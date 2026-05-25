@@ -88,7 +88,22 @@
     </section>
 
     <section class="card">
-      <div class="section-title"><div><h2>메달 목록</h2><span>성별·메달별로 나누어 볼 수 있습니다. 대회명 또는 선수명을 누르면 상세 정보를 볼 수 있습니다.</span></div></div>
+      <div class="section-title"><div><h2>선수별 종합 메달</h2><span>올림픽 / 세계선수권 / 월드컵·월드투어 금·은·동을 나누고 마지막에 총합을 표시합니다.</span></div></div>
+      <div class="tabs">
+        <button class="tab skater-mode-tab active" data-mode="all">계주 포함</button>
+        <button class="tab skater-mode-tab" data-mode="individual">개인전만</button>
+      </div>
+      <div class="subnote">현재 검색어, 대회 종류, 시즌, 성별, 종목 필터가 반영됩니다. 선수명은 skater_aliases 시트 기준으로 표준화됩니다.</div>
+      <div id="skaterRankingWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title"><div><h2>국가별 메달 순위</h2><span>medals 시트 기준입니다. 계주가 선수 수만큼 중복 집계되지 않습니다.</span></div></div>
+      <div id="countryRankingWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
+    </section>
+
+    <section class="card">
+      <div class="section-title"><div><h2>메달 목록</h2><span>상세 원자료 확인용 목록입니다. 길어지기 쉬워 화면 맨 아래에 배치했습니다.</span></div></div>
       <div class="tabs" aria-label="성별 보기">
         <button class="tab gender-tab active" data-gender="">전체</button>
         <button class="tab gender-tab" data-gender="Men">남자</button>
@@ -104,28 +119,16 @@
       <div id="tableWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
     </section>
 
-    <section class="card">
-      <div class="section-title"><div><h2>선수별 종합 메달</h2><span>올림픽 / 세계선수권 / 월드컵·월드투어 금·은·동을 나누고 마지막에 총합을 표시합니다.</span></div></div>
-      <div class="tabs">
-        <button class="tab skater-mode-tab active" data-mode="all">계주 포함</button>
-        <button class="tab skater-mode-tab" data-mode="individual">개인전만</button>
-      </div>
-      <div class="subnote">현재 검색어, 대회 종류, 시즌, 성별, 종목 필터가 반영됩니다.</div>
-      <div id="skaterRankingWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
-    </section>
-
-    <section class="card">
-      <div class="section-title"><div><h2>국가별 메달 순위</h2><span>medals 시트 기준입니다. 계주가 선수 수만큼 중복 집계되지 않습니다.</span></div></div>
-      <div id="countryRankingWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
-    </section>
   </main>
 
   <script>
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkNr8yBRI_ok8aFZd623RmHhNCpyHFKuTvdwxYiczFi_LFff5olScBXSPGPd_-QWepKg/exec';
+    const APPS_SCRIPT_URL = '여기에_Apps_Script_exec_주소';
 
     let medals = [];
     let relayMembers = [];
     let lapTimes = [];
+    let skaterAliases = [];
+    let skaterAliasMap = new Map();
     let skaterMedals = [];
     let filteredMedals = [];
     let currentMedalFilter = '';
@@ -188,6 +191,8 @@
         const response=await fetch(APPS_SCRIPT_URL);
         const json=await response.json();
         if(!json.ok) throw new Error(json.error || '데이터를 불러오지 못했습니다.');
+        skaterAliases=(json.skater_aliases||[]).map(normalizeAliasRow);
+        skaterAliasMap=buildSkaterAliasMap(skaterAliases);
         medals=(json.medals||[]).map(normalizeMedalRow);
         relayMembers=(json.relay_members||[]).map(normalizeRelayRow);
         lapTimes=(json.lap_times||[]).map(normalizeLapRow);
@@ -202,9 +207,14 @@
       }
     }
 
-    function normalizeMedalRow(row){return {competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),skater_name:String(row.skater_name||'').trim(),country:String(row.country||'').trim(),time:String(row.time||'').trim(),note:String(row.note||'').trim()};}
-    function normalizeRelayRow(row){return {competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),country:String(row.country||'').trim(),team_name:String(row.team_name||'').trim(),skater_name:String(row.skater_name||'').trim(),time:String(row.time||'').trim(),note:String(row.note||'').trim()};}
-    function normalizeLapRow(row){return {competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),round:String(row.round||'').trim(),heat:String(row.heat||'').trim(),skater_name:String(row.skater_name||'').trim(),country:String(row.country||'').trim(),lap_number:String(row.lap_number||'').trim(),lap_time:String(row.lap_time||'').trim(),cumulative_time:String(row.cumulative_time||'').trim(),position:String(row.position||'').trim(),note:String(row.note||'').trim()};}
+    function normalizeAliasRow(row){return {alias_name:String(row.alias_name||'').trim(),canonical_name:String(row.canonical_name||'').trim(),country:String(row.country||'').trim(),note:String(row.note||'').trim()};}
+    function normalizeMedalRow(row){const original=String(row.skater_name||'').trim();return {competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,country:String(row.country||'').trim(),time:String(row.time||'').trim(),note:String(row.note||'').trim()};}
+    function normalizeRelayRow(row){const original=String(row.skater_name||'').trim();return {competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),country:String(row.country||'').trim(),team_name:String(row.team_name||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,time:String(row.time||'').trim(),note:String(row.note||'').trim()};}
+    function normalizeLapRow(row){const original=String(row.skater_name||'').trim();return {competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),round:String(row.round||'').trim(),heat:String(row.heat||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,country:String(row.country||'').trim(),lap_number:String(row.lap_number||'').trim(),lap_time:String(row.lap_time||'').trim(),cumulative_time:String(row.cumulative_time||'').trim(),position:String(row.position||'').trim(),note:String(row.note||'').trim()};}
+
+    function buildSkaterAliasMap(rows){const map=new Map();rows.forEach(row=>{if(!row.alias_name||!row.canonical_name)return;map.set(aliasKey(row.alias_name),row.canonical_name);map.set(aliasKey(row.canonical_name),row.canonical_name);});return map;}
+    function aliasKey(name){return String(name||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[\s._-]+/g,' ');}
+    function canonicalSkaterName(name){const raw=String(name||'').trim();if(!raw)return '';return skaterAliasMap.get(aliasKey(raw))||raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 
     function buildSkaterMedals(){
       const individual=medals.filter(row=>row.skater_name && !isRelayEvent(row.event)).map(row=>({...row,medal_type:'Individual'}));
@@ -226,7 +236,7 @@
     }
 
     function rowMatchesFilters(row,q){
-      const target=[row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.country,row.team_name,row.time,row.note].join(' ').toLowerCase();
+      const target=[row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.original_skater_name,row.country,row.team_name,row.time,row.note].join(' ').toLowerCase();
       return (!q||target.includes(q))&&(!typeFilter.value||row.competition_type===typeFilter.value)&&(!seasonFilter.value||row.season===seasonFilter.value)&&(!genderFilter.value||row.gender===genderFilter.value)&&(!eventFilter.value||row.event===eventFilter.value)&&(!currentMedalFilter||row.medal===currentMedalFilter);
     }
 
