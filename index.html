@@ -5,7 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Short Track Archive</title>
   <style>
-    :root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#6b7280;--line:#e5e7eb;--primary:#2563eb;--gold:#f59e0b;--silver:#6b7280;--bronze:#b45309;--danger:#dc2626}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:36px 20px;text-align:center}header h1{margin:0;font-size:32px;letter-spacing:-.04em}header p{margin:10px 0 0;opacity:.9;font-size:15px}main{max-width:1180px;margin:-24px auto 60px;padding:0 16px}.card{background:var(--card);border-radius:20px;box-shadow:0 12px 30px rgba(15,23,42,.08);padding:20px;margin-bottom:18px}.controls{display:grid;grid-template-columns:1.7fr repeat(4,1fr);gap:10px}input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 13px;font-size:14px;background:#fff;color:var(--text);outline:none}input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12)}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.summary-box{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fbfdff}.summary-box .label{font-size:13px;color:var(--muted);margin-bottom:8px}.summary-box .value{font-size:26px;font-weight:800}.section-title{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:12px}.section-title h2{margin:0;font-size:20px}.section-title span{color:var(--muted);font-size:13px}.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.tab{border:1px solid var(--line);background:#fff;color:var(--text);padding:9px 13px;border-radius:999px;cursor:pointer;font-size:14px}.tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:14px}th,td{border-bottom:1px solid var(--line);padding:12px 10px;text-align:left;font-size:14px;vertical-align:middle}th{background:#f8fafc;color:#334155;font-size:13px}tr:hover td{background:#f9fafb}.medal{display:inline-flex;align-items:center;justify-content:center;min-width:66px;border-radius:999px;padding:5px 9px;font-weight:700;font-size:12px}.Gold{background:rgba(245,158,11,.14);color:var(--gold)}.Silver{background:rgba(156,163,175,.16);color:#4b5563}.Bronze{background:rgba(180,83,9,.14);color:var(--bronze)}.link{color:var(--primary);font-weight:700;cursor:pointer;text-decoration:none}.link:hover{text-decoration:underline}.panel{display:none}.panel.active{display:block}.panel-header{display:flex;justify-content:space-between;gap:16px;align-items:start;margin-bottom:14px}.panel-header h2{margin:0 0 6px;font-size:24px}.panel-header p{margin:0;color:var(--muted)}.close-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}.empty{text-align:center;color:var(--muted);padding:32px}.notice{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:14px;padding:12px 14px;font-size:14px;margin-bottom:14px}.error{background:#fef2f2;border:1px solid #fecaca;color:var(--danger);border-radius:14px;padding:12px 14px;font-size:14px;margin-bottom:14px}small{color:var(--muted)}.spacer{height:18px}.lap-group{margin-bottom:18px;border:1px solid var(--line);border-radius:16px;overflow:hidden}.lap-group-title{padding:12px 14px;background:#f8fafc;border-bottom:1px solid var(--line)}@media(max-width:860px){.controls{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}table{display:block;overflow-x:auto;white-space:nowrap}}@media(max-width:520px){header h1{font-size:26px}.summary{grid-template-columns:1fr}.panel-header{flex-direction:column}}
+    :root {
+      --bg:#f5f7fb; --card:#fff; --text:#172033; --muted:#6b7280; --line:#e5e7eb;
+      --primary:#2563eb; --gold:#f59e0b; --silver:#6b7280; --bronze:#b45309; --danger:#dc2626;
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+    header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:36px 20px;text-align:center} header h1{margin:0;font-size:32px;letter-spacing:-.04em} header p{margin:10px 0 0;opacity:.9;font-size:15px}
+    main{max-width:1280px;margin:-24px auto 60px;padding:0 16px}.card{background:var(--card);border-radius:20px;box-shadow:0 12px 30px rgba(15,23,42,.08);padding:20px;margin-bottom:18px}
+    .controls{display:grid;grid-template-columns:1.7fr repeat(4,1fr);gap:10px} input,select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 13px;font-size:14px;background:#fff;color:var(--text);outline:none} input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.summary-box{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fbfdff}.summary-box .label{font-size:13px;color:var(--muted);margin-bottom:8px}.summary-box .value{font-size:26px;font-weight:800}
+    .section-title{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:12px}.section-title h2{margin:0;font-size:20px}.section-title span{color:var(--muted);font-size:13px}.subnote{color:var(--muted);font-size:13px;margin:-6px 0 12px}
+    .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.tab{border:1px solid var(--line);background:#fff;color:var(--text);padding:9px 13px;border-radius:999px;cursor:pointer;font-size:14px}.tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:14px} th,td{border-bottom:1px solid var(--line);padding:10px 9px;text-align:left;font-size:13.5px;vertical-align:middle} th{background:#f8fafc;color:#334155;font-size:12.5px;white-space:nowrap} tr:hover td{background:#f9fafb}
+    .medal{display:inline-flex;align-items:center;justify-content:center;min-width:46px;border-radius:999px;padding:5px 8px;font-weight:700;font-size:12px}.Gold{background:rgba(245,158,11,.14);color:var(--gold)}.Silver{background:rgba(156,163,175,.16);color:#4b5563}.Bronze{background:rgba(180,83,9,.14);color:var(--bronze)}
+    .link{color:var(--primary);font-weight:700;cursor:pointer;text-decoration:none}.link:hover{text-decoration:underline}.panel{display:none}.panel.active{display:block}.panel-header{display:flex;justify-content:space-between;gap:16px;align-items:start;margin-bottom:14px}.panel-header h2{margin:0 0 6px;font-size:24px}.panel-header p{margin:0;color:var(--muted)}.close-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}
+    .empty{text-align:center;color:var(--muted);padding:32px}.notice{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:14px;padding:12px 14px;font-size:14px;margin-bottom:14px}.error{background:#fef2f2;border:1px solid #fecaca;color:var(--danger);border-radius:14px;padding:12px 14px;font-size:14px;margin-bottom:14px} small{color:var(--muted)}.spacer{height:18px}.lap-group{margin-bottom:18px;border:1px solid var(--line);border-radius:16px;overflow:hidden}.lap-group-title{padding:12px 14px;background:#f8fafc;border-bottom:1px solid var(--line)}
+    .table-scroll{overflow-x:auto}.rank-total{font-weight:800;background:#fbfdff}.group-head{font-weight:800;text-align:center;background:#f8fafc}.nowrap{white-space:nowrap}
+    @media(max-width:900px){.controls{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}table{display:block;overflow-x:auto;white-space:nowrap}}@media(max-width:520px){header h1{font-size:26px}.summary{grid-template-columns:1fr}.panel-header{flex-direction:column}}
   </style>
 </head>
 <body>
@@ -71,22 +87,29 @@
     </section>
 
     <section class="card">
-      <div class="section-title"><div><h2>메달 목록</h2><span>대회명 또는 선수명을 누르면 상세 정보를 볼 수 있습니다.</span></div></div>
-      <div class="tabs">
-        <button class="tab active" data-medal="">전체</button>
-        <button class="tab" data-medal="Gold">금메달</button>
-        <button class="tab" data-medal="Silver">은메달</button>
-        <button class="tab" data-medal="Bronze">동메달</button>
+      <div class="section-title"><div><h2>메달 목록</h2><span>성별·메달별로 나누어 볼 수 있습니다. 대회명 또는 선수명을 누르면 상세 정보를 볼 수 있습니다.</span></div></div>
+      <div class="tabs" aria-label="성별 보기">
+        <button class="tab gender-tab active" data-gender="">전체</button>
+        <button class="tab gender-tab" data-gender="Men">남자</button>
+        <button class="tab gender-tab" data-gender="Women">여자</button>
+        <button class="tab gender-tab" data-gender="Mixed">혼성</button>
+      </div>
+      <div class="tabs" aria-label="메달 보기">
+        <button class="tab medal-tab active" data-medal="">전체 메달</button>
+        <button class="tab medal-tab" data-medal="Gold">금메달</button>
+        <button class="tab medal-tab" data-medal="Silver">은메달</button>
+        <button class="tab medal-tab" data-medal="Bronze">동메달</button>
       </div>
       <div id="tableWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
     </section>
 
     <section class="card">
-      <div class="section-title"><div><h2>선수별 메달 순위</h2><span>현재 검색·필터 결과를 기준으로 집계됩니다.</span></div></div>
+      <div class="section-title"><div><h2>선수별 종합 메달</h2><span>올림픽 / 세계선수권 / 월드컵·월드투어 금·은·동을 나누고 마지막에 총합을 표시합니다.</span></div></div>
       <div class="tabs">
-        <button class="tab skater-mode-tab" data-mode="all">계주 포함</button>
+        <button class="tab skater-mode-tab active" data-mode="all">계주 포함</button>
         <button class="tab skater-mode-tab" data-mode="individual">개인전만</button>
       </div>
+      <div class="subnote">현재 검색어, 대회 종류, 시즌, 성별, 종목 필터가 반영됩니다.</div>
       <div id="skaterRankingWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
     </section>
 
@@ -97,7 +120,7 @@
   </main>
 
   <script>
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkNr8yBRI_ok8aFZd623RmHhNCpyHFKuTvdwxYiczFi_LFff5olScBXSPGPd_-QWepKg/exec';
+    const APPS_SCRIPT_URL = '여기에_Apps_Script_exec_주소';
 
     let medals = [];
     let relayMembers = [];
@@ -117,7 +140,6 @@
 
     async function init(){
       bindEvents();
-      document.querySelector('.skater-mode-tab[data-mode="all"]').classList.add('active');
       if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')){showNotConnected();return;}
       await loadData();
     }
@@ -125,8 +147,31 @@
     function bindEvents(){
       [searchInput,typeFilter,seasonFilter,genderFilter,eventFilter].forEach(el=>el.addEventListener('input',applyFilters));
       [typeFilter,seasonFilter,genderFilter,eventFilter].forEach(el=>el.addEventListener('change',applyFilters));
-      document.querySelectorAll('.tab[data-medal]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab[data-medal]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentMedalFilter=btn.dataset.medal;applyFilters();}));
-      document.querySelectorAll('.skater-mode-tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.skater-mode-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');skaterRankingMode=btn.dataset.mode;renderSkaterRanking(getFilteredSkaterMedals());}));
+
+      document.querySelectorAll('.gender-tab').forEach(btn=>btn.addEventListener('click',()=>{
+        document.querySelectorAll('.gender-tab').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        genderFilter.value = btn.dataset.gender;
+        applyFilters();
+      }));
+
+      genderFilter.addEventListener('change',()=>{
+        document.querySelectorAll('.gender-tab').forEach(b=>b.classList.toggle('active', b.dataset.gender === genderFilter.value));
+      });
+
+      document.querySelectorAll('.medal-tab').forEach(btn=>btn.addEventListener('click',()=>{
+        document.querySelectorAll('.medal-tab').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        currentMedalFilter = btn.dataset.medal;
+        applyFilters();
+      }));
+
+      document.querySelectorAll('.skater-mode-tab').forEach(btn=>btn.addEventListener('click',()=>{
+        document.querySelectorAll('.skater-mode-tab').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        skaterRankingMode = btn.dataset.mode;
+        renderSkaterRanking(getFilteredSkaterMedals());
+      }));
     }
 
     function showNotConnected(){
@@ -171,30 +216,64 @@
     function applyFilters(){
       const q=searchInput.value.trim().toLowerCase();
       filteredMedals=medals.filter(row=>rowMatchesFilters(row,q));
-      renderSummary(filteredMedals);renderMedalTable(filteredMedals);renderSkaterRanking(getFilteredSkaterMedals());renderCountryRanking(filteredMedals);
+      renderSummary(filteredMedals);
+      renderMedalTable(filteredMedals);
+      renderSkaterRanking(getFilteredSkaterMedals());
+      renderCountryRanking(filteredMedals);
     }
+
     function rowMatchesFilters(row,q){
       const target=[row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.country,row.team_name,row.time,row.note].join(' ').toLowerCase();
       return (!q||target.includes(q))&&(!typeFilter.value||row.competition_type===typeFilter.value)&&(!seasonFilter.value||row.season===seasonFilter.value)&&(!genderFilter.value||row.gender===genderFilter.value)&&(!eventFilter.value||row.event===eventFilter.value)&&(!currentMedalFilter||row.medal===currentMedalFilter);
     }
-    function getFilteredSkaterMedals(){const q=searchInput.value.trim().toLowerCase();let data=skaterMedals.filter(row=>rowMatchesFilters(row,q));if(skaterRankingMode==='individual') data=data.filter(row=>row.medal_type==='Individual');return data;}
+
+    function getFilteredSkaterMedals(){
+      const q=searchInput.value.trim().toLowerCase();
+      let data=skaterMedals.filter(row=>rowMatchesFilters(row,q));
+      if(skaterRankingMode==='individual') data=data.filter(row=>row.medal_type==='Individual');
+      return data;
+    }
 
     function renderSummary(data){document.getElementById('totalCount').textContent=data.length;document.getElementById('goldCount').textContent=data.filter(r=>r.medal==='Gold').length;document.getElementById('silverCount').textContent=data.filter(r=>r.medal==='Silver').length;document.getElementById('bronzeCount').textContent=data.filter(r=>r.medal==='Bronze').length;}
+
     function renderMedalTable(data){
       const wrap=document.getElementById('tableWrap');
       if(!data.length){wrap.innerHTML='<div class="empty">검색 결과가 없습니다.</div>';return;}
-      const sorted=[...data].sort((a,b)=>Number(b.year||0)-Number(a.year||0)||eventOrder(a.event)-eventOrder(b.event)||medalOrder(a.medal)-medalOrder(b.medal));
-      wrap.innerHTML=`<table><thead><tr><th>대회</th><th>시즌</th><th>개최지</th><th>성별</th><th>종목</th><th>메달</th><th>선수/팀</th><th>국가</th><th>기록</th><th>비고</th></tr></thead><tbody>${sorted.map(row=>`<tr><td><span class="link" onclick="openCompetitionPanel('${escapeJs(row.competition_name)}')">${escapeHtml(row.competition_name)}</span><br><small>${escapeHtml(row.competition_type)}</small></td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.city)}</td><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td><span class="medal ${escapeHtml(row.medal)}">${medalKorean(row.medal)}</span></td><td>${isRelayEvent(row.event)?escapeHtml(row.skater_name):`<span class="link" onclick="openPlayerPanel('${escapeJs(row.skater_name)}')">${escapeHtml(row.skater_name)}</span>`}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.time)}</td><td>${escapeHtml(row.note)}</td></tr>`).join('')}</tbody></table>`;
+      const sorted=[...data].sort((a,b)=>Number(b.year||0)-Number(a.year||0)||genderOrder(a.gender)-genderOrder(b.gender)||eventOrder(a.event)-eventOrder(b.event)||medalOrder(a.medal)-medalOrder(b.medal));
+      wrap.innerHTML=`<div class="table-scroll"><table><thead><tr><th>대회</th><th>시즌</th><th>개최지</th><th>성별</th><th>종목</th><th>메달</th><th>선수/팀</th><th>국가</th><th>기록</th><th>비고</th></tr></thead><tbody>${sorted.map(row=>`<tr><td><span class="link" onclick="openCompetitionPanel('${escapeJs(row.competition_name)}')">${escapeHtml(row.competition_name)}</span><br><small>${escapeHtml(row.competition_type)}</small></td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.city)}</td><td>${genderKorean(row.gender)}</td><td>${escapeHtml(row.event)}</td><td><span class="medal ${escapeHtml(row.medal)}">${medalKorean(row.medal)}</span></td><td>${isRelayEvent(row.event)?escapeHtml(row.skater_name):`<span class="link" onclick="openPlayerPanel('${escapeJs(row.skater_name)}')">${escapeHtml(row.skater_name)}</span>`}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.time)}</td><td>${escapeHtml(row.note)}</td></tr>`).join('')}</tbody></table></div>`;
     }
 
     function renderSkaterRanking(data){
       const wrap=document.getElementById('skaterRankingWrap');
       if(!data.length){wrap.innerHTML='<div class="empty">집계할 데이터가 없습니다.</div>';return;}
       const map=new Map();
-      data.forEach(row=>{const key=row.skater_name;if(!key)return;if(!map.has(key))map.set(key,{name:row.skater_name,country:row.country,gold:0,silver:0,bronze:0,total:0});const item=map.get(key);if(row.medal==='Gold')item.gold++;if(row.medal==='Silver')item.silver++;if(row.medal==='Bronze')item.bronze++;item.total++;});
-      const ranking=[...map.values()].sort(rankSort);
-      wrap.innerHTML=`<table><thead><tr><th>순위</th><th>선수</th><th>국가</th><th>금</th><th>은</th><th>동</th><th>합계</th><th>기준</th></tr></thead><tbody>${ranking.map((row,i)=>`<tr><td>${i+1}</td><td><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}</span></td><td>${escapeHtml(row.country)}</td><td>${row.gold}</td><td>${row.silver}</td><td>${row.bronze}</td><td><strong>${row.total}</strong></td><td>${skaterRankingMode==='individual'?'개인전만':'계주 포함'}</td></tr>`).join('')}</tbody></table>`;
+      data.forEach(row=>{
+        const key=row.skater_name;if(!key)return;
+        if(!map.has(key)) map.set(key,createSkaterAgg(row.skater_name,row.country));
+        const item=map.get(key);
+        if(row.country && !item.country) item.country=row.country;
+        const bucket=competitionBucket(row.competition_type);
+        addMedalCount(item[bucket], row.medal);
+        addMedalCount(item.total, row.medal);
+      });
+      const ranking=[...map.values()].sort(aggregateRankSort);
+      wrap.innerHTML=`<div class="table-scroll"><table>
+        <thead>
+          <tr><th rowspan="2">순위</th><th rowspan="2">선수</th><th rowspan="2">국가</th><th class="group-head" colspan="3">올림픽</th><th class="group-head" colspan="3">세계선수권</th><th class="group-head" colspan="3">월드컵·월드투어</th><th class="group-head" colspan="4">총합</th><th rowspan="2">기준</th></tr>
+          <tr><th>금</th><th>은</th><th>동</th><th>금</th><th>은</th><th>동</th><th>금</th><th>은</th><th>동</th><th>금</th><th>은</th><th>동</th><th>합계</th></tr>
+        </thead>
+        <tbody>${ranking.map((row,i)=>`<tr>
+          <td>${i+1}</td><td><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}</span></td><td>${escapeHtml(row.country)}</td>
+          ${medalCells(row.olympic)}${medalCells(row.worlds)}${medalCells(row.worldcup)}${medalCells(row.total,true)}
+          <td>${skaterRankingMode==='individual'?'개인전만':'계주 포함'}</td>
+        </tr>`).join('')}</tbody></table></div>`;
     }
+
+    function createSkaterAgg(name,country){return {name,country,olympic:{gold:0,silver:0,bronze:0,total:0},worlds:{gold:0,silver:0,bronze:0,total:0},worldcup:{gold:0,silver:0,bronze:0,total:0},total:{gold:0,silver:0,bronze:0,total:0}};}
+    function addMedalCount(obj,medal){if(medal==='Gold')obj.gold++;if(medal==='Silver')obj.silver++;if(medal==='Bronze')obj.bronze++;obj.total++;}
+    function competitionBucket(type){if(type==='Olympic Games')return 'olympic';if(type==='World Championships')return 'worlds';return 'worldcup';}
+    function medalCells(obj,includeTotal=false){return `<td>${obj.gold}</td><td>${obj.silver}</td><td>${obj.bronze}</td>${includeTotal?`<td class="rank-total">${obj.total}</td>`:''}`;}
+    function aggregateRankSort(a,b){return b.total.gold-a.total.gold||b.total.silver-a.total.silver||b.total.bronze-a.total.bronze||b.total.total-a.total.total||String(a.name).localeCompare(String(b.name),'ko');}
 
     function renderCountryRanking(data){
       const wrap=document.getElementById('countryRankingWrap');
@@ -202,7 +281,7 @@
       const map=new Map();
       data.forEach(row=>{const key=row.country;if(!key)return;if(!map.has(key))map.set(key,{country:key,gold:0,silver:0,bronze:0,total:0});const item=map.get(key);if(row.medal==='Gold')item.gold++;if(row.medal==='Silver')item.silver++;if(row.medal==='Bronze')item.bronze++;item.total++;});
       const ranking=[...map.values()].sort(rankSort);
-      wrap.innerHTML=`<table><thead><tr><th>순위</th><th>국가</th><th>금</th><th>은</th><th>동</th><th>합계</th></tr></thead><tbody>${ranking.map((row,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHtml(row.country)}</strong></td><td>${row.gold}</td><td>${row.silver}</td><td>${row.bronze}</td><td><strong>${row.total}</strong></td></tr>`).join('')}</tbody></table>`;
+      wrap.innerHTML=`<div class="table-scroll"><table><thead><tr><th>순위</th><th>국가</th><th>금</th><th>은</th><th>동</th><th>합계</th></tr></thead><tbody>${ranking.map((row,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHtml(row.country)}</strong></td><td>${row.gold}</td><td>${row.silver}</td><td>${row.bronze}</td><td><strong>${row.total}</strong></td></tr>`).join('')}</tbody></table></div>`;
     }
 
     function openPlayerPanel(name){
@@ -222,51 +301,64 @@
     function closePlayerPanel(){document.getElementById('playerPanel').classList.remove('active');}
 
     function renderPlayerMedalTable(name){
-      const wrap=document.getElementById('playerTable');const rows=skaterMedals.filter(row=>row.skater_name===name).sort((a,b)=>Number(b.year||0)-Number(a.year||0)||String(a.medal_type).localeCompare(String(b.medal_type),'ko')||eventOrder(a.event)-eventOrder(b.event));
+      const wrap=document.getElementById('playerTable');
+      const rows=skaterMedals.filter(row=>row.skater_name===name).sort((a,b)=>Number(b.year||0)-Number(a.year||0)||competitionTypeOrder(a.competition_type)-competitionTypeOrder(b.competition_type)||eventOrder(a.event)-eventOrder(b.event));
       if(!rows.length){wrap.innerHTML='<div class="empty">입력된 메달 내역이 없습니다.</div>';return;}
-      wrap.innerHTML=`<table><thead><tr><th>구분</th><th>대회</th><th>시즌</th><th>성별</th><th>종목</th><th>메달</th><th>국가/팀</th><th>기록</th><th>비고</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${row.medal_type==='Relay'?'계주':'개인전'}</td><td><span class="link" onclick="openCompetitionPanel('${escapeJs(row.competition_name)}')">${escapeHtml(row.competition_name)}</span><br><small>${escapeHtml(row.competition_type)}</small></td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td><span class="medal ${escapeHtml(row.medal)}">${medalKorean(row.medal)}</span></td><td>${escapeHtml(row.team_name||row.country)}</td><td>${escapeHtml(row.time)}</td><td>${escapeHtml(row.note)}</td></tr>`).join('')}</tbody></table>`;
+      wrap.innerHTML=`<div class="table-scroll"><table><thead><tr><th>구분</th><th>대회</th><th>시즌</th><th>성별</th><th>종목</th><th>메달</th><th>국가/팀</th><th>기록</th><th>비고</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${row.medal_type==='Relay'?'계주':'개인전'}</td><td><span class="link" onclick="openCompetitionPanel('${escapeJs(row.competition_name)}')">${escapeHtml(row.competition_name)}</span><br><small>${escapeHtml(row.competition_type)}</small></td><td>${escapeHtml(row.season)}</td><td>${genderKorean(row.gender)}</td><td>${escapeHtml(row.event)}</td><td><span class="medal ${escapeHtml(row.medal)}">${medalKorean(row.medal)}</span></td><td>${escapeHtml(row.team_name||row.country)}</td><td>${escapeHtml(row.time)}</td><td>${escapeHtml(row.note)}</td></tr>`).join('')}</tbody></table></div>`;
     }
 
     function renderPlayerLapTable(name){
-      const wrap=document.getElementById('playerLapTable');const rows=lapTimes.filter(row=>row.skater_name===name).sort(sortLapRows);
+      const wrap=document.getElementById('playerLapTable');
+      const rows=lapTimes.filter(row=>row.skater_name===name).sort(sortLapRows);
       if(!rows.length){wrap.innerHTML='<div class="empty">입력된 랩타임이 없습니다.</div>';return;}
       const groups=new Map();
       rows.forEach(row=>{const key=[row.competition_name,row.season,row.gender,row.event,row.round,row.heat].join('|');if(!groups.has(key))groups.set(key,{...row,rows:[]});groups.get(key).rows.push(row);});
-      wrap.innerHTML=[...groups.values()].map(group=>{const sorted=group.rows.sort((a,b)=>Number(a.lap_number||0)-Number(b.lap_number||0));return `<div class="lap-group"><div class="lap-group-title"><strong><span class="link" onclick="openCompetitionPanel('${escapeJs(group.competition_name)}')">${escapeHtml(group.competition_name)}</span></strong><br><small>${escapeHtml(group.competition_type)} · ${escapeHtml(group.season)} · ${escapeHtml(group.gender)} ${escapeHtml(group.event)} · ${escapeHtml(group.round)} · Heat ${escapeHtml(group.heat)}</small></div><table><thead><tr><th>Lap</th><th>랩타임</th><th>누적기록</th><th>순위</th><th>비고</th></tr></thead><tbody>${sorted.map(row=>`<tr><td>${escapeHtml(row.lap_number)}</td><td>${escapeHtml(row.lap_time)}</td><td>${escapeHtml(row.cumulative_time)}</td><td>${escapeHtml(row.position)}</td><td>${escapeHtml(row.note)}</td></tr>`).join('')}</tbody></table></div>`;}).join('');
+      wrap.innerHTML=[...groups.values()].map(group=>`<div class="lap-group"><div class="lap-group-title"><strong><span class="link" onclick="openCompetitionPanel('${escapeJs(group.competition_name)}')">${escapeHtml(group.competition_name)}</span></strong><br><small>${escapeHtml(group.competition_type)} · ${escapeHtml(group.season)} · ${genderKorean(group.gender)} ${escapeHtml(group.event)} · ${escapeHtml(group.round)} · Heat ${escapeHtml(group.heat)}</small></div><table><thead><tr><th>Lap</th><th>랩타임</th><th>누적기록</th><th>순위</th><th>비고</th></tr></thead><tbody>${group.rows.sort((a,b)=>Number(a.lap_number||0)-Number(b.lap_number||0)).map(row=>`<tr><td>${escapeHtml(row.lap_number)}</td><td>${escapeHtml(row.lap_time)}</td><td>${escapeHtml(row.cumulative_time)}</td><td>${escapeHtml(row.position)}</td><td>${escapeHtml(row.note)}</td></tr>`).join('')}</tbody></table></div>`).join('');
     }
 
     function openCompetitionPanel(name){
-      const rows=medals.filter(row=>row.competition_name===name);const lapRows=lapTimes.filter(row=>row.competition_name===name);
-      if(!rows.length&&!lapRows.length)return;const first=rows[0]||lapRows[0];
+      const rows=medals.filter(row=>row.competition_name===name);
+      const laps=lapTimes.filter(row=>row.competition_name===name);
+      if(!rows.length&&!laps.length)return;
+      const first=rows[0]||laps[0];
       document.getElementById('competitionName').textContent=name;
       document.getElementById('competitionInfo').textContent=`${first.competition_type} · ${first.city} · ${first.season||first.year}`;
-      document.getElementById('competitionTotal').textContent=rows.length;document.getElementById('competitionGold').textContent=rows.filter(r=>r.medal==='Gold').length;document.getElementById('competitionSilver').textContent=rows.filter(r=>r.medal==='Silver').length;document.getElementById('competitionBronze').textContent=rows.filter(r=>r.medal==='Bronze').length;
+      document.getElementById('competitionTotal').textContent=rows.length;
+      document.getElementById('competitionGold').textContent=rows.filter(r=>r.medal==='Gold').length;
+      document.getElementById('competitionSilver').textContent=rows.filter(r=>r.medal==='Silver').length;
+      document.getElementById('competitionBronze').textContent=rows.filter(r=>r.medal==='Bronze').length;
       renderCompetitionTable(name);renderCompetitionLapSummary(name);
       const panel=document.getElementById('competitionPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
     function closeCompetitionPanel(){document.getElementById('competitionPanel').classList.remove('active');}
 
     function renderCompetitionTable(name){
-      const wrap=document.getElementById('competitionTable');const rows=medals.filter(row=>row.competition_name===name).sort((a,b)=>String(a.gender).localeCompare(String(b.gender),'ko')||eventOrder(a.event)-eventOrder(b.event)||medalOrder(a.medal)-medalOrder(b.medal));
+      const wrap=document.getElementById('competitionTable');
+      const rows=medals.filter(row=>row.competition_name===name).sort((a,b)=>genderOrder(a.gender)-genderOrder(b.gender)||eventOrder(a.event)-eventOrder(b.event)||medalOrder(a.medal)-medalOrder(b.medal));
       if(!rows.length){wrap.innerHTML='<div class="empty">입력된 대회 메달표가 없습니다.</div>';return;}
-      wrap.innerHTML=`<table><thead><tr><th>성별</th><th>종목</th><th>메달</th><th>선수/팀</th><th>국가</th><th>기록</th><th>비고</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td><span class="medal ${escapeHtml(row.medal)}">${medalKorean(row.medal)}</span></td><td>${isRelayEvent(row.event)?escapeHtml(row.skater_name):`<span class="link" onclick="openPlayerPanel('${escapeJs(row.skater_name)}')">${escapeHtml(row.skater_name)}</span>`}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.time)}</td><td>${escapeHtml(row.note)}</td></tr>`).join('')}</tbody></table>`;
+      wrap.innerHTML=`<div class="table-scroll"><table><thead><tr><th>성별</th><th>종목</th><th>메달</th><th>선수/팀</th><th>국가</th><th>기록</th><th>비고</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${genderKorean(row.gender)}</td><td>${escapeHtml(row.event)}</td><td><span class="medal ${escapeHtml(row.medal)}">${medalKorean(row.medal)}</span></td><td>${isRelayEvent(row.event)?escapeHtml(row.skater_name):`<span class="link" onclick="openPlayerPanel('${escapeJs(row.skater_name)}')">${escapeHtml(row.skater_name)}</span>`}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.time)}</td><td>${escapeHtml(row.note)}</td></tr>`).join('')}</tbody></table></div>`;
     }
 
     function renderCompetitionLapSummary(name){
-      const wrap=document.getElementById('competitionLapSummary');const rows=lapTimes.filter(row=>row.competition_name===name);
+      const wrap=document.getElementById('competitionLapSummary');
+      const rows=lapTimes.filter(row=>row.competition_name===name);
       if(!rows.length){wrap.innerHTML='<div class="empty">입력된 랩타임이 없습니다.</div>';return;}
-      const map=new Map();rows.forEach(row=>{const key=[row.gender,row.event,row.round,row.heat].join('|');if(!map.has(key))map.set(key,{gender:row.gender,event:row.event,round:row.round,heat:row.heat,skaters:new Set(),lapRows:0});const item=map.get(key);item.skaters.add(row.skater_name);item.lapRows++;});
-      const summary=[...map.values()].sort((a,b)=>String(a.gender).localeCompare(String(b.gender),'ko')||eventOrder(a.event)-eventOrder(b.event)||roundOrder(a.round)-roundOrder(b.round)||Number(a.heat||0)-Number(b.heat||0));
-      wrap.innerHTML=`<table><thead><tr><th>성별</th><th>종목</th><th>라운드</th><th>조</th><th>선수 수</th><th>랩타임 행 수</th></tr></thead><tbody>${summary.map(row=>`<tr><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td>${escapeHtml(row.round)}</td><td>${escapeHtml(row.heat)}</td><td>${row.skaters.size}</td><td><strong>${row.lapRows}</strong></td></tr>`).join('')}</tbody></table>`;
+      const map=new Map();
+      rows.forEach(row=>{const key=[row.gender,row.event,row.round,row.heat].join('|');if(!map.has(key))map.set(key,{gender:row.gender,event:row.event,round:row.round,heat:row.heat,skaters:new Set(),lapRows:0});const item=map.get(key);item.skaters.add(row.skater_name);item.lapRows++;});
+      const summary=[...map.values()].sort((a,b)=>genderOrder(a.gender)-genderOrder(b.gender)||eventOrder(a.event)-eventOrder(b.event)||roundOrder(a.round)-roundOrder(b.round)||Number(a.heat||0)-Number(b.heat||0));
+      wrap.innerHTML=`<div class="table-scroll"><table><thead><tr><th>성별</th><th>종목</th><th>라운드</th><th>조</th><th>선수 수</th><th>랩타임 행 수</th></tr></thead><tbody>${summary.map(row=>`<tr><td>${genderKorean(row.gender)}</td><td>${escapeHtml(row.event)}</td><td>${escapeHtml(row.round)}</td><td>${escapeHtml(row.heat)}</td><td>${row.skaters.size}</td><td><strong>${row.lapRows}</strong></td></tr>`).join('')}</tbody></table></div>`;
     }
 
-    function sortLapRows(a,b){return Number(b.year||0)-Number(a.year||0)||String(a.competition_name).localeCompare(String(b.competition_name),'ko')||String(a.gender).localeCompare(String(b.gender),'ko')||eventOrder(a.event)-eventOrder(b.event)||roundOrder(a.round)-roundOrder(b.round)||Number(a.heat||0)-Number(b.heat||0)||Number(a.lap_number||0)-Number(b.lap_number||0);}
-    function rankSort(a,b){return (b.gold-a.gold)||(b.silver-a.silver)||(b.bronze-a.bronze)||(b.total-a.total)||String(a.name||a.country).localeCompare(String(b.name||b.country),'ko');}
+    function sortLapRows(a,b){return Number(b.year||0)-Number(a.year||0)||String(a.competition_name).localeCompare(String(b.competition_name),'ko')||genderOrder(a.gender)-genderOrder(b.gender)||eventOrder(a.event)-eventOrder(b.event)||roundOrder(a.round)-roundOrder(b.round)||Number(a.heat||0)-Number(b.heat||0)||Number(a.lap_number||0)-Number(b.lap_number||0);}
+    function rankSort(a,b){return b.gold-a.gold||b.silver-a.silver||b.bronze-a.bronze||b.total-a.total||String(a.country).localeCompare(String(b.country),'ko');}
     function isRelayEvent(eventName){return String(eventName||'').toLowerCase().includes('relay');}
     function medalOrder(medal){return medal==='Gold'?1:medal==='Silver'?2:medal==='Bronze'?3:4;}
+    function genderOrder(gender){return gender==='Men'?1:gender==='Women'?2:gender==='Mixed'?3:9;}
+    function competitionTypeOrder(type){return type==='Olympic Games'?1:type==='World Championships'?2:type==='World Cup'?3:type==='World Tour'?4:9;}
     function eventOrder(eventName){const order={'500m':1,'1000m':2,'1500m':3,'3000m':4,'3000m Relay':5,'5000m Relay':6,'Mixed Relay':7,'Overall':8};return order[eventName]||99;}
     function roundOrder(roundName){const order={'Preliminaries':1,'Preliminary':1,'Heats':2,'Heat':2,'Quarterfinal':3,'Quarterfinals':3,'Semifinal':4,'Semifinals':4,'Final B':5,'Final A':6};return order[roundName]||99;}
-    function medalKorean(medal){return medal==='Gold'?'금':medal==='Silver'?'은':medal==='Bronze'?'동':(medal||'');}
+    function medalKorean(medal){return medal==='Gold'?'금':medal==='Silver'?'은':medal==='Bronze'?'동':medal||'';}
+    function genderKorean(gender){return gender==='Men'?'남자':gender==='Women'?'여자':gender==='Mixed'?'혼성':escapeHtml(gender||'');}
     function escapeHtml(value){return String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
     function escapeJs(value){return String(value??'').replaceAll('\\','\\\\').replaceAll("'","\\'").replaceAll('"','\\"');}
   </script>
