@@ -490,14 +490,6 @@
         skaterSortKey=key;
         skaterSortDir=(key==='name'||key==='country')?'asc':'desc';
       }
-      if(skaterCustomScoreEnabled && key!=='custom_score'){
-const panel=document.getElementById('skaterScorePanel');
-        const btn=document.getElementById('customScoreToggle');
-        const label=document.getElementById('skaterRankingModeLabel');
-        if(panel)panel.classList.remove('open');
-        if(btn)btn.textContent='사용자 정의 점수 랭킹';
-        if(label)label.textContent='기본 정렬: 올림픽 금→은→동, 세계선수권 금→은→동, 월드컵·월드투어 금→은→동';
-      }
       renderSkaterRanking(getFilteredSkaterMedals());
     }
 
