@@ -24,6 +24,11 @@
     .sort-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}.sort-controls select{max-width:260px}.sort-btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 13px;cursor:pointer;font-size:14px}.sort-btn:hover{border-color:var(--primary)}.sort-th{cursor:pointer;user-select:none}.sort-th:hover{background:#eef2ff;color:#1d4ed8}.sort-arrow{font-size:11px;color:var(--primary);margin-left:3px}
     .score-panel{border:1px solid var(--line);border-radius:16px;background:#fbfdff;padding:14px;margin:12px 0 14px;display:none}.score-panel.open{display:block}.score-grid{display:grid;grid-template-columns:repeat(9,minmax(90px,1fr));gap:8px}.score-field label{display:block;font-size:12px;color:var(--muted);margin:0 0 5px}.score-field input{padding:9px 10px;border-radius:10px}.score-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}.score-actions select{max-width:280px}.score-result{font-weight:900;color:#1d4ed8}.score-mini{font-size:12px;color:var(--muted)}@media(max-width:1100px){.score-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:520px){.score-grid{grid-template-columns:1fr}}
     @media(max-width:900px){.controls{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}table{display:block;overflow-x:auto;white-space:nowrap}}@media(max-width:520px){header h1{font-size:26px}.summary{grid-template-columns:1fr}.panel-header{flex-direction:column}}
+
+    .compact-medal-table th,.compact-medal-table td{text-align:center}
+    .compact-medal-table th:nth-child(2),.compact-medal-table td:nth-child(2){text-align:left;min-width:120px}
+    .compact-medal-table th:nth-child(3),.compact-medal-table td:nth-child(3){text-align:left;min-width:56px}
+
   </style>
 </head>
 <body>
@@ -340,36 +345,73 @@
         rows.sort((a,b)=>{
           const av=getSkaterSortValue(a,skaterSortKey);
           const bv=getSkaterSortValue(b,skaterSortKey);
+          let primary=0;
           if(typeof av==='string'||typeof bv==='string'){
-            return skaterSortDir==='asc'?String(av).localeCompare(String(bv),'ko'):String(bv).localeCompare(String(av),'ko');
+            primary = skaterSortDir==='asc'
+              ? String(av).localeCompare(String(bv),'ko')
+              : String(bv).localeCompare(String(av),'ko');
+          }else{
+            primary = skaterSortDir==='asc' ? av-bv : bv-av;
           }
-          return skaterSortDir==='asc'?av-bv:bv-av;
+
+          // 핵심 수정:
+          // 머리글 클릭으로 한 항목만 정렬해도, 동률일 때는 기본 우선순위
+          // 올림픽 금→은→동, 세계선수권 금→은→동, 월드컵·월드투어 금→은→동으로 다시 비교합니다.
+          return primary || defaultSkaterCompare(a,b);
         });
       }
 
       rows=rows.slice(0,50);
 
-      const headers=[
-        ['name','선수'],['country','국가'],
-        ['olympic_gold','올림픽 금'],['olympic_silver','올림픽 은'],['olympic_bronze','올림픽 동'],['olympic_total','올림픽 합계'],
-        ['worlds_gold','세선 금'],['worlds_silver','세선 은'],['worlds_bronze','세선 동'],['worlds_total','세선 합계'],
-        ['worldcup_gold','월컵·월투 금'],['worldcup_silver','월컵·월투 은'],['worldcup_bronze','월컵·월투 동'],['worldcup_total','월컵·월투 합계'],
-        ['total_gold','총 금'],['total_silver','총 은'],['total_bronze','총 동'],['total_count','총합']
-      ];
-      if(skaterCustomScoreEnabled) headers.push(['custom_score','점수']);
+      const scoreHead = skaterCustomScoreEnabled ? `<th rowspan="2" class="sort-th" onclick="setSkaterSort('custom_score')">점수${sortArrow('custom_score')}</th>` : '';
 
-      wrap.innerHTML=`<div class="subnote">상위 50위까지만 표시됩니다. 표 머리글을 누르면 해당 항목 기준으로 정렬됩니다.</div>
-      <div class="table-scroll"><table><thead><tr><th>순위</th>${headers.map(([key,label])=>`<th class="sort-th" onclick="setSkaterSort('${key}')">${label}${sortArrow(key)}</th>`).join('')}</tr></thead>
-      <tbody>${rows.map((row,i)=>`<tr>
-        <td>${i+1}</td>
-        <td><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}</span></td>
-        <td>${escapeHtml(row.country)}</td>
-        <td>${row.olympic.gold}</td><td>${row.olympic.silver}</td><td>${row.olympic.bronze}</td><td>${medalTotal(row.olympic)}</td>
-        <td>${row.worlds.gold}</td><td>${row.worlds.silver}</td><td>${row.worlds.bronze}</td><td>${medalTotal(row.worlds)}</td>
-        <td>${row.worldcup.gold}</td><td>${row.worldcup.silver}</td><td>${row.worldcup.bronze}</td><td>${medalTotal(row.worldcup)}</td>
-        <td>${row.total.gold}</td><td>${row.total.silver}</td><td>${row.total.bronze}</td><td>${medalTotal(row.total)}</td>
-        ${skaterCustomScoreEnabled?`<td class="score-result">${formatScore(row.customScore)}</td>`:''}
-      </tr>`).join('')}</tbody></table></div>`;
+      wrap.innerHTML=`<div class="subnote">상위 50위까지만 표시됩니다. 표 머리글을 누르면 해당 항목 기준으로 정렬되며, 동률이면 기본 우선순위로 다시 정렬됩니다.</div>
+      <div class="table-scroll"><table class="compact-medal-table">
+        <thead>
+          <tr>
+            <th rowspan="2">순위</th>
+            <th rowspan="2" class="sort-th" onclick="setSkaterSort('name')">선수${sortArrow('name')}</th>
+            <th rowspan="2" class="sort-th" onclick="setSkaterSort('country')">국가${sortArrow('country')}</th>
+            <th colspan="4" class="group-head">올림픽</th>
+            <th colspan="4" class="group-head">세계선수권</th>
+            <th colspan="4" class="group-head">월드컵·월드투어</th>
+            <th colspan="4" class="group-head">총합</th>
+            ${scoreHead}
+          </tr>
+          <tr>
+            <th class="sort-th" onclick="setSkaterSort('olympic_gold')">금${sortArrow('olympic_gold')}</th>
+            <th class="sort-th" onclick="setSkaterSort('olympic_silver')">은${sortArrow('olympic_silver')}</th>
+            <th class="sort-th" onclick="setSkaterSort('olympic_bronze')">동${sortArrow('olympic_bronze')}</th>
+            <th class="sort-th" onclick="setSkaterSort('olympic_total')">계${sortArrow('olympic_total')}</th>
+
+            <th class="sort-th" onclick="setSkaterSort('worlds_gold')">금${sortArrow('worlds_gold')}</th>
+            <th class="sort-th" onclick="setSkaterSort('worlds_silver')">은${sortArrow('worlds_silver')}</th>
+            <th class="sort-th" onclick="setSkaterSort('worlds_bronze')">동${sortArrow('worlds_bronze')}</th>
+            <th class="sort-th" onclick="setSkaterSort('worlds_total')">계${sortArrow('worlds_total')}</th>
+
+            <th class="sort-th" onclick="setSkaterSort('worldcup_gold')">금${sortArrow('worldcup_gold')}</th>
+            <th class="sort-th" onclick="setSkaterSort('worldcup_silver')">은${sortArrow('worldcup_silver')}</th>
+            <th class="sort-th" onclick="setSkaterSort('worldcup_bronze')">동${sortArrow('worldcup_bronze')}</th>
+            <th class="sort-th" onclick="setSkaterSort('worldcup_total')">계${sortArrow('worldcup_total')}</th>
+
+            <th class="sort-th" onclick="setSkaterSort('total_gold')">금${sortArrow('total_gold')}</th>
+            <th class="sort-th" onclick="setSkaterSort('total_silver')">은${sortArrow('total_silver')}</th>
+            <th class="sort-th" onclick="setSkaterSort('total_bronze')">동${sortArrow('total_bronze')}</th>
+            <th class="sort-th" onclick="setSkaterSort('total_count')">계${sortArrow('total_count')}</th>
+          </tr>
+        </thead>
+        <tbody>${rows.map((row,i)=>`<tr>
+          <td>${i+1}</td>
+          <td><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}</span></td>
+          <td>${escapeHtml(row.country)}</td>
+
+          <td>${row.olympic.gold}</td><td>${row.olympic.silver}</td><td>${row.olympic.bronze}</td><td class="rank-total">${medalTotal(row.olympic)}</td>
+          <td>${row.worlds.gold}</td><td>${row.worlds.silver}</td><td>${row.worlds.bronze}</td><td class="rank-total">${medalTotal(row.worlds)}</td>
+          <td>${row.worldcup.gold}</td><td>${row.worldcup.silver}</td><td>${row.worldcup.bronze}</td><td class="rank-total">${medalTotal(row.worldcup)}</td>
+          <td>${row.total.gold}</td><td>${row.total.silver}</td><td>${row.total.bronze}</td><td class="rank-total">${medalTotal(row.total)}</td>
+          ${skaterCustomScoreEnabled?`<td class="score-result">${formatScore(row.customScore)}</td>`:''}
+        </tr>`).join('')}</tbody>
+      </table></div>`;
     }
 
     function defaultSkaterCompare(a,b){
