@@ -743,6 +743,9 @@
       const v=String(value||'').trim();
       const lower=v.toLowerCase().replace(/\s+/g,' ');
       if(/^overall|allround|classification|종합/.test(lower)) return tr('overall');
+      if(isDistanceEvent(v,'500')) return '500m';
+      if(isDistanceEvent(v,'1000')) return '1000m';
+      if(isDistanceEvent(v,'1500')) return '1500m';
       if(lower === '3000m relay') return currentLang==='en' ? "Women's 3000m Relay" : "여자 3000m 계주";
       if(lower === '5000m relay') return currentLang==='en' ? "Men's 5000m Relay" : "남자 5000m 계주";
       if(lower === 'mixed relay' || lower === 'mixed 2000m relay') return currentLang==='en' ? "Mixed 2000m Relay" : "혼성 2000m 계주";
@@ -944,6 +947,17 @@
       return true;
     }
 
+
+    function normalizedEventText(eventName){
+      return String(eventName||'').trim().toLowerCase().replace(/\s+/g,' ');
+    }
+
+    function isDistanceEvent(eventName, distance){
+      const event = normalizedEventText(eventName);
+      // 500m, 500 m, 500m (1), 500m (2) 등 보너스/복수 종목 표기를 모두 같은 거리로 집계합니다.
+      return new RegExp('^' + distance + '\\s*m\\s*(?:\\(\\d+\\))?$').test(event);
+    }
+
     function eventRankingMatch(row){
       const event=String(row.event||'').trim().toLowerCase().replace(/\s+/g,' ');
       const gender=String(row.gender||'').trim();
@@ -964,9 +978,9 @@
       if(eventRankingGender==='men' && gender!=='Men') return false;
       if(eventRankingGender==='women' && gender!=='Women') return false;
 
-      if(selected==='500') return /^500\s*m$/.test(event);
-      if(selected==='1000') return /^1000\s*m$/.test(event);
-      if(selected==='1500') return /^1500\s*m$/.test(event);
+      if(selected==='500') return isDistanceEvent(row.event,'500');
+      if(selected==='1000') return isDistanceEvent(row.event,'1000');
+      if(selected==='1500') return isDistanceEvent(row.event,'1500');
       return false;
     }
 
@@ -1488,7 +1502,8 @@
     }
 
     function eventMedalBucketForComparison(rows,eventName){
-      return countMedalBucket(rows.filter(row=>String(row.event||'').trim()===eventName && row.medal_type==='Individual'));
+      const distance = String(eventName||'').replace(/[^0-9]/g,'');
+      return countMedalBucket(rows.filter(row=>isDistanceEvent(row.event,distance) && row.medal_type==='Individual'));
     }
 
     function bestGoldEvent(rows){
