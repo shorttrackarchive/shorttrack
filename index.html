@@ -849,28 +849,8 @@
       const compareB=document.getElementById('comparePlayerB');
       [compareA,compareB].forEach(el=>el&&el.addEventListener('change',renderPlayerComparison));
 
-      [skaterSeasonFilter, compareSeasonFilter, countrySeasonFilter, eventSeasonFilter,
-        skaterEraStartSelect, skaterEraEndSelect, compareEraStartSelect, compareEraEndSelect,
-        countryEraStartSelect, countryEraEndSelect, eventEraStartSelect, eventEraEndSelect
-      ].forEach(el=>el&&el.addEventListener('change',()=>{
-        skaterSeason = skaterSeasonFilter?.value || '';
-        compareSeason = compareSeasonFilter?.value || '';
-        countrySeason = countrySeasonFilter?.value || '';
-        eventSeason = eventSeasonFilter?.value || '';
+      bindSeasonEraFilters();
 
-        skaterEraStart = skaterEraStartSelect?.value || '';
-        skaterEraEnd = skaterEraEndSelect?.value || '';
-        compareEraStart = compareEraStartSelect?.value || '';
-        compareEraEnd = compareEraEndSelect?.value || '';
-        countryEraStart = countryEraStartSelect?.value || '';
-        countryEraEnd = countryEraEndSelect?.value || '';
-        eventEraStart = eventEraStartSelect?.value || '';
-        eventEraEnd = eventEraEndSelect?.value || '';
-
-        setupComparePlayerSelects();
-        applyFilters();
-        renderPlayerComparison();
-      }));
 
       document.querySelectorAll('.score-input').forEach(input=>input.addEventListener('input',()=>{}));
       document.querySelectorAll('.event-score-input').forEach(input=>input.addEventListener('input',()=>{}));
@@ -1073,6 +1053,56 @@
       renderSkaterRanking(getFilteredSkaterMedals());
       renderCountryRanking(getFilteredCountryMedals());
       renderEventRanking(getFilteredEventRankingMedals());
+    }
+
+    function bindSeasonEraFilters(){
+      const sections = [
+        { season: skaterSeasonFilter, start: skaterEraStartSelect, end: skaterEraEndSelect, set: values=>{
+          skaterSeason = values.season; skaterEraStart = values.start; skaterEraEnd = values.end;
+        }},
+        { season: compareSeasonFilter, start: compareEraStartSelect, end: compareEraEndSelect, set: values=>{
+          compareSeason = values.season; compareEraStart = values.start; compareEraEnd = values.end;
+        }},
+        { season: countrySeasonFilter, start: countryEraStartSelect, end: countryEraEndSelect, set: values=>{
+          countrySeason = values.season; countryEraStart = values.start; countryEraEnd = values.end;
+        }},
+        { season: eventSeasonFilter, start: eventEraStartSelect, end: eventEraEndSelect, set: values=>{
+          eventSeason = values.season; eventEraStart = values.start; eventEraEnd = values.end;
+        }}
+      ];
+
+      function syncAfterFilterChange(){
+        setupComparePlayerSelects();
+        applyFilters();
+        renderPlayerComparison();
+      }
+
+      sections.forEach(section=>{
+        if(section.season){
+          section.season.addEventListener('change',()=>{
+            // 시즌을 마지막으로 건드리면 같은 컨텐츠의 시대 드롭박스는 초기화
+            if(section.start) section.start.value = '';
+            if(section.end) section.end.value = '';
+            section.set({
+              season: section.season.value || '',
+              start: '',
+              end: ''
+            });
+            syncAfterFilterChange();
+          });
+        }
+
+        [section.start, section.end].forEach(el=>el&&el.addEventListener('change',()=>{
+          // 시대를 마지막으로 건드리면 같은 컨텐츠의 시즌 드롭박스는 초기화
+          if(section.season) section.season.value = '';
+          section.set({
+            season: '',
+            start: section.start?.value || '',
+            end: section.end?.value || ''
+          });
+          syncAfterFilterChange();
+        }));
+      });
     }
 
     function rowInEra(row,start,end){
