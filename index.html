@@ -27,6 +27,70 @@
     .ranking-filter-label{font-size:12px;color:var(--muted);font-weight:700;margin-right:2px}
     .ranking-option-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
     .ranking-option-tab:not(.active){background:#fff;color:var(--text)}
+    .country-ranking-tab.active,.event-ranking-tab.active,.event-rank-gender-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .tab:disabled{opacity:.45;cursor:not-allowed;background:#f3f4f6;color:var(--muted);border-color:var(--line)}
+    #medalListCard{display:none}
+    html{scroll-behavior:smooth}
+    .anchor-section{scroll-margin-top:18px}
+    .side-nav{
+      position:fixed;
+      left:18px;
+      top:50%;
+      transform:translateY(-50%);
+      z-index:50;
+      width:170px;
+      background:rgba(255,255,255,.96);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow:0 12px 30px rgba(15,23,42,.12);
+      padding:10px;
+      backdrop-filter:blur(8px);
+    }
+    .side-nav-title{
+      font-size:12px;
+      font-weight:800;
+      color:var(--muted);
+      padding:6px 8px 8px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:8px;
+    }
+    .side-nav button{
+      width:100%;
+      display:block;
+      border:0;
+      background:transparent;
+      color:var(--text);
+      text-align:left;
+      padding:9px 9px;
+      border-radius:11px;
+      cursor:pointer;
+      font-size:13px;
+      line-height:1.25;
+    }
+    .side-nav button:hover{background:#eff6ff;color:#1d4ed8}
+    .side-nav button.nav-soon{color:var(--muted)}
+    .side-nav button.nav-soon:hover{background:#f3f4f6;color:#374151}
+    @media(max-width:1500px){
+      .side-nav{left:8px;width:142px}
+      main{max-width:1180px;margin-left:160px;margin-right:16px}
+    }
+    @media(max-width:1050px){
+      .side-nav{
+        position:sticky;
+        top:0;
+        transform:none;
+        left:auto;
+        width:auto;
+        margin:0 16px 12px;
+        display:flex;
+        overflow-x:auto;
+        gap:6px;
+        border-radius:0 0 18px 18px;
+      }
+      .side-nav-title{display:none}
+      .side-nav button{white-space:nowrap;width:auto}
+      main{margin:-24px auto 60px}
+    }
     .score-panel{border:1px solid var(--line);border-radius:16px;background:#fbfdff;padding:14px;margin:12px 0 14px;display:none}.score-panel.open{display:block}.score-grid{display:grid;grid-template-columns:repeat(9,minmax(90px,1fr));gap:8px}.score-field label{display:block;font-size:12px;color:var(--muted);margin:0 0 5px}.score-field input{padding:9px 10px;border-radius:10px}.score-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}.score-actions select{max-width:280px}.score-result{font-weight:900;color:#1d4ed8}.score-mini{font-size:12px;color:var(--muted)}@media(max-width:1100px){.score-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:520px){.score-grid{grid-template-columns:1fr}}
     @media(max-width:900px){.controls{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}table{display:block;overflow-x:auto;white-space:nowrap}}@media(max-width:520px){header h1{font-size:26px}.summary{grid-template-columns:1fr}.panel-header{flex-direction:column}}
 .compact-medal-table th,.compact-medal-table td{text-align:center}
@@ -42,8 +106,19 @@
     <p>월드컵 · 월드투어 · 세계선수권 · 올림픽 쇼트트랙 포디움 아카이브</p>
   </header>
 
+  <nav class="side-nav" aria-label="화면 이동 메뉴">
+    <div class="side-nav-title">바로가기</div>
+    <button type="button" onclick="scrollToSection('searchSection')">검색</button>
+    <button type="button" onclick="scrollToSection('skaterRankingSection')">선수별 종합 순위</button>
+    <button type="button" onclick="scrollToSection('countryRankingSection')">국가별 메달 순위</button>
+    <button type="button" onclick="scrollToSection('eventRankingSection')">종목별 선수 순위</button>
+    <button type="button" class="nav-soon" onclick="showPreparing()">종목별 기록 순위</button>
+    <button type="button" class="nav-soon" onclick="showPreparing()">랩타임 순위</button>
+    <button type="button" class="nav-soon" onclick="showPreparing()">각종 기록</button>
+  </nav>
+
   <main>
-    <section class="card">
+    <section class="card anchor-section" id="searchSection">
       <div class="controls">
         <input id="searchInput" type="text" placeholder="선수명, 국가, 대회명, 종목 검색" />
         <select id="typeFilter"><option value="">전체 대회</option></select>
@@ -98,8 +173,8 @@
       <div id="competitionLapSummary"></div>
     </section>
 
-    <section class="card">
-      <div class="section-title"><div><h2>선수별 종합 메달</h2><span>올림픽 / 세계선수권 / 월드컵·월드투어 금·은·동을 나누고 마지막에 총합을 표시합니다.</span></div></div>
+    <section class="card anchor-section" id="skaterRankingSection">
+      <div class="section-title"><div><h2>선수별 종합 순위</h2><span>올림픽 / 세계선수권 / 월드컵·월드투어 금·은·동을 나누고 마지막에 총합을 표시합니다.</span></div></div>
       <div class="tabs">
         <button class="tab skater-mode-tab" data-mode="all">계주 포함</button>
         <button class="tab skater-mode-tab active" data-mode="individual">개인전만</button>
@@ -150,12 +225,37 @@
       <div id="skaterRankingWrap"><div id="skaterRankingTableWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div></div>
     </section>
 
-    <section class="card">
-      <div class="section-title"><div><h2>국가별 메달 순위</h2><span>medals 시트 기준입니다. 계주가 선수 수만큼 중복 집계되지 않습니다.</span></div></div>
+    <section class="card anchor-section" id="countryRankingSection">
+      <div class="section-title"><div><h2>국가별 메달 순위</h2><span>medals 시트 기준입니다. 계주가 선수 수만큼 중복 집계되지 않습니다. 상위 20개 국가까지만 표시합니다.</span></div></div>
+      <div class="tabs" aria-label="국가별 메달 순위 대회 구분">
+        <button type="button" class="tab country-ranking-tab active" data-country-group="all">전체</button>
+        <button type="button" class="tab country-ranking-tab" data-country-group="olympics">올림픽</button>
+        <button type="button" class="tab country-ranking-tab" data-country-group="worlds">세계선수권</button>
+        <button type="button" class="tab country-ranking-tab" data-country-group="worldcup">월드컵 및 월드투어</button>
+      </div>
       <div id="countryRankingWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
     </section>
 
-    <section class="card">
+    <section class="card anchor-section" id="eventRankingSection">
+      <div class="section-title"><div><h2>종목별 선수 순위</h2><span>선수별 종합 메달과 같은 점수 기준으로 산정합니다. 초기 화면은 500m 순위입니다.</span></div></div>
+      <div class="tabs" aria-label="종목별 순위 종목">
+        <button type="button" class="tab event-ranking-tab active" data-event-rank="500">500</button>
+        <button type="button" class="tab event-ranking-tab" data-event-rank="1000">1000</button>
+        <button type="button" class="tab event-ranking-tab" data-event-rank="1500">1500</button>
+        <button type="button" class="tab event-ranking-tab" data-event-rank="womenRelay">여자계주</button>
+        <button type="button" class="tab event-ranking-tab" data-event-rank="menRelay">남자계주</button>
+        <button type="button" class="tab event-ranking-tab" data-event-rank="mixedRelay">혼성계주</button>
+      </div>
+      <div class="ranking-filter-row" aria-label="종목별 순위 성별 보기">
+        <span class="ranking-filter-label">성별</span>
+        <button type="button" class="tab event-rank-gender-tab active" data-event-rank-gender="all">전체</button>
+        <button type="button" class="tab event-rank-gender-tab" data-event-rank-gender="men">남자</button>
+        <button type="button" class="tab event-rank-gender-tab" data-event-rank-gender="women">여자</button>
+      </div>
+      <div id="eventRankingWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
+    </section>
+
+    <section class="card" id="medalListCard">
       <div class="section-title"><div><h2>메달 목록</h2><span>상세 원자료 확인용 목록입니다. 길어지기 쉬워 화면 맨 아래에 배치했습니다.</span></div></div>
       <div class="tabs" aria-label="성별 보기">
         <button class="tab gender-tab active" data-gender="">전체</button>
@@ -185,6 +285,10 @@
     let skaterMedals = [];
     let filteredMedals = [];
     let currentMedalFilter = '';
+    let countryRankingGroup = 'all';
+    let eventRankingEvent = '500';
+    let eventRankingGender = 'all';
+    let relayIncludeNoticeShown = false;
     let skaterRankingMode = 'individual';
     let skaterSortKey = 'default';
     let skaterSortDir = 'desc';
@@ -207,6 +311,7 @@
 
     async function init(){
       bindEvents();
+      updateEventGenderTabs();
       if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')){showNotConnected();return;}
       await loadData();
     }
@@ -234,10 +339,16 @@
       }));
 
       document.querySelectorAll('.skater-mode-tab').forEach(btn=>btn.addEventListener('click',()=>{
+        const nextMode = btn.dataset.mode;
+        if(nextMode === 'all' && skaterRankingMode !== 'all' && !relayIncludeNoticeShown){
+          alert('계주 결과는 올림픽 중심으로 정리되었으며, 세계선수권 및 월드컵·월드투어 계주 결과는 거의 반영되지 않았습니다.');
+          relayIncludeNoticeShown = true;
+        }
         document.querySelectorAll('.skater-mode-tab').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
-        skaterRankingMode = btn.dataset.mode;
+        skaterRankingMode = nextMode;
         renderSkaterRanking(getFilteredSkaterMedals());
+        renderEventRanking(getFilteredEventRankingMedals());
       }));
 
       document.querySelectorAll('.skater-rank-gender-tab').forEach(btn=>btn.addEventListener('click',()=>{
@@ -255,13 +366,36 @@
         renderSkaterRanking(getFilteredSkaterMedals());
       }));
 
+      document.querySelectorAll('.country-ranking-tab').forEach(btn=>btn.addEventListener('click',()=>{
+        document.querySelectorAll('.country-ranking-tab').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        countryRankingGroup = btn.dataset.countryGroup || 'all';
+        renderCountryRanking(filteredMedals);
+      }));
+
+      document.querySelectorAll('.event-ranking-tab').forEach(btn=>btn.addEventListener('click',()=>{
+        document.querySelectorAll('.event-ranking-tab').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        eventRankingEvent = btn.dataset.eventRank || '500';
+        updateEventGenderTabs();
+        renderEventRanking(getFilteredEventRankingMedals());
+      }));
+
+      document.querySelectorAll('.event-rank-gender-tab').forEach(btn=>btn.addEventListener('click',()=>{
+        if(btn.disabled) return;
+        document.querySelectorAll('.event-rank-gender-tab').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        eventRankingGender = btn.dataset.eventRankGender || 'all';
+        renderEventRanking(getFilteredEventRankingMedals());
+      }));
+
       document.querySelectorAll('.score-input').forEach(input=>input.addEventListener('input',()=>{}));
     }
 
     function showNotConnected(){
       document.getElementById('tableWrap').innerHTML='<div class="notice">Apps Script 주소가 아직 연결되지 않았습니다. 코드 상단의 APPS_SCRIPT_URL에 /exec 주소를 넣어 주세요.</div>';
       (document.getElementById('skaterRankingTableWrap')||document.getElementById('skaterRankingWrap')).innerHTML='<div class="empty">Apps Script 주소 연결 후 집계됩니다.</div>';
-      document.getElementById('countryRankingWrap').innerHTML='<div class="empty">Apps Script 주소 연결 후 집계됩니다.</div>';
+      document.getElementById('countryRankingWrap').innerHTML='<div class="empty">Apps Script 주소 연결 후 집계됩니다.</div>'; document.getElementById('eventRankingWrap').innerHTML='<div class="empty">Apps Script 주소 연결 후 집계됩니다.</div>';
     }
 
     async function loadData(){
@@ -281,7 +415,7 @@
         console.error(error);
         document.getElementById('tableWrap').innerHTML='<div class="error">데이터를 불러오지 못했습니다.<br>Apps Script 배포 권한, 시트 이름, APPS_SCRIPT_URL을 확인해 주세요.</div>';
         (document.getElementById('skaterRankingTableWrap')||document.getElementById('skaterRankingWrap')).innerHTML='<div class="empty">데이터를 불러오지 못했습니다.</div>';
-        document.getElementById('countryRankingWrap').innerHTML='<div class="empty">데이터를 불러오지 못했습니다.</div>';
+        document.getElementById('countryRankingWrap').innerHTML='<div class="empty">데이터를 불러오지 못했습니다.</div>'; document.getElementById('eventRankingWrap').innerHTML='<div class="empty">데이터를 불러오지 못했습니다.</div>';
       }
     }
 
@@ -311,6 +445,7 @@
       renderMedalTable(filteredMedals);
       renderSkaterRanking(getFilteredSkaterMedals());
       renderCountryRanking(filteredMedals);
+      renderEventRanking(getFilteredEventRankingMedals());
     }
 
     function rowMatchesFilters(row,q){
@@ -360,6 +495,93 @@
     function isIndividual3000mEvent(eventName){
       const event = String(eventName||'').trim().toLowerCase().replace(/\s+/g,' ');
       return /^3000\s*m$/.test(event) && !event.includes('relay');
+    }
+
+
+    function getCompetitionGroup(row){
+      const type = String(row.competition_type||'').toLowerCase();
+      const name = String(row.competition_name||'').toLowerCase();
+      const note = String(row.note||'').toLowerCase();
+      if(type.includes('olympic') || name.includes('calgary 1988')) return 'olympics';
+      if(type.includes('world championship')) return 'worlds';
+      if(type.includes('world cup') || type.includes('world tour') || type.includes('challenge cup') || note.includes('world ranking')) return 'worldcup';
+      return 'other';
+    }
+
+    function getFilteredEventRankingMedals(){
+      const q=searchInput.value.trim().toLowerCase();
+      return skaterMedals
+        .filter(row=>rowMatchesEventRankingBaseFilters(row,q))
+        .filter(row=>shouldIncludeEventRankingRow(row))
+        .filter(row=>eventRankingMatch(row));
+    }
+
+    function rowMatchesEventRankingBaseFilters(row,q){
+      const target=[row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.original_skater_name,row.country,row.team_name,row.time,row.note].join(' ').toLowerCase();
+      return (!q||target.includes(q)) &&
+        (!typeFilter.value||row.competition_type===typeFilter.value) &&
+        (!seasonFilter.value||row.season===seasonFilter.value) &&
+        (!currentMedalFilter||row.medal===currentMedalFilter);
+    }
+
+    function shouldIncludeEventRankingRow(row){
+      if(!skaterRankingOptions.includeOlympicDemo && isOlympicDemonstrationRow(row)) return false;
+      return true;
+    }
+
+    function eventRankingMatch(row){
+      const event=String(row.event||'').trim().toLowerCase().replace(/\s+/g,' ');
+      const gender=String(row.gender||'').trim();
+      const selected=eventRankingEvent;
+
+      if(selected==='mixedRelay'){
+        return gender==='Mixed' || event.includes('mixed');
+      }
+
+      if(selected==='womenRelay'){
+        return gender==='Women' && (event==='3000m relay' || event==='women relay');
+      }
+
+      if(selected==='menRelay'){
+        return gender==='Men' && (event==='5000m relay' || event==='men relay');
+      }
+
+      if(eventRankingGender==='men' && gender!=='Men') return false;
+      if(eventRankingGender==='women' && gender!=='Women') return false;
+
+      if(selected==='500') return /^500\s*m$/.test(event);
+      if(selected==='1000') return /^1000\s*m$/.test(event);
+      if(selected==='1500') return /^1500\s*m$/.test(event);
+      return false;
+    }
+
+    function updateEventGenderTabs(){
+      const mixedOrGenderedRelay = ['mixedRelay','womenRelay','menRelay'].includes(eventRankingEvent);
+      const tabs=[...document.querySelectorAll('.event-rank-gender-tab')];
+      tabs.forEach(btn=>btn.disabled = mixedOrGenderedRelay && btn.dataset.eventRankGender !== 'all');
+      if(mixedOrGenderedRelay){
+        eventRankingGender='all';
+        tabs.forEach(btn=>btn.classList.toggle('active', btn.dataset.eventRankGender === 'all'));
+      }
+    }
+
+    function eventRankingLabel(){
+      const map={
+        '500':'500m',
+        '1000':'1000m',
+        '1500':'1500m',
+        'womenRelay':'여자계주',
+        'menRelay':'남자계주',
+        'mixedRelay':'혼성계주'
+      };
+      return map[eventRankingEvent] || '500m';
+    }
+
+    function eventGenderLabel(){
+      if(['mixedRelay','womenRelay','menRelay'].includes(eventRankingEvent)) return '전체';
+      if(eventRankingGender==='men') return '남자';
+      if(eventRankingGender==='women') return '여자';
+      return '전체';
     }
 
     function renderSummary(data){document.getElementById('totalCount').textContent=data.length;document.getElementById('goldCount').textContent=data.filter(r=>r.medal==='Gold').length;document.getElementById('silverCount').textContent=data.filter(r=>r.medal==='Silver').length;document.getElementById('bronzeCount').textContent=data.filter(r=>r.medal==='Bronze').length;}
@@ -587,6 +809,7 @@
       if(panel) panel.classList.add('open');
 
       renderSkaterRanking(getFilteredSkaterMedals());
+      renderEventRanking(getFilteredEventRankingMedals());
     }
 
         function setSkaterSort(key){
@@ -646,11 +869,53 @@
 
     function renderCountryRanking(data){
       const wrap=document.getElementById('countryRankingWrap');
-      if(!data.length){wrap.innerHTML='<div class="empty">집계할 데이터가 없습니다.</div>';return;}
+      const scoped = data.filter(row=>countryRankingGroup==='all' || getCompetitionGroup(row)===countryRankingGroup);
+      if(!scoped.length){wrap.innerHTML='<div class="empty">집계할 데이터가 없습니다.</div>';return;}
       const map=new Map();
-      data.forEach(row=>{const key=row.country;if(!key)return;if(!map.has(key))map.set(key,{country:key,gold:0,silver:0,bronze:0,total:0});const item=map.get(key);if(row.medal==='Gold')item.gold++;if(row.medal==='Silver')item.silver++;if(row.medal==='Bronze')item.bronze++;item.total++;});
-      const ranking=[...map.values()].sort(rankSort);
-      wrap.innerHTML=`<div class="table-scroll"><table><thead><tr><th>순위</th><th>국가</th><th>금</th><th>은</th><th>동</th><th>합계</th></tr></thead><tbody>${ranking.map((row,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHtml(row.country)}</strong></td><td>${row.gold}</td><td>${row.silver}</td><td>${row.bronze}</td><td><strong>${row.total}</strong></td></tr>`).join('')}</tbody></table></div>`;
+      scoped.forEach(row=>{
+        const key=row.country;if(!key)return;
+        if(!map.has(key))map.set(key,{country:key,gold:0,silver:0,bronze:0,total:0});
+        const item=map.get(key);
+        if(row.medal==='Gold')item.gold++;
+        if(row.medal==='Silver')item.silver++;
+        if(row.medal==='Bronze')item.bronze++;
+        item.total++;
+      });
+      const ranking=[...map.values()].sort(rankSort).slice(0,20);
+      const groupLabel = countryRankingGroup==='olympics'?'올림픽':countryRankingGroup==='worlds'?'세계선수권':countryRankingGroup==='worldcup'?'월드컵 및 월드투어':'전체';
+      wrap.innerHTML=`<div class="subnote">현재 구분: ${groupLabel} · 상위 20개 국가</div><div class="table-scroll"><table><thead><tr><th>순위</th><th>국가</th><th>금</th><th>은</th><th>동</th><th>합계</th></tr></thead><tbody>${ranking.map((row,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHtml(row.country)}</strong></td><td>${row.gold}</td><td>${row.silver}</td><td>${row.bronze}</td><td><strong>${row.total}</strong></td></tr>`).join('')}</tbody></table></div>`;
+    }
+
+    function renderEventRanking(data){
+      const wrap=document.getElementById('eventRankingWrap');
+      if(!data.length){wrap.innerHTML='<div class="empty">집계할 데이터가 없습니다.</div>';return;}
+
+      const weights=readScoreWeights();
+      const rows=buildSkaterAggregates(data).map(row=>({...row,customScore:totalCustomScore(row,weights)}))
+        .sort((a,b)=>b.customScore-a.customScore||defaultSkaterCompare(a,b))
+        .slice(0,50);
+
+      wrap.innerHTML=`<div class="subnote">현재 종목: ${eventRankingLabel()} · 성별: ${eventGenderLabel()} · 상위 50위까지 표시됩니다. 계주 순위는 relay_members에 입력된 선수 기준입니다.</div>
+      <div class="table-scroll"><table class="compact-medal-table">
+        <thead><tr>
+          <th>순위</th><th>선수</th><th>국가</th>
+          <th>올림픽<br><small>금/은/동</small></th>
+          <th>세계선수권<br><small>금/은/동</small></th>
+          <th>월드컵·월드투어<br><small>금/은/동</small></th>
+          <th>총합<br><small>금/은/동</small></th>
+          <th>점수</th>
+        </tr></thead>
+        <tbody>${rows.map((row,i)=>`<tr>
+          <td>${i+1}</td>
+          <td><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}</span></td>
+          <td>${escapeHtml(row.country)}</td>
+          <td>${row.olympic.gold}/${row.olympic.silver}/${row.olympic.bronze}</td>
+          <td>${row.worlds.gold}/${row.worlds.silver}/${row.worlds.bronze}</td>
+          <td>${row.worldcup.gold}/${row.worldcup.silver}/${row.worldcup.bronze}</td>
+          <td><strong>${row.total.gold}/${row.total.silver}/${row.total.bronze}</strong></td>
+          <td class="score-result">${formatScore(row.customScore)}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>`;
     }
 
     function openPlayerPanel(name){
@@ -724,10 +989,21 @@
     function medalOrder(medal){return medal==='Gold'?1:medal==='Silver'?2:medal==='Bronze'?3:4;}
     function genderOrder(gender){return gender==='Men'?1:gender==='Women'?2:gender==='Mixed'?3:9;}
     function competitionTypeOrder(type){return type==='Olympic Games'?1:type==='World Championships'?2:type==='World Cup'?3:type==='World Tour'?4:9;}
-    function eventOrder(eventName){const order={'500m':1,'1000m':2,'1500m':3,'3000m':4,'3000m Relay':5,'5000m Relay':6,'Mixed Relay':7,'Overall':8};return order[eventName]||99;}
+    function eventOrder(eventName){const order={'500m':1,'1000m':2,'1500m':3,'3000m':4,'3000m Relay':5,'5000m Relay':6,'Mixed Relay':7,'Mixed 2000m Relay':7,'Overall':8};return order[eventName]||99;}
     function roundOrder(roundName){const order={'Preliminaries':1,'Preliminary':1,'Heats':2,'Heat':2,'Quarterfinal':3,'Quarterfinals':3,'Semifinal':4,'Semifinals':4,'Final B':5,'Final A':6};return order[roundName]||99;}
     function medalKorean(medal){return medal==='Gold'?'금':medal==='Silver'?'은':medal==='Bronze'?'동':medal||'';}
     function genderKorean(gender){return gender==='Men'?'남자':gender==='Women'?'여자':gender==='Mixed'?'혼성':escapeHtml(gender||'');}
+
+    function scrollToSection(id){
+      const el=document.getElementById(id);
+      if(!el) return;
+      el.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function showPreparing(){
+      alert('준비 중입니다.');
+    }
+
     function escapeHtml(value){return String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
     function escapeJs(value){return String(value??'').replaceAll('\\','\\\\').replaceAll("'","\\'").replaceAll('"','\\"');}
   </script>
