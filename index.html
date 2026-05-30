@@ -29,18 +29,7 @@
     .compact-medal-table th:nth-child(3),.compact-medal-table td:nth-child(3){text-align:left;min-width:52px}
     .compact-medal-table th{line-height:1.25}
     .compact-medal-table small{font-size:10.5px;color:var(--muted)}
-
-
-    .medal-detail-table th,.medal-detail-table td{text-align:center;padding:8px 5px}
-    .medal-detail-table .rank-col{width:42px;min-width:42px}
-    .medal-detail-table .name-col{text-align:left;min-width:118px;max-width:170px}
-    .medal-detail-table .country-col{text-align:left;width:54px;min-width:54px}
-    .medal-detail-table .medal-num{width:34px;min-width:34px;max-width:38px}
-    .medal-detail-table .score-col{width:64px;min-width:64px}
-    .medal-detail-table .group-head{padding:7px 4px;font-weight:800;background:#f8fafc}
-    .medal-detail-table .sort-arrow{display:block;margin-left:0;line-height:1}
-
-  </style>
+</style>
 </head>
 <body>
   <header>
@@ -133,7 +122,7 @@
         </div>
       </div>
 
-      <div id="skaterRankingWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
+      <div id="skaterRankingWrap"><div id="skaterRankingTableWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div></div>
     </section>
 
     <section class="card">
@@ -225,7 +214,7 @@
 
     function showNotConnected(){
       document.getElementById('tableWrap').innerHTML='<div class="notice">Apps Script 주소가 아직 연결되지 않았습니다. 코드 상단의 APPS_SCRIPT_URL에 /exec 주소를 넣어 주세요.</div>';
-      document.getElementById('skaterRankingWrap').innerHTML='<div class="empty">Apps Script 주소 연결 후 집계됩니다.</div>';
+      (document.getElementById('skaterRankingTableWrap')||document.getElementById('skaterRankingWrap')).innerHTML='<div class="empty">Apps Script 주소 연결 후 집계됩니다.</div>';
       document.getElementById('countryRankingWrap').innerHTML='<div class="empty">Apps Script 주소 연결 후 집계됩니다.</div>';
     }
 
@@ -245,7 +234,7 @@
       }catch(error){
         console.error(error);
         document.getElementById('tableWrap').innerHTML='<div class="error">데이터를 불러오지 못했습니다.<br>Apps Script 배포 권한, 시트 이름, APPS_SCRIPT_URL을 확인해 주세요.</div>';
-        document.getElementById('skaterRankingWrap').innerHTML='<div class="empty">데이터를 불러오지 못했습니다.</div>';
+        (document.getElementById('skaterRankingTableWrap')||document.getElementById('skaterRankingWrap')).innerHTML='<div class="empty">데이터를 불러오지 못했습니다.</div>';
         document.getElementById('countryRankingWrap').innerHTML='<div class="empty">데이터를 불러오지 못했습니다.</div>';
       }
     }
@@ -332,7 +321,7 @@
 
 
     function renderSkaterRanking(data){
-      const wrap=document.getElementById('skaterRankingWrap');
+      const wrap=document.getElementById('skaterRankingTableWrap') || document.getElementById('skaterRankingWrap');
       if(!data.length){wrap.innerHTML='<div class="empty">집계할 데이터가 없습니다.</div>';return;}
 
       const weights=readScoreWeights();
@@ -502,8 +491,7 @@
         skaterSortDir=(key==='name'||key==='country')?'asc':'desc';
       }
       if(skaterCustomScoreEnabled && key!=='custom_score'){
-        skaterCustomScoreEnabled=false;
-        const panel=document.getElementById('skaterScorePanel');
+const panel=document.getElementById('skaterScorePanel');
         const btn=document.getElementById('customScoreToggle');
         const label=document.getElementById('skaterRankingModeLabel');
         if(panel)panel.classList.remove('open');
