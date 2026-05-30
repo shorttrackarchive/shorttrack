@@ -269,37 +269,6 @@
       
       <div class="score-actions" style="margin:10px 0 12px">
         <span class="score-mini" data-i18n="skaterScoreAutoNote">기본 순위는 아래 점수 기준으로 계산됩니다. 점수를 바꾸면 순위가 자동으로 다시 계산됩니다.
-      </div>
-
-      <div class="score-panel open" id="skaterScorePanel">
-        <div class="subnote" style="margin-bottom:10px" data-i18n="skaterScoreDesc">점수칸에 원하는 값을 입력하면 선수별 종합 순위가 사용자 정의 점수 기준으로 정렬됩니다.</div>
-        <div class="score-grid">
-          <div class="score-field"><label data-i18n="olympicGold">올림픽 금</label><input class="score-input" data-score-key="olympic_gold" type="number" step="0.1" value="816"></div>
-          <div class="score-field"><label data-i18n="olympicSilver">올림픽 은</label><input class="score-input" data-score-key="olympic_silver" type="number" step="0.1" value="504"></div>
-          <div class="score-field"><label data-i18n="olympicBronze">올림픽 동</label><input class="score-input" data-score-key="olympic_bronze" type="number" step="0.1" value="312"></div>
-
-          <div class="score-field"><label data-i18n="worldsGold">세계선수권 금</label><input class="score-input" data-score-key="worlds_gold" type="number" step="0.1" value="204"></div>
-          <div class="score-field"><label data-i18n="worldsSilver">세계선수권 은</label><input class="score-input" data-score-key="worlds_silver" type="number" step="0.1" value="126"></div>
-          <div class="score-field"><label data-i18n="worldsBronze">세계선수권 동</label><input class="score-input" data-score-key="worlds_bronze" type="number" step="0.1" value="78"></div>
-
-          <div class="score-field"><label data-i18n="worldcupGold">월드컵·월드투어 금</label><input class="score-input" data-score-key="worldcup_gold" type="number" step="0.1" value="34"></div>
-          <div class="score-field"><label data-i18n="worldcupSilver">월드컵·월드투어 은</label><input class="score-input" data-score-key="worldcup_silver" type="number" step="0.1" value="21"></div>
-          <div class="score-field"><label data-i18n="worldcupBronze">월드컵·월드투어 동</label><input class="score-input" data-score-key="worldcup_bronze" type="number" step="0.1" value="13"></div>
-        </div>
-      
-        <div class="score-actions score-apply-row">
-          <button class="sort-btn primary-score-btn" data-i18n="apply" onclick="applyScoreSettings()">설정</button>
-          <span class="score-mini" data-i18n="skaterScoreHelp">점수를 바꾼 뒤 설정을 누르면 점수 기준 순위로 다시 정렬됩니다.
-        </div>
-</div>
-
-      <div id="skaterRankingWrap"><div id="skaterRankingTableWrap"><div class="empty"><span data-i18n="loading">데이터를 불러오는 중입니다.</div></div></div>
-    </section>
-
-    <section class="card anchor-section" id="compareSection">
-      <div class="section-title"><div><h2 data-i18n="compareTitle">선수 비교</h2><span data-i18n="compareDesc">두 선수를 선택해 점수, 대회별 메달, 개인전·계주 성과, 종목별 성과를 비교합니다.</div></div>
-      <div class="ranking-filter-row" aria-label="선수 비교 성별 보기">
-        <span class="ranking-filter-label" data-i18n="gender">성별</span>
         <button type="button" class="tab compare-gender-tab active" data-compare-gender="all" data-i18n="all">전체</button>
         <button type="button" class="tab compare-gender-tab" data-compare-gender="women" data-i18n="women">여자</button>
         <button type="button" class="tab compare-gender-tab" data-compare-gender="men" data-i18n="men">남자</button>
@@ -432,7 +401,7 @@
         skaterScoreHelp:'점수를 바꾼 뒤 설정을 누르면 점수 기준 순위로 다시 정렬됩니다.',
         eventScoreHelp:'점수를 바꾼 뒤 설정을 누르면 종목별 순위만 다시 계산됩니다.',
         top50Only:'상위 50위까지만 표시됩니다. 기본 순위는 사용자 정의 점수 기준입니다. 금·은·동·계는 각각 개별 정렬됩니다. 현재 설정:',
-        skaterFilterNote:'Current search, competition type, season, gender, and event filters are applied. Default settings: individual only, all genders, Olympic demonstration events excluded, World Championships overall included, 3000m excluded.',
+        skaterFilterNote:'현재 검색어, 대회 종류, 시즌, 성별, 종목 필터가 반영됩니다. 기본값은 개인전만·전체 성별·올림픽 시범종목 제외·세계선수권 종합 포함·3000m 제외입니다.',
         skaterScoreAutoNote:'기본 순위는 아래 점수 기준으로 계산됩니다. 점수를 바꾸면 순위가 자동으로 다시 계산됩니다.',
         allCompetitions:'전체 대회', allSeasons:'전체 시즌', allGenders:'전체 성별', allEvents:'전체 종목',
         reliabilityTitle:'자료 신뢰도 안내', reliabilityDesc:'순위를 해석할 때 참고해야 할 데이터 반영 범위입니다.', reliabilityOlympicsTitle:'올림픽', reliabilityOlympicsText:'정식 메달과 시범종목을 구분해 반영했습니다.', reliabilityWorldsTitle:'세계선수권', reliabilityWorldsText:'종합, 개인전 결과를 중심으로 정리했습니다.', reliabilityWorldcupTitle:'월드컵·월드투어', reliabilityWorldcupText:'개인전 중심이며 일부 초기 자료는 보완이 필요할 수 있습니다.', reliabilityRelayTitle:'계주 멤버', reliabilityRelayText:'계주 멤버는 올림픽 중심으로 정리되어 있습니다.',
