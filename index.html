@@ -330,7 +330,7 @@
         return {...row,customScore};
       });
 
-      if(skaterCustomScoreEnabled){
+      if(skaterCustomScoreEnabled && skaterSortKey==='default'){
         rows.sort((a,b)=>b.customScore-a.customScore||defaultSkaterCompare(a,b));
       }else if(skaterSortKey==='default'){
         rows.sort(defaultSkaterCompare);
@@ -346,7 +346,7 @@
           }else{
             primary = skaterSortDir==='asc' ? av-bv : bv-av;
           }
-          return primary || defaultSkaterCompare(a,b);
+          return primary || (skaterCustomScoreEnabled ? (b.customScore-a.customScore||defaultSkaterCompare(a,b)) : defaultSkaterCompare(a,b));
         });
       }
 
@@ -483,15 +483,19 @@
       return 'worldcup';
     }
 
-    function setSkaterSort(key){
-      if(skaterSortKey===key){
-        skaterSortDir=skaterSortDir==='desc'?'asc':'desc';
+        function setSkaterSort(key){
+      if(skaterSortKey === key){
+        skaterSortDir = skaterSortDir === 'desc' ? 'asc' : 'desc';
       }else{
-        skaterSortKey=key;
-        skaterSortDir=(key==='name'||key==='country')?'asc':'desc';
+        skaterSortKey = key;
+        skaterSortDir = 'desc';
       }
+
+      // 점수 입력란은 닫지 않고, 표만 다시 정렬해서 그립니다.
       renderSkaterRanking(getFilteredSkaterMedals());
     }
+
+
 
     function sortArrow(key){
       if(skaterSortKey!==key)return '';
