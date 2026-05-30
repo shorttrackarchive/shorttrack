@@ -422,6 +422,86 @@
       return Number.isInteger(n)?String(n):n.toFixed(1).replace(/\.0$/,'');
     }
 
+
+    function createSkaterAgg(name,country){
+      return {
+        name:name||'',
+        country:country||'',
+        olympic:{gold:0,silver:0,bronze:0},
+        worlds:{gold:0,silver:0,bronze:0},
+        worldcup:{gold:0,silver:0,bronze:0},
+        total:{gold:0,silver:0,bronze:0}
+      };
+    }
+
+    function addMedalCount(bucket,medal){
+      if(!bucket)return;
+      if(medal==='Gold')bucket.gold++;
+      else if(medal==='Silver')bucket.silver++;
+      else if(medal==='Bronze')bucket.bronze++;
+    }
+
+    function medalTotal(bucket){
+      return (Number(bucket?.gold)||0)+(Number(bucket?.silver)||0)+(Number(bucket?.bronze)||0);
+    }
+
+    function competitionBucket(type){
+      const value=String(type||'').toLowerCase();
+      if(value.includes('olympic'))return 'olympic';
+      if(value.includes('world championship'))return 'worlds';
+      if(value.includes('world cup')||value.includes('world tour'))return 'worldcup';
+      return 'worldcup';
+    }
+
+    function setSkaterSort(key){
+      if(skaterSortKey===key){
+        skaterSortDir=skaterSortDir==='desc'?'asc':'desc';
+      }else{
+        skaterSortKey=key;
+        skaterSortDir=(key==='name'||key==='country')?'asc':'desc';
+      }
+      if(skaterCustomScoreEnabled && key!=='custom_score'){
+        skaterCustomScoreEnabled=false;
+        const panel=document.getElementById('skaterScorePanel');
+        const btn=document.getElementById('customScoreToggle');
+        const label=document.getElementById('skaterRankingModeLabel');
+        if(panel)panel.classList.remove('open');
+        if(btn)btn.textContent='사용자 정의 점수 랭킹';
+        if(label)label.textContent='기본 정렬: 올림픽 금→은→동, 세계선수권 금→은→동, 월드컵·월드투어 금→은→동';
+      }
+      renderSkaterRanking(getFilteredSkaterMedals());
+    }
+
+    function sortArrow(key){
+      if(skaterSortKey!==key)return '';
+      return `<span class="sort-arrow">${skaterSortDir==='asc'?'▲':'▼'}</span>`;
+    }
+
+    function getSkaterSortValue(row,key){
+      switch(key){
+        case 'name':return row.name||'';
+        case 'country':return row.country||'';
+        case 'olympic_gold':return row.olympic.gold;
+        case 'olympic_silver':return row.olympic.silver;
+        case 'olympic_bronze':return row.olympic.bronze;
+        case 'olympic_total':return medalTotal(row.olympic);
+        case 'worlds_gold':return row.worlds.gold;
+        case 'worlds_silver':return row.worlds.silver;
+        case 'worlds_bronze':return row.worlds.bronze;
+        case 'worlds_total':return medalTotal(row.worlds);
+        case 'worldcup_gold':return row.worldcup.gold;
+        case 'worldcup_silver':return row.worldcup.silver;
+        case 'worldcup_bronze':return row.worldcup.bronze;
+        case 'worldcup_total':return medalTotal(row.worldcup);
+        case 'total_gold':return row.total.gold;
+        case 'total_silver':return row.total.silver;
+        case 'total_bronze':return row.total.bronze;
+        case 'total_count':return medalTotal(row.total);
+        case 'custom_score':return row.customScore||0;
+        default:return 0;
+      }
+    }
+
     function renderCountryRanking(data){
       const wrap=document.getElementById('countryRankingWrap');
       if(!data.length){wrap.innerHTML='<div class="empty">집계할 데이터가 없습니다.</div>';return;}
