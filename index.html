@@ -30,6 +30,16 @@
     .compact-medal-table th{line-height:1.25}
     .compact-medal-table small{font-size:10.5px;color:var(--muted)}
 
+
+    .medal-detail-table th,.medal-detail-table td{text-align:center;padding:8px 5px}
+    .medal-detail-table .rank-col{width:42px;min-width:42px}
+    .medal-detail-table .name-col{text-align:left;min-width:118px;max-width:170px}
+    .medal-detail-table .country-col{text-align:left;width:54px;min-width:54px}
+    .medal-detail-table .medal-num{width:34px;min-width:34px;max-width:38px}
+    .medal-detail-table .score-col{width:64px;min-width:64px}
+    .medal-detail-table .group-head{padding:7px 4px;font-weight:800;background:#f8fafc}
+    .medal-detail-table .sort-arrow{display:block;margin-left:0;line-height:1}
+
   </style>
 </head>
 <body>
@@ -353,37 +363,54 @@
 
       rows=rows.slice(0,50);
 
-      const scoreHead = skaterCustomScoreEnabled ? `<th class="sort-th" onclick="setSkaterSort('custom_score')">점수${sortArrow('custom_score')}</th>` : '';
+      const scoreHead = skaterCustomScoreEnabled ? `<th rowspan="2" class="sort-th score-col" onclick="setSkaterSort('custom_score')">점수${sortArrow('custom_score')}</th>` : '';
 
-      wrap.innerHTML=`<div class="subnote">상위 50위까지만 표시됩니다. 기본 순위는 사용자 정의 점수 기준입니다. 메달칸은 금/은/동/계 순서입니다.</div>
-      <div class="table-scroll"><table class="compact-medal-table">
+      wrap.innerHTML=`<div class="subnote">상위 50위까지만 표시됩니다. 기본 순위는 사용자 정의 점수 기준입니다. 금·은·동·계는 각각 개별 정렬됩니다.</div>
+      <div class="table-scroll"><table class="medal-detail-table">
         <thead>
           <tr>
-            <th>순위</th>
-            <th class="sort-th" onclick="setSkaterSort('name')">선수${sortArrow('name')}</th>
-            <th class="sort-th" onclick="setSkaterSort('country')">국가${sortArrow('country')}</th>
-            <th class="sort-th" onclick="setSkaterSort('olympic_group')">올림픽<br><small>금/은/동/계</small>${sortArrow('olympic_group')}</th>
-            <th class="sort-th" onclick="setSkaterSort('worlds_group')">세계선수권<br><small>금/은/동/계</small>${sortArrow('worlds_group')}</th>
-            <th class="sort-th" onclick="setSkaterSort('worldcup_group')">월드컵·월드투어<br><small>금/은/동/계</small>${sortArrow('worldcup_group')}</th>
-            <th class="sort-th" onclick="setSkaterSort('total_group')">총합<br><small>금/은/동/계</small>${sortArrow('total_group')}</th>
+            <th rowspan="2" class="rank-col">순위</th>
+            <th rowspan="2" class="name-col sort-th" onclick="setSkaterSort('name')">선수${sortArrow('name')}</th>
+            <th rowspan="2" class="country-col sort-th" onclick="setSkaterSort('country')">국가${sortArrow('country')}</th>
+            <th colspan="4" class="group-head">올림픽</th>
+            <th colspan="4" class="group-head">세계선수권</th>
+            <th colspan="4" class="group-head">월드컵·월드투어</th>
+            <th colspan="4" class="group-head">총합</th>
             ${scoreHead}
+          </tr>
+          <tr>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_gold')" title="올림픽 금">금${sortArrow('olympic_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_silver')" title="올림픽 은">은${sortArrow('olympic_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_bronze')" title="올림픽 동">동${sortArrow('olympic_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_total')" title="올림픽 합계">계${sortArrow('olympic_total')}</th>
+
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_gold')" title="세계선수권 금">금${sortArrow('worlds_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_silver')" title="세계선수권 은">은${sortArrow('worlds_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_bronze')" title="세계선수권 동">동${sortArrow('worlds_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_total')" title="세계선수권 합계">계${sortArrow('worlds_total')}</th>
+
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_gold')" title="월드컵·월드투어 금">금${sortArrow('worldcup_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_silver')" title="월드컵·월드투어 은">은${sortArrow('worldcup_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_bronze')" title="월드컵·월드투어 동">동${sortArrow('worldcup_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_total')" title="월드컵·월드투어 합계">계${sortArrow('worldcup_total')}</th>
+
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_gold')" title="총 금">금${sortArrow('total_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_silver')" title="총 은">은${sortArrow('total_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_bronze')" title="총 동">동${sortArrow('total_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_count')" title="총합">계${sortArrow('total_count')}</th>
           </tr>
         </thead>
         <tbody>${rows.map((row,i)=>`<tr>
-          <td>${i+1}</td>
-          <td><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}</span></td>
-          <td>${escapeHtml(row.country)}</td>
-          <td>${compactMedalCell(row.olympic)}</td>
-          <td>${compactMedalCell(row.worlds)}</td>
-          <td>${compactMedalCell(row.worldcup)}</td>
-          <td class="rank-total">${compactMedalCell(row.total)}</td>
-          ${skaterCustomScoreEnabled?`<td class="score-result">${formatScore(row.customScore)}</td>`:''}
+          <td class="rank-col">${i+1}</td>
+          <td class="name-col"><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}</span></td>
+          <td class="country-col">${escapeHtml(row.country)}</td>
+          <td class="medal-num">${row.olympic.gold}</td><td class="medal-num">${row.olympic.silver}</td><td class="medal-num">${row.olympic.bronze}</td><td class="medal-num rank-total">${medalTotal(row.olympic)}</td>
+          <td class="medal-num">${row.worlds.gold}</td><td class="medal-num">${row.worlds.silver}</td><td class="medal-num">${row.worlds.bronze}</td><td class="medal-num rank-total">${medalTotal(row.worlds)}</td>
+          <td class="medal-num">${row.worldcup.gold}</td><td class="medal-num">${row.worldcup.silver}</td><td class="medal-num">${row.worldcup.bronze}</td><td class="medal-num rank-total">${medalTotal(row.worldcup)}</td>
+          <td class="medal-num">${row.total.gold}</td><td class="medal-num">${row.total.silver}</td><td class="medal-num">${row.total.bronze}</td><td class="medal-num rank-total">${medalTotal(row.total)}</td>
+          ${skaterCustomScoreEnabled?`<td class="score-result score-col">${formatScore(row.customScore)}</td>`:''}
         </tr>`).join('')}</tbody>
       </table></div>`;
-    }
-
-    function compactMedalCell(bucket){
-      return `<span class="nowrap"><strong>${bucket.gold}</strong> / ${bucket.silver} / ${bucket.bronze} / <b>${medalTotal(bucket)}</b></span>`;
     }
 
     function defaultSkaterCompare(a,b){
