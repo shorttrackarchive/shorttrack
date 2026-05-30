@@ -120,7 +120,12 @@
           <div class="score-field"><label>월드컵·월드투어 은</label><input class="score-input" data-score-key="worldcup_silver" type="number" step="0.1" value="21"></div>
           <div class="score-field"><label>월드컵·월드투어 동</label><input class="score-input" data-score-key="worldcup_bronze" type="number" step="0.1" value="13"></div>
         </div>
-      </div>
+      
+        <div class="score-actions score-apply-row">
+          <button class="sort-btn primary-score-btn" onclick="applyScoreSettings()">설정</button>
+          <span class="score-mini">점수를 바꾼 뒤 설정을 누르면 점수 기준 순위로 다시 정렬됩니다.</span>
+        </div>
+</div>
 
       <div id="skaterRankingWrap"><div id="skaterRankingTableWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div></div>
     </section>
@@ -209,7 +214,7 @@
         renderSkaterRanking(getFilteredSkaterMedals());
       }));
 
-      document.querySelectorAll('.score-input').forEach(input=>input.addEventListener('input',()=>{ if(skaterCustomScoreEnabled) renderSkaterRanking(getFilteredSkaterMedals()); }));
+      document.querySelectorAll('.score-input').forEach(input=>input.addEventListener('input',()=>{}));
     }
 
     function showNotConnected(){
@@ -483,6 +488,19 @@
       return 'worldcup';
     }
 
+        function applyScoreSettings(){
+      // 입력된 점수를 기준으로 다시 순위를 계산합니다.
+      // 사용자가 다른 머리글로 오름/내림 정렬해 둔 상태여도, 설정 버튼을 누르면 점수 기준 내림차순으로 복귀합니다.
+      skaterCustomScoreEnabled = true;
+      skaterSortKey = 'default';
+      skaterSortDir = 'desc';
+
+      const panel = document.getElementById('skaterScorePanel');
+      if(panel) panel.classList.add('open');
+
+      renderSkaterRanking(getFilteredSkaterMedals());
+    }
+
         function setSkaterSort(key){
       if(skaterSortKey === key){
         skaterSortDir = skaterSortDir === 'desc' ? 'asc' : 'desc';
@@ -491,9 +509,14 @@
         skaterSortDir = 'desc';
       }
 
-      // 점수 입력란은 닫지 않고, 표만 다시 정렬해서 그립니다.
+      // 점수 입력란은 그대로 유지하고 표만 다시 정렬합니다.
+      const panel = document.getElementById('skaterScorePanel');
+      if(panel) panel.classList.add('open');
+
       renderSkaterRanking(getFilteredSkaterMedals());
     }
+
+
 
 
 
