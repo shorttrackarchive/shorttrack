@@ -327,6 +327,12 @@
         <span class="ranking-filter-label" data-i18n="season">시즌</span>
         <select id="compareSeasonFilter"><option value="" data-i18n="allSeasons">전체 시즌</option></select>
       </div>
+      <div class="era-controls" aria-label="선수 비교 시대 선택">
+        <span class="ranking-filter-label" data-i18n="eraRange">시대</span>
+        <select id="compareEraStart"><option value="" data-i18n="eraStartAll">전체 시작</option></select>
+        <span>~</span>
+        <select id="compareEraEnd"><option value="" data-i18n="eraEndAll">전체 끝</option></select>
+      </div>
       <div class="compare-controls">
         <select id="comparePlayerA"><option value="" data-i18n="selectPlayerA">선수 A 선택</option></select>
         <div class="compare-versus">VS</div>
@@ -349,6 +355,12 @@
         <span class="ranking-filter-label" data-i18n="season">시즌</span>
         <select id="countrySeasonFilter"><option value="" data-i18n="allSeasons">전체 시즌</option></select>
       </div>
+      <div class="era-controls" aria-label="국가별 메달 순위 시대 선택">
+        <span class="ranking-filter-label" data-i18n="eraRange">시대</span>
+        <select id="countryEraStart"><option value="" data-i18n="eraStartAll">전체 시작</option></select>
+        <span>~</span>
+        <select id="countryEraEnd"><option value="" data-i18n="eraEndAll">전체 끝</option></select>
+      </div>
       <div id="countryRankingWrap"><div class="empty"><span data-i18n="loading">데이터를 불러오는 중입니다.</div></div>
     </section>
 
@@ -365,6 +377,12 @@
       <div class="era-controls" aria-label="종목별 선수 순위 시즌 선택">
         <span class="ranking-filter-label" data-i18n="season">시즌</span>
         <select id="eventSeasonFilter"><option value="" data-i18n="allSeasons">전체 시즌</option></select>
+      </div>
+      <div class="era-controls" aria-label="종목별 선수 순위 시대 선택">
+        <span class="ranking-filter-label" data-i18n="eraRange">시대</span>
+        <select id="eventEraStart"><option value="" data-i18n="eraStartAll">전체 시작</option></select>
+        <span>~</span>
+        <select id="eventEraEnd"><option value="" data-i18n="eraEndAll">전체 끝</option></select>
       </div>
       <div class="ranking-filter-row" aria-label="종목별 순위 성별 보기">
         <span class="ranking-filter-label" data-i18n="gender">성별
@@ -700,6 +718,12 @@
     let eventSeason = '';
     let skaterEraStart = '';
     let skaterEraEnd = '';
+    let compareEraStart = '';
+    let compareEraEnd = '';
+    let countryEraStart = '';
+    let countryEraEnd = '';
+    let eventEraStart = '';
+    let eventEraEnd = '';
     let skaterRankingOptions = {
       includeOlympicDemo: false,
       includeWorldsOverall: true,
@@ -714,6 +738,12 @@
     const eventSeasonFilter = document.getElementById('eventSeasonFilter');
     const skaterEraStartSelect = document.getElementById('skaterEraStart');
     const skaterEraEndSelect = document.getElementById('skaterEraEnd');
+    const compareEraStartSelect = document.getElementById('compareEraStart');
+    const compareEraEndSelect = document.getElementById('compareEraEnd');
+    const countryEraStartSelect = document.getElementById('countryEraStart');
+    const countryEraEndSelect = document.getElementById('countryEraEnd');
+    const eventEraStartSelect = document.getElementById('eventEraStart');
+    const eventEraEndSelect = document.getElementById('eventEraEnd');
 
     document.addEventListener('DOMContentLoaded', init);
 
@@ -760,12 +790,6 @@
         if(!option || !(option in skaterRankingOptions)) return;
         skaterRankingOptions[option] = !skaterRankingOptions[option];
         btn.classList.toggle('active', !!skaterRankingOptions[option]);
-        renderSkaterRanking(getFilteredSkaterMedals());
-      }));
-
-      [skaterEraStartSelect, skaterEraEndSelect].forEach(el=>el&&el.addEventListener('change',()=>{
-        skaterEraStart = skaterEraStartSelect.value || '';
-        skaterEraEnd = skaterEraEndSelect.value || '';
         renderSkaterRanking(getFilteredSkaterMedals());
       }));
 
@@ -825,11 +849,24 @@
       const compareB=document.getElementById('comparePlayerB');
       [compareA,compareB].forEach(el=>el&&el.addEventListener('change',renderPlayerComparison));
 
-      [skaterSeasonFilter, compareSeasonFilter, countrySeasonFilter, eventSeasonFilter].forEach(el=>el&&el.addEventListener('change',()=>{
+      [skaterSeasonFilter, compareSeasonFilter, countrySeasonFilter, eventSeasonFilter,
+        skaterEraStartSelect, skaterEraEndSelect, compareEraStartSelect, compareEraEndSelect,
+        countryEraStartSelect, countryEraEndSelect, eventEraStartSelect, eventEraEndSelect
+      ].forEach(el=>el&&el.addEventListener('change',()=>{
         skaterSeason = skaterSeasonFilter?.value || '';
         compareSeason = compareSeasonFilter?.value || '';
         countrySeason = countrySeasonFilter?.value || '';
         eventSeason = eventSeasonFilter?.value || '';
+
+        skaterEraStart = skaterEraStartSelect?.value || '';
+        skaterEraEnd = skaterEraEndSelect?.value || '';
+        compareEraStart = compareEraStartSelect?.value || '';
+        compareEraEnd = compareEraEndSelect?.value || '';
+        countryEraStart = countryEraStartSelect?.value || '';
+        countryEraEnd = countryEraEndSelect?.value || '';
+        eventEraStart = eventEraStartSelect?.value || '';
+        eventEraEnd = eventEraEndSelect?.value || '';
+
         setupComparePlayerSelects();
         applyFilters();
         renderPlayerComparison();
@@ -857,7 +894,7 @@
         bestTimes=(json.best_times||json.lap_times||[]).map(normalizeBestTimeRow);
         skaterMedals=buildSkaterMedals();
         setupSectionSeasonFilters();
-        setupSkaterEraFilters();
+        setupSectionEraFilters();
         setupComparePlayerSelects();
         applyFilters();
       }catch(error){
@@ -932,7 +969,7 @@
     }
 
     function refreshSelectOptionLabels(){
-      [skaterSeasonFilter,compareSeasonFilter,countrySeasonFilter,eventSeasonFilter,skaterEraStartSelect,skaterEraEndSelect,document.getElementById('comparePlayerA'),document.getElementById('comparePlayerB')].forEach(select=>{
+      [skaterSeasonFilter,compareSeasonFilter,countrySeasonFilter,eventSeasonFilter,skaterEraStartSelect,skaterEraEndSelect,compareEraStartSelect,compareEraEndSelect,countryEraStartSelect,countryEraEndSelect,eventEraStartSelect,eventEraEndSelect,document.getElementById('comparePlayerA'),document.getElementById('comparePlayerB')].forEach(select=>{
         if(!select) return;
         [...select.options].forEach(option=>{
           if(option.value===''){
@@ -946,11 +983,10 @@
     }
 
 
-    function setupSkaterEraFilters(){
-      if(!skaterEraStartSelect || !skaterEraEndSelect) return;
+    function setupSectionEraFilters(){
       const years=[...new Set([...medals,...relayMembers].map(row=>Number(row.year)).filter(Number.isFinite))].sort((a,b)=>a-b);
-      fillYearSelect(skaterEraStartSelect, years, 'eraStartAll');
-      fillYearSelect(skaterEraEndSelect, years, 'eraEndAll');
+      [skaterEraStartSelect, compareEraStartSelect, countryEraStartSelect, eventEraStartSelect].forEach(select=>fillYearSelect(select, years, 'eraStartAll'));
+      [skaterEraEndSelect, compareEraEndSelect, countryEraEndSelect, eventEraEndSelect].forEach(select=>fillYearSelect(select, years, 'eraEndAll'));
     }
 
     function fillYearSelect(el,years,labelKey){
@@ -981,6 +1017,7 @@
           return row.gender==='Women' || row.gender==='Men' || row.gender==='Mixed';
         })
         .filter(row=>!compareSeason||row.season===compareSeason)
+        .filter(row=>rowInEra(row, compareEraStart, compareEraEnd))
         .map(row=>row.skater_name)
         .filter(Boolean))]
         .sort((x,y)=>x.localeCompare(y,'ko'));
@@ -1038,6 +1075,13 @@
       renderEventRanking(getFilteredEventRankingMedals());
     }
 
+    function rowInEra(row,start,end){
+      const yearNumber = Number(row.year);
+      if(start && Number.isFinite(yearNumber) && yearNumber < Number(start)) return false;
+      if(end && Number.isFinite(yearNumber) && yearNumber > Number(end)) return false;
+      return true;
+    }
+
     function rowMatchesSearchAndMedal(row,q){
       const target=[row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.original_skater_name,row.country,row.team_name,row.time,row.note].join(' ').toLowerCase();
       return (!q||target.includes(q))&&(!currentMedalFilter||row.medal===currentMedalFilter);
@@ -1059,9 +1103,7 @@
       const note = String(row.note||'').toLowerCase();
       const year = String(row.year||'').trim();
 
-      const yearNumber = Number(year);
-      if(skaterEraStart && Number.isFinite(yearNumber) && yearNumber < Number(skaterEraStart)) return false;
-      if(skaterEraEnd && Number.isFinite(yearNumber) && yearNumber > Number(skaterEraEnd)) return false;
+      if(!rowInEra(row, skaterEraStart, skaterEraEnd)) return false;
 
             if(skaterRankingGender === 'men' && gender !== 'Men') return false;
       if(skaterRankingGender === 'women' && gender !== 'Women') return false;
@@ -1120,6 +1162,7 @@
       const target=[row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.original_skater_name,row.country,row.team_name,row.time,row.note].join(' ').toLowerCase();
       return (!q||target.includes(q)) &&
         (!eventSeason||row.season===eventSeason) &&
+        rowInEra(row, eventEraStart, eventEraEnd) &&
         (!currentMedalFilter||row.medal===currentMedalFilter);
     }
 
@@ -1490,7 +1533,7 @@
 
     function getFilteredCountryMedals(){
       const q=searchInput.value.trim().toLowerCase();
-      return medals.filter(row=>rowMatchesSearchAndMedal(row,q)).filter(row=>!countrySeason||row.season===countrySeason);
+      return medals.filter(row=>rowMatchesSearchAndMedal(row,q)).filter(row=>!countrySeason||row.season===countrySeason).filter(row=>rowInEra(row, countryEraStart, countryEraEnd));
     }
 
     function renderCountryRanking(data){
@@ -1660,7 +1703,7 @@
 
 
     function getComparisonEligibleRows(name){
-      return skaterMedals.filter(row=>row.skater_name===name).filter(row=>!compareSeason||row.season===compareSeason).filter(row=>{
+      return skaterMedals.filter(row=>row.skater_name===name).filter(row=>!compareSeason||row.season===compareSeason).filter(row=>rowInEra(row, compareEraStart, compareEraEnd)).filter(row=>{
         if(!skaterRankingOptions.includeOlympicDemo && isOlympicDemonstrationRow(row)) return false;
         if(!skaterRankingOptions.includeWorldsOverall && isWorldChampionshipOverallRow(row)) return false;
         if(!skaterRankingOptions.includeIndividual3000m && isIndividual3000mEvent(row.event)) return false;
