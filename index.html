@@ -70,6 +70,44 @@
     .side-nav button:hover{background:#eff6ff;color:#1d4ed8}
     .side-nav button.nav-soon{color:var(--muted)}
     .side-nav button.nav-soon:hover{background:#f3f4f6;color:#374151}
+    .report-modal-backdrop{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(15,23,42,.45);
+      z-index:100;
+      padding:18px;
+    }
+    .report-modal-backdrop.open{display:flex}
+    .report-modal{
+      width:min(520px,100%);
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:20px;
+      box-shadow:0 24px 60px rgba(15,23,42,.22);
+      padding:18px;
+    }
+    .report-modal-header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
+    .report-modal-header h2{margin:0;font-size:20px}
+    .report-modal-close{border:1px solid var(--line);background:#fff;border-radius:10px;padding:7px 10px;cursor:pointer}
+    .report-modal textarea{
+      width:100%;
+      min-height:150px;
+      resize:vertical;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 13px;
+      font-size:14px;
+      font-family:inherit;
+      outline:none;
+    }
+    .report-modal textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+    .report-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+    .report-submit-btn{border:1px solid var(--primary);background:var(--primary);color:#fff;border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:700}
+    .report-cancel-btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 14px;cursor:pointer}
+    .report-status{font-size:13px;color:var(--muted);margin-top:8px;min-height:18px}
     @media(max-width:1500px){
       .side-nav{left:8px;width:142px}
       main{max-width:1180px;margin-left:160px;margin-right:16px}
@@ -112,10 +150,26 @@
     <button type="button" onclick="scrollToSection('skaterRankingSection')">선수별 종합 순위</button>
     <button type="button" onclick="scrollToSection('countryRankingSection')">국가별 메달 순위</button>
     <button type="button" onclick="scrollToSection('eventRankingSection')">종목별 선수 순위</button>
+    <button type="button" onclick="openReportModal()">오류 신고 및 문의</button>
     <button type="button" class="nav-soon" onclick="showPreparing()">종목별 기록 순위</button>
     <button type="button" class="nav-soon" onclick="showPreparing()">랩타임 순위</button>
     <button type="button" class="nav-soon" onclick="showPreparing()">각종 기록</button>
   </nav>
+
+  <div class="report-modal-backdrop" id="reportModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+    <div class="report-modal">
+      <div class="report-modal-header">
+        <h2 id="reportModalTitle">오류 신고 및 문의</h2>
+        <button type="button" class="report-modal-close" onclick="closeReportModal()">닫기</button>
+      </div>
+      <textarea id="reportMessage" placeholder="오류 내용이나 문의 내용을 입력해 주세요."></textarea>
+      <div class="report-modal-actions">
+        <button type="button" class="report-cancel-btn" onclick="closeReportModal()">취소</button>
+        <button type="button" class="report-submit-btn" id="reportSubmitBtn" onclick="submitReport()">제출</button>
+      </div>
+      <div class="report-status" id="reportStatus"></div>
+    </div>
+  </div>
 
   <main>
     <section class="card anchor-section" id="searchSection">
@@ -412,6 +466,16 @@
       }));
 
       document.querySelectorAll('.score-input').forEach(input=>input.addEventListener('input',()=>{}));
+      const reportBackdrop=document.getElementById('reportModalBackdrop');
+      if(reportBackdrop){
+        reportBackdrop.addEventListener('click',event=>{
+          if(event.target===reportBackdrop) closeReportModal();
+        });
+      }
+      document.addEventListener('keydown',event=>{
+        if(event.key==='Escape') closeReportModal();
+      });
+
       document.querySelectorAll('.event-score-input').forEach(input=>input.addEventListener('input',()=>{}));
     }
 
@@ -1074,6 +1138,68 @@
     function roundOrder(roundName){const order={'Preliminaries':1,'Preliminary':1,'Heats':2,'Heat':2,'Quarterfinal':3,'Quarterfinals':3,'Semifinal':4,'Semifinals':4,'Final B':5,'Final A':6};return order[roundName]||99;}
     function medalKorean(medal){return medal==='Gold'?'금':medal==='Silver'?'은':medal==='Bronze'?'동':medal||'';}
     function genderKorean(gender){return gender==='Men'?'남자':gender==='Women'?'여자':gender==='Mixed'?'혼성':escapeHtml(gender||'');}
+
+
+    function openReportModal(){
+      const modal=document.getElementById('reportModalBackdrop');
+      const status=document.getElementById('reportStatus');
+      if(status) status.textContent='';
+      if(modal) modal.classList.add('open');
+      setTimeout(()=>document.getElementById('reportMessage')?.focus(),50);
+    }
+
+    function closeReportModal(){
+      const modal=document.getElementById('reportModalBackdrop');
+      if(modal) modal.classList.remove('open');
+    }
+
+    async function submitReport(){
+      const textarea=document.getElementById('reportMessage');
+      const btn=document.getElementById('reportSubmitBtn');
+      const status=document.getElementById('reportStatus');
+      const message=String(textarea?.value||'').trim();
+
+      if(!message){
+        if(status) status.textContent='내용을 입력해 주세요.';
+        return;
+      }
+
+      if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')){
+        if(status) status.textContent='Apps Script 주소가 연결되지 않았습니다.';
+        return;
+      }
+
+      try{
+        if(btn) btn.disabled=true;
+        if(status) status.textContent='제출 중입니다...';
+
+        const payload={
+          action:'report',
+          message,
+          page_url:location.href,
+          user_agent:navigator.userAgent,
+          created_at:new Date().toISOString()
+        };
+
+        const response=await fetch(APPS_SCRIPT_URL,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify(payload)
+        });
+
+        const result=await response.json().catch(()=>({ok:false,error:'응답을 해석하지 못했습니다.'}));
+        if(!result.ok) throw new Error(result.error||'제출에 실패했습니다.');
+
+        textarea.value='';
+        closeReportModal();
+        alert('제출되었습니다.');
+      }catch(error){
+        console.error(error);
+        if(status) status.textContent='제출하지 못했습니다. Apps Script doPost와 report 시트를 확인해 주세요.';
+      }finally{
+        if(btn) btn.disabled=false;
+      }
+    }
 
     function scrollToSection(id){
       const el=document.getElementById(id);
