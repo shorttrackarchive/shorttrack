@@ -166,10 +166,10 @@
 
     <section class="card">
       <div class="summary">
-        <div class="summary-box"><div class="label">검색 결과</div><div class="value" id="totalCount">0</div></div>
-        <div class="summary-box"><div class="label">금메달</div><div class="value" id="goldCount">0</div></div>
-        <div class="summary-box"><div class="label">은메달</div><div class="value" id="silverCount">0</div></div>
-        <div class="summary-box"><div class="label">동메달</div><div class="value" id="bronzeCount">0</div></div>
+        <div class="summary-box"><div class="label" data-i18n="resultCount">검색 결과</div><div class="value" id="totalCount">0</div></div>
+        <div class="summary-box"><div class="label" data-i18n="goldMedal">금메달</div><div class="value" id="goldCount">0</div></div>
+        <div class="summary-box"><div class="label" data-i18n="silverMedal">은메달</div><div class="value" id="silverCount">0</div></div>
+        <div class="summary-box"><div class="label" data-i18n="bronzeMedal">동메달</div><div class="value" id="bronzeCount">0</div></div>
       </div>
     </section>
 
@@ -230,35 +230,35 @@
         <button type="button" class="tab ranking-option-tab" data-option="includeIndividual3000m">3000m</button>
       </div>
 
-      <div class="subnote">현재 검색어, 대회 종류, 시즌, 성별, 종목 필터가 반영됩니다. 기본값은 개인전만·전체 성별·올림픽 시범종목 제외·세계선수권 종합 포함·3000m 제외이며, 선수명은 skater_aliases 시트 기준으로 표준화됩니다.</div>
+      <div class="subnote">현재 검색어, 대회 종류, 시즌, 성별, 종목 필터가 반영됩니다. 기본값은 개인전만·전체 성별·올림픽 시범종목 제외·세계선수권 종합 포함·3000m 제외입니다</div>
       
       <div class="score-actions" style="margin:10px 0 12px">
         <span class="score-mini">기본 순위는 아래 점수 기준으로 계산됩니다. 점수를 바꾸면 순위가 자동으로 다시 계산됩니다.</span>
       </div>
 
       <div class="score-panel open" id="skaterScorePanel">
-        <div class="subnote" style="margin-bottom:10px">점수칸에 원하는 값을 입력하면 선수별 종합 메달 순위가 사용자 정의 점수 기준으로 정렬됩니다.</div>
+        <div class="subnote" style="margin-bottom:10px" data-i18n="skaterScoreDesc">점수칸에 원하는 값을 입력하면 선수별 종합 순위가 사용자 정의 점수 기준으로 정렬됩니다.</div>
         <div class="score-grid">
-          <div class="score-field"><label>올림픽 금</label><input class="score-input" data-score-key="olympic_gold" type="number" step="0.1" value="816"></div>
-          <div class="score-field"><label>올림픽 은</label><input class="score-input" data-score-key="olympic_silver" type="number" step="0.1" value="504"></div>
-          <div class="score-field"><label>올림픽 동</label><input class="score-input" data-score-key="olympic_bronze" type="number" step="0.1" value="312"></div>
+          <div class="score-field"><label data-i18n="olympicGold">올림픽 금</label><input class="score-input" data-score-key="olympic_gold" type="number" step="0.1" value="816"></div>
+          <div class="score-field"><label data-i18n="olympicSilver">올림픽 은</label><input class="score-input" data-score-key="olympic_silver" type="number" step="0.1" value="504"></div>
+          <div class="score-field"><label data-i18n="olympicBronze">올림픽 동</label><input class="score-input" data-score-key="olympic_bronze" type="number" step="0.1" value="312"></div>
 
-          <div class="score-field"><label>세계선수권 금</label><input class="score-input" data-score-key="worlds_gold" type="number" step="0.1" value="204"></div>
-          <div class="score-field"><label>세계선수권 은</label><input class="score-input" data-score-key="worlds_silver" type="number" step="0.1" value="126"></div>
-          <div class="score-field"><label>세계선수권 동</label><input class="score-input" data-score-key="worlds_bronze" type="number" step="0.1" value="78"></div>
+          <div class="score-field"><label data-i18n="worldsGold">세계선수권 금</label><input class="score-input" data-score-key="worlds_gold" type="number" step="0.1" value="204"></div>
+          <div class="score-field"><label data-i18n="worldsSilver">세계선수권 은</label><input class="score-input" data-score-key="worlds_silver" type="number" step="0.1" value="126"></div>
+          <div class="score-field"><label data-i18n="worldsBronze">세계선수권 동</label><input class="score-input" data-score-key="worlds_bronze" type="number" step="0.1" value="78"></div>
 
-          <div class="score-field"><label>월드컵·월드투어 금</label><input class="score-input" data-score-key="worldcup_gold" type="number" step="0.1" value="34"></div>
-          <div class="score-field"><label>월드컵·월드투어 은</label><input class="score-input" data-score-key="worldcup_silver" type="number" step="0.1" value="21"></div>
-          <div class="score-field"><label>월드컵·월드투어 동</label><input class="score-input" data-score-key="worldcup_bronze" type="number" step="0.1" value="13"></div>
+          <div class="score-field"><label data-i18n="worldcupGold">월드컵·월드투어 금</label><input class="score-input" data-score-key="worldcup_gold" type="number" step="0.1" value="34"></div>
+          <div class="score-field"><label data-i18n="worldcupSilver">월드컵·월드투어 은</label><input class="score-input" data-score-key="worldcup_silver" type="number" step="0.1" value="21"></div>
+          <div class="score-field"><label data-i18n="worldcupBronze">월드컵·월드투어 동</label><input class="score-input" data-score-key="worldcup_bronze" type="number" step="0.1" value="13"></div>
         </div>
       
         <div class="score-actions score-apply-row">
           <button class="sort-btn primary-score-btn" data-i18n="apply" onclick="applyScoreSettings()">설정</button>
-          <span class="score-mini">점수를 바꾼 뒤 설정을 누르면 점수 기준 순위로 다시 정렬됩니다.</span>
+          <span class="score-mini" data-i18n="skaterScoreHelp">점수를 바꾼 뒤 설정을 누르면 점수 기준 순위로 다시 정렬됩니다.</span>
         </div>
 </div>
 
-      <div id="skaterRankingWrap"><div id="skaterRankingTableWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div></div>
+      <div id="skaterRankingWrap"><div id="skaterRankingTableWrap"><div class="empty"><span data-i18n="loading">데이터를 불러오는 중입니다.</span></div></div></div>
     </section>
 
     <section class="card anchor-section" id="countryRankingSection">
@@ -269,7 +269,7 @@
         <button type="button" class="tab country-ranking-tab" data-country-group="worlds" data-i18n="worlds">세계선수권</button>
         <button type="button" class="tab country-ranking-tab" data-country-group="worldcup" data-i18n="worldcupTour">월드컵 및 월드투어</button>
       </div>
-      <div id="countryRankingWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
+      <div id="countryRankingWrap"><div class="empty"><span data-i18n="loading">데이터를 불러오는 중입니다.</span></div></div>
     </section>
 
     <section class="card anchor-section" id="eventRankingSection">
@@ -298,25 +298,25 @@
       <div class="score-panel open" id="eventScorePanel">
         <div class="subnote" style="margin-bottom:10px">이 점수는 종목별 선수 순위에만 적용됩니다. 선수별 종합 순위 점수와 별도로 설정됩니다. 계주 3개는 선수별이 아니라 국가별로 집계됩니다. 올림픽 시범종목은 기본 제외입니다.</div>
         <div class="score-grid">
-          <div class="score-field"><label>올림픽 금</label><input class="event-score-input" data-score-key="olympic_gold" type="number" step="0.1" value="816"></div>
-          <div class="score-field"><label>올림픽 은</label><input class="event-score-input" data-score-key="olympic_silver" type="number" step="0.1" value="504"></div>
-          <div class="score-field"><label>올림픽 동</label><input class="event-score-input" data-score-key="olympic_bronze" type="number" step="0.1" value="312"></div>
+          <div class="score-field"><label data-i18n="olympicGold">올림픽 금</label><input class="event-score-input" data-score-key="olympic_gold" type="number" step="0.1" value="816"></div>
+          <div class="score-field"><label data-i18n="olympicSilver">올림픽 은</label><input class="event-score-input" data-score-key="olympic_silver" type="number" step="0.1" value="504"></div>
+          <div class="score-field"><label data-i18n="olympicBronze">올림픽 동</label><input class="event-score-input" data-score-key="olympic_bronze" type="number" step="0.1" value="312"></div>
 
-          <div class="score-field"><label>세계선수권 금</label><input class="event-score-input" data-score-key="worlds_gold" type="number" step="0.1" value="204"></div>
-          <div class="score-field"><label>세계선수권 은</label><input class="event-score-input" data-score-key="worlds_silver" type="number" step="0.1" value="126"></div>
-          <div class="score-field"><label>세계선수권 동</label><input class="event-score-input" data-score-key="worlds_bronze" type="number" step="0.1" value="78"></div>
+          <div class="score-field"><label data-i18n="worldsGold">세계선수권 금</label><input class="event-score-input" data-score-key="worlds_gold" type="number" step="0.1" value="204"></div>
+          <div class="score-field"><label data-i18n="worldsSilver">세계선수권 은</label><input class="event-score-input" data-score-key="worlds_silver" type="number" step="0.1" value="126"></div>
+          <div class="score-field"><label data-i18n="worldsBronze">세계선수권 동</label><input class="event-score-input" data-score-key="worlds_bronze" type="number" step="0.1" value="78"></div>
 
-          <div class="score-field"><label>월드컵·월드투어 금</label><input class="event-score-input" data-score-key="worldcup_gold" type="number" step="0.1" value="34"></div>
-          <div class="score-field"><label>월드컵·월드투어 은</label><input class="event-score-input" data-score-key="worldcup_silver" type="number" step="0.1" value="21"></div>
-          <div class="score-field"><label>월드컵·월드투어 동</label><input class="event-score-input" data-score-key="worldcup_bronze" type="number" step="0.1" value="13"></div>
+          <div class="score-field"><label data-i18n="worldcupGold">월드컵·월드투어 금</label><input class="event-score-input" data-score-key="worldcup_gold" type="number" step="0.1" value="34"></div>
+          <div class="score-field"><label data-i18n="worldcupSilver">월드컵·월드투어 은</label><input class="event-score-input" data-score-key="worldcup_silver" type="number" step="0.1" value="21"></div>
+          <div class="score-field"><label data-i18n="worldcupBronze">월드컵·월드투어 동</label><input class="event-score-input" data-score-key="worldcup_bronze" type="number" step="0.1" value="13"></div>
         </div>
         <div class="score-actions score-apply-row">
           <button class="sort-btn primary-score-btn" data-i18n="apply" onclick="applyEventScoreSettings()">설정</button>
-          <span class="score-mini">점수를 바꾼 뒤 설정을 누르면 종목별 순위만 다시 계산됩니다.</span>
+          <span class="score-mini" data-i18n="eventScoreHelp">점수를 바꾼 뒤 설정을 누르면 종목별 순위만 다시 계산됩니다.</span>
         </div>
       </div>
 
-      <div id="eventRankingWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
+      <div id="eventRankingWrap"><div class="empty"><span data-i18n="loading">데이터를 불러오는 중입니다.</span></div></div>
     </section>
 
     <section class="card" id="medalListCard">
@@ -333,7 +333,7 @@
         <button class="tab medal-tab" data-medal="Silver">은메달</button>
         <button class="tab medal-tab" data-medal="Bronze">동메달</button>
       </div>
-      <div id="tableWrap"><div class="empty">데이터를 불러오는 중입니다.</div></div>
+      <div id="tableWrap"><div class="empty"><span data-i18n="loading">데이터를 불러오는 중입니다.</span></div></div>
     </section>
 
   </main>
@@ -369,7 +369,17 @@
         currentCompetition:'현재 구분', top20:'상위 20개 국가', currentEvent:'현재 종목', genderLabel:'성별',
         relayCountryNote:'계주 3개는 선수별이 아니라 국가별로 집계됩니다. 올림픽 시범종목은 기본 제외입니다.',
         top50:'상위 50위까지 표시됩니다',
-        countryLabel:'국가', skaterLabel:'선수'
+        countryLabel:'국가', skaterLabel:'선수',
+        loading:'<span data-i18n="loading">데이터를 불러오는 중입니다.</span>', noSearchResults:'검색 결과가 없습니다.', dataLoadFail:'데이터를 불러오지 못했습니다.', appsNotConnected:'Apps Script 주소 연결 후 집계됩니다.',
+        resultCount:'검색 결과', goldMedal:'금메달', silverMedal:'은메달', bronzeMedal:'동메달',
+        olympicGold:'올림픽 금', olympicSilver:'올림픽 은', olympicBronze:'올림픽 동',
+        worldsGold:'세계선수권 금', worldsSilver:'세계선수권 은', worldsBronze:'세계선수권 동',
+        worldcupGold:'월드컵·월드투어 금', worldcupSilver:'월드컵·월드투어 은', worldcupBronze:'월드컵·월드투어 동',
+        skaterScoreDesc:'점수칸에 원하는 값을 입력하면 선수별 종합 순위가 사용자 정의 점수 기준으로 정렬됩니다.',
+        eventScoreDesc:'이 점수는 종목별 선수 순위에만 적용됩니다. 선수별 종합 순위 점수와 별도로 설정됩니다. 계주 3개는 선수별이 아니라 국가별로 집계됩니다.',
+        skaterScoreHelp:'점수를 바꾼 뒤 설정을 누르면 점수 기준 순위로 다시 정렬됩니다.',
+        eventScoreHelp:'점수를 바꾼 뒤 설정을 누르면 종목별 순위만 다시 계산됩니다.',
+        top50Only:'상위 50위까지만 표시됩니다. 기본 순위는 사용자 정의 점수 기준입니다. 금·은·동·계는 각각 개별 정렬됩니다. 현재 설정:'
       },
       en: {
         appTitle:'Short Track Archive',
@@ -398,7 +408,17 @@
         currentCompetition:'Current category', top20:'Top 20 countries', currentEvent:'Current event', genderLabel:'Gender',
         relayCountryNote:'The three relay events are aggregated by country, not by skater. Olympic demonstration events are excluded by default.',
         top50:'Top 50 shown',
-        countryLabel:'Country', skaterLabel:'Skater'
+        countryLabel:'Country', skaterLabel:'Skater',
+        loading:'Loading data.', noSearchResults:'No search results.', dataLoadFail:'Could not load data.', appsNotConnected:'Connect Apps Script first.',
+        resultCount:'Results', goldMedal:'Gold medals', silverMedal:'Silver medals', bronzeMedal:'Bronze medals',
+        olympicGold:'Olympic gold', olympicSilver:'Olympic silver', olympicBronze:'Olympic bronze',
+        worldsGold:'Worlds gold', worldsSilver:'Worlds silver', worldsBronze:'Worlds bronze',
+        worldcupGold:'World Cup/Tour gold', worldcupSilver:'World Cup/Tour silver', worldcupBronze:'World Cup/Tour bronze',
+        skaterScoreDesc:'Enter point values to sort the overall skater ranking by custom score.',
+        eventScoreDesc:'These points apply only to event rankings. They are separate from the overall skater ranking points. The three relay events are ranked by country, not by skater.',
+        skaterScoreHelp:'After changing point values, click Apply to sort by score again.',
+        eventScoreHelp:'After changing point values, click Apply to recalculate only the event ranking.',
+        top50Only:'Only the top 50 are shown. The default ranking uses custom score. Gold, silver, bronze, and total columns are independently sortable. Current settings:'
       }
     };
 
@@ -561,9 +581,9 @@
     }
 
     function showNotConnected(){
-      document.getElementById('tableWrap').innerHTML='<div class="notice">Apps Script 주소가 아직 연결되지 않았습니다. 코드 상단의 APPS_SCRIPT_URL에 /exec 주소를 넣어 주세요.</div>';
-      (document.getElementById('skaterRankingTableWrap')||document.getElementById('skaterRankingWrap')).innerHTML='<div class="empty">Apps Script 주소 연결 후 집계됩니다.</div>';
-      document.getElementById('countryRankingWrap').innerHTML='<div class="empty">Apps Script 주소 연결 후 집계됩니다.</div>'; document.getElementById('eventRankingWrap').innerHTML='<div class="empty">Apps Script 주소 연결 후 집계됩니다.</div>';
+      document.getElementById('tableWrap').innerHTML=`<div class="notice">${tr('appsNotConnected')}</div>`;
+      (document.getElementById('skaterRankingTableWrap')||document.getElementById('skaterRankingWrap')).innerHTML=`<div class="empty">${tr('appsNotConnected')}</div>`;
+      document.getElementById('countryRankingWrap').innerHTML=`<div class="empty">${tr('appsNotConnected')}</div>`; document.getElementById('eventRankingWrap').innerHTML=`<div class="empty">${tr('appsNotConnected')}</div>`;
     }
 
     async function loadData(){
@@ -582,8 +602,8 @@
       }catch(error){
         console.error(error);
         document.getElementById('tableWrap').innerHTML='<div class="error">데이터를 불러오지 못했습니다.<br>Apps Script 배포 권한, 시트 이름, APPS_SCRIPT_URL을 확인해 주세요.</div>';
-        (document.getElementById('skaterRankingTableWrap')||document.getElementById('skaterRankingWrap')).innerHTML='<div class="empty">데이터를 불러오지 못했습니다.</div>';
-        document.getElementById('countryRankingWrap').innerHTML='<div class="empty">데이터를 불러오지 못했습니다.</div>'; document.getElementById('eventRankingWrap').innerHTML='<div class="empty">데이터를 불러오지 못했습니다.</div>';
+        (document.getElementById('skaterRankingTableWrap')||document.getElementById('skaterRankingWrap')).innerHTML=`<div class="empty">${tr('dataLoadFail')}</div>`;
+        document.getElementById('countryRankingWrap').innerHTML=`<div class="empty">${tr('dataLoadFail')}</div>`; document.getElementById('eventRankingWrap').innerHTML=`<div class="empty">${tr('dataLoadFail')}</div>`;
       }
     }
 
@@ -761,7 +781,7 @@
 
     function renderMedalTable(data){
       const wrap=document.getElementById('tableWrap');
-      if(!data.length){wrap.innerHTML='<div class="empty">검색 결과가 없습니다.</div>';return;}
+      if(!data.length){wrap.innerHTML=`<div class="empty">${tr('noSearchResults')}</div>`;return;}
       const sorted=[...data].sort((a,b)=>Number(b.year||0)-Number(a.year||0)||genderOrder(a.gender)-genderOrder(b.gender)||eventOrder(a.event)-eventOrder(b.event)||medalOrder(a.medal)-medalOrder(b.medal));
       wrap.innerHTML=`<div class="table-scroll"><table><thead><tr><th>대회</th><th>시즌</th><th>개최지</th><th>성별</th><th>종목</th><th>메달</th><th>선수/팀</th><th>국가</th><th>기록</th><th>비고</th></tr></thead><tbody>${sorted.map(row=>`<tr><td><span class="link" onclick="openCompetitionPanel('${escapeJs(row.competition_name)}')">${escapeHtml(row.competition_name)}</span><br><small>${escapeHtml(row.competition_type)}</small></td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.city)}</td><td>${genderKorean(row.gender)}</td><td>${escapeHtml(row.event)}</td><td><span class="medal ${escapeHtml(row.medal)}">${medalKorean(row.medal)}</span></td><td>${isRelayEvent(row.event)?escapeHtml(row.skater_name):`<span class="link" onclick="openPlayerPanel('${escapeJs(row.skater_name)}')">${escapeHtml(row.skater_name)}</span>`}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.time)}</td><td>${escapeHtml(row.note)}</td></tr>`).join('')}</tbody></table></div>`;
     }
@@ -811,7 +831,7 @@
 
     function renderSkaterRanking(data){
       const wrap=document.getElementById('skaterRankingTableWrap') || document.getElementById('skaterRankingWrap');
-      if(!data.length){wrap.innerHTML='<div class="empty">집계할 데이터가 없습니다.</div>';return;}
+      if(!data.length){wrap.innerHTML=`<div class="empty">${tr('empty')}</div>`;return;}
 
       const weights=readScoreWeights();
       let rows=buildSkaterAggregates(data).map(row=>{
@@ -841,17 +861,17 @@
 
       rows=rows.slice(0,50);
 
-      const scoreHead = skaterCustomScoreEnabled ? `<th rowspan="2" class="sort-th score-col" onclick="setSkaterSort('custom_score')">점수${sortArrow('custom_score')}</th>` : '';
+      const scoreHead = skaterCustomScoreEnabled ? `<th rowspan="2" class="sort-th score-col" onclick="setSkaterSort('custom_score')">${tr('score')}${sortArrow('custom_score')}</th>` : '';
 
       const rankingOptionSummary = getSkaterRankingOptionSummary();
 
-      wrap.innerHTML=`<div class="subnote">상위 50위까지만 표시됩니다. 기본 순위는 사용자 정의 점수 기준입니다. 금·은·동·계는 각각 개별 정렬됩니다. 현재 설정: ${rankingOptionSummary}</div>
+      wrap.innerHTML=`<div class="subnote">${tr('top50Only')} ${rankingOptionSummary}</div>
       <div class="table-scroll"><table class="medal-detail-table">
         <thead>
           <tr>
             <th rowspan="2" class="rank-col">${tr('rank')}</th>
-            <th rowspan="2" class="name-col sort-th" onclick="setSkaterSort('name')">선수${sortArrow('name')}</th>
-            <th rowspan="2" class="country-col sort-th" onclick="setSkaterSort('country')">국가${sortArrow('country')}</th>
+            <th rowspan="2" class="name-col sort-th" onclick="setSkaterSort('name')">${tr('skater')}${sortArrow('name')}</th>
+            <th rowspan="2" class="country-col sort-th" onclick="setSkaterSort('country')">${tr('country')}${sortArrow('country')}</th>
             <th colspan="4" class="group-head">${tr('olympic')}</th>
             <th colspan="4" class="group-head">${tr('worldChampionships')}</th>
             <th colspan="4" class="group-head">${tr('worldCupTour')}</th>
@@ -859,25 +879,25 @@
             ${scoreHead}
           </tr>
           <tr>
-            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_gold')" title="올림픽 금">금${sortArrow('olympic_gold')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_silver')" title="올림픽 은">은${sortArrow('olympic_silver')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_bronze')" title="올림픽 동">동${sortArrow('olympic_bronze')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_total')" title="올림픽 합계">계${sortArrow('olympic_total')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_gold')" title="올림픽 금">${tr('gold')}${sortArrow('olympic_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_silver')" title="올림픽 은">${tr('silver')}${sortArrow('olympic_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_bronze')" title="올림픽 동">${tr('bronze')}${sortArrow('olympic_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_total')" title="올림픽 합계">${tr('total')}${sortArrow('olympic_total')}</th>
 
-            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_gold')" title="세계선수권 금">금${sortArrow('worlds_gold')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_silver')" title="세계선수권 은">은${sortArrow('worlds_silver')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_bronze')" title="세계선수권 동">동${sortArrow('worlds_bronze')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_total')" title="세계선수권 합계">계${sortArrow('worlds_total')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_gold')" title="세계선수권 금">${tr('gold')}${sortArrow('worlds_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_silver')" title="세계선수권 은">${tr('silver')}${sortArrow('worlds_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_bronze')" title="세계선수권 동">${tr('bronze')}${sortArrow('worlds_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_total')" title="세계선수권 합계">${tr('total')}${sortArrow('worlds_total')}</th>
 
-            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_gold')" title="월드컵·월드투어 금">금${sortArrow('worldcup_gold')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_silver')" title="월드컵·월드투어 은">은${sortArrow('worldcup_silver')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_bronze')" title="월드컵·월드투어 동">동${sortArrow('worldcup_bronze')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_total')" title="월드컵·월드투어 합계">계${sortArrow('worldcup_total')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_gold')" title="월드컵·월드투어 금">${tr('gold')}${sortArrow('worldcup_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_silver')" title="월드컵·월드투어 은">${tr('silver')}${sortArrow('worldcup_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_bronze')" title="월드컵·월드투어 동">${tr('bronze')}${sortArrow('worldcup_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_total')" title="월드컵·월드투어 합계">${tr('total')}${sortArrow('worldcup_total')}</th>
 
-            <th class="medal-num sort-th" onclick="setSkaterSort('total_gold')" title="총 금">금${sortArrow('total_gold')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('total_silver')" title="총 은">은${sortArrow('total_silver')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('total_bronze')" title="총 동">동${sortArrow('total_bronze')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('total_count')" title="총합">계${sortArrow('total_count')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_gold')" title="총 금">${tr('gold')}${sortArrow('total_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_silver')" title="총 은">${tr('silver')}${sortArrow('total_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_bronze')" title="총 동">${tr('bronze')}${sortArrow('total_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_count')" title="총합">${tr('total')}${sortArrow('total_count')}</th>
           </tr>
         </thead>
         <tbody>${rows.map((row,i)=>`<tr>
@@ -894,10 +914,10 @@
     }
 
     function getSkaterRankingOptionSummary(){
-      const genderLabel = skaterRankingGender === 'men' ? '남' : skaterRankingGender === 'women' ? '녀' : '전체';
-      const demoLabel = skaterRankingOptions.includeOlympicDemo ? '시범종목 포함' : '시범종목 제외';
-      const worldsOverallLabel = skaterRankingOptions.includeWorldsOverall ? '세계선수권 종합 포함' : '세계선수권 종합 제외';
-      const event3000Label = skaterRankingOptions.includeIndividual3000m ? '3000m 포함' : '3000m 제외';
+      const genderLabel = skaterRankingGender === 'men' ? tr('menShort') : skaterRankingGender === 'women' ? tr('womenShort') : tr('all');
+      const demoLabel = skaterRankingOptions.includeOlympicDemo ? tr('includeOlympicDemo') : tr('excludeOlympicDemo');
+      const worldsOverallLabel = skaterRankingOptions.includeWorldsOverall ? tr('worldsOverall') + ' ' + (currentLang==='en'?'included':'포함') : tr('worldsOverall') + ' ' + (currentLang==='en'?'excluded':'제외');
+      const event3000Label = skaterRankingOptions.includeIndividual3000m ? '3000m ' + (currentLang==='en'?'included':'포함') : '3000m ' + (currentLang==='en'?'excluded':'제외');
       return `${genderLabel} · ${demoLabel} · ${worldsOverallLabel} · ${event3000Label}`;
     }
 
@@ -1053,7 +1073,7 @@
     function renderCountryRanking(data){
       const wrap=document.getElementById('countryRankingWrap');
       const scoped = data.filter(row=>countryRankingGroup==='all' || getCompetitionGroup(row)===countryRankingGroup);
-      if(!scoped.length){wrap.innerHTML='<div class="empty">집계할 데이터가 없습니다.</div>';return;}
+      if(!scoped.length){wrap.innerHTML=`<div class="empty">${tr('empty')}</div>`;return;}
       const map=new Map();
       scoped.forEach(row=>{
         const key=row.country;if(!key)return;
@@ -1125,7 +1145,7 @@
 
     function renderEventRanking(data){
       const wrap=document.getElementById('eventRankingWrap');
-      if(!data.length){wrap.innerHTML='<div class="empty">집계할 데이터가 없습니다.</div>';return;}
+      if(!data.length){wrap.innerHTML=`<div class="empty">${tr('empty')}</div>`;return;}
 
       const weights=readEventScoreWeights();
       const rows=(isEventRankingRelay() ? buildCountryAggregatesForEventRanking(data) : buildSkaterAggregates(data))
