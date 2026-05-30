@@ -109,13 +109,7 @@
 
       <div class="score-panel">
         <div class="score-actions">
-          <select id="scorePreset" onchange="applyScorePreset(this.value)">
-            <option value="equal">기본: 대회 동일, 금3 은2 동1</option>
-            <option value="olympicHeavy">올림픽 가중: 올림픽 9/6/3, 세선 6/4/2, 월드컵 3/2/1</option>
-            <option value="goldHeavy">금메달 중심: 금5 은2 동1</option>
-            <option value="medalBalanced">메달 개수 중심: 모든 메달 1점</option>
-            <option value="custom">사용자 지정</option>
-          </select>
+          <span class="score-mini">아래 점수칸에 원하는 값을 입력하면 순위가 자동으로 다시 계산됩니다.</span>
           <button class="sort-btn" onclick="renderCustomScoreRanking(getFilteredSkaterMedals())">점수 다시 계산</button>
         </div>
 
@@ -222,8 +216,6 @@
       }));
 
       document.querySelectorAll('.score-input').forEach(input=>input.addEventListener('input',()=>{
-        const preset=document.getElementById('scorePreset');
-        if(preset) preset.value='custom';
         renderCustomScoreRanking(getFilteredSkaterMedals());
       }));
     }
@@ -381,21 +373,6 @@
       return row[bucket] ? row[bucket][medal] || 0 : 0;
     }
 
-
-    function applyScorePreset(preset){
-      const presets={
-        equal:{olympic_gold:3,olympic_silver:2,olympic_bronze:1,worlds_gold:3,worlds_silver:2,worlds_bronze:1,worldcup_gold:3,worldcup_silver:2,worldcup_bronze:1},
-        olympicHeavy:{olympic_gold:9,olympic_silver:6,olympic_bronze:3,worlds_gold:6,worlds_silver:4,worlds_bronze:2,worldcup_gold:3,worldcup_silver:2,worldcup_bronze:1},
-        goldHeavy:{olympic_gold:5,olympic_silver:2,olympic_bronze:1,worlds_gold:5,worlds_silver:2,worlds_bronze:1,worldcup_gold:5,worldcup_silver:2,worldcup_bronze:1},
-        medalBalanced:{olympic_gold:1,olympic_silver:1,olympic_bronze:1,worlds_gold:1,worlds_silver:1,worlds_bronze:1,worldcup_gold:1,worldcup_silver:1,worldcup_bronze:1}
-      };
-      const values=presets[preset]||readScoreWeights();
-      document.querySelectorAll('.score-input').forEach(input=>{
-        const key=input.dataset.scoreKey;
-        if(values[key]!==undefined) input.value=values[key];
-      });
-      renderCustomScoreRanking(getFilteredSkaterMedals());
-    }
 
     function readScoreWeights(){
       const weights={};
