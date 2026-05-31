@@ -216,15 +216,53 @@
       .visitor-widget{margin:10px 16px 0 !important;width:auto}
     }
 
+
+    /* Visitor widget / language toggle non-overlap fix */
+    header{position:relative}
+    header .visitor-widget{
+      position:absolute !important;
+      left:20px !important;
+      right:auto !important;
+      top:18px !important;
+      margin:0 !important;
+      width:auto !important;
+      max-width:240px !important;
+      z-index:5 !important;
+      background:rgba(255,255,255,.14) !important;
+      color:#fff !important;
+      border:1px solid rgba(255,255,255,.35) !important;
+      box-shadow:none !important;
+      backdrop-filter:blur(10px);
+    }
+    header .visitor-row{color:rgba(255,255,255,.9) !important}
+    header .visitor-row strong{color:#fff !important}
+    header .language-toggle{
+      right:20px !important;
+      left:auto !important;
+      top:18px !important;
+      z-index:6 !important;
+    }
+    @media(max-width:820px){
+      header .visitor-widget{
+        position:static !important;
+        display:inline-block !important;
+        margin:0 auto 14px !important;
+        max-width:calc(100% - 32px) !important;
+      }
+      header .language-toggle{
+        position:static !important;
+        margin:0 auto 16px !important;
+      }
+    }
+
 </style>
 </head>
 <body>
-  <aside class="visitor-widget" aria-label="방문자 수">
-    <div class="visitor-row"><span data-i18n="todayVisitors">오늘 방문자 수</span><strong id="todayVisitors">-</strong></div>
-    <div class="visitor-row"><span data-i18n="totalVisitors">총 방문자 수</span><strong id="totalVisitors">-</strong></div>
-  </aside>
-
-  <header>
+<header>
+    <aside class="visitor-widget" aria-label="방문자 수">
+        <div class="visitor-row"><span data-i18n="todayVisitors">오늘 방문자 수</span><strong id="todayVisitors">-</strong></div>
+        <div class="visitor-row"><span data-i18n="totalVisitors">총 방문자 수</span><strong id="totalVisitors">-</strong></div>
+      </aside>
     <div class="language-toggle" aria-label="Language">
       <button type="button" class="lang-btn active" data-lang="ko" onclick="setLanguage('ko')">한국어</button>
       <button type="button" class="lang-btn" data-lang="en" onclick="setLanguage('en')">ENG</button>
