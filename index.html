@@ -390,6 +390,28 @@
     @media(max-width:1000px){.heat-tool-grid{grid-template-columns:repeat(2,1fr)}.heat-result-grid{grid-template-columns:1fr}}
     @media(max-width:560px){.heat-tool-grid{grid-template-columns:1fr}.heat-table input,.heat-table select{min-width:92px}}
 
+
+    /* Random short track quiz */
+    .quiz-controls{border:1px solid var(--line);border-radius:18px;background:#fbfdff;padding:16px}
+    .quiz-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:end}
+    .quiz-grid label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin-bottom:5px}
+    .quiz-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .quiz-question{border:1px solid var(--line);border-radius:16px;background:#fff;padding:15px;margin:12px 0}
+    .quiz-question-header{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:10px}
+    .quiz-question-title{font-weight:950;line-height:1.45}
+    .quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .quiz-option{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:#fbfdff;cursor:pointer}
+    .quiz-option input{width:auto}
+    .quiz-option.correct{border-color:#22c55e;background:#dcfce7}
+    .quiz-option.wrong{border-color:#ef4444;background:#fee2e2}
+    .quiz-meta{font-size:12px;color:var(--muted);margin-top:8px}
+    .quiz-report-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;cursor:pointer;color:var(--muted);white-space:nowrap}
+    .quiz-result-box{border:1px solid var(--line);border-radius:18px;background:#fff;padding:16px;margin-top:14px}
+    .quiz-result-score{font-size:26px;font-weight:950;letter-spacing:-.04em}
+    .quiz-title-badge{display:inline-flex;border-radius:999px;padding:5px 10px;background:#eff6ff;color:#1e40af;font-weight:950;margin-top:6px}
+    @media(max-width:900px){.quiz-grid{grid-template-columns:repeat(2,1fr)}.quiz-options{grid-template-columns:1fr}}
+    @media(max-width:560px){.quiz-grid{grid-template-columns:1fr}.quiz-question-header{display:block}.quiz-report-btn{margin-top:8px}}
+
 </style>
 </head>
 <body>
@@ -416,6 +438,7 @@
     <button type="button" data-i18n="navHallOfFame" onclick="scrollToSection('hallOfFameSection')">명예의 전당</button>
     <button type="button" data-i18n="navCardMaker" onclick="scrollToSection('cardMakerSection')">선수 카드 만들기</button>
     <button type="button" data-i18n="navHeatTool" onclick="scrollToSection('heatToolSection')">조편성 계산기</button>
+    <button type="button" data-i18n="navQuiz" onclick="scrollToSection('quizSection')">랜덤 퀴즈</button>
     <button type="button" data-i18n="navReport" onclick="openReportModal()">오류 신고 및 문의</button>
     <button type="button" class="nav-soon" data-i18n="navRecordRank" onclick="showPreparing()">종목별 기록 순위</button>
     <button type="button" class="nav-soon" data-i18n="navLapRank" onclick="showPreparing()">랩타임 순위</button>
@@ -1004,6 +1027,70 @@
     </section>
 
 
+
+    <section class="card anchor-section" id="quizSection">
+      <div class="section-title"><div><h2 data-i18n="quizTitle">랜덤 쇼트트랙 퀴즈</h2><span data-i18n="quizDesc">현재 medals 데이터를 바탕으로 자동 출제합니다. 데이터가 추가되면 새로고침 후 문제 후보도 자동으로 늘어납니다.</span></div></div>
+      <div class="quiz-controls">
+        <div class="subnote" data-i18n="quizNotice">개인전 중심으로 출제하며 계주, 3000m, 올림픽 시범종목, 공동 메달 또는 불완전 포디움 의심 경기는 제외합니다. 문제에서 오류를 발견하면 문제별 오류 신고 버튼으로 제보할 수 있습니다.</div>
+        <div class="quiz-grid">
+          <div>
+            <label for="quizCount" data-i18n="quizCount">문제 수</label>
+            <select id="quizCount">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+            </select>
+          </div>
+          <div>
+            <label for="quizEra" data-i18n="quizEra">시대</label>
+            <select id="quizEra">
+              <option value="all" data-i18n="all">전체</option>
+              <option value="1980">1980s</option>
+              <option value="1990">1990s</option>
+              <option value="2000">2000s</option>
+              <option value="2010">2010s</option>
+              <option value="2020">2020s</option>
+            </select>
+          </div>
+          <div>
+            <label for="quizGender" data-i18n="gender">성별</label>
+            <select id="quizGender">
+              <option value="all" data-i18n="all">전체</option>
+              <option value="Men" data-i18n="men">남자</option>
+              <option value="Women" data-i18n="women">여자</option>
+            </select>
+          </div>
+          <div>
+            <label for="quizCompetition" data-i18n="competitionType">대회 종류</label>
+            <select id="quizCompetition">
+              <option value="all" data-i18n="all">전체</option>
+              <option value="olympic" data-i18n="olympics">올림픽</option>
+              <option value="worlds" data-i18n="worlds">세계선수권</option>
+              <option value="worldcup" data-i18n="worldcupTour">월드컵·월드투어</option>
+            </select>
+          </div>
+          <div>
+            <label for="quizType" data-i18n="quizType">문제 유형</label>
+            <select id="quizType">
+              <option value="mixed" data-i18n="quizTypeMixed">혼합</option>
+              <option value="gold" data-i18n="quizTypeGold">금메달리스트</option>
+              <option value="podium" data-i18n="quizTypePodium">포디움 순서</option>
+              <option value="country" data-i18n="quizTypeCountry">선수 국가</option>
+              <option value="medal" data-i18n="quizTypeMedal">메달 색</option>
+            </select>
+          </div>
+        </div>
+        <div class="quiz-actions">
+          <button type="button" class="sort-btn primary-score-btn" data-i18n="startQuiz" onclick="startRandomQuiz()">퀴즈 시작</button>
+          <button type="button" class="sort-btn" data-i18n="submitQuiz" onclick="submitRandomQuiz()">채점하기</button>
+          <button type="button" class="sort-btn" data-i18n="resetQuiz" onclick="resetRandomQuiz()">초기화</button>
+        </div>
+      </div>
+      <div id="quizWrap" class="quiz-result-box"><div class="empty" data-i18n="quizEmpty">옵션을 선택한 뒤 퀴즈를 시작해 주세요.</div></div>
+    </section>
+
+
     <section class="card" id="medalListCard">
       <div class="section-title"><div><h2>메달 목록</h2><span>상세 원자료 확인용 목록입니다. 길어지기 쉬워 화면 맨 아래에 배치했습니다.</div></div>
       <div class="tabs" aria-label="성별 보기">
@@ -1031,7 +1118,7 @@
       ko: {
         appTitle:'Short Track Archive',
         appSubtitle:'월드컵 · 월드투어 · 세계선수권 · 올림픽 쇼트트랙 포디움 아카이브', todayVisitors:'오늘 방문자 수', totalVisitors:'총 방문자 수',
-        navTitle:'바로가기', navSearch:'검색', navSkaterRank:'선수별 종합 순위', navCompare:'선수 비교', navCountryRank:'국가별 메달 순위', navEventRank:'종목별 선수 순위', navHallOfFame:'명예의 전당', navCardMaker:'선수 카드 만들기', navHeatTool:'조편성 계산기',
+        navTitle:'바로가기', navSearch:'검색', navSkaterRank:'선수별 종합 순위', navCompare:'선수 비교', navCountryRank:'국가별 메달 순위', navEventRank:'종목별 선수 순위', navHallOfFame:'명예의 전당', navCardMaker:'선수 카드 만들기', navHeatTool:'조편성 계산기', navQuiz:'랜덤 퀴즈',
         navReport:'오류 신고 및 문의', navRecordRank:'종목별 기록 순위', navLapRank:'랩타임 순위', navRecords:'각종 기록',
         reportTitle:'오류 신고 및 문의', close:'닫기', cancel:'취소', submit:'제출',
         reportPlaceholder:'오류 내용이나 문의 내용을 입력해 주세요.', searchPlaceholder:'선수명, 국가, 대회명, 종목 검색',
@@ -1073,14 +1160,14 @@
         playerOverviewTitle:'선수 요약', playerOverviewDesc:'개인전·계주·대회 유형별 메달을 요약합니다.', playerMedalDetailTitle:'선수별 메달 내역', playerMedalDetailDesc:'개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.',
         eraRange:'시대', eraStartAll:'전체 시작', eraEndAll:'전체 끝',
         compareTitle:'선수 비교', compareDesc:'두 선수를 선택해 개인전 성적만 기준으로 점수와 종목별 성과를 비교합니다.',
-        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. URL 이미지가 안 뜨면 이미지 직접 첨부를 이용해 주세요. 직접 첨부한 이미지는 카드 저장 시에도 안정적으로 포함됩니다.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardImageFile:'이미지 직접 첨부', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 8개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'조편성 계산기', heatToolDesc:'경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.', heatToolNotice:'팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 순위 그룹 우선·그룹 내 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 배정된 조 안의 SP는 직전 라운드 기록순으로 다시 정렬합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.', heatDistance:'종목', heatRound:'현재 라운드', roundPreliminary:'예비예선', roundHeats:'예선', roundQuarterfinals:'준준결승', roundSemifinals:'준결승', heatCount:'현재 조 수', heatSkatersPerHeat:'조별 선수 수', heatAutoQualifiers:'조별 순위 진출', heatTimeQualifiers:'기록순 추가 진출', heatNextCount:'다음 라운드 조 수', heatSeedMethod:'배정 방식', seedSnake:'지그재그 배정', seedStraight:'순차 배정', heatTimeSort:'기록 정렬', timeFastest:'빠른 기록 우선', timeNone:'기록 미사용', buildHeatTable:'결과 입력표 만들기', calculateHeatDraw:'진출자·조편성 계산', sampleHeatData:'예시 채우기', clearHeatData:'입력 초기화', heatInputEmpty:'결과 입력표를 먼저 만들어 주세요.', heatOutputEmpty:'계산 결과가 여기에 표시됩니다.', heatNoQualifiers:'진출자가 없습니다.', heatAutoQ:'순위 진출', heatTimeQ:'기록 진출', heatAdv:'ADV', heatEliminated:'탈락자', heatQualifiers:'진출자', heatNextDraw:'다음 라운드 조편성', heatName:'선수명', heatCountry:'국가', heatPosition:'순위', heatTime:'기록', heatStatus:'상태', heatHeat:'조', heatReason:'진출 방식', heatRank:'시드', heatSP:'SP', heatOfficialNote:'추정 조편성입니다. 실제 공식 조편성과 다를 수 있습니다.', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
+        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. URL 이미지가 안 뜨면 이미지 직접 첨부를 이용해 주세요. 직접 첨부한 이미지는 카드 저장 시에도 안정적으로 포함됩니다.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardImageFile:'이미지 직접 첨부', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 8개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'조편성 계산기', heatToolDesc:'경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.', heatToolNotice:'팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 순위 그룹 우선·그룹 내 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 배정된 조 안의 SP는 직전 라운드 기록순으로 다시 정렬합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.', heatDistance:'종목', heatRound:'현재 라운드', roundPreliminary:'예비예선', roundHeats:'예선', roundQuarterfinals:'준준결승', roundSemifinals:'준결승', heatCount:'현재 조 수', heatSkatersPerHeat:'조별 선수 수', heatAutoQualifiers:'조별 순위 진출', heatTimeQualifiers:'기록순 추가 진출', heatNextCount:'다음 라운드 조 수', heatSeedMethod:'배정 방식', seedSnake:'지그재그 배정', seedStraight:'순차 배정', heatTimeSort:'기록 정렬', timeFastest:'빠른 기록 우선', timeNone:'기록 미사용', buildHeatTable:'결과 입력표 만들기', calculateHeatDraw:'진출자·조편성 계산', sampleHeatData:'예시 채우기', clearHeatData:'입력 초기화', heatInputEmpty:'결과 입력표를 먼저 만들어 주세요.', heatOutputEmpty:'계산 결과가 여기에 표시됩니다.', heatNoQualifiers:'진출자가 없습니다.', heatAutoQ:'순위 진출', heatTimeQ:'기록 진출', heatAdv:'ADV', heatEliminated:'탈락자', heatQualifiers:'진출자', heatNextDraw:'다음 라운드 조편성', heatName:'선수명', heatCountry:'국가', heatPosition:'순위', heatTime:'기록', heatStatus:'상태', heatHeat:'조', heatReason:'진출 방식', heatRank:'시드', heatSP:'SP', heatOfficialNote:'추정 조편성입니다. 실제 공식 조편성과 다를 수 있습니다.', quizTitle:'랜덤 쇼트트랙 퀴즈', quizDesc:'현재 medals 데이터를 바탕으로 자동 출제합니다. 데이터가 추가되면 새로고침 후 문제 후보도 자동으로 늘어납니다.', quizNotice:'개인전 중심으로 출제하며 계주, 3000m, 올림픽 시범종목, 공동 메달 또는 불완전 포디움 의심 경기는 제외합니다. 문제에서 오류를 발견하면 문제별 오류 신고 버튼으로 제보할 수 있습니다.', quizCount:'문제 수', quizEra:'시대', quizType:'문제 유형', quizTypeMixed:'혼합', quizTypeGold:'금메달리스트', quizTypePodium:'포디움 순서', quizTypeCountry:'선수 국가', quizTypeMedal:'메달 색', startQuiz:'퀴즈 시작', submitQuiz:'채점하기', resetQuiz:'초기화', quizEmpty:'옵션을 선택한 뒤 퀴즈를 시작해 주세요.', quizNoData:'조건에 맞는 문제 후보가 부족합니다.', quizQuestion:'문제', quizReport:'이 문제 오류 신고', quizCorrectAnswer:'정답', quizYourAnswer:'내 답', quizUnanswered:'미응답', quizScoreText:'정답 수', quizAccuracy:'정답률', quizTitleGod:'ISU 데이터베이스 그 자체', quizTitleLegend:'쇼트트랙 백과사전', quizTitleWorld:'월드투어 해설위원', quizTitlePodium:'포디움 추적자', quizTitleFan:'빙상장 상주팬', quizTitleRookie:'다시보기 훈련 필요', quizGoldQuestion:'금메달리스트는?', quizPodiumQuestion:'포디움 순서로 맞는 것은?', quizCountryQuestion:'의 국가로 맞는 것은?', quizMedalQuestion:'이 선수의 메달 색은?', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
         category:'구분', individual:'개인전', relayMedal:'계주', includeRelayTotal:'계주 포함', individualMedals:'개인전 메달', relayIncludedMedals:'계주 포함 메달', bestEvent:'최다 금메달 종목', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'점수', olympicScore:'올림픽 점수', worldsScore:'세계선수권 점수', worldcupScore:'월드컵·월드투어 점수', totalScore:'총점', noData:'데이터 없음',
         olympicGames:'올림픽', worldCup:'월드컵', worldTour:'월드투어', challengeCup:'챌린지컵', mixed:'혼성', overall:'종합', relay:'계주'
       },
       en: {
         appTitle:'Short Track Archive',
         appSubtitle:'Short track podium archive for World Cup, World Tour, World Championships, and Olympics',
-        navTitle:'Menu', navSearch:'Search', navSkaterRank:'Overall Skater Ranking', navCompare:'Compare Skaters', navCountryRank:'Country Medal Ranking', navEventRank:'Event Ranking', navHallOfFame:'Hall of Fame', navCardMaker:'Card Maker', navHeatTool:'Heat Draw Tool',
+        navTitle:'Menu', navSearch:'Search', navSkaterRank:'Overall Skater Ranking', navCompare:'Compare Skaters', navCountryRank:'Country Medal Ranking', navEventRank:'Event Ranking', navHallOfFame:'Hall of Fame', navCardMaker:'Card Maker', navHeatTool:'Heat Draw Tool', navQuiz:'Random Quiz',
         navReport:'Report / Contact', navRecordRank:'Event Record Ranking', navLapRank:'Lap Time Ranking', navRecords:'Records',
         reportTitle:'Report / Contact', close:'Close', cancel:'Cancel', submit:'Submit',
         reportPlaceholder:'Enter an error report or question.', searchPlaceholder:'Search skater, country, competition, or event',
@@ -1122,7 +1209,7 @@
         playerOverviewTitle:'Skater Summary', playerOverviewDesc:'Summarizes medals by individual/relay and competition type.', playerMedalDetailTitle:'Medal Details', playerMedalDetailDesc:'Shows individual medals together with relay medals from relay_members.',
         eraRange:'Era', eraStartAll:'Start', eraEndAll:'End',
         compareTitle:'Compare Skaters', compareDesc:'Select two skaters to compare scores and event performance based on individual results only.',
-        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. If a URL image does not load, upload an image directly. Directly uploaded images are more reliably included when saving the card.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardImageFile:'Upload image directly', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 8 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'Heat Draw Tool', heatToolDesc:'Enter race results to calculate qualifiers and estimate the next-round heat draw.', heatToolNotice:'This is a fan-made helper. Because ADV qualifiers may occur, set the number of skaters per heat manually before building the result table. Qualifiers are seeded by finish-position groups first, then by time within each group; next-round heats are assigned by snake seeding. SP within each next-round heat is then re-sorted by the previous-round time. Actual official heat draws may differ, and ADV/ties should be checked manually.', heatDistance:'Event', heatRound:'Current round', roundPreliminary:'Preliminary', roundHeats:'Heats', roundQuarterfinals:'Quarterfinals', roundSemifinals:'Semifinals', heatCount:'Current heats', heatSkatersPerHeat:'Skaters per heat', heatAutoQualifiers:'Auto qualifiers per heat', heatTimeQualifiers:'Fastest additional qualifiers', heatNextCount:'Next-round heats', heatSeedMethod:'Seeding method', seedSnake:'Snake seeding', seedStraight:'Straight seeding', heatTimeSort:'Time sorting', timeFastest:'Fastest first', timeNone:'Do not use times', buildHeatTable:'Build result table', calculateHeatDraw:'Calculate qualifiers & draw', sampleHeatData:'Fill sample', clearHeatData:'Clear input', heatInputEmpty:'Build a result table first.', heatOutputEmpty:'Results will appear here.', heatNoQualifiers:'No qualifiers.', heatAutoQ:'Auto qualifier', heatTimeQ:'Time qualifier', heatAdv:'ADV', heatEliminated:'Eliminated', heatQualifiers:'Qualifiers', heatNextDraw:'Next-round heat draw', heatName:'Skater', heatCountry:'Country', heatPosition:'Place', heatTime:'Time', heatStatus:'Status', heatHeat:'Heat', heatReason:'Reason', heatRank:'Seed', heatSP:'SP', heatOfficialNote:'Estimated heat draw. Actual official heat draws may differ.', heatToolTitle:'조편성 계산기', heatToolDesc:'경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.', heatToolNotice:'팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 순위 그룹 우선·그룹 내 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 배정된 조 안의 SP는 직전 라운드 기록순으로 다시 정렬합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.', heatDistance:'종목', heatRound:'현재 라운드', roundPreliminary:'예비예선', roundHeats:'예선', roundQuarterfinals:'준준결승', roundSemifinals:'준결승', heatCount:'현재 조 수', heatSkatersPerHeat:'조별 선수 수', heatAutoQualifiers:'조별 순위 진출', heatTimeQualifiers:'기록순 추가 진출', heatNextCount:'다음 라운드 조 수', heatSeedMethod:'배정 방식', seedSnake:'지그재그 배정', seedStraight:'순차 배정', heatTimeSort:'기록 정렬', timeFastest:'빠른 기록 우선', timeNone:'기록 미사용', buildHeatTable:'결과 입력표 만들기', calculateHeatDraw:'진출자·조편성 계산', sampleHeatData:'예시 채우기', clearHeatData:'입력 초기화', heatInputEmpty:'결과 입력표를 먼저 만들어 주세요.', heatOutputEmpty:'계산 결과가 여기에 표시됩니다.', heatNoQualifiers:'진출자가 없습니다.', heatAutoQ:'순위 진출', heatTimeQ:'기록 진출', heatAdv:'ADV', heatEliminated:'탈락자', heatQualifiers:'진출자', heatNextDraw:'다음 라운드 조편성', heatName:'선수명', heatCountry:'국가', heatPosition:'순위', heatTime:'기록', heatStatus:'상태', heatHeat:'조', heatReason:'진출 방식', heatRank:'시드', heatSP:'SP', heatOfficialNote:'추정 조편성입니다. 실제 공식 조편성과 다를 수 있습니다.', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
+        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. If a URL image does not load, upload an image directly. Directly uploaded images are more reliably included when saving the card.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardImageFile:'Upload image directly', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 8 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'Heat Draw Tool', heatToolDesc:'Enter race results to calculate qualifiers and estimate the next-round heat draw.', heatToolNotice:'This is a fan-made helper. Because ADV qualifiers may occur, set the number of skaters per heat manually before building the result table. Qualifiers are seeded by finish-position groups first, then by time within each group; next-round heats are assigned by snake seeding. SP within each next-round heat is then re-sorted by the previous-round time. Actual official heat draws may differ, and ADV/ties should be checked manually.', heatDistance:'Event', heatRound:'Current round', roundPreliminary:'Preliminary', roundHeats:'Heats', roundQuarterfinals:'Quarterfinals', roundSemifinals:'Semifinals', heatCount:'Current heats', heatSkatersPerHeat:'Skaters per heat', heatAutoQualifiers:'Auto qualifiers per heat', heatTimeQualifiers:'Fastest additional qualifiers', heatNextCount:'Next-round heats', heatSeedMethod:'Seeding method', seedSnake:'Snake seeding', seedStraight:'Straight seeding', heatTimeSort:'Time sorting', timeFastest:'Fastest first', timeNone:'Do not use times', buildHeatTable:'Build result table', calculateHeatDraw:'Calculate qualifiers & draw', sampleHeatData:'Fill sample', clearHeatData:'Clear input', heatInputEmpty:'Build a result table first.', heatOutputEmpty:'Results will appear here.', heatNoQualifiers:'No qualifiers.', heatAutoQ:'Auto qualifier', heatTimeQ:'Time qualifier', heatAdv:'ADV', heatEliminated:'Eliminated', heatQualifiers:'Qualifiers', heatNextDraw:'Next-round heat draw', heatName:'Skater', heatCountry:'Country', heatPosition:'Place', heatTime:'Time', heatStatus:'Status', heatHeat:'Heat', heatReason:'Reason', heatRank:'Seed', heatSP:'SP', heatOfficialNote:'Estimated heat draw. Actual official heat draws may differ.', quizTitle:'Random Short Track Quiz', quizDesc:'Questions are generated automatically from the current medals data. When new data is added, the quiz pool updates after refresh.', quizNotice:'Questions focus on individual events and exclude relays, 3000m, Olympic demonstration events, joint-medal cases, and incomplete podiums. If you find an error, report it from that question.', quizCount:'Questions', quizEra:'Era', quizType:'Question type', quizTypeMixed:'Mixed', quizTypeGold:'Gold medalist', quizTypePodium:'Podium order', quizTypeCountry:'Skater country', quizTypeMedal:'Medal color', startQuiz:'Start quiz', submitQuiz:'Grade quiz', resetQuiz:'Reset', quizEmpty:'Select options and start the quiz.', quizNoData:'Not enough question candidates for these options.', quizQuestion:'Question', quizReport:'Report this question', quizCorrectAnswer:'Answer', quizYourAnswer:'Your answer', quizUnanswered:'Unanswered', quizScoreText:'Correct', quizAccuracy:'Accuracy', quizTitleGod:'ISU database itself', quizTitleLegend:'Short track encyclopedia', quizTitleWorld:'World Tour commentator', quizTitlePodium:'Podium tracker', quizTitleFan:'Rink regular', quizTitleRookie:'Needs replay training', quizGoldQuestion:'Who was the gold medalist?', quizPodiumQuestion:'Which podium order is correct?', quizCountryQuestion:'is from which country?', quizMedalQuestion:'What medal did this skater win?', heatToolTitle:'조편성 계산기', heatToolDesc:'경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.', heatToolNotice:'팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 순위 그룹 우선·그룹 내 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 배정된 조 안의 SP는 직전 라운드 기록순으로 다시 정렬합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.', heatDistance:'종목', heatRound:'현재 라운드', roundPreliminary:'예비예선', roundHeats:'예선', roundQuarterfinals:'준준결승', roundSemifinals:'준결승', heatCount:'현재 조 수', heatSkatersPerHeat:'조별 선수 수', heatAutoQualifiers:'조별 순위 진출', heatTimeQualifiers:'기록순 추가 진출', heatNextCount:'다음 라운드 조 수', heatSeedMethod:'배정 방식', seedSnake:'지그재그 배정', seedStraight:'순차 배정', heatTimeSort:'기록 정렬', timeFastest:'빠른 기록 우선', timeNone:'기록 미사용', buildHeatTable:'결과 입력표 만들기', calculateHeatDraw:'진출자·조편성 계산', sampleHeatData:'예시 채우기', clearHeatData:'입력 초기화', heatInputEmpty:'결과 입력표를 먼저 만들어 주세요.', heatOutputEmpty:'계산 결과가 여기에 표시됩니다.', heatNoQualifiers:'진출자가 없습니다.', heatAutoQ:'순위 진출', heatTimeQ:'기록 진출', heatAdv:'ADV', heatEliminated:'탈락자', heatQualifiers:'진출자', heatNextDraw:'다음 라운드 조편성', heatName:'선수명', heatCountry:'국가', heatPosition:'순위', heatTime:'기록', heatStatus:'상태', heatHeat:'조', heatReason:'진출 방식', heatRank:'시드', heatSP:'SP', heatOfficialNote:'추정 조편성입니다. 실제 공식 조편성과 다를 수 있습니다.', quizTitle:'랜덤 쇼트트랙 퀴즈', quizDesc:'현재 medals 데이터를 바탕으로 자동 출제합니다. 데이터가 추가되면 새로고침 후 문제 후보도 자동으로 늘어납니다.', quizNotice:'개인전 중심으로 출제하며 계주, 3000m, 올림픽 시범종목, 공동 메달 또는 불완전 포디움 의심 경기는 제외합니다. 문제에서 오류를 발견하면 문제별 오류 신고 버튼으로 제보할 수 있습니다.', quizCount:'문제 수', quizEra:'시대', quizType:'문제 유형', quizTypeMixed:'혼합', quizTypeGold:'금메달리스트', quizTypePodium:'포디움 순서', quizTypeCountry:'선수 국가', quizTypeMedal:'메달 색', startQuiz:'퀴즈 시작', submitQuiz:'채점하기', resetQuiz:'초기화', quizEmpty:'옵션을 선택한 뒤 퀴즈를 시작해 주세요.', quizNoData:'조건에 맞는 문제 후보가 부족합니다.', quizQuestion:'문제', quizReport:'이 문제 오류 신고', quizCorrectAnswer:'정답', quizYourAnswer:'내 답', quizUnanswered:'미응답', quizScoreText:'정답 수', quizAccuracy:'정답률', quizTitleGod:'ISU 데이터베이스 그 자체', quizTitleLegend:'쇼트트랙 백과사전', quizTitleWorld:'월드투어 해설위원', quizTitlePodium:'포디움 추적자', quizTitleFan:'빙상장 상주팬', quizTitleRookie:'다시보기 훈련 필요', quizGoldQuestion:'금메달리스트는?', quizPodiumQuestion:'포디움 순서로 맞는 것은?', quizCountryQuestion:'의 국가로 맞는 것은?', quizMedalQuestion:'이 선수의 메달 색은?', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
         category:'Category', individual:'Individual', relayMedal:'Relay', includeRelayTotal:'Relay included', individualMedals:'Individual medals', relayIncludedMedals:'Relay included medals', bestEvent:'Best gold-medal event', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'Score', olympicScore:'Olympic score', worldsScore:'Worlds score', worldcupScore:'World Cup/Tour score', totalScore:'Total score', noData:'No data',
         olympicGames:'Olympic Games', worldCup:'World Cup', worldTour:'World Tour', challengeCup:'Challenge Cup', mixed:'Mixed', overall:'Overall', relay:'Relay'
       }
@@ -1191,6 +1278,7 @@
     let eventEraEnd = '';
     let compareOptions = { includeWorldsOverall: true };
     let fanCardUploadedImageDataUrl = '';
+    let currentQuizQuestions = [];
     let skaterRankingOptions = {
       includeOlympicDemo: false,
       includeWorldsOverall: true,
@@ -3066,6 +3154,272 @@
       document.querySelectorAll('#heatInputWrap select').forEach(select=>select.value='OK');
       const out=document.getElementById('heatOutputWrap');
       if(out) out.innerHTML=`<div class="empty">${tr('heatOutputEmpty')}</div>`;
+    }
+
+
+    function quizCompetitionGroup(row){
+      const bucket=competitionBucket(row.competition_type);
+      if(bucket==='olympic') return 'olympic';
+      if(bucket==='worlds') return 'worlds';
+      if(bucket==='worldcup') return 'worldcup';
+      return bucket || '';
+    }
+
+    function isQuizEligibleRow(row){
+      if(!row || !row.skater_name || !row.country || !row.gender || !row.event || !row.medal) return false;
+      if(row.gender!=='Men' && row.gender!=='Women') return false;
+      if(row.medal_type && row.medal_type !== 'Individual') return false;
+      const event=String(row.event||'');
+      if(/relay/i.test(event)) return false;
+      if(isIndividual3000mEvent(event)) return false;
+      if(isOlympicDemonstrationRow(row)) return false;
+      if(!['Gold','Silver','Bronze'].includes(row.medal)) return false;
+      const year=Number(row.year||0);
+      if(!Number.isFinite(year) || year<1900) return false;
+      return true;
+    }
+
+    function quizRowMatchesOptions(row){
+      const era=document.getElementById('quizEra')?.value || 'all';
+      const gender=document.getElementById('quizGender')?.value || 'all';
+      const competition=document.getElementById('quizCompetition')?.value || 'all';
+      const year=Number(row.year||0);
+      if(era!=='all'){
+        const start=Number(era);
+        if(year < start || year > start+9) return false;
+      }
+      if(gender!=='all' && row.gender!==gender) return false;
+      if(competition!=='all' && quizCompetitionGroup(row)!==competition) return false;
+      return true;
+    }
+
+    function quizGroupKey(row){
+      return [row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event].join(' | ');
+    }
+
+    function quizEventLabel(row){
+      const gender = row.gender==='Women' ? tr('women') : row.gender==='Men' ? tr('men') : row.gender;
+      return `${row.year} ${row.competition_name} · ${gender} · ${translateEventName(row.event)}`;
+    }
+
+    function shuffleArray(array){
+      const arr=array.slice();
+      for(let i=arr.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    function uniqueValues(values){
+      return [...new Set(values.filter(Boolean).map(v=>String(v).trim()).filter(Boolean))];
+    }
+
+    function sampleOptions(correct, pool, count=4){
+      const options=[String(correct)];
+      shuffleArray(uniqueValues(pool).filter(v=>v!==String(correct))).forEach(v=>{
+        if(options.length<count) options.push(v);
+      });
+      return options.length>=2 ? shuffleArray(options.slice(0,count)) : [];
+    }
+
+    function getQuizBaseRows(){
+      return medals.filter(isQuizEligibleRow).filter(quizRowMatchesOptions);
+    }
+
+    function getCompleteQuizPodiums(rows){
+      const groups=new Map();
+      rows.forEach(row=>{
+        const key=quizGroupKey(row);
+        if(!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(row);
+      });
+      return [...groups.values()].map(group=>{
+        const gold=group.filter(r=>r.medal==='Gold');
+        const silver=group.filter(r=>r.medal==='Silver');
+        const bronze=group.filter(r=>r.medal==='Bronze');
+        if(gold.length===1 && silver.length===1 && bronze.length===1){
+          return {rows:group, gold:gold[0], silver:silver[0], bronze:bronze[0], sample:gold[0]};
+        }
+        return null;
+      }).filter(Boolean);
+    }
+
+    function makeGoldQuiz(podium, allRows){
+      const answer=podium.gold.skater_name;
+      const pool=allRows
+        .filter(row=>row.gender===podium.gold.gender && (row.event===podium.gold.event || quizCompetitionGroup(row)===quizCompetitionGroup(podium.gold)))
+        .map(row=>row.skater_name);
+      const options=sampleOptions(answer,pool,4);
+      if(options.length<4) return null;
+      return {
+        type:'gold',
+        question:`${quizEventLabel(podium.gold)} ${tr('quizGoldQuestion')}`,
+        options,
+        answer,
+        sourceRows:[podium.gold],
+        meta:`${podium.gold.competition_type} / ${podium.gold.season} / ${podium.gold.event} / Gold`
+      };
+    }
+
+    function makePodiumQuiz(podium){
+      const answer=`${podium.gold.skater_name} - ${podium.silver.skater_name} - ${podium.bronze.skater_name}`;
+      const names=[podium.gold.skater_name,podium.silver.skater_name,podium.bronze.skater_name];
+      const perms=[
+        [names[0],names[1],names[2]],[names[0],names[2],names[1]],[names[1],names[0],names[2]],
+        [names[1],names[2],names[0]],[names[2],names[0],names[1]],[names[2],names[1],names[0]]
+      ].map(a=>a.join(' - '));
+      const options=sampleOptions(answer,perms,4);
+      if(options.length<4) return null;
+      return {
+        type:'podium',
+        question:`${quizEventLabel(podium.gold)} ${tr('quizPodiumQuestion')}`,
+        options,
+        answer,
+        sourceRows:[podium.gold,podium.silver,podium.bronze],
+        meta:`${podium.gold.competition_type} / ${podium.gold.season} / ${podium.gold.event} / Podium`
+      };
+    }
+
+    function makeCountryQuiz(row, allRows){
+      const answer=row.country;
+      const pool=allRows.filter(r=>r.gender===row.gender).map(r=>r.country);
+      const options=sampleOptions(answer,pool,4);
+      if(options.length<4) return null;
+      return {
+        type:'country',
+        question:`${row.skater_name} ${tr('quizCountryQuestion')}`,
+        options,
+        answer,
+        sourceRows:[row],
+        meta:`${row.skater_name} / ${row.country}`
+      };
+    }
+
+    function makeMedalQuiz(podium){
+      const row=shuffleArray([podium.gold,podium.silver,podium.bronze])[0];
+      const answer=translateMedal(row.medal);
+      const options=['Gold','Silver','Bronze'].map(translateMedal);
+      return {
+        type:'medal',
+        question:`${quizEventLabel(row)} · ${row.skater_name}: ${tr('quizMedalQuestion')}`,
+        options:shuffleArray(options),
+        answer,
+        sourceRows:[row],
+        meta:`${row.competition_type} / ${row.season} / ${row.event} / ${row.medal}`
+      };
+    }
+
+    function buildQuizCandidates(){
+      const rows=getQuizBaseRows();
+      const podiums=getCompleteQuizPodiums(rows);
+      const selectedType=document.getElementById('quizType')?.value || 'mixed';
+      const candidates=[];
+      podiums.forEach(podium=>{
+        if(selectedType==='mixed'||selectedType==='gold'){
+          const q=makeGoldQuiz(podium, rows);
+          if(q) candidates.push(q);
+        }
+        if(selectedType==='mixed'||selectedType==='podium'){
+          const q=makePodiumQuiz(podium);
+          if(q) candidates.push(q);
+        }
+        if(selectedType==='mixed'||selectedType==='medal'){
+          const q=makeMedalQuiz(podium);
+          if(q) candidates.push(q);
+        }
+      });
+      if(selectedType==='mixed'||selectedType==='country'){
+        shuffleArray(rows).slice(0, Math.min(rows.length, 300)).forEach(row=>{
+          const q=makeCountryQuiz(row, rows);
+          if(q) candidates.push(q);
+        });
+      }
+      return shuffleArray(candidates);
+    }
+
+    function startRandomQuiz(){
+      const count=Number(document.getElementById('quizCount')?.value||10);
+      const candidates=buildQuizCandidates();
+      const wrap=document.getElementById('quizWrap');
+      if(!wrap) return;
+      if(candidates.length < Math.min(count, 3)){
+        currentQuizQuestions=[];
+        wrap.innerHTML=`<div class="empty">${tr('quizNoData')}</div>`;
+        return;
+      }
+      currentQuizQuestions=candidates.slice(0, Math.min(count, candidates.length)).map((q,i)=>({...q,id:i}));
+      renderQuizQuestions(false);
+    }
+
+    function renderQuizQuestions(showResult=false){
+      const wrap=document.getElementById('quizWrap');
+      if(!wrap) return;
+      if(!currentQuizQuestions.length){
+        wrap.innerHTML=`<div class="empty">${tr('quizEmpty')}</div>`;
+        return;
+      }
+      const html=currentQuizQuestions.map((q,idx)=>{
+        const selected=document.querySelector(`input[name="quiz_${q.id}"]:checked`)?.value || '';
+        return `<div class="quiz-question" data-quiz-id="${q.id}">
+          <div class="quiz-question-header">
+            <div class="quiz-question-title">${tr('quizQuestion')} ${idx+1}. ${escapeHtml(q.question)}</div>
+            <button type="button" class="quiz-report-btn" onclick="reportQuizIssue(${q.id})">${tr('quizReport')}</button>
+          </div>
+          <div class="quiz-options">${q.options.map(option=>{
+            const isSelected=selected===option;
+            const cls=showResult ? (option===q.answer ? ' correct' : (isSelected && option!==q.answer ? ' wrong' : '')) : '';
+            return `<label class="quiz-option${cls}"><input type="radio" name="quiz_${q.id}" value="${escapeHtml(option)}" ${isSelected?'checked':''}> <span>${escapeHtml(option)}</span></label>`;
+          }).join('')}</div>
+          ${showResult?`<div class="quiz-meta">${tr('quizCorrectAnswer')}: <strong>${escapeHtml(q.answer)}</strong> · ${tr('quizYourAnswer')}: <strong>${escapeHtml(selected||tr('quizUnanswered'))}</strong></div>`:''}
+          <div class="quiz-meta">${escapeHtml(q.meta||'')}</div>
+        </div>`;
+      }).join('');
+      wrap.innerHTML=html;
+    }
+
+    function getQuizTitleByRate(rate){
+      if(rate>=1) return tr('quizTitleGod');
+      if(rate>=0.9) return tr('quizTitleLegend');
+      if(rate>=0.8) return tr('quizTitleWorld');
+      if(rate>=0.7) return tr('quizTitlePodium');
+      if(rate>=0.5) return tr('quizTitleFan');
+      return tr('quizTitleRookie');
+    }
+
+    function submitRandomQuiz(){
+      if(!currentQuizQuestions.length) return;
+      let correct=0;
+      currentQuizQuestions.forEach(q=>{
+        const selected=document.querySelector(`input[name="quiz_${q.id}"]:checked`)?.value || '';
+        if(selected===q.answer) correct++;
+      });
+      renderQuizQuestions(true);
+      const rate=correct/currentQuizQuestions.length;
+      const result=document.createElement('div');
+      result.className='quiz-result-box';
+      result.innerHTML=`<div class="quiz-result-score">${tr('quizScoreText')}: ${correct} / ${currentQuizQuestions.length}</div>
+        <div>${tr('quizAccuracy')}: ${Math.round(rate*100)}%</div>
+        <div class="quiz-title-badge">${escapeHtml(getQuizTitleByRate(rate))}</div>`;
+      document.getElementById('quizWrap')?.prepend(result);
+    }
+
+    function resetRandomQuiz(){
+      currentQuizQuestions=[];
+      const wrap=document.getElementById('quizWrap');
+      if(wrap) wrap.innerHTML=`<div class="empty">${tr('quizEmpty')}</div>`;
+    }
+
+    function reportQuizIssue(id){
+      const q=currentQuizQuestions.find(item=>item.id===id);
+      openReportModal();
+      const textarea=document.getElementById('reportMessage');
+      if(textarea && q){
+        const rows=(q.sourceRows||[]).map(row=>[
+          row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.country,row.time
+        ].join(' | ')).join('\\n');
+        textarea.value=`[퀴즈 오류 신고]\\n문제: ${q.question}\\n정답 처리: ${q.answer}\\n선택지: ${q.options.join(' / ')}\\n관련 데이터:\\n${rows}`;
+      }
     }
 
     function openReportModal(){
