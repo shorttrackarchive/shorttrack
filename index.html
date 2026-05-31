@@ -349,8 +349,8 @@
     .fan-card-placeholder{font-size:13px;text-align:center;opacity:.85;padding:16px;line-height:1.45}
     .fan-card-name{font-size:25px;font-weight:950;text-align:center;letter-spacing:-.04em;margin-bottom:12px;text-shadow:0 2px 10px rgba(0,0,0,.35)}
     .fan-card-comment{font-size:12px;text-align:center;opacity:.9;margin:-4px 0 12px;min-height:18px}
-    .fan-card-stats{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-    .fan-card-stat{display:flex;justify-content:space-between;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px 9px;font-size:13px;font-weight:850}
+    .fan-card-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+    .fan-card-stat{display:flex;justify-content:space-between;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:7px 9px;font-size:13px;font-weight:850}
     .fan-card-stat .stat-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .fan-card-stat .stat-score{font-weight:950}
     .fan-card-footer{margin-top:12px;text-align:center;font-size:10px;opacity:.75}
@@ -808,11 +808,11 @@
           <div class="card-maker-grid">
             <div>
               <label for="fanCardName" data-i18n="cardSkaterName">선수명</label>
-              <input id="fanCardName" type="text" value="Choi Min-jeong" oninput="updateFanCard()">
+              <input id="fanCardName" type="text" value="Short Track" oninput="updateFanCard()">
             </div>
             <div>
               <label for="fanCardRating" data-i18n="cardRating">카드 점수</label>
-              <input id="fanCardRating" type="number" min="0" max="999" value="98" oninput="updateFanCard()">
+              <input id="fanCardRating" type="number" min="0" max="999" value="100" oninput="updateFanCard()">
             </div>
             <div>
               <label for="fanCardGrade" data-i18n="cardGrade">등급</label>
@@ -842,15 +842,16 @@
 
           <div style="margin-top:14px">
             <strong data-i18n="cardStats">스탯 항목 및 점수</strong>
-            <div class="subnote" data-i18n="cardStatsNotice">최대 7개까지 자유롭게 입력할 수 있습니다.</div>
+            <div class="subnote" data-i18n="cardStatsNotice">최대 8개까지 자유롭게 입력할 수 있습니다.</div>
             <div id="fanCardStatsEditor">
-              <div class="stat-editor"><input class="fan-stat-name" value="경기 운영" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="99" oninput="updateFanCard()"></div>
-              <div class="stat-editor"><input class="fan-stat-name" value="순간 가속" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="98" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="체력" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="100" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="스피드" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="100" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="스타트" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="100" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="몸싸움" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="100" oninput="updateFanCard()"></div>
               <div class="stat-editor"><input class="fan-stat-name" value="아웃코스" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="100" oninput="updateFanCard()"></div>
-              <div class="stat-editor"><input class="fan-stat-name" value="회복력" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="97" oninput="updateFanCard()"></div>
-              <div class="stat-editor"><input class="fan-stat-name" value="스타트" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="92" oninput="updateFanCard()"></div>
-              <div class="stat-editor"><input class="fan-stat-name" value="인코스" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="96" oninput="updateFanCard()"></div>
-              <div class="stat-editor"><input class="fan-stat-name" value="멘탈" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="99" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="인코스" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="100" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="경기운영" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="100" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="코스마킹" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="100" oninput="updateFanCard()"></div>
             </div>
           </div>
 
@@ -864,16 +865,25 @@
           <div class="fan-card grade-goat" id="fanCardPreview">
             <div class="fan-card-inner">
               <div class="fan-card-top">
-                <div class="fan-card-rating" id="fanCardPreviewRating">98</div>
+                <div class="fan-card-rating" id="fanCardPreviewRating">100</div>
                 <div class="fan-card-grade" id="fanCardPreviewGrade">GOAT</div>
               </div>
               <div class="fan-card-image-box">
                 <img id="fanCardPreviewImage" alt="Fan card image" crossorigin="anonymous">
                 <div class="fan-card-placeholder" id="fanCardImagePlaceholder">이미지 URL을 입력하면 여기에 표시됩니다.</div>
               </div>
-              <div class="fan-card-name" id="fanCardPreviewName">Choi Min-jeong</div>
+              <div class="fan-card-name" id="fanCardPreviewName">Short Track</div>
               <div class="fan-card-comment" id="fanCardPreviewComment">Fan-made short track card</div>
-              <div class="fan-card-stats" id="fanCardPreviewStats"></div>
+              <div class="fan-card-stats" id="fanCardPreviewStats">
+                <div class="fan-card-stat"><span class="stat-name">체력</span><span class="stat-score">100</span></div>
+                <div class="fan-card-stat"><span class="stat-name">스피드</span><span class="stat-score">100</span></div>
+                <div class="fan-card-stat"><span class="stat-name">스타트</span><span class="stat-score">100</span></div>
+                <div class="fan-card-stat"><span class="stat-name">몸싸움</span><span class="stat-score">100</span></div>
+                <div class="fan-card-stat"><span class="stat-name">아웃코스</span><span class="stat-score">100</span></div>
+                <div class="fan-card-stat"><span class="stat-name">인코스</span><span class="stat-score">100</span></div>
+                <div class="fan-card-stat"><span class="stat-name">경기운영</span><span class="stat-score">100</span></div>
+                <div class="fan-card-stat"><span class="stat-name">코스마킹</span><span class="stat-score">100</span></div>
+              </div>
               <div class="fan-card-footer" data-i18n="fanMadeFooter">FAN-MADE · NOT OFFICIAL</div>
             </div>
           </div>
@@ -951,7 +961,7 @@
         playerOverviewTitle:'선수 요약', playerOverviewDesc:'개인전·계주·대회 유형별 메달을 요약합니다.', playerMedalDetailTitle:'선수별 메달 내역', playerMedalDetailDesc:'개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.',
         eraRange:'시대', eraStartAll:'전체 시작', eraEndAll:'전체 끝',
         compareTitle:'선수 비교', compareDesc:'두 선수를 선택해 개인전 성적만 기준으로 점수와 종목별 성과를 비교합니다.',
-        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. 카드 이미지 저장 시 URL 보안/CORS 문제로 선수 이미지가 빠질 수 있습니다. 이 경우 화면 캡처를 이용해 주세요.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 7개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
+        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. 카드 이미지 저장 시 URL 보안/CORS 문제로 선수 이미지가 빠질 수 있습니다. 이 경우 화면 캡처를 이용해 주세요.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 8개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
         category:'구분', individual:'개인전', relayMedal:'계주', includeRelayTotal:'계주 포함', individualMedals:'개인전 메달', relayIncludedMedals:'계주 포함 메달', bestEvent:'최다 금메달 종목', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'점수', olympicScore:'올림픽 점수', worldsScore:'세계선수권 점수', worldcupScore:'월드컵·월드투어 점수', totalScore:'총점', noData:'데이터 없음',
         olympicGames:'올림픽', worldCup:'월드컵', worldTour:'월드투어', challengeCup:'챌린지컵', mixed:'혼성', overall:'종합', relay:'계주'
       },
@@ -1000,7 +1010,7 @@
         playerOverviewTitle:'Skater Summary', playerOverviewDesc:'Summarizes medals by individual/relay and competition type.', playerMedalDetailTitle:'Medal Details', playerMedalDetailDesc:'Shows individual medals together with relay medals from relay_members.',
         eraRange:'Era', eraStartAll:'Start', eraEndAll:'End',
         compareTitle:'Compare Skaters', compareDesc:'Select two skaters to compare scores and event performance based on individual results only.',
-        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. When saving the card as an image, the skater image may be missing due to URL security/CORS restrictions. In that case, use a screenshot instead.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 7 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
+        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. When saving the card as an image, the skater image may be missing due to URL security/CORS restrictions. In that case, use a screenshot instead.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 8 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
         category:'Category', individual:'Individual', relayMedal:'Relay', includeRelayTotal:'Relay included', individualMedals:'Individual medals', relayIncludedMedals:'Relay included medals', bestEvent:'Best gold-medal event', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'Score', olympicScore:'Olympic score', worldsScore:'Worlds score', worldcupScore:'World Cup/Tour score', totalScore:'Total score', noData:'No data',
         olympicGames:'Olympic Games', worldCup:'World Cup', worldTour:'World Tour', challengeCup:'Challenge Cup', mixed:'Mixed', overall:'Overall', relay:'Relay'
       }
@@ -2679,7 +2689,7 @@
 
       const statsWrap=document.getElementById('fanCardPreviewStats');
       if(statsWrap){
-        statsWrap.innerHTML=stats.slice(0,7).map(stat=>`<div class="fan-card-stat"><span class="stat-name">${escapeHtml(stat.name)}</span><span class="stat-score">${escapeHtml(stat.score)}</span></div>`).join('');
+        statsWrap.innerHTML=stats.slice(0,8).map(stat=>`<div class="fan-card-stat"><span class="stat-name">${escapeHtml(stat.name)}</span><span class="stat-score">${escapeHtml(stat.score)}</span></div>`).join('');
       }
     }
 
