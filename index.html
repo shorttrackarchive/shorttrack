@@ -1083,7 +1083,7 @@
         </div>
         <div class="quiz-actions">
           <button type="button" id="quizStartBtn" class="sort-btn primary-score-btn" data-i18n="startQuiz" onclick="startRandomQuiz()">퀴즈 시작</button>
-          <button type="button" id="quizSubmitBtn" class="sort-btn" data-i18n="submitQuiz" onclick="submitRandomQuiz()">채점하기</button>
+          <button type="button" id="quizSubmitBtn" class="sort-btn" data-i18n="submitQuiz" onclick="submitRandomQuiz()" style="display:none">채점하기</button>
           <button type="button" id="quizResetBtn" class="sort-btn" data-i18n="resetQuiz" onclick="resetRandomQuiz()">초기화</button>
         </div>
       </div>
@@ -3458,7 +3458,8 @@
         wrap.innerHTML=`<div class="empty">${tr('quizEmpty')}</div>`;
         return;
       }
-      const html=currentQuizQuestions.map((q,idx)=>{
+
+      const questionsHtml=currentQuizQuestions.map((q,idx)=>{
         const selected=document.querySelector(`input[name="quiz_${q.id}"]:checked`)?.value || '';
         return `<div class="quiz-question" data-quiz-id="${q.id}">
           <div class="quiz-question-header">
@@ -3470,11 +3471,16 @@
             const cls=showResult ? (option===q.answer ? ' correct' : (isSelected && option!==q.answer ? ' wrong' : '')) : '';
             return `<label class="quiz-option${cls}"><input type="radio" name="quiz_${q.id}" value="${escapeAttr(option)}" ${isSelected?'checked':''}> <span>${escapeHtml(option)}</span></label>`;
           }).join('')}</div>
-          ${showResult?`<div class="quiz-meta">${tr('quizCorrectAnswer')}: <strong>${escapeHtml(q.answer)}</strong> · ${tr('quizYourAnswer')}: <strong>${escapeHtml(selected||tr('quizUnanswered'))}</strong></div>`:''}
-          <div class="quiz-meta">${escapeHtml(q.meta||'')}</div>
+          ${showResult?`<div class="quiz-meta">${tr('quizCorrectAnswer')}: <strong>${escapeHtml(q.answer)}</strong> · ${tr('quizYourAnswer')}: <strong>${escapeHtml(selected||tr('quizUnanswered'))}</strong></div>
+          <div class="quiz-meta">${escapeHtml(q.meta||'')}</div>`:''}
         </div>`;
       }).join('');
-      wrap.innerHTML=html;
+
+      const bottomButton = showResult ? '' : `<div class="quiz-actions" style="justify-content:center;margin-top:16px">
+        <button type="button" class="sort-btn primary-score-btn" data-i18n="submitQuiz" onclick="submitRandomQuiz()">${tr('submitQuiz')}</button>
+      </div>`;
+
+      wrap.innerHTML=questionsHtml + bottomButton;
     }
 
     function getQuizTitleByRate(rate){
@@ -3497,10 +3503,15 @@
       const rate=correct/currentQuizQuestions.length;
       const result=document.createElement('div');
       result.className='quiz-result-box';
+      result.id='quizResultBox';
       result.innerHTML=`<div class="quiz-result-score">${tr('quizScoreText')}: ${correct} / ${currentQuizQuestions.length}</div>
         <div>${tr('quizAccuracy')}: ${Math.round(rate*100)}%</div>
         <div class="quiz-title-badge">${escapeHtml(getQuizTitleByRate(rate))}</div>`;
       document.getElementById('quizWrap')?.prepend(result);
+
+      setTimeout(()=>{
+        document.getElementById('quizResultBox')?.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 50);
     }
 
     function resetRandomQuiz(){
