@@ -201,6 +201,21 @@
     section,.anchor-section{scroll-margin-top:92px}
     main{padding-top:18px !important}
 
+
+    /* Visitor widget static position override */
+    .visitor-widget{
+      position:static !important;
+      width:max-content;
+      max-width:calc(100% - 32px);
+      margin:12px 16px 0 auto !important;
+      right:auto !important;
+      top:auto !important;
+      z-index:auto !important;
+    }
+    @media(max-width:720px){
+      .visitor-widget{margin:10px 16px 0 !important;width:auto}
+    }
+
 </style>
 </head>
 <body>
