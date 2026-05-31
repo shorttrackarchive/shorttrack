@@ -142,9 +142,19 @@
     .compact-medal-table th:nth-child(3),.compact-medal-table td:nth-child(3){text-align:left;min-width:52px}
     .compact-medal-table th{line-height:1.25}
     .compact-medal-table small{font-size:10.5px;color:var(--muted)}
+    .visitor-widget{position:fixed;right:18px;top:18px;z-index:70;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border:1px solid var(--line);box-shadow:0 10px 24px rgba(15,23,42,.12);border-radius:16px;padding:10px 12px;min-width:156px}
+    .visitor-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--muted);line-height:1.7}
+    .visitor-row strong{font-size:15px;color:#1e3a8a;font-weight:950}
+    @media(max-width:1050px){.visitor-widget{position:static;margin:0 16px 10px;display:inline-block;min-width:180px}.visitor-row{gap:18px}}
+
 </style>
 </head>
 <body>
+  <aside class="visitor-widget" aria-label="방문자 수">
+    <div class="visitor-row"><span data-i18n="todayVisitors">오늘 방문자 수</span><strong id="todayVisitors">-</strong></div>
+    <div class="visitor-row"><span data-i18n="totalVisitors">총 방문자 수</span><strong id="totalVisitors">-</strong></div>
+  </aside>
+
   <header>
     <div class="language-toggle" aria-label="Language">
       <button type="button" class="lang-btn active" data-lang="ko" onclick="setLanguage('ko')">한국어</button>
@@ -268,6 +278,7 @@
         <span class="ranking-filter-label" data-i18n="includeSettings">포함 설정</span>
         <button type="button" class="tab ranking-option-tab" data-option="includeOlympicDemo" data-i18n="olympicDemo">올림픽 시범종목</button>
         <button type="button" class="tab ranking-option-tab active" data-option="includeWorldsOverall" data-i18n="worldsOverall">세계선수권 종합</button>
+        <button type="button" class="tab ranking-option-tab" data-option="separateWorldsOverall" data-i18n="separateWorldsOverall">세계선수권 종합 포디움 별도</button>
         <button type="button" class="tab ranking-option-tab" data-option="includeIndividual3000m">3000m</button>
       </div>
 
@@ -299,6 +310,10 @@
           <div class="score-field"><label data-i18n="worldsGold">세계선수권 금</label><input class="score-input" data-score-key="worlds_gold" type="number" step="0.1" value="204"></div>
           <div class="score-field"><label data-i18n="worldsSilver">세계선수권 은</label><input class="score-input" data-score-key="worlds_silver" type="number" step="0.1" value="126"></div>
           <div class="score-field"><label data-i18n="worldsBronze">세계선수권 동</label><input class="score-input" data-score-key="worlds_bronze" type="number" step="0.1" value="78"></div>
+
+          <div class="score-field worlds-overall-score-field" style="display:none"><label data-i18n="worldsOverallGold">세계선수권 종합 금</label><input class="score-input worlds-overall-score-input" data-score-key="worlds_overall_gold" type="number" step="0.1" value="0"></div>
+          <div class="score-field worlds-overall-score-field" style="display:none"><label data-i18n="worldsOverallSilver">세계선수권 종합 은</label><input class="score-input worlds-overall-score-input" data-score-key="worlds_overall_silver" type="number" step="0.1" value="0"></div>
+          <div class="score-field worlds-overall-score-field" style="display:none"><label data-i18n="worldsOverallBronze">세계선수권 종합 동</label><input class="score-input worlds-overall-score-input" data-score-key="worlds_overall_bronze" type="number" step="0.1" value="0"></div>
 
           <div class="score-field"><label data-i18n="worldcupGold">월드컵·월드투어 금</label><input class="score-input" data-score-key="worldcup_gold" type="number" step="0.1" value="34"></div>
           <div class="score-field"><label data-i18n="worldcupSilver">월드컵·월드투어 은</label><input class="score-input" data-score-key="worldcup_silver" type="number" step="0.1" value="21"></div>
@@ -565,7 +580,7 @@
     const I18N = {
       ko: {
         appTitle:'Short Track Archive',
-        appSubtitle:'월드컵 · 월드투어 · 세계선수권 · 올림픽 쇼트트랙 포디움 아카이브',
+        appSubtitle:'월드컵 · 월드투어 · 세계선수권 · 올림픽 쇼트트랙 포디움 아카이브', todayVisitors:'오늘 방문자 수', totalVisitors:'총 방문자 수',
         navTitle:'바로가기', navSearch:'검색', navSkaterRank:'선수별 종합 순위', navCompare:'선수 비교', navCountryRank:'국가별 메달 순위', navEventRank:'종목별 선수 순위', navHallOfFame:'명예의 전당',
         navReport:'오류 신고 및 문의', navRecordRank:'종목별 기록 순위', navLapRank:'랩타임 순위', navRecords:'각종 기록',
         reportTitle:'오류 신고 및 문의', close:'닫기', cancel:'취소', submit:'제출',
@@ -576,7 +591,7 @@
         eventRankDesc:'종목별 점수 기준으로 산정합니다. 개인 종목은 선수별, 계주 종목은 국가별로 순위를 매깁니다. 초기 화면은 500m 순위입니다.',
         includeRelay:'계주 포함', individualOnly:'개인전만', gender:'성별', includeSettings:'포함 설정',
         all:'전체', menShort:'남', womenShort:'녀', men:'남자', women:'여자',
-        olympicDemo:'올림픽 시범종목', worldsOverall:'세계선수권 종합',
+        olympicDemo:'올림픽 시범종목', worldsOverall:'세계선수권 종합', separateWorldsOverall:'세계선수권 종합 포디움 별도', worldsOverallGold:'세계선수권 종합 금', worldsOverallSilver:'세계선수권 종합 은', worldsOverallBronze:'세계선수권 종합 동', worldsOverallGroup:'세계선수권 종합',
         olympics:'올림픽', worlds:'세계선수권', worldcupTour:'월드컵 및 월드투어',
         includeOlympicDemo:'올림픽 시범종목 포함', excludeOlympicDemo:'올림픽 시범종목 제외',
         event500:'500', event1000:'1000', event1500:'1500', womenRelay:'여자계주', menRelay:'남자계주', mixedRelay:'혼성계주',
@@ -625,7 +640,7 @@
         eventRankDesc:'Calculated with event-specific points. Individual events rank skaters; relay events rank countries. The default view is 500m.',
         includeRelay:'Include relay', individualOnly:'Individual only', gender:'Gender', includeSettings:'Settings',
         all:'All', menShort:'Men', womenShort:'Women', men:'Men', women:'Women',
-        olympicDemo:'Olympic demo events', worldsOverall:'Worlds overall',
+        olympicDemo:'Olympic demo events', worldsOverall:'Worlds overall', separateWorldsOverall:'Separate Worlds overall podiums', worldsOverallGold:'Worlds overall gold', worldsOverallSilver:'Worlds overall silver', worldsOverallBronze:'Worlds overall bronze', worldsOverallGroup:'Worlds overall',
         olympics:'Olympics', worlds:'World Championships', worldcupTour:'World Cup & World Tour',
         includeOlympicDemo:'Include Olympic demo events', excludeOlympicDemo:'Exclude Olympic demo events',
         event500:'500', event1000:'1000', event1500:'1500', womenRelay:"Women's relay", menRelay:"Men's relay", mixedRelay:'Mixed relay',
@@ -727,6 +742,7 @@
     let skaterRankingOptions = {
       includeOlympicDemo: false,
       includeWorldsOverall: true,
+      separateWorldsOverall: false,
       includeIndividual3000m: false
     };
     let scoreWeights = {};
@@ -751,8 +767,10 @@
       bindEvents();
       setLanguage('ko');
       updateEventGenderTabs();
+      updateWorldsOverallScoreFields();
       if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')){showNotConnected();return;}
       await loadData();
+      registerVisit();
     }
 
     function bindEvents(){
@@ -789,7 +807,26 @@
         const option = btn.dataset.option;
         if(!option || !(option in skaterRankingOptions)) return;
         skaterRankingOptions[option] = !skaterRankingOptions[option];
-        btn.classList.toggle('active', !!skaterRankingOptions[option]);
+
+        if(option === 'includeWorldsOverall' && !skaterRankingOptions.includeWorldsOverall){
+          skaterRankingOptions.separateWorldsOverall = false;
+          resetWorldsOverallScoreInputs();
+        }
+
+        if(option === 'separateWorldsOverall'){
+          if(skaterRankingOptions.separateWorldsOverall){
+            skaterRankingOptions.includeWorldsOverall = true;
+            copyWorldsScoresToOverallScores();
+          }else{
+            resetWorldsOverallScoreInputs();
+          }
+        }
+
+        document.querySelectorAll('.ranking-option-tab').forEach(b=>{
+          const opt=b.dataset.option;
+          if(opt && opt in skaterRankingOptions) b.classList.toggle('active', !!skaterRankingOptions[opt]);
+        });
+        updateWorldsOverallScoreFields();
         renderSkaterRanking(getFilteredSkaterMedals());
       }));
 
@@ -1284,6 +1321,29 @@
       renderSkaterRanking(getFilteredSkaterMedals());
     }
 
+    function resetWorldsOverallScoreInputs(){
+      document.querySelectorAll('.worlds-overall-score-input').forEach(input=>{
+        input.value='0';
+      });
+    }
+
+    function copyWorldsScoresToOverallScores(){
+      const gold=document.querySelector('[data-score-key="worlds_gold"]')?.value || '0';
+      const silver=document.querySelector('[data-score-key="worlds_silver"]')?.value || '0';
+      const bronze=document.querySelector('[data-score-key="worlds_bronze"]')?.value || '0';
+      const set=(key,value)=>{const input=document.querySelector(`[data-score-key="${key}"]`); if(input) input.value=value;};
+      set('worlds_overall_gold', gold);
+      set('worlds_overall_silver', silver);
+      set('worlds_overall_bronze', bronze);
+    }
+
+    function updateWorldsOverallScoreFields(){
+      const show=!!skaterRankingOptions.separateWorldsOverall;
+      document.querySelectorAll('.worlds-overall-score-field').forEach(el=>{
+        el.style.display=show?'block':'none';
+      });
+    }
+
     function readScoreWeights(){
       const weights={};
       document.querySelectorAll('.score-input').forEach(input=>{
@@ -1310,7 +1370,10 @@
     }
 
     function totalCustomScore(row,weights){
-      return bucketScore(row.olympic,'olympic',weights)+bucketScore(row.worlds,'worlds',weights)+bucketScore(row.worldcup,'worldcup',weights);
+      return bucketScore(row.olympic,'olympic',weights)
+        + bucketScore(row.worlds,'worlds',weights)
+        + (skaterRankingOptions.separateWorldsOverall ? bucketScore(row.worldsOverall,'worlds_overall',weights) : 0)
+        + bucketScore(row.worldcup,'worldcup',weights);
     }
 
     function formatScore(value){
@@ -1352,6 +1415,18 @@
       rows=rows.slice(0,50);
 
       const scoreHead = skaterCustomScoreEnabled ? `<th rowspan="2" class="sort-th score-col" onclick="setSkaterSort('custom_score')">${tr('score')}${sortArrow('custom_score')}</th>` : '';
+      const worldsOverallHead = skaterRankingOptions.separateWorldsOverall
+        ? `<th colspan="4" class="group-head">${tr('worldsOverallGroup')}</th>`
+        : '';
+      const worldsOverallSubHead = skaterRankingOptions.separateWorldsOverall
+        ? `<th class="medal-num sort-th" onclick="setSkaterSort('worlds_overall_gold')">${tr('gold')}${sortArrow('worlds_overall_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_overall_silver')">${tr('silver')}${sortArrow('worlds_overall_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_overall_bronze')">${tr('bronze')}${sortArrow('worlds_overall_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_overall_total')">${tr('total')}${sortArrow('worlds_overall_total')}</th>`
+        : '';
+      const worldsOverallCells = row => skaterRankingOptions.separateWorldsOverall
+        ? `<td class="medal-num">${row.worldsOverall.gold}</td><td class="medal-num">${row.worldsOverall.silver}</td><td class="medal-num">${row.worldsOverall.bronze}</td><td class="medal-num rank-total">${medalTotal(row.worldsOverall)}</td>`
+        : '';
 
       const rankingOptionSummary = getSkaterRankingOptionSummary();
 
@@ -1364,38 +1439,42 @@
             <th rowspan="2" class="country-col sort-th" onclick="setSkaterSort('country')">${tr('country')}${sortArrow('country')}</th>
             <th colspan="4" class="group-head">${tr('olympic')}</th>
             <th colspan="4" class="group-head">${tr('worldChampionships')}</th>
+            ${worldsOverallHead}
             <th colspan="4" class="group-head">${tr('worldCupTour')}</th>
             <th colspan="4" class="group-head">${tr('totalGroup')}</th>
             ${scoreHead}
           </tr>
           <tr>
-            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_gold')" title="올림픽 금">${tr('gold')}${sortArrow('olympic_gold')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_silver')" title="올림픽 은">${tr('silver')}${sortArrow('olympic_silver')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_bronze')" title="올림픽 동">${tr('bronze')}${sortArrow('olympic_bronze')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_total')" title="올림픽 합계">${tr('total')}${sortArrow('olympic_total')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_gold')">${tr('gold')}${sortArrow('olympic_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_silver')">${tr('silver')}${sortArrow('olympic_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_bronze')">${tr('bronze')}${sortArrow('olympic_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('olympic_total')">${tr('total')}${sortArrow('olympic_total')}</th>
 
-            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_gold')" title="세계선수권 금">${tr('gold')}${sortArrow('worlds_gold')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_silver')" title="세계선수권 은">${tr('silver')}${sortArrow('worlds_silver')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_bronze')" title="세계선수권 동">${tr('bronze')}${sortArrow('worlds_bronze')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_total')" title="세계선수권 합계">${tr('total')}${sortArrow('worlds_total')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_gold')">${tr('gold')}${sortArrow('worlds_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_silver')">${tr('silver')}${sortArrow('worlds_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_bronze')">${tr('bronze')}${sortArrow('worlds_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worlds_total')">${tr('total')}${sortArrow('worlds_total')}</th>
 
-            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_gold')" title="월드컵·월드투어 금">${tr('gold')}${sortArrow('worldcup_gold')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_silver')" title="월드컵·월드투어 은">${tr('silver')}${sortArrow('worldcup_silver')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_bronze')" title="월드컵·월드투어 동">${tr('bronze')}${sortArrow('worldcup_bronze')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_total')" title="월드컵·월드투어 합계">${tr('total')}${sortArrow('worldcup_total')}</th>
+            ${worldsOverallSubHead}
 
-            <th class="medal-num sort-th" onclick="setSkaterSort('total_gold')" title="총 금">${tr('gold')}${sortArrow('total_gold')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('total_silver')" title="총 은">${tr('silver')}${sortArrow('total_silver')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('total_bronze')" title="총 동">${tr('bronze')}${sortArrow('total_bronze')}</th>
-            <th class="medal-num sort-th" onclick="setSkaterSort('total_count')" title="총합">${tr('total')}${sortArrow('total_count')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_gold')">${tr('gold')}${sortArrow('worldcup_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_silver')">${tr('silver')}${sortArrow('worldcup_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_bronze')">${tr('bronze')}${sortArrow('worldcup_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('worldcup_total')">${tr('total')}${sortArrow('worldcup_total')}</th>
+
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_gold')">${tr('gold')}${sortArrow('total_gold')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_silver')">${tr('silver')}${sortArrow('total_silver')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_bronze')">${tr('bronze')}${sortArrow('total_bronze')}</th>
+            <th class="medal-num sort-th" onclick="setSkaterSort('total_count')">${tr('total')}${sortArrow('total_count')}</th>
           </tr>
         </thead>
         <tbody>${rows.map((row,i)=>`<tr>
           <td class="rank-col">${i+1}</td>
-          <td class="name-col"><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}</td>
+          <td class="name-col"><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}</span></td>
           <td class="country-col">${escapeHtml(row.country)}</td>
           <td class="medal-num">${row.olympic.gold}</td><td class="medal-num">${row.olympic.silver}</td><td class="medal-num">${row.olympic.bronze}</td><td class="medal-num rank-total">${medalTotal(row.olympic)}</td>
           <td class="medal-num">${row.worlds.gold}</td><td class="medal-num">${row.worlds.silver}</td><td class="medal-num">${row.worlds.bronze}</td><td class="medal-num rank-total">${medalTotal(row.worlds)}</td>
+          ${worldsOverallCells(row)}
           <td class="medal-num">${row.worldcup.gold}</td><td class="medal-num">${row.worldcup.silver}</td><td class="medal-num">${row.worldcup.bronze}</td><td class="medal-num rank-total">${medalTotal(row.worldcup)}</td>
           <td class="medal-num">${row.total.gold}</td><td class="medal-num">${row.total.silver}</td><td class="medal-num">${row.total.bronze}</td><td class="medal-num rank-total">${medalTotal(row.total)}</td>
           ${skaterCustomScoreEnabled?`<td class="score-result score-col">${formatScore(row.customScore)}</td>`:''}
@@ -1407,8 +1486,9 @@
       const genderLabel = skaterRankingGender === 'men' ? tr('menShort') : skaterRankingGender === 'women' ? tr('womenShort') : tr('all');
       const demoLabel = skaterRankingOptions.includeOlympicDemo ? tr('includeOlympicDemo') : tr('excludeOlympicDemo');
       const worldsOverallLabel = skaterRankingOptions.includeWorldsOverall ? tr('worldsOverall') + ' ' + (currentLang==='en'?'included':'포함') : tr('worldsOverall') + ' ' + (currentLang==='en'?'excluded':'제외');
+      const separateLabel = skaterRankingOptions.separateWorldsOverall ? tr('separateWorldsOverall') + ' ' + (currentLang==='en'?'on':'적용') : tr('separateWorldsOverall') + ' ' + (currentLang==='en'?'off':'해제');
       const event3000Label = skaterRankingOptions.includeIndividual3000m ? '3000m ' + (currentLang==='en'?'included':'포함') : '3000m ' + (currentLang==='en'?'excluded':'제외');
-      return `${genderLabel} · ${demoLabel} · ${worldsOverallLabel} · ${event3000Label}`;
+      return `${genderLabel} · ${demoLabel} · ${worldsOverallLabel} · ${separateLabel} · ${event3000Label}`;
     }
 
     function defaultSkaterCompare(a,b){
@@ -1418,10 +1498,34 @@
         b.worlds.gold-a.worlds.gold||
         b.worlds.silver-a.worlds.silver||
         b.worlds.bronze-a.worlds.bronze||
+        (skaterRankingOptions.separateWorldsOverall ? (b.worldsOverall.gold-a.worldsOverall.gold||b.worldsOverall.silver-a.worldsOverall.silver||b.worldsOverall.bronze-a.worldsOverall.bronze) : 0)||
         b.worldcup.gold-a.worldcup.gold||
         b.worldcup.silver-a.worldcup.silver||
         b.worldcup.bronze-a.worldcup.bronze||
         String(a.name).localeCompare(String(b.name),'ko');
+    }
+
+    function resetWorldsOverallScoreInputs(){
+      document.querySelectorAll('.worlds-overall-score-input').forEach(input=>{
+        input.value='0';
+      });
+    }
+
+    function copyWorldsScoresToOverallScores(){
+      const gold=document.querySelector('[data-score-key="worlds_gold"]')?.value || '0';
+      const silver=document.querySelector('[data-score-key="worlds_silver"]')?.value || '0';
+      const bronze=document.querySelector('[data-score-key="worlds_bronze"]')?.value || '0';
+      const set=(key,value)=>{const input=document.querySelector(`[data-score-key="${key}"]`); if(input) input.value=value;};
+      set('worlds_overall_gold', gold);
+      set('worlds_overall_silver', silver);
+      set('worlds_overall_bronze', bronze);
+    }
+
+    function updateWorldsOverallScoreFields(){
+      const show=!!skaterRankingOptions.separateWorldsOverall;
+      document.querySelectorAll('.worlds-overall-score-field').forEach(el=>{
+        el.style.display=show?'block':'none';
+      });
     }
 
     function readScoreWeights(){
@@ -1441,7 +1545,10 @@
         if(!map.has(key)) map.set(key,createSkaterAgg(row.skater_name,row.country));
         const item=map.get(key);
         if(row.country && !item.country) item.country=row.country;
-        const bucket=competitionBucket(row.competition_type);
+        let bucket=competitionBucket(row.competition_type);
+        if(bucket==='worlds' && skaterRankingOptions.separateWorldsOverall && isWorldChampionshipOverallRow(row)){
+          bucket='worldsOverall';
+        }
         addMedalCount(item[bucket], row.medal);
         addMedalCount(item.total, row.medal);
       });
@@ -1468,6 +1575,7 @@
         country:country||'',
         olympic:{gold:0,silver:0,bronze:0},
         worlds:{gold:0,silver:0,bronze:0},
+        worldsOverall:{gold:0,silver:0,bronze:0},
         worldcup:{gold:0,silver:0,bronze:0},
         total:{gold:0,silver:0,bronze:0}
       };
@@ -1502,6 +1610,7 @@
       const panel = document.getElementById('skaterScorePanel');
       if(panel) panel.classList.add('open');
 
+      updateWorldsOverallScoreFields();
       renderSkaterRanking(getFilteredSkaterMedals());
       renderPlayerComparison();
     }
@@ -1544,6 +1653,10 @@
         case 'worlds_silver':return row.worlds.silver;
         case 'worlds_bronze':return row.worlds.bronze;
         case 'worlds_total':return medalTotal(row.worlds);
+        case 'worlds_overall_gold':return row.worldsOverall.gold;
+        case 'worlds_overall_silver':return row.worldsOverall.silver;
+        case 'worlds_overall_bronze':return row.worldsOverall.bronze;
+        case 'worlds_overall_total':return medalTotal(row.worldsOverall);
         case 'worldcup_gold':return row.worldcup.gold;
         case 'worldcup_silver':return row.worldcup.silver;
         case 'worldcup_bronze':return row.worldcup.bronze;
@@ -1554,6 +1667,7 @@
         case 'total_count':return medalTotal(row.total);
         case 'olympic_group':return groupSortScore(row.olympic);
         case 'worlds_group':return groupSortScore(row.worlds);
+        case 'worlds_overall_group':return groupSortScore(row.worldsOverall);
         case 'worldcup_group':return groupSortScore(row.worldcup);
         case 'total_group':return groupSortScore(row.total);
         case 'custom_score':return row.customScore||0;
@@ -1719,6 +1833,7 @@
         b.worlds.gold-a.worlds.gold||
         b.worlds.silver-a.worlds.silver||
         b.worlds.bronze-a.worlds.bronze||
+        (skaterRankingOptions.separateWorldsOverall ? (b.worldsOverall.gold-a.worldsOverall.gold||b.worldsOverall.silver-a.worldsOverall.silver||b.worldsOverall.bronze-a.worldsOverall.bronze) : 0)||
         b.worldcup.gold-a.worldcup.gold||
         b.worldcup.silver-a.worldcup.silver||
         b.worldcup.bronze-a.worldcup.bronze||
@@ -1744,7 +1859,10 @@
     function aggregateRowsForComparison(rows){
       const agg=createSkaterAgg('', '');
       rows.forEach(row=>{
-        const bucket=competitionBucket(row.competition_type);
+        let bucket=competitionBucket(row.competition_type);
+        if(bucket==='worlds' && skaterRankingOptions.separateWorldsOverall && isWorldChampionshipOverallRow(row)){
+          bucket='worldsOverall';
+        }
         addMedalCount(agg[bucket], row.medal);
         addMedalCount(agg.total, row.medal);
       });
@@ -2083,6 +2201,45 @@
     function medalKorean(medal){return medal==='Gold'?tr('gold'):medal==='Silver'?tr('silver'):medal==='Bronze'?tr('bronze'):medal||'';}
     function genderKorean(gender){return gender==='Men'?tr('men'):gender==='Women'?tr('women'):gender==='Mixed'?'Mixed':escapeHtml(gender||'');}
 
+
+
+    function visitorLocalDate(){
+      const d=new Date();
+      const y=d.getFullYear();
+      const m=String(d.getMonth()+1).padStart(2,'0');
+      const day=String(d.getDate()).padStart(2,'0');
+      return `${y}-${m}-${day}`;
+    }
+
+    async function registerVisit(){
+      const todayEl=document.getElementById('todayVisitors');
+      const totalEl=document.getElementById('totalVisitors');
+      if(!todayEl || !totalEl || !APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')) return;
+
+      try{
+        const payload={
+          action:'visit',
+          visit_date:visitorLocalDate(),
+          page_url:location.href,
+          user_agent:navigator.userAgent,
+          referrer:document.referrer || '',
+          created_at:new Date().toISOString()
+        };
+        const response=await fetch(APPS_SCRIPT_URL,{
+          method:'POST',
+          headers:{'Content-Type':'text/plain;charset=utf-8'},
+          body:JSON.stringify(payload)
+        });
+        const result=await response.json().catch(()=>({ok:false}));
+        if(!result.ok) throw new Error(result.error || 'visit count failed');
+        todayEl.textContent=String(result.today ?? '-');
+        totalEl.textContent=String(result.total ?? '-');
+      }catch(error){
+        console.warn('방문자 수를 불러오지 못했습니다.', error);
+        todayEl.textContent='-';
+        totalEl.textContent='-';
+      }
+    }
 
     function openReportModal(){
       const modal=document.getElementById('reportModalBackdrop');
