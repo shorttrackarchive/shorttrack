@@ -255,6 +255,115 @@
       }
     }
 
+
+    /* Mobile table sticky name column */
+    @media(max-width:760px){
+      .table-scroll{
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+        position:relative;
+      }
+      .table-scroll table{
+        min-width:max-content;
+      }
+      .medal-detail-table th.name-col,
+      .medal-detail-table td.name-col,
+      .compact-medal-table th:nth-child(2),
+      .compact-medal-table td:nth-child(2){
+        position:sticky;
+        left:0;
+        z-index:4;
+        background:#fff;
+        box-shadow:8px 0 10px -10px rgba(15,23,42,.35);
+      }
+      .medal-detail-table thead th.name-col,
+      .compact-medal-table thead th:nth-child(2){
+        z-index:8;
+        background:#f8fafc;
+      }
+      .medal-detail-table td.name-col,
+      .compact-medal-table td:nth-child(2){
+        max-width:132px;
+        min-width:132px;
+        white-space:normal;
+        word-break:keep-all;
+      }
+      .medal-detail-table th.name-col,
+      .compact-medal-table th:nth-child(2){
+        max-width:132px;
+        min-width:132px;
+      }
+      .medal-detail-table th.rank-col,
+      .medal-detail-table td.rank-col{
+        position:sticky;
+        left:0;
+        z-index:5;
+        background:#fff;
+      }
+      .medal-detail-table th.rank-col + th.name-col,
+      .medal-detail-table td.rank-col + td.name-col{
+        left:48px;
+      }
+      .medal-detail-table thead th.rank-col{
+        z-index:9;
+        background:#f8fafc;
+      }
+      .medal-detail-table thead th.rank-col + th.name-col{
+        z-index:10;
+        background:#f8fafc;
+      }
+      .table-scroll::after{
+        content:'← →';
+        position:sticky;
+        right:8px;
+        bottom:6px;
+        float:right;
+        font-size:11px;
+        color:var(--muted);
+        background:rgba(255,255,255,.88);
+        border:1px solid var(--line);
+        border-radius:999px;
+        padding:2px 7px;
+        pointer-events:none;
+      }
+    }
+
+
+    /* Fan-made skater card maker */
+    .card-maker-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+    .card-maker-form{border:1px solid var(--line);border-radius:18px;background:#fbfdff;padding:16px}
+    .card-maker-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .card-maker-grid .wide{grid-column:1/-1}
+    .card-maker-form label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin:0 0 5px}
+    .stat-editor{display:grid;grid-template-columns:1fr 92px;gap:8px;margin-bottom:8px}
+    .card-maker-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .fan-card-wrap{display:flex;justify-content:center}
+    .fan-card{width:330px;min-height:520px;border-radius:28px;padding:18px;position:relative;overflow:hidden;color:#fff;box-shadow:0 22px 45px rgba(15,23,42,.22);border:1px solid rgba(255,255,255,.22);background:linear-gradient(145deg,#334155,#0f172a)}
+    .fan-card:before{content:"";position:absolute;inset:-40%;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.38),transparent 28%),radial-gradient(circle at 80% 0%,rgba(255,255,255,.18),transparent 25%);transform:rotate(12deg);pointer-events:none}
+    .fan-card-inner{position:relative;z-index:1}
+    .fan-card-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .fan-card-rating{font-size:42px;font-weight:950;line-height:1;letter-spacing:-.05em}
+    .fan-card-grade{font-size:13px;font-weight:950;letter-spacing:.08em;text-align:right;max-width:150px}
+    .fan-card-image-box{height:210px;border-radius:22px;margin:16px 0 14px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .fan-card-image-box img{width:100%;height:100%;object-fit:cover;display:none}
+    .fan-card-placeholder{font-size:13px;text-align:center;opacity:.85;padding:16px;line-height:1.45}
+    .fan-card-name{font-size:25px;font-weight:950;text-align:center;letter-spacing:-.04em;margin-bottom:12px;text-shadow:0 2px 10px rgba(0,0,0,.35)}
+    .fan-card-comment{font-size:12px;text-align:center;opacity:.9;margin:-4px 0 12px;min-height:18px}
+    .fan-card-stats{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .fan-card-stat{display:flex;justify-content:space-between;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:8px 9px;font-size:13px;font-weight:850}
+    .fan-card-stat .stat-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .fan-card-stat .stat-score{font-weight:950}
+    .fan-card-footer{margin-top:12px;text-align:center;font-size:10px;opacity:.75}
+    .grade-prospect{background:linear-gradient(145deg,#64748b,#1e293b)}
+    .grade-contender{background:linear-gradient(145deg,#0f766e,#064e3b)}
+    .grade-champion{background:linear-gradient(145deg,#2563eb,#1e3a8a)}
+    .grade-world-class{background:linear-gradient(145deg,#7c3aed,#3b0764)}
+    .grade-legend{background:linear-gradient(145deg,#b45309,#451a03)}
+    .grade-goat{background:linear-gradient(145deg,#111827,#000000 55%,#b8860b)}
+    .grade-custom{background:linear-gradient(145deg,#db2777,#312e81)}
+    @media(max-width:980px){.card-maker-layout{grid-template-columns:1fr}.fan-card{width:min(330px,100%)}}
+    @media(max-width:560px){.card-maker-grid{grid-template-columns:1fr}.stat-editor{grid-template-columns:1fr 86px}.fan-card{min-height:500px}.fan-card-image-box{height:190px}}
+
 </style>
 </head>
 <body>
@@ -279,6 +388,7 @@
     <button type="button" data-i18n="navCountryRank" onclick="scrollToSection('countryRankingSection')">국가별 메달 순위</button>
     <button type="button" data-i18n="navEventRank" onclick="scrollToSection('eventRankingSection')">종목별 선수 순위</button>
     <button type="button" data-i18n="navHallOfFame" onclick="scrollToSection('hallOfFameSection')">명예의 전당</button>
+    <button type="button" data-i18n="navCardMaker" onclick="scrollToSection('cardMakerSection')">선수 카드 만들기</button>
     <button type="button" data-i18n="navReport" onclick="openReportModal()">오류 신고 및 문의</button>
     <button type="button" class="nav-soon" data-i18n="navRecordRank" onclick="showPreparing()">종목별 기록 순위</button>
     <button type="button" class="nav-soon" data-i18n="navLapRank" onclick="showPreparing()">랩타임 순위</button>
@@ -687,6 +797,91 @@
       </div>
     </section>
 
+
+    <section class="card anchor-section" id="cardMakerSection">
+      <div class="section-title"><div><h2 data-i18n="cardMakerTitle">선수 카드 만들기</h2><span data-i18n="cardMakerDesc">이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.</span></div></div>
+
+      <div class="card-maker-layout">
+        <div class="card-maker-form">
+          <div class="subnote" data-i18n="cardMakerNotice">이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. 카드 이미지 저장 시 URL 보안/CORS 문제로 선수 이미지가 빠질 수 있습니다. 이 경우 화면 캡처를 이용해 주세요.</div>
+
+          <div class="card-maker-grid">
+            <div>
+              <label for="fanCardName" data-i18n="cardSkaterName">선수명</label>
+              <input id="fanCardName" type="text" value="Choi Min-jeong" oninput="updateFanCard()">
+            </div>
+            <div>
+              <label for="fanCardRating" data-i18n="cardRating">카드 점수</label>
+              <input id="fanCardRating" type="number" min="0" max="999" value="98" oninput="updateFanCard()">
+            </div>
+            <div>
+              <label for="fanCardGrade" data-i18n="cardGrade">등급</label>
+              <select id="fanCardGrade" onchange="updateFanCard()">
+                <option value="PROSPECT">PROSPECT</option>
+                <option value="CONTENDER">CONTENDER</option>
+                <option value="CHAMPION">CHAMPION</option>
+                <option value="WORLD CLASS">WORLD CLASS</option>
+                <option value="LEGEND">LEGEND</option>
+                <option value="GOAT" selected>GOAT</option>
+                <option value="CUSTOM">CUSTOM</option>
+              </select>
+            </div>
+            <div>
+              <label for="fanCardCustomGrade" data-i18n="cardCustomGrade">CUSTOM 등급명</label>
+              <input id="fanCardCustomGrade" type="text" placeholder="예: ACE" oninput="updateFanCard()">
+            </div>
+            <div class="wide">
+              <label for="fanCardImageUrl" data-i18n="cardImageUrl">이미지 URL</label>
+              <input id="fanCardImageUrl" type="url" placeholder="https://..." oninput="updateFanCard()">
+            </div>
+            <div class="wide">
+              <label for="fanCardComment" data-i18n="cardComment">한 줄 코멘트</label>
+              <input id="fanCardComment" type="text" value="Fan-made short track card" oninput="updateFanCard()">
+            </div>
+          </div>
+
+          <div style="margin-top:14px">
+            <strong data-i18n="cardStats">스탯 항목 및 점수</strong>
+            <div class="subnote" data-i18n="cardStatsNotice">최대 7개까지 자유롭게 입력할 수 있습니다.</div>
+            <div id="fanCardStatsEditor">
+              <div class="stat-editor"><input class="fan-stat-name" value="경기 운영" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="99" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="순간 가속" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="98" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="아웃코스" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="100" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="회복력" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="97" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="스타트" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="92" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="인코스" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="96" oninput="updateFanCard()"></div>
+              <div class="stat-editor"><input class="fan-stat-name" value="멘탈" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="99" oninput="updateFanCard()"></div>
+            </div>
+          </div>
+
+          <div class="card-maker-actions">
+            <button type="button" class="sort-btn primary-score-btn" data-i18n="updateCard" onclick="updateFanCard()">카드 만들기</button>
+            <button type="button" class="sort-btn" data-i18n="downloadCard" onclick="downloadFanCard()">이미지 저장</button>
+          </div>
+        </div>
+
+        <div class="fan-card-wrap">
+          <div class="fan-card grade-goat" id="fanCardPreview">
+            <div class="fan-card-inner">
+              <div class="fan-card-top">
+                <div class="fan-card-rating" id="fanCardPreviewRating">98</div>
+                <div class="fan-card-grade" id="fanCardPreviewGrade">GOAT</div>
+              </div>
+              <div class="fan-card-image-box">
+                <img id="fanCardPreviewImage" alt="Fan card image" crossorigin="anonymous">
+                <div class="fan-card-placeholder" id="fanCardImagePlaceholder">이미지 URL을 입력하면 여기에 표시됩니다.</div>
+              </div>
+              <div class="fan-card-name" id="fanCardPreviewName">Choi Min-jeong</div>
+              <div class="fan-card-comment" id="fanCardPreviewComment">Fan-made short track card</div>
+              <div class="fan-card-stats" id="fanCardPreviewStats"></div>
+              <div class="fan-card-footer" data-i18n="fanMadeFooter">FAN-MADE · NOT OFFICIAL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
     <section class="card" id="medalListCard">
       <div class="section-title"><div><h2>메달 목록</h2><span>상세 원자료 확인용 목록입니다. 길어지기 쉬워 화면 맨 아래에 배치했습니다.</div></div>
       <div class="tabs" aria-label="성별 보기">
@@ -706,14 +901,15 @@
 
   </main>
 
-  <script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
 
     let currentLang = 'ko';
     const I18N = {
       ko: {
         appTitle:'Short Track Archive',
         appSubtitle:'월드컵 · 월드투어 · 세계선수권 · 올림픽 쇼트트랙 포디움 아카이브', todayVisitors:'오늘 방문자 수', totalVisitors:'총 방문자 수',
-        navTitle:'바로가기', navSearch:'검색', navSkaterRank:'선수별 종합 순위', navCompare:'선수 비교', navCountryRank:'국가별 메달 순위', navEventRank:'종목별 선수 순위', navHallOfFame:'명예의 전당',
+        navTitle:'바로가기', navSearch:'검색', navSkaterRank:'선수별 종합 순위', navCompare:'선수 비교', navCountryRank:'국가별 메달 순위', navEventRank:'종목별 선수 순위', navHallOfFame:'명예의 전당', navCardMaker:'선수 카드 만들기',
         navReport:'오류 신고 및 문의', navRecordRank:'종목별 기록 순위', navLapRank:'랩타임 순위', navRecords:'각종 기록',
         reportTitle:'오류 신고 및 문의', close:'닫기', cancel:'취소', submit:'제출',
         reportPlaceholder:'오류 내용이나 문의 내용을 입력해 주세요.', searchPlaceholder:'선수명, 국가, 대회명, 종목 검색',
@@ -755,14 +951,14 @@
         playerOverviewTitle:'선수 요약', playerOverviewDesc:'개인전·계주·대회 유형별 메달을 요약합니다.', playerMedalDetailTitle:'선수별 메달 내역', playerMedalDetailDesc:'개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.',
         eraRange:'시대', eraStartAll:'전체 시작', eraEndAll:'전체 끝',
         compareTitle:'선수 비교', compareDesc:'두 선수를 선택해 개인전 성적만 기준으로 점수와 종목별 성과를 비교합니다.',
-        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
+        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. 카드 이미지 저장 시 URL 보안/CORS 문제로 선수 이미지가 빠질 수 있습니다. 이 경우 화면 캡처를 이용해 주세요.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 7개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
         category:'구분', individual:'개인전', relayMedal:'계주', includeRelayTotal:'계주 포함', individualMedals:'개인전 메달', relayIncludedMedals:'계주 포함 메달', bestEvent:'최다 금메달 종목', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'점수', olympicScore:'올림픽 점수', worldsScore:'세계선수권 점수', worldcupScore:'월드컵·월드투어 점수', totalScore:'총점', noData:'데이터 없음',
         olympicGames:'올림픽', worldCup:'월드컵', worldTour:'월드투어', challengeCup:'챌린지컵', mixed:'혼성', overall:'종합', relay:'계주'
       },
       en: {
         appTitle:'Short Track Archive',
         appSubtitle:'Short track podium archive for World Cup, World Tour, World Championships, and Olympics',
-        navTitle:'Menu', navSearch:'Search', navSkaterRank:'Overall Skater Ranking', navCompare:'Compare Skaters', navCountryRank:'Country Medal Ranking', navEventRank:'Event Ranking', navHallOfFame:'Hall of Fame',
+        navTitle:'Menu', navSearch:'Search', navSkaterRank:'Overall Skater Ranking', navCompare:'Compare Skaters', navCountryRank:'Country Medal Ranking', navEventRank:'Event Ranking', navHallOfFame:'Hall of Fame', navCardMaker:'Card Maker',
         navReport:'Report / Contact', navRecordRank:'Event Record Ranking', navLapRank:'Lap Time Ranking', navRecords:'Records',
         reportTitle:'Report / Contact', close:'Close', cancel:'Cancel', submit:'Submit',
         reportPlaceholder:'Enter an error report or question.', searchPlaceholder:'Search skater, country, competition, or event',
@@ -804,7 +1000,7 @@
         playerOverviewTitle:'Skater Summary', playerOverviewDesc:'Summarizes medals by individual/relay and competition type.', playerMedalDetailTitle:'Medal Details', playerMedalDetailDesc:'Shows individual medals together with relay medals from relay_members.',
         eraRange:'Era', eraStartAll:'Start', eraEndAll:'End',
         compareTitle:'Compare Skaters', compareDesc:'Select two skaters to compare scores and event performance based on individual results only.',
-        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
+        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. When saving the card as an image, the skater image may be missing due to URL security/CORS restrictions. In that case, use a screenshot instead.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 7 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
         category:'Category', individual:'Individual', relayMedal:'Relay', includeRelayTotal:'Relay included', individualMedals:'Individual medals', relayIncludedMedals:'Relay included medals', bestEvent:'Best gold-medal event', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'Score', olympicScore:'Olympic score', worldsScore:'Worlds score', worldcupScore:'World Cup/Tour score', totalScore:'Total score', noData:'No data',
         olympicGames:'Olympic Games', worldCup:'World Cup', worldTour:'World Tour', challengeCup:'Challenge Cup', mixed:'Mixed', overall:'Overall', relay:'Relay'
       }
@@ -901,9 +1097,11 @@
       setLanguage('ko');
       updateCompareOptionTabs();
       updateEventGenderTabs();
+      updateFanCard();
       updateWorldsOverallScoreFields();
       if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')){showNotConnected();return;}
       await loadData();
+      updateFanCard();
       registerVisit();
     }
 
@@ -2415,6 +2613,102 @@
         console.warn('방문자 수를 불러오지 못했습니다.', error);
         todayEl.textContent='-';
         totalEl.textContent='-';
+      }
+    }
+
+
+    function fanCardGradeClass(grade){
+      const value=String(grade||'CUSTOM').toLowerCase().replace(/\s+/g,'-');
+      if(['prospect','contender','champion','world-class','legend','goat','custom'].includes(value)) return 'grade-'+value;
+      return 'grade-custom';
+    }
+
+    function updateFanCard(){
+      const card=document.getElementById('fanCardPreview');
+      if(!card) return;
+
+      const name=document.getElementById('fanCardName')?.value.trim() || 'Unnamed Skater';
+      const rating=document.getElementById('fanCardRating')?.value || '-';
+      const gradeSelect=document.getElementById('fanCardGrade');
+      const selectedGrade=gradeSelect?.value || 'CUSTOM';
+      const customGrade=document.getElementById('fanCardCustomGrade')?.value.trim();
+      const grade=selectedGrade==='CUSTOM' && customGrade ? customGrade : selectedGrade;
+      const comment=document.getElementById('fanCardComment')?.value.trim() || '';
+      const imageUrl=document.getElementById('fanCardImageUrl')?.value.trim() || '';
+
+      card.className='fan-card ' + fanCardGradeClass(selectedGrade);
+      document.getElementById('fanCardPreviewName').textContent=name;
+      document.getElementById('fanCardPreviewRating').textContent=rating;
+      document.getElementById('fanCardPreviewGrade').textContent=grade;
+      document.getElementById('fanCardPreviewComment').textContent=comment;
+
+      const img=document.getElementById('fanCardPreviewImage');
+      const placeholder=document.getElementById('fanCardImagePlaceholder');
+      if(img && placeholder){
+        if(imageUrl){
+          img.style.display='block';
+          placeholder.style.display='none';
+          if(img.src !== imageUrl) img.src=imageUrl;
+          img.onerror=()=>{
+            img.style.display='none';
+            placeholder.style.display='block';
+            placeholder.textContent=currentLang==='en' ? 'This image URL cannot be displayed.' : '표시할 수 없는 이미지 URL입니다.';
+          };
+          img.onload=()=>{
+            img.style.display='block';
+            placeholder.style.display='none';
+          };
+        }else{
+          img.removeAttribute('src');
+          img.style.display='none';
+          placeholder.style.display='block';
+          placeholder.textContent=currentLang==='en' ? 'Enter an image URL to display it here.' : '이미지 URL을 입력하면 여기에 표시됩니다.';
+        }
+      }
+
+      const stats=[];
+      const names=[...document.querySelectorAll('.fan-stat-name')];
+      const scores=[...document.querySelectorAll('.fan-stat-score')];
+      names.forEach((input,index)=>{
+        const statName=input.value.trim();
+        const statScore=scores[index]?.value ?? '';
+        if(statName || statScore){
+          stats.push({name:statName || '-', score:statScore || '-'});
+        }
+      });
+
+      const statsWrap=document.getElementById('fanCardPreviewStats');
+      if(statsWrap){
+        statsWrap.innerHTML=stats.slice(0,7).map(stat=>`<div class="fan-card-stat"><span class="stat-name">${escapeHtml(stat.name)}</span><span class="stat-score">${escapeHtml(stat.score)}</span></div>`).join('');
+      }
+    }
+
+    async function downloadFanCard(){
+      const card=document.getElementById('fanCardPreview');
+      if(!card) return;
+
+      if(typeof html2canvas === 'undefined'){
+        alert(currentLang==='en' ? 'Image saving library has not loaded. Please try a screenshot.' : '이미지 저장 라이브러리를 불러오지 못했습니다. 화면 캡처를 이용해 주세요.');
+        return;
+      }
+
+      try{
+        const canvas=await html2canvas(card,{
+          backgroundColor:null,
+          scale:2,
+          useCORS:true,
+          allowTaint:false
+        });
+        const link=document.createElement('a');
+        const name=(document.getElementById('fanCardName')?.value || 'skater-card').trim().replace(/[\\/:*?"<>|]+/g,'_') || 'skater-card';
+        link.download=`${name}_fan_card.png`;
+        link.href=canvas.toDataURL('image/png');
+        link.click();
+      }catch(error){
+        console.warn(error);
+        alert(currentLang==='en'
+          ? 'The card could not be saved as an image. The external image URL may be blocked by security/CORS settings. Please use a screenshot instead.'
+          : '카드 이미지를 저장하지 못했습니다. 외부 이미지 URL 보안/CORS 문제일 수 있습니다. 화면 캡처를 이용해 주세요.');
       }
     }
 
