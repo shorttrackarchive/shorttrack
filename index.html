@@ -437,7 +437,7 @@
     </section>
 
     <section class="card anchor-section" id="compareSection">
-      <div class="section-title"><div><h2 data-i18n="compareTitle">선수 비교</h2><span data-i18n="compareDesc">두 선수를 선택해 점수, 대회별 메달, 개인전·계주 성과, 종목별 성과를 비교합니다.</span></div></div>
+      <div class="section-title"><div><h2 data-i18n="compareTitle">선수 비교</h2><span data-i18n="compareDesc">두 선수를 선택해 개인전 성적만 기준으로 점수와 종목별 성과를 비교합니다.</span></div></div>
       <div class="ranking-filter-row" aria-label="선수 비교 성별 보기">
         <span class="ranking-filter-label" data-i18n="gender">성별</span>
         <button type="button" class="tab compare-gender-tab active" data-compare-gender="all" data-i18n="all">전체</button>
@@ -454,6 +454,31 @@
         <select id="compareEraStart"><option value="" data-i18n="eraStartAll">전체 시작</option></select>
         <span>~</span>
         <select id="compareEraEnd"><option value="" data-i18n="eraEndAll">전체 끝</option></select>
+      </div>
+      <div class="ranking-filter-row" aria-label="선수 비교 포함 설정">
+        <span class="ranking-filter-label" data-i18n="includeSettings">포함 설정</span>
+        <button type="button" class="tab compare-option-tab active" data-compare-option="includeWorldsOverall" data-i18n="compareIncludeWorldsOverall">세계선수권 종합 포함</button>
+      </div>
+
+      <div class="score-panel open" id="compareScorePanel">
+        <div class="subnote" style="margin-bottom:10px" data-i18n="compareScoreDesc">이 점수는 선수 비교에만 적용됩니다. 계주는 제외하고 개인전 성적만 비교합니다.</div>
+        <div class="score-grid">
+          <div class="score-field"><label data-i18n="olympicGold">올림픽 금</label><input class="compare-score-input" data-score-key="olympic_gold" type="number" step="0.1" value="1000"></div>
+          <div class="score-field"><label data-i18n="olympicSilver">올림픽 은</label><input class="compare-score-input" data-score-key="olympic_silver" type="number" step="0.1" value="650"></div>
+          <div class="score-field"><label data-i18n="olympicBronze">올림픽 동</label><input class="compare-score-input" data-score-key="olympic_bronze" type="number" step="0.1" value="420"></div>
+
+          <div class="score-field compare-worlds-overall-score-field"><label data-i18n="worldsOverallGold">세계선수권 종합 금</label><input class="compare-score-input" data-score-key="worlds_overall_gold" type="number" step="0.1" value="600"></div>
+          <div class="score-field compare-worlds-overall-score-field"><label data-i18n="worldsOverallSilver">세계선수권 종합 은</label><input class="compare-score-input" data-score-key="worlds_overall_silver" type="number" step="0.1" value="390"></div>
+          <div class="score-field compare-worlds-overall-score-field"><label data-i18n="worldsOverallBronze">세계선수권 종합 동</label><input class="compare-score-input" data-score-key="worlds_overall_bronze" type="number" step="0.1" value="250"></div>
+
+          <div class="score-field"><label data-i18n="worldsGold">세계선수권 금</label><input class="compare-score-input" data-score-key="worlds_gold" type="number" step="0.1" value="300"></div>
+          <div class="score-field"><label data-i18n="worldsSilver">세계선수권 은</label><input class="compare-score-input" data-score-key="worlds_silver" type="number" step="0.1" value="195"></div>
+          <div class="score-field"><label data-i18n="worldsBronze">세계선수권 동</label><input class="compare-score-input" data-score-key="worlds_bronze" type="number" step="0.1" value="125"></div>
+
+          <div class="score-field"><label data-i18n="worldcupGold">월드컵·월드투어 금</label><input class="compare-score-input" data-score-key="worldcup_gold" type="number" step="0.1" value="60"></div>
+          <div class="score-field"><label data-i18n="worldcupSilver">월드컵·월드투어 은</label><input class="compare-score-input" data-score-key="worldcup_silver" type="number" step="0.1" value="39"></div>
+          <div class="score-field"><label data-i18n="worldcupBronze">월드컵·월드투어 동</label><input class="compare-score-input" data-score-key="worldcup_bronze" type="number" step="0.1" value="25"></div>
+        </div>
       </div>
       <div class="compare-controls">
         <select id="comparePlayerA"><option value="" data-i18n="selectPlayerA">선수 A 선택</option></select>
@@ -507,14 +532,14 @@
         <select id="eventEraEnd"><option value="" data-i18n="eraEndAll">전체 끝</option></select>
       </div>
       <div class="ranking-filter-row" aria-label="종목별 순위 성별 보기">
-        <span class="ranking-filter-label" data-i18n="gender">성별
+        <span class="ranking-filter-label" data-i18n="gender">성별</span>
         <button type="button" class="tab event-rank-gender-tab active" data-event-rank-gender="all" data-i18n="all">전체</button>
         <button type="button" class="tab event-rank-gender-tab" data-event-rank-gender="men" data-i18n="men">남자</button>
         <button type="button" class="tab event-rank-gender-tab" data-event-rank-gender="women" data-i18n="women">여자</button>
       </div>
 
       <div class="ranking-filter-row" aria-label="종목별 순위 포함 설정">
-        <span class="ranking-filter-label" data-i18n="includeSettings">포함 설정
+        <span class="ranking-filter-label" data-i18n="includeSettings">포함 설정</span>
         <button type="button" class="tab event-ranking-option-tab" data-event-option="includeOlympicDemo" data-i18n="includeOlympicDemo">올림픽 시범종목 포함</button>
         <button type="button" class="tab event-ranking-option-tab active" data-event-option="excludeOlympicDemo" data-i18n="excludeOlympicDemo">올림픽 시범종목 제외</button>
       </div>
@@ -729,8 +754,8 @@
         reliabilityTitle:'자료 신뢰도 안내', reliabilityDesc:'순위를 해석할 때 참고해야 할 데이터 반영 범위입니다.', reliabilityOlympicsTitle:'올림픽', reliabilityOlympicsText:'정식 메달과 시범종목을 구분해 반영했습니다.', reliabilityWorldsTitle:'세계선수권', reliabilityWorldsText:'종합, 개인전 결과를 중심으로 정리했습니다.', reliabilityWorldcupTitle:'월드컵·월드투어', reliabilityWorldcupText:'개인전 중심이며 일부 초기 자료는 보완이 필요할 수 있습니다.', reliabilityRelayTitle:'계주 멤버', reliabilityRelayText:'계주 멤버는 올림픽 중심으로 정리되어 있습니다.',
         playerOverviewTitle:'선수 요약', playerOverviewDesc:'개인전·계주·대회 유형별 메달을 요약합니다.', playerMedalDetailTitle:'선수별 메달 내역', playerMedalDetailDesc:'개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.',
         eraRange:'시대', eraStartAll:'전체 시작', eraEndAll:'전체 끝',
-        compareTitle:'선수 비교', compareDesc:'두 선수를 선택해 점수, 대회별 메달, 개인전·계주 성과, 종목별 성과를 비교합니다.',
-        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.',
+        compareTitle:'선수 비교', compareDesc:'두 선수를 선택해 개인전 성적만 기준으로 점수와 종목별 성과를 비교합니다.',
+        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
         category:'구분', individual:'개인전', relayMedal:'계주', includeRelayTotal:'계주 포함', individualMedals:'개인전 메달', relayIncludedMedals:'계주 포함 메달', bestEvent:'최다 금메달 종목', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'점수', olympicScore:'올림픽 점수', worldsScore:'세계선수권 점수', worldcupScore:'월드컵·월드투어 점수', totalScore:'총점', noData:'데이터 없음',
         olympicGames:'올림픽', worldCup:'월드컵', worldTour:'월드투어', challengeCup:'챌린지컵', mixed:'혼성', overall:'종합', relay:'계주'
       },
@@ -778,8 +803,8 @@
         reliabilityTitle:'Data Coverage Notice', reliabilityDesc:'Use this as context when interpreting rankings.', reliabilityOlympicsTitle:'Olympics', reliabilityOlympicsText:'Official medals and demonstration events are separated.', reliabilityWorldsTitle:'World Championships', reliabilityWorldsText:'Overall and individual results are organized as the main focus.', reliabilityWorldcupTitle:'World Cup & World Tour', reliabilityWorldcupText:'Mainly individual events; some early records may still need refinement.', reliabilityRelayTitle:'Relay members', reliabilityRelayText:'Relay member data is organized mainly around the Olympics.',
         playerOverviewTitle:'Skater Summary', playerOverviewDesc:'Summarizes medals by individual/relay and competition type.', playerMedalDetailTitle:'Medal Details', playerMedalDetailDesc:'Shows individual medals together with relay medals from relay_members.',
         eraRange:'Era', eraStartAll:'Start', eraEndAll:'End',
-        compareTitle:'Compare Skaters', compareDesc:'Select two skaters to compare score, competition medals, individual/relay results, and event performance.',
-        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.',
+        compareTitle:'Compare Skaters', compareDesc:'Select two skaters to compare scores and event performance based on individual results only.',
+        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
         category:'Category', individual:'Individual', relayMedal:'Relay', includeRelayTotal:'Relay included', individualMedals:'Individual medals', relayIncludedMedals:'Relay included medals', bestEvent:'Best gold-medal event', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'Score', olympicScore:'Olympic score', worldsScore:'Worlds score', worldcupScore:'World Cup/Tour score', totalScore:'Total score', noData:'No data',
         olympicGames:'Olympic Games', worldCup:'World Cup', worldTour:'World Tour', challengeCup:'Challenge Cup', mixed:'Mixed', overall:'Overall', relay:'Relay'
       }
@@ -846,6 +871,7 @@
     let countryEraEnd = '';
     let eventEraStart = '';
     let eventEraEnd = '';
+    let compareOptions = { includeWorldsOverall: true };
     let skaterRankingOptions = {
       includeOlympicDemo: false,
       includeWorldsOverall: true,
@@ -873,6 +899,7 @@
     async function init(){
       bindEvents();
       setLanguage('ko');
+      updateCompareOptionTabs();
       updateEventGenderTabs();
       updateWorldsOverallScoreFields();
       if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')){showNotConnected();return;}
@@ -992,6 +1019,16 @@
       const compareA=document.getElementById('comparePlayerA');
       const compareB=document.getElementById('comparePlayerB');
       [compareA,compareB].forEach(el=>el&&el.addEventListener('change',renderPlayerComparison));
+
+      document.querySelectorAll('.compare-option-tab').forEach(btn=>btn.addEventListener('click',()=>{
+        if(btn.dataset.compareOption === 'includeWorldsOverall'){
+          compareOptions.includeWorldsOverall = !compareOptions.includeWorldsOverall;
+          updateCompareOptionTabs();
+          renderPlayerComparison();
+        }
+      }));
+
+      document.querySelectorAll('.compare-score-input').forEach(input=>input.addEventListener('input',renderPlayerComparison));
 
       bindSeasonEraFilters();
 
@@ -1653,7 +1690,7 @@
         const item=map.get(key);
         if(row.country && !item.country) item.country=row.country;
         let bucket=competitionBucket(row.competition_type);
-        if(bucket==='worlds' && skaterRankingOptions.separateWorldsOverall && isWorldChampionshipOverallRow(row)){
+        if(bucket==='worlds' && isWorldChampionshipOverallRow(row)){
           bucket='worldsOverall';
         }
         addMedalCount(item[bucket], row.medal);
@@ -1954,13 +1991,47 @@
     }
 
 
-    function getComparisonEligibleRows(name){
-      return skaterMedals.filter(row=>row.skater_name===name).filter(row=>!compareSeason||row.season===compareSeason).filter(row=>rowInEra(row, compareEraStart, compareEraEnd)).filter(row=>{
-        if(!skaterRankingOptions.includeOlympicDemo && isOlympicDemonstrationRow(row)) return false;
-        if(!skaterRankingOptions.includeWorldsOverall && isWorldChampionshipOverallRow(row)) return false;
-        if(!skaterRankingOptions.includeIndividual3000m && isIndividual3000mEvent(row.event)) return false;
-        return true;
+    function updateCompareOptionTabs(){
+      document.querySelectorAll('.compare-option-tab').forEach(btn=>{
+        if(btn.dataset.compareOption === 'includeWorldsOverall'){
+          btn.classList.toggle('active', !!compareOptions.includeWorldsOverall);
+          btn.textContent = compareOptions.includeWorldsOverall ? tr('compareIncludeWorldsOverall') : tr('compareExcludeWorldsOverall');
+        }
       });
+      document.querySelectorAll('.compare-worlds-overall-score-field').forEach(el=>{
+        el.style.display = compareOptions.includeWorldsOverall ? 'block' : 'none';
+      });
+    }
+
+    function readCompareScoreWeights(){
+      const weights={};
+      document.querySelectorAll('.compare-score-input').forEach(input=>{
+        const key=input.dataset.scoreKey;
+        const value=Number(input.value);
+        weights[key]=Number.isFinite(value)?value:0;
+      });
+      return weights;
+    }
+
+    function totalCompareScore(row,weights){
+      return bucketScore(row.olympic,'olympic',weights)
+        + bucketScore(row.worlds,'worlds',weights)
+        + (compareOptions.includeWorldsOverall ? bucketScore(row.worldsOverall,'worlds_overall',weights) : 0)
+        + bucketScore(row.worldcup,'worldcup',weights);
+    }
+
+    function getComparisonEligibleRows(name){
+      return skaterMedals
+        .filter(row=>row.skater_name===name)
+        .filter(row=>row.medal_type==='Individual')
+        .filter(row=>!compareSeason||row.season===compareSeason)
+        .filter(row=>rowInEra(row, compareEraStart, compareEraEnd))
+        .filter(row=>{
+          if(isOlympicDemonstrationRow(row)) return false;
+          if(!compareOptions.includeWorldsOverall && isWorldChampionshipOverallRow(row)) return false;
+          if(isIndividual3000mEvent(row.event)) return false;
+          return true;
+        });
     }
 
     function aggregateRowsForComparison(rows){
@@ -1977,12 +2048,13 @@
     }
 
     function comparisonScore(rows, bucketName){
-      const weights=readScoreWeights();
+      const weights=readCompareScoreWeights();
       const agg=aggregateRowsForComparison(rows);
       if(bucketName==='olympic') return bucketScore(agg.olympic,'olympic',weights);
+      if(bucketName==='worldsOverall') return compareOptions.includeWorldsOverall ? bucketScore(agg.worldsOverall,'worlds_overall',weights) : 0;
       if(bucketName==='worlds') return bucketScore(agg.worlds,'worlds',weights);
       if(bucketName==='worldcup') return bucketScore(agg.worldcup,'worldcup',weights);
-      return totalCustomScore(agg,weights);
+      return totalCompareScore(agg,weights);
     }
 
     function eventMedalBucketForComparison(rows,eventName){
@@ -2018,15 +2090,13 @@
 
       const aRows=getComparisonEligibleRows(aName);
       const bRows=getComparisonEligibleRows(bName);
-      const aIndividual=aRows.filter(row=>row.medal_type==='Individual');
-      const bIndividual=bRows.filter(row=>row.medal_type==='Individual');
-
       const rows=[
         [tr('totalScore'), formatScore(comparisonScore(aRows,'total')), formatScore(comparisonScore(bRows,'total'))],
         [tr('olympicScore'), formatScore(comparisonScore(aRows,'olympic')), formatScore(comparisonScore(bRows,'olympic'))],
+        ...(compareOptions.includeWorldsOverall ? [[tr('worldsOverallScore'), formatScore(comparisonScore(aRows,'worldsOverall')), formatScore(comparisonScore(bRows,'worldsOverall'))]] : []),
         [tr('worldsScore'), formatScore(comparisonScore(aRows,'worlds')), formatScore(comparisonScore(bRows,'worlds'))],
         [tr('worldcupScore'), formatScore(comparisonScore(aRows,'worldcup')), formatScore(comparisonScore(bRows,'worldcup'))],
-        [tr('individualMedals'), medalBucketText(countMedalBucket(aIndividual)), medalBucketText(countMedalBucket(bIndividual))],
+        [tr('individualMedals'), medalBucketText(countMedalBucket(aRows)), medalBucketText(countMedalBucket(bRows))],
         [tr('fiveHundred'), medalBucketText(eventMedalBucketForComparison(aRows,'500m')), medalBucketText(eventMedalBucketForComparison(bRows,'500m'))],
         [tr('thousand'), medalBucketText(eventMedalBucketForComparison(aRows,'1000m')), medalBucketText(eventMedalBucketForComparison(bRows,'1000m'))],
         [tr('fifteenHundred'), medalBucketText(eventMedalBucketForComparison(aRows,'1500m')), medalBucketText(eventMedalBucketForComparison(bRows,'1500m'))],
