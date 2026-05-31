@@ -369,6 +369,27 @@
     .card-stats-heading{display:block;margin-bottom:8px;line-height:1.45}
     .card-stats-notice{margin-top:0 !important;margin-bottom:12px !important;line-height:1.65}
 
+
+    /* Heat draw calculator */
+    .heat-tool-layout{display:grid;grid-template-columns:1fr;gap:14px}
+    .heat-tool-controls{border:1px solid var(--line);border-radius:18px;background:#fbfdff;padding:16px}
+    .heat-tool-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:end}
+    .heat-tool-grid label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin-bottom:5px}
+    .heat-tool-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .heat-result-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .heat-table input,.heat-table select{padding:8px 9px;border-radius:9px;font-size:13px}
+    .heat-table th,.heat-table td{white-space:nowrap}
+    .heat-table .heat-col{font-weight:900;background:#f8fafc}
+    .heat-output-box{border:1px solid var(--line);border-radius:16px;background:#fff;padding:14px;margin-top:12px}
+    .heat-output-title{font-weight:950;margin-bottom:8px}
+    .qualifier-tag{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:900;margin-left:5px}
+    .tag-q{background:#dbeafe;color:#1e40af}.tag-t{background:#dcfce7;color:#166534}.tag-adv{background:#fef3c7;color:#92400e}
+    .heat-next-card{border:1px solid var(--line);border-radius:14px;background:#fbfdff;padding:12px}
+    .heat-next-card h4{margin:0 0 8px;font-size:14px}
+    .heat-next-card ol{margin:0;padding-left:20px}.heat-next-card li{margin:4px 0}
+    @media(max-width:1000px){.heat-tool-grid{grid-template-columns:repeat(2,1fr)}.heat-result-grid{grid-template-columns:1fr}}
+    @media(max-width:560px){.heat-tool-grid{grid-template-columns:1fr}.heat-table input,.heat-table select{min-width:92px}}
+
 </style>
 </head>
 <body>
@@ -394,6 +415,7 @@
     <button type="button" data-i18n="navEventRank" onclick="scrollToSection('eventRankingSection')">종목별 선수 순위</button>
     <button type="button" data-i18n="navHallOfFame" onclick="scrollToSection('hallOfFameSection')">명예의 전당</button>
     <button type="button" data-i18n="navCardMaker" onclick="scrollToSection('cardMakerSection')">선수 카드 만들기</button>
+    <button type="button" data-i18n="navHeatTool" onclick="scrollToSection('heatToolSection')">조편성 계산기</button>
     <button type="button" data-i18n="navReport" onclick="openReportModal()">오류 신고 및 문의</button>
     <button type="button" class="nav-soon" data-i18n="navRecordRank" onclick="showPreparing()">종목별 기록 순위</button>
     <button type="button" class="nav-soon" data-i18n="navLapRank" onclick="showPreparing()">랩타임 순위</button>
@@ -901,6 +923,87 @@
     </section>
 
 
+
+    <section class="card anchor-section" id="heatToolSection">
+      <div class="section-title"><div><h2 data-i18n="heatToolTitle">조편성 계산기</h2><span data-i18n="heatToolDesc">경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.</span></div></div>
+
+      <div class="heat-tool-layout">
+        <div class="heat-tool-controls">
+          <div class="subnote" data-i18n="heatToolNotice">팬용 도우미입니다. ISU 2025-26 Qualifying Tables의 라운드 구성은 대회·참가 인원에 따라 달라질 수 있으므로, 조 수·진출 방식은 사용자가 직접 설정합니다. 실제 공식 조편성과 다를 수 있으며 ADV·PEN·DQ·동순위는 수동 확인이 필요합니다.</div>
+
+          <div class="heat-tool-grid">
+            <div>
+              <label for="heatDistance" data-i18n="heatDistance">종목</label>
+              <select id="heatDistance">
+                <option value="500m">500m</option>
+                <option value="1000m">1000m</option>
+                <option value="1500m">1500m</option>
+              </select>
+            </div>
+            <div>
+              <label for="heatRound" data-i18n="heatRound">현재 라운드</label>
+              <select id="heatRound">
+                <option value="Preliminary" data-i18n="roundPreliminary">예비예선</option>
+                <option value="Heats" selected data-i18n="roundHeats">예선</option>
+                <option value="Quarterfinals" data-i18n="roundQuarterfinals">준준결승</option>
+                <option value="Semifinals" data-i18n="roundSemifinals">준결승</option>
+              </select>
+            </div>
+            <div>
+              <label for="heatCount" data-i18n="heatCount">현재 조 수</label>
+              <input id="heatCount" type="number" min="1" max="20" value="4">
+            </div>
+            <div>
+              <label for="heatSkatersPerHeat" data-i18n="heatSkatersPerHeat">조별 선수 수</label>
+              <input id="heatSkatersPerHeat" type="number" min="2" max="8" value="5">
+            </div>
+            <div>
+              <label for="heatAutoQualifiers" data-i18n="heatAutoQualifiers">조별 순위 진출</label>
+              <input id="heatAutoQualifiers" type="number" min="0" max="8" value="2">
+            </div>
+            <div>
+              <label for="heatTimeQualifiers" data-i18n="heatTimeQualifiers">기록순 추가 진출</label>
+              <input id="heatTimeQualifiers" type="number" min="0" max="20" value="0">
+            </div>
+            <div>
+              <label for="heatNextCount" data-i18n="heatNextCount">다음 라운드 조 수</label>
+              <input id="heatNextCount" type="number" min="1" max="10" value="2">
+            </div>
+            <div>
+              <label for="heatSeedMethod" data-i18n="heatSeedMethod">배정 방식</label>
+              <select id="heatSeedMethod">
+                <option value="snake" data-i18n="seedSnake">지그재그 배정</option>
+                <option value="straight" data-i18n="seedStraight">순차 배정</option>
+              </select>
+            </div>
+            <div>
+              <label for="heatTimeSort" data-i18n="heatTimeSort">기록 정렬</label>
+              <select id="heatTimeSort">
+                <option value="asc" data-i18n="timeFastest">빠른 기록 우선</option>
+                <option value="none" data-i18n="timeNone">기록 미사용</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="heat-tool-actions">
+            <button type="button" class="sort-btn primary-score-btn" data-i18n="buildHeatTable" onclick="buildHeatInputTable()">결과 입력표 만들기</button>
+            <button type="button" class="sort-btn" data-i18n="calculateHeatDraw" onclick="calculateHeatDraw()">진출자·조편성 계산</button>
+            <button type="button" class="sort-btn" data-i18n="sampleHeatData" onclick="fillSampleHeatData()">예시 채우기</button>
+            <button type="button" class="sort-btn" data-i18n="clearHeatData" onclick="clearHeatData()">입력 초기화</button>
+          </div>
+        </div>
+
+        <div id="heatInputWrap" class="heat-output-box">
+          <div class="empty" data-i18n="heatInputEmpty">결과 입력표를 먼저 만들어 주세요.</div>
+        </div>
+
+        <div id="heatOutputWrap" class="heat-output-box">
+          <div class="empty" data-i18n="heatOutputEmpty">계산 결과가 여기에 표시됩니다.</div>
+        </div>
+      </div>
+    </section>
+
+
     <section class="card" id="medalListCard">
       <div class="section-title"><div><h2>메달 목록</h2><span>상세 원자료 확인용 목록입니다. 길어지기 쉬워 화면 맨 아래에 배치했습니다.</div></div>
       <div class="tabs" aria-label="성별 보기">
@@ -928,7 +1031,7 @@
       ko: {
         appTitle:'Short Track Archive',
         appSubtitle:'월드컵 · 월드투어 · 세계선수권 · 올림픽 쇼트트랙 포디움 아카이브', todayVisitors:'오늘 방문자 수', totalVisitors:'총 방문자 수',
-        navTitle:'바로가기', navSearch:'검색', navSkaterRank:'선수별 종합 순위', navCompare:'선수 비교', navCountryRank:'국가별 메달 순위', navEventRank:'종목별 선수 순위', navHallOfFame:'명예의 전당', navCardMaker:'선수 카드 만들기',
+        navTitle:'바로가기', navSearch:'검색', navSkaterRank:'선수별 종합 순위', navCompare:'선수 비교', navCountryRank:'국가별 메달 순위', navEventRank:'종목별 선수 순위', navHallOfFame:'명예의 전당', navCardMaker:'선수 카드 만들기', navHeatTool:'조편성 계산기',
         navReport:'오류 신고 및 문의', navRecordRank:'종목별 기록 순위', navLapRank:'랩타임 순위', navRecords:'각종 기록',
         reportTitle:'오류 신고 및 문의', close:'닫기', cancel:'취소', submit:'제출',
         reportPlaceholder:'오류 내용이나 문의 내용을 입력해 주세요.', searchPlaceholder:'선수명, 국가, 대회명, 종목 검색',
@@ -970,14 +1073,14 @@
         playerOverviewTitle:'선수 요약', playerOverviewDesc:'개인전·계주·대회 유형별 메달을 요약합니다.', playerMedalDetailTitle:'선수별 메달 내역', playerMedalDetailDesc:'개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.',
         eraRange:'시대', eraStartAll:'전체 시작', eraEndAll:'전체 끝',
         compareTitle:'선수 비교', compareDesc:'두 선수를 선택해 개인전 성적만 기준으로 점수와 종목별 성과를 비교합니다.',
-        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. URL 이미지가 안 뜨면 이미지 직접 첨부를 이용해 주세요. 직접 첨부한 이미지는 카드 저장 시에도 안정적으로 포함됩니다.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardImageFile:'이미지 직접 첨부', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 8개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
+        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. URL 이미지가 안 뜨면 이미지 직접 첨부를 이용해 주세요. 직접 첨부한 이미지는 카드 저장 시에도 안정적으로 포함됩니다.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardImageFile:'이미지 직접 첨부', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 8개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'조편성 계산기', heatToolDesc:'경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.', heatToolNotice:'팬용 도우미입니다. ISU 2025-26 Qualifying Tables의 라운드 구성은 대회·참가 인원에 따라 달라질 수 있으므로, 조 수·진출 방식은 사용자가 직접 설정합니다. 실제 공식 조편성과 다를 수 있으며 ADV·PEN·DQ·동순위는 수동 확인이 필요합니다.', heatDistance:'종목', heatRound:'현재 라운드', roundPreliminary:'예비예선', roundHeats:'예선', roundQuarterfinals:'준준결승', roundSemifinals:'준결승', heatCount:'현재 조 수', heatSkatersPerHeat:'조별 선수 수', heatAutoQualifiers:'조별 순위 진출', heatTimeQualifiers:'기록순 추가 진출', heatNextCount:'다음 라운드 조 수', heatSeedMethod:'배정 방식', seedSnake:'지그재그 배정', seedStraight:'순차 배정', heatTimeSort:'기록 정렬', timeFastest:'빠른 기록 우선', timeNone:'기록 미사용', buildHeatTable:'결과 입력표 만들기', calculateHeatDraw:'진출자·조편성 계산', sampleHeatData:'예시 채우기', clearHeatData:'입력 초기화', heatInputEmpty:'결과 입력표를 먼저 만들어 주세요.', heatOutputEmpty:'계산 결과가 여기에 표시됩니다.', heatNoQualifiers:'진출자가 없습니다.', heatAutoQ:'순위 진출', heatTimeQ:'기록 진출', heatAdv:'ADV', heatEliminated:'탈락자', heatQualifiers:'진출자', heatNextDraw:'다음 라운드 조편성', heatName:'선수명', heatCountry:'국가', heatPosition:'순위', heatTime:'기록', heatStatus:'상태', heatHeat:'조', heatReason:'진출 방식', heatRank:'시드', heatOfficialNote:'추정 조편성입니다. 실제 공식 조편성과 다를 수 있습니다.', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
         category:'구분', individual:'개인전', relayMedal:'계주', includeRelayTotal:'계주 포함', individualMedals:'개인전 메달', relayIncludedMedals:'계주 포함 메달', bestEvent:'최다 금메달 종목', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'점수', olympicScore:'올림픽 점수', worldsScore:'세계선수권 점수', worldcupScore:'월드컵·월드투어 점수', totalScore:'총점', noData:'데이터 없음',
         olympicGames:'올림픽', worldCup:'월드컵', worldTour:'월드투어', challengeCup:'챌린지컵', mixed:'혼성', overall:'종합', relay:'계주'
       },
       en: {
         appTitle:'Short Track Archive',
         appSubtitle:'Short track podium archive for World Cup, World Tour, World Championships, and Olympics',
-        navTitle:'Menu', navSearch:'Search', navSkaterRank:'Overall Skater Ranking', navCompare:'Compare Skaters', navCountryRank:'Country Medal Ranking', navEventRank:'Event Ranking', navHallOfFame:'Hall of Fame', navCardMaker:'Card Maker',
+        navTitle:'Menu', navSearch:'Search', navSkaterRank:'Overall Skater Ranking', navCompare:'Compare Skaters', navCountryRank:'Country Medal Ranking', navEventRank:'Event Ranking', navHallOfFame:'Hall of Fame', navCardMaker:'Card Maker', navHeatTool:'Heat Draw Tool',
         navReport:'Report / Contact', navRecordRank:'Event Record Ranking', navLapRank:'Lap Time Ranking', navRecords:'Records',
         reportTitle:'Report / Contact', close:'Close', cancel:'Cancel', submit:'Submit',
         reportPlaceholder:'Enter an error report or question.', searchPlaceholder:'Search skater, country, competition, or event',
@@ -1019,7 +1122,7 @@
         playerOverviewTitle:'Skater Summary', playerOverviewDesc:'Summarizes medals by individual/relay and competition type.', playerMedalDetailTitle:'Medal Details', playerMedalDetailDesc:'Shows individual medals together with relay medals from relay_members.',
         eraRange:'Era', eraStartAll:'Start', eraEndAll:'End',
         compareTitle:'Compare Skaters', compareDesc:'Select two skaters to compare scores and event performance based on individual results only.',
-        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. If a URL image does not load, upload an image directly. Directly uploaded images are more reliably included when saving the card.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardImageFile:'Upload image directly', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 8 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
+        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. If a URL image does not load, upload an image directly. Directly uploaded images are more reliably included when saving the card.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardImageFile:'Upload image directly', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 8 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'Heat Draw Tool', heatToolDesc:'Enter race results to calculate qualifiers and estimate the next-round heat draw.', heatToolNotice:'This is a fan-made helper. Round structures in the ISU 2025-26 Qualifying Tables vary by competition and entry size, so heat counts and qualifying rules are set manually. Actual official heat draws may differ, and ADV/PEN/DQ/ties should be checked manually.', heatDistance:'Event', heatRound:'Current round', roundPreliminary:'Preliminary', roundHeats:'Heats', roundQuarterfinals:'Quarterfinals', roundSemifinals:'Semifinals', heatCount:'Current heats', heatSkatersPerHeat:'Skaters per heat', heatAutoQualifiers:'Auto qualifiers per heat', heatTimeQualifiers:'Fastest additional qualifiers', heatNextCount:'Next-round heats', heatSeedMethod:'Seeding method', seedSnake:'Snake seeding', seedStraight:'Straight seeding', heatTimeSort:'Time sorting', timeFastest:'Fastest first', timeNone:'Do not use times', buildHeatTable:'Build result table', calculateHeatDraw:'Calculate qualifiers & draw', sampleHeatData:'Fill sample', clearHeatData:'Clear input', heatInputEmpty:'Build a result table first.', heatOutputEmpty:'Results will appear here.', heatNoQualifiers:'No qualifiers.', heatAutoQ:'Auto qualifier', heatTimeQ:'Time qualifier', heatAdv:'ADV', heatEliminated:'Eliminated', heatQualifiers:'Qualifiers', heatNextDraw:'Next-round heat draw', heatName:'Skater', heatCountry:'Country', heatPosition:'Place', heatTime:'Time', heatStatus:'Status', heatHeat:'Heat', heatReason:'Reason', heatRank:'Seed', heatOfficialNote:'Estimated heat draw. Actual official heat draws may differ.', heatToolTitle:'조편성 계산기', heatToolDesc:'경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.', heatToolNotice:'팬용 도우미입니다. ISU 2025-26 Qualifying Tables의 라운드 구성은 대회·참가 인원에 따라 달라질 수 있으므로, 조 수·진출 방식은 사용자가 직접 설정합니다. 실제 공식 조편성과 다를 수 있으며 ADV·PEN·DQ·동순위는 수동 확인이 필요합니다.', heatDistance:'종목', heatRound:'현재 라운드', roundPreliminary:'예비예선', roundHeats:'예선', roundQuarterfinals:'준준결승', roundSemifinals:'준결승', heatCount:'현재 조 수', heatSkatersPerHeat:'조별 선수 수', heatAutoQualifiers:'조별 순위 진출', heatTimeQualifiers:'기록순 추가 진출', heatNextCount:'다음 라운드 조 수', heatSeedMethod:'배정 방식', seedSnake:'지그재그 배정', seedStraight:'순차 배정', heatTimeSort:'기록 정렬', timeFastest:'빠른 기록 우선', timeNone:'기록 미사용', buildHeatTable:'결과 입력표 만들기', calculateHeatDraw:'진출자·조편성 계산', sampleHeatData:'예시 채우기', clearHeatData:'입력 초기화', heatInputEmpty:'결과 입력표를 먼저 만들어 주세요.', heatOutputEmpty:'계산 결과가 여기에 표시됩니다.', heatNoQualifiers:'진출자가 없습니다.', heatAutoQ:'순위 진출', heatTimeQ:'기록 진출', heatAdv:'ADV', heatEliminated:'탈락자', heatQualifiers:'진출자', heatNextDraw:'다음 라운드 조편성', heatName:'선수명', heatCountry:'국가', heatPosition:'순위', heatTime:'기록', heatStatus:'상태', heatHeat:'조', heatReason:'진출 방식', heatRank:'시드', heatOfficialNote:'추정 조편성입니다. 실제 공식 조편성과 다를 수 있습니다.', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
         category:'Category', individual:'Individual', relayMedal:'Relay', includeRelayTotal:'Relay included', individualMedals:'Individual medals', relayIncludedMedals:'Relay included medals', bestEvent:'Best gold-medal event', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'Score', olympicScore:'Olympic score', worldsScore:'Worlds score', worldcupScore:'World Cup/Tour score', totalScore:'Total score', noData:'No data',
         olympicGames:'Olympic Games', worldCup:'World Cup', worldTour:'World Tour', challengeCup:'Challenge Cup', mixed:'Mixed', overall:'Overall', relay:'Relay'
       }
@@ -1118,6 +1221,7 @@
       updateCompareOptionTabs();
       updateEventGenderTabs();
       updateFanCard();
+      buildHeatInputTable();
       updateWorldsOverallScoreFields();
       if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')){showNotConnected();return;}
       await loadData();
@@ -2761,6 +2865,204 @@
           ? 'The card could not be saved as an image. The external image URL may be blocked by security/CORS settings. Please use a screenshot instead.'
           : '카드 이미지를 저장하지 못했습니다. 외부 이미지 URL 보안/CORS 문제일 수 있습니다. 화면 캡처를 이용해 주세요.');
       }
+    }
+
+
+    function parseShortTrackTime(value){
+      const raw=String(value||'').trim();
+      if(!raw) return Number.POSITIVE_INFINITY;
+      const clean=raw.replace(/[^\d:.]/g,'');
+      if(!clean) return Number.POSITIVE_INFINITY;
+      const parts=clean.split(':').map(Number);
+      if(parts.some(Number.isNaN)) return Number.POSITIVE_INFINITY;
+      if(parts.length===1) return parts[0];
+      if(parts.length===2) return parts[0]*60 + parts[1];
+      if(parts.length===3) return parts[0]*3600 + parts[1]*60 + parts[2];
+      return Number.POSITIVE_INFINITY;
+    }
+
+    function buildHeatInputTable(){
+      const heatCount=Math.max(1, Math.min(20, Number(document.getElementById('heatCount')?.value)||1));
+      const perHeat=Math.max(2, Math.min(8, Number(document.getElementById('heatSkatersPerHeat')?.value)||4));
+      const wrap=document.getElementById('heatInputWrap');
+      if(!wrap) return;
+
+      let rows='';
+      for(let h=1; h<=heatCount; h++){
+        for(let s=1; s<=perHeat; s++){
+          rows += `<tr data-heat-row="${h}">
+            <td class="heat-col">${h}</td>
+            <td><input class="heat-pos" type="number" min="1" max="20" value="${s}"></td>
+            <td><input class="heat-name" type="text" placeholder="${tr('heatName')}"></td>
+            <td><input class="heat-country" type="text" maxlength="3" placeholder="KOR"></td>
+            <td><input class="heat-time" type="text" placeholder="1:23.456"></td>
+            <td><select class="heat-status">
+              <option value="OK">OK</option>
+              <option value="ADV">ADV</option>
+              <option value="PEN">PEN</option>
+              <option value="DQ">DQ</option>
+              <option value="DNS">DNS</option>
+              <option value="DNF">DNF</option>
+            </select></td>
+          </tr>`;
+        }
+      }
+
+      wrap.innerHTML=`<div class="heat-output-title">${tr('heatRound')} ${escapeHtml(document.getElementById('heatRound')?.value||'')}</div>
+      <div class="table-scroll"><table class="heat-table"><thead><tr>
+        <th>${tr('heatHeat')}</th><th>${tr('heatPosition')}</th><th>${tr('heatName')}</th><th>${tr('heatCountry')}</th><th>${tr('heatTime')}</th><th>${tr('heatStatus')}</th>
+      </tr></thead><tbody>${rows}</tbody></table></div>`;
+      document.getElementById('heatOutputWrap').innerHTML=`<div class="empty">${tr('heatOutputEmpty')}</div>`;
+    }
+
+    function collectHeatRows(){
+      return [...document.querySelectorAll('#heatInputWrap tbody tr')].map((trEl, index)=>{
+        const heat=Number(trEl.dataset.heatRow || 0);
+        const position=Number(trEl.querySelector('.heat-pos')?.value || 999);
+        const name=trEl.querySelector('.heat-name')?.value.trim() || '';
+        const country=trEl.querySelector('.heat-country')?.value.trim().toUpperCase() || '';
+        const time=trEl.querySelector('.heat-time')?.value.trim() || '';
+        const status=trEl.querySelector('.heat-status')?.value || 'OK';
+        return {index, heat, position, name, country, time, status, seconds:parseShortTrackTime(time)};
+      }).filter(row=>row.name);
+    }
+
+    function qualifierReasonLabel(reason){
+      if(reason==='Q') return tr('heatAutoQ');
+      if(reason==='q') return tr('heatTimeQ');
+      if(reason==='ADV') return tr('heatAdv');
+      return reason;
+    }
+
+    function qualifierTag(reason){
+      const cls=reason==='Q'?'tag-q':reason==='q'?'tag-t':'tag-adv';
+      return `<span class="qualifier-tag ${cls}">${qualifierReasonLabel(reason)}</span>`;
+    }
+
+    function calculateHeatDraw(){
+      const rows=collectHeatRows();
+      const autoN=Math.max(0, Number(document.getElementById('heatAutoQualifiers')?.value)||0);
+      const timeN=Math.max(0, Number(document.getElementById('heatTimeQualifiers')?.value)||0);
+      const nextHeatCount=Math.max(1, Number(document.getElementById('heatNextCount')?.value)||1);
+      const useTime=(document.getElementById('heatTimeSort')?.value||'asc')==='asc';
+
+      const qualifiers=[];
+      const used=new Set();
+
+      const heatGroups=new Map();
+      rows.forEach(row=>{
+        if(!heatGroups.has(row.heat)) heatGroups.set(row.heat, []);
+        heatGroups.get(row.heat).push(row);
+      });
+
+      [...heatGroups.entries()].sort((a,b)=>a[0]-b[0]).forEach(([heat, group])=>{
+        group
+          .filter(row=>row.status==='OK')
+          .sort((a,b)=>a.position-b.position||a.seconds-b.seconds||a.index-b.index)
+          .slice(0, autoN)
+          .forEach(row=>{
+            qualifiers.push({...row, reason:'Q'});
+            used.add(row.index);
+          });
+      });
+
+      rows.filter(row=>row.status==='ADV').forEach(row=>{
+        qualifiers.push({...row, reason:'ADV'});
+        used.add(row.index);
+      });
+
+      if(useTime && timeN>0){
+        rows
+          .filter(row=>row.status==='OK' && !used.has(row.index))
+          .sort((a,b)=>a.seconds-b.seconds||a.position-b.position||a.index-b.index)
+          .slice(0,timeN)
+          .forEach(row=>{
+            qualifiers.push({...row, reason:'q'});
+            used.add(row.index);
+          });
+      }
+
+      const seedOrder=qualifiers.slice().sort((a,b)=>{
+        const reasonOrder={Q:0,q:1,ADV:2};
+        return (reasonOrder[a.reason]??9)-(reasonOrder[b.reason]??9)
+          || a.heat-b.heat
+          || a.position-b.position
+          || a.seconds-b.seconds
+          || a.index-b.index;
+      }).map((row, i)=>({...row, seed:i+1}));
+
+      const eliminated=rows.filter(row=>!used.has(row.index) && !['PEN','DQ','DNS','DNF'].includes(row.status));
+      const penalties=rows.filter(row=>['PEN','DQ','DNS','DNF'].includes(row.status));
+
+      const nextHeats=Array.from({length:nextHeatCount},()=>[]);
+      const method=document.getElementById('heatSeedMethod')?.value || 'snake';
+      seedOrder.forEach((row, idx)=>{
+        let heatIndex;
+        if(method==='straight'){
+          heatIndex=idx % nextHeatCount;
+        }else{
+          const block=Math.floor(idx/nextHeatCount);
+          const pos=idx % nextHeatCount;
+          heatIndex=block % 2 === 0 ? pos : nextHeatCount-1-pos;
+        }
+        nextHeats[heatIndex].push(row);
+      });
+
+      renderHeatToolOutput(seedOrder, eliminated, penalties, nextHeats);
+    }
+
+    function renderHeatToolOutput(qualifiers, eliminated, penalties, nextHeats){
+      const wrap=document.getElementById('heatOutputWrap');
+      if(!wrap) return;
+
+      if(!qualifiers.length){
+        wrap.innerHTML=`<div class="empty">${tr('heatNoQualifiers')}</div>`;
+        return;
+      }
+
+      const qualifierRows=qualifiers.map(row=>`<tr>
+        <td>${row.seed}</td><td>${row.heat}</td><td><strong>${escapeHtml(row.name)}</strong> ${qualifierTag(row.reason)}</td><td>${escapeHtml(row.country)}</td><td>${row.position}</td><td>${escapeHtml(row.time||'-')}</td>
+      </tr>`).join('');
+
+      const nextHtml=nextHeats.map((group, i)=>`<div class="heat-next-card"><h4>${tr('heatHeat')} ${i+1}</h4><ol>${group.map(row=>`<li><strong>${escapeHtml(row.name)}</strong> ${escapeHtml(row.country)} <small>#${row.seed}</small></li>`).join('')}</ol></div>`).join('');
+
+      const eliminatedHtml=[...eliminated, ...penalties].length
+        ? `<div class="heat-output-box"><div class="heat-output-title">${tr('heatEliminated')}</div><div class="table-scroll"><table class="heat-table"><thead><tr><th>${tr('heatHeat')}</th><th>${tr('heatName')}</th><th>${tr('heatCountry')}</th><th>${tr('heatPosition')}</th><th>${tr('heatTime')}</th><th>${tr('heatStatus')}</th></tr></thead><tbody>${[...eliminated,...penalties].map(row=>`<tr><td>${row.heat}</td><td>${escapeHtml(row.name)}</td><td>${escapeHtml(row.country)}</td><td>${row.position}</td><td>${escapeHtml(row.time||'-')}</td><td>${escapeHtml(row.status)}</td></tr>`).join('')}</tbody></table></div></div>`
+        : '';
+
+      wrap.innerHTML=`<div class="heat-result-grid">
+        <div class="heat-output-box"><div class="heat-output-title">${tr('heatQualifiers')}</div>
+          <div class="table-scroll"><table class="heat-table"><thead><tr><th>${tr('heatRank')}</th><th>${tr('heatHeat')}</th><th>${tr('heatName')}</th><th>${tr('heatCountry')}</th><th>${tr('heatPosition')}</th><th>${tr('heatTime')}</th></tr></thead><tbody>${qualifierRows}</tbody></table></div>
+        </div>
+        <div class="heat-output-box"><div class="heat-output-title">${tr('heatNextDraw')}</div>
+          <div class="subnote">${tr('heatOfficialNote')}</div>
+          <div class="heat-result-grid">${nextHtml}</div>
+        </div>
+      </div>${eliminatedHtml}`;
+    }
+
+    function fillSampleHeatData(){
+      buildHeatInputTable();
+      const names=['Kim A','Lee B','Park C','Choi D','Seo E','Hwang F','Rim G','Sun H','Dubois I','Sighel J','Dandjinou K','Desmet L','Liu M','Wang N','Blais O','Santos P','Velzeboer Q','Poutsma R','Boutin S','Jang T'];
+      const countries=['KOR','KOR','KOR','KOR','KOR','KOR','PRK','CHN','CAN','ITA','CAN','BEL','CHN','CHN','CAN','USA','NED','NED','CAN','KOR'];
+      [...document.querySelectorAll('#heatInputWrap tbody tr')].forEach((trEl, i)=>{
+        const name=names[i%names.length];
+        trEl.querySelector('.heat-name').value=name;
+        trEl.querySelector('.heat-country').value=countries[i%countries.length];
+        const heat=Number(trEl.dataset.heatRow||1);
+        const pos=Number(trEl.querySelector('.heat-pos').value||1);
+        trEl.querySelector('.heat-time').value=`2:${String(15+heat+pos).padStart(2,'0')}.${String(100+i*17).slice(0,3)}`;
+      });
+    }
+
+    function clearHeatData(){
+      document.querySelectorAll('#heatInputWrap input').forEach(input=>{
+        if(input.classList.contains('heat-pos')) return;
+        input.value='';
+      });
+      document.querySelectorAll('#heatInputWrap select').forEach(select=>select.value='OK');
+      const out=document.getElementById('heatOutputWrap');
+      if(out) out.innerHTML=`<div class="empty">${tr('heatOutputEmpty')}</div>`;
     }
 
     function openReportModal(){
