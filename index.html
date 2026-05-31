@@ -364,6 +364,11 @@
     @media(max-width:980px){.card-maker-layout{grid-template-columns:1fr}.fan-card{width:min(330px,100%)}}
     @media(max-width:560px){.card-maker-grid{grid-template-columns:1fr}.stat-editor{grid-template-columns:1fr 86px}.fan-card{min-height:500px}.fan-card-image-box{height:190px}}
 
+
+    .card-stats-block{margin-top:18px !important}
+    .card-stats-heading{display:block;margin-bottom:8px;line-height:1.45}
+    .card-stats-notice{margin-top:0 !important;margin-bottom:12px !important;line-height:1.65}
+
 </style>
 </head>
 <body>
@@ -803,7 +808,7 @@
 
       <div class="card-maker-layout">
         <div class="card-maker-form">
-          <div class="subnote" data-i18n="cardMakerNotice">이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. 카드 이미지 저장 시 URL 보안/CORS 문제로 선수 이미지가 빠질 수 있습니다. 이 경우 화면 캡처를 이용해 주세요.</div>
+          <div class="subnote" data-i18n="cardMakerNotice">이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. URL 이미지가 안 뜨면 이미지 직접 첨부를 이용해 주세요. 직접 첨부한 이미지는 카드 저장 시에도 안정적으로 포함됩니다.</div>
 
           <div class="card-maker-grid">
             <div>
@@ -835,14 +840,18 @@
               <input id="fanCardImageUrl" type="url" placeholder="https://..." oninput="updateFanCard()">
             </div>
             <div class="wide">
+              <label for="fanCardImageFile" data-i18n="cardImageFile">이미지 직접 첨부</label>
+              <input id="fanCardImageFile" type="file" accept="image/*" onchange="handleFanCardImageFile(event)">
+            </div>
+            <div class="wide">
               <label for="fanCardComment" data-i18n="cardComment">한 줄 코멘트</label>
               <input id="fanCardComment" type="text" value="Fan-made short track card" oninput="updateFanCard()">
             </div>
           </div>
 
-          <div style="margin-top:14px">
-            <strong data-i18n="cardStats">스탯 항목 및 점수</strong>
-            <div class="subnote" data-i18n="cardStatsNotice">최대 8개까지 자유롭게 입력할 수 있습니다.</div>
+          <div class="card-stats-block" style="margin-top:18px">
+            <strong class="card-stats-heading" data-i18n="cardStats">스탯 항목 및 점수</strong>
+            <div class="subnote card-stats-notice" data-i18n="cardStatsNotice">최대 8개까지 자유롭게 입력할 수 있습니다.</div>
             <div id="fanCardStatsEditor">
               <div class="stat-editor"><input class="fan-stat-name" value="체력" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="100" oninput="updateFanCard()"></div>
               <div class="stat-editor"><input class="fan-stat-name" value="스피드" oninput="updateFanCard()"><input class="fan-stat-score" type="number" value="100" oninput="updateFanCard()"></div>
@@ -961,7 +970,7 @@
         playerOverviewTitle:'선수 요약', playerOverviewDesc:'개인전·계주·대회 유형별 메달을 요약합니다.', playerMedalDetailTitle:'선수별 메달 내역', playerMedalDetailDesc:'개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.',
         eraRange:'시대', eraStartAll:'전체 시작', eraEndAll:'전체 끝',
         compareTitle:'선수 비교', compareDesc:'두 선수를 선택해 개인전 성적만 기준으로 점수와 종목별 성과를 비교합니다.',
-        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. 카드 이미지 저장 시 URL 보안/CORS 문제로 선수 이미지가 빠질 수 있습니다. 이 경우 화면 캡처를 이용해 주세요.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 8개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
+        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. URL 이미지가 안 뜨면 이미지 직접 첨부를 이용해 주세요. 직접 첨부한 이미지는 카드 저장 시에도 안정적으로 포함됩니다.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardImageFile:'이미지 직접 첨부', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 8개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
         category:'구분', individual:'개인전', relayMedal:'계주', includeRelayTotal:'계주 포함', individualMedals:'개인전 메달', relayIncludedMedals:'계주 포함 메달', bestEvent:'최다 금메달 종목', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'점수', olympicScore:'올림픽 점수', worldsScore:'세계선수권 점수', worldcupScore:'월드컵·월드투어 점수', totalScore:'총점', noData:'데이터 없음',
         olympicGames:'올림픽', worldCup:'월드컵', worldTour:'월드투어', challengeCup:'챌린지컵', mixed:'혼성', overall:'종합', relay:'계주'
       },
@@ -1010,7 +1019,7 @@
         playerOverviewTitle:'Skater Summary', playerOverviewDesc:'Summarizes medals by individual/relay and competition type.', playerMedalDetailTitle:'Medal Details', playerMedalDetailDesc:'Shows individual medals together with relay medals from relay_members.',
         eraRange:'Era', eraStartAll:'Start', eraEndAll:'End',
         compareTitle:'Compare Skaters', compareDesc:'Select two skaters to compare scores and event performance based on individual results only.',
-        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. When saving the card as an image, the skater image may be missing due to URL security/CORS restrictions. In that case, use a screenshot instead.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 8 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
+        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. If a URL image does not load, upload an image directly. Directly uploaded images are more reliably included when saving the card.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardImageFile:'Upload image directly', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 8 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
         category:'Category', individual:'Individual', relayMedal:'Relay', includeRelayTotal:'Relay included', individualMedals:'Individual medals', relayIncludedMedals:'Relay included medals', bestEvent:'Best gold-medal event', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'Score', olympicScore:'Olympic score', worldsScore:'Worlds score', worldcupScore:'World Cup/Tour score', totalScore:'Total score', noData:'No data',
         olympicGames:'Olympic Games', worldCup:'World Cup', worldTour:'World Tour', challengeCup:'Challenge Cup', mixed:'Mixed', overall:'Overall', relay:'Relay'
       }
@@ -1078,6 +1087,7 @@
     let eventEraStart = '';
     let eventEraEnd = '';
     let compareOptions = { includeWorldsOverall: true };
+    let fanCardUploadedImageDataUrl = '';
     let skaterRankingOptions = {
       includeOlympicDemo: false,
       includeWorldsOverall: true,
@@ -2627,6 +2637,36 @@
     }
 
 
+
+    function handleFanCardImageFile(event){
+      const file=event.target.files && event.target.files[0];
+      if(!file){
+        fanCardUploadedImageDataUrl='';
+        updateFanCard();
+        return;
+      }
+
+      if(!file.type || !file.type.startsWith('image/')){
+        alert(currentLang==='en' ? 'Please select an image file.' : '이미지 파일을 선택해 주세요.');
+        event.target.value='';
+        fanCardUploadedImageDataUrl='';
+        updateFanCard();
+        return;
+      }
+
+      const reader=new FileReader();
+      reader.onload=()=>{
+        fanCardUploadedImageDataUrl=String(reader.result || '');
+        updateFanCard();
+      };
+      reader.onerror=()=>{
+        alert(currentLang==='en' ? 'The image could not be loaded.' : '이미지를 불러오지 못했습니다.');
+        fanCardUploadedImageDataUrl='';
+        updateFanCard();
+      };
+      reader.readAsDataURL(file);
+    }
+
     function fanCardGradeClass(grade){
       const value=String(grade||'CUSTOM').toLowerCase().replace(/\s+/g,'-');
       if(['prospect','contender','champion','world-class','legend','goat','custom'].includes(value)) return 'grade-'+value;
@@ -2644,7 +2684,8 @@
       const customGrade=document.getElementById('fanCardCustomGrade')?.value.trim();
       const grade=selectedGrade==='CUSTOM' && customGrade ? customGrade : selectedGrade;
       const comment=document.getElementById('fanCardComment')?.value.trim() || '';
-      const imageUrl=document.getElementById('fanCardImageUrl')?.value.trim() || '';
+      const imageUrlFromInput=document.getElementById('fanCardImageUrl')?.value.trim() || '';
+      const imageUrl=fanCardUploadedImageDataUrl || imageUrlFromInput;
 
       card.className='fan-card ' + fanCardGradeClass(selectedGrade);
       document.getElementById('fanCardPreviewName').textContent=name;
