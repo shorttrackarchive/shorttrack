@@ -1082,9 +1082,9 @@
           </div>
         </div>
         <div class="quiz-actions">
-          <button type="button" class="sort-btn primary-score-btn" data-i18n="startQuiz" onclick="startRandomQuiz()">퀴즈 시작</button>
-          <button type="button" class="sort-btn" data-i18n="submitQuiz" onclick="submitRandomQuiz()">채점하기</button>
-          <button type="button" class="sort-btn" data-i18n="resetQuiz" onclick="resetRandomQuiz()">초기화</button>
+          <button type="button" id="quizStartBtn" class="sort-btn primary-score-btn" data-i18n="startQuiz" onclick="startRandomQuiz()">퀴즈 시작</button>
+          <button type="button" id="quizSubmitBtn" class="sort-btn" data-i18n="submitQuiz" onclick="submitRandomQuiz()">채점하기</button>
+          <button type="button" id="quizResetBtn" class="sort-btn" data-i18n="resetQuiz" onclick="resetRandomQuiz()">초기화</button>
         </div>
       </div>
       <div id="quizWrap" class="quiz-result-box"><div class="empty" data-i18n="quizEmpty">옵션을 선택한 뒤 퀴즈를 시작해 주세요.</div></div>
@@ -1439,6 +1439,10 @@
       }));
 
       document.querySelectorAll('.compare-score-input').forEach(input=>input.addEventListener('input',renderPlayerComparison));
+
+      document.getElementById('quizStartBtn')?.addEventListener('click', event=>{event.preventDefault(); startRandomQuiz();});
+      document.getElementById('quizSubmitBtn')?.addEventListener('click', event=>{event.preventDefault(); submitRandomQuiz();});
+      document.getElementById('quizResetBtn')?.addEventListener('click', event=>{event.preventDefault(); resetRandomQuiz();});
 
       bindSeasonEraFilters();
 
@@ -3331,16 +3335,26 @@
 
     function buildQuizCandidates(){
       const rows=getQuizBaseRows();
-      const podiums=getCompleteQuizPodiums(rows);
       const selectedType=document.getElementById('quizType')?.value || 'mixed';
       const candidates=[];
+      if(!rows.length) return candidates;
 
-      // 금메달리스트 문제: 완성 포디움이 없어도 Gold 행만 있으면 출제
+      // 성능 보호: 전체 데이터가 커도 랜덤 표본에서 충분한 후보를 만든다.
+      const rowSample=shuffleArray(rows).slice(0, Math.min(rows.length, 1200));
+      const goldRows=shuffleArray(rows.filter(row=>row.medal==='Gold')).slice(0, 500);
+      const countryRows=shuffleArray(rows).slice(0, Math.min(rows.length, 500));
+      const medalRows=shuffleArray(rows).slice(0, Math.min(rows.length, 700));
+
+      const poolsByGender=new Map();
+      rows.forEach(row=>{
+        const key=row.gender || 'all';
+        if(!poolsByGender.has(key)) poolsByGender.set(key, []);
+        poolsByGender.get(key).push(row.skater_name);
+      });
+
       if(selectedType==='mixed'||selectedType==='gold'){
-        rows.filter(row=>row.medal==='Gold').forEach(row=>{
-          const pool=rows
-            .filter(other=>other.gender===row.gender && (other.event===row.event || quizCompetitionGroup(other)===quizCompetitionGroup(row)))
-            .map(other=>other.skater_name);
+        goldRows.forEach(row=>{
+          const pool=(poolsByGender.get(row.gender)||rows.map(r=>r.skater_name));
           const options=sampleOptions(row.skater_name,pool,4);
           if(options.length>=4){
             candidates.push({
@@ -3355,17 +3369,15 @@
         });
       }
 
-      // 포디움 순서 문제: 금은동이 정확히 1명씩 있는 경기에서만 출제
       if(selectedType==='mixed'||selectedType==='podium'){
-        podiums.forEach(podium=>{
+        getCompleteQuizPodiums(rowSample).slice(0,300).forEach(podium=>{
           const q=makePodiumQuiz(podium);
           if(q) candidates.push(q);
         });
       }
 
-      // 메달 색 문제: 행 단위로 출제 가능
       if(selectedType==='mixed'||selectedType==='medal'){
-        rows.forEach(row=>{
+        medalRows.forEach(row=>{
           const answer=quizMedalLabel(row.medal);
           const options=['Gold','Silver','Bronze'].map(quizMedalLabel);
           candidates.push({
@@ -3379,9 +3391,8 @@
         });
       }
 
-      // 선수 국가 문제: 행 단위로 출제 가능
       if(selectedType==='mixed'||selectedType==='country'){
-        shuffleArray(rows).slice(0, Math.min(rows.length, 500)).forEach(row=>{
+        countryRows.forEach(row=>{
           const q=makeCountryQuiz(row, rows);
           if(q) candidates.push(q);
         });
@@ -3392,40 +3403,52 @@
 
     function startRandomQuiz(){
       const wrap=document.getElementById('quizWrap');
-      try{
-        const requestedCount=Number(document.getElementById('quizCount')?.value||10);
-        const candidates=buildQuizCandidates();
-        if(!wrap) return;
+      if(!wrap) return;
 
-        if(!candidates.length){
-          currentQuizQuestions=[];
-          wrap.innerHTML=`<div class="empty">${tr('quizNoData')}<br><br>${currentLang==='en'
-            ? 'Try broadening the filters: All era / All gender / All competitions / Mixed question type.'
-            : '시대·성별·대회 종류를 전체로 넓히거나 문제 유형을 혼합으로 바꿔 보세요.'}</div>`;
-          return;
-        }
+      wrap.innerHTML=`<div class="empty">${currentLang==='en'?'Generating quiz...':'퀴즈를 생성하는 중입니다...'}</div>`;
 
-        const actualCount=Math.min(requestedCount, candidates.length);
-        currentQuizQuestions=candidates.slice(0, actualCount).map((q,i)=>({...q,id:i}));
-        renderQuizQuestions(false);
+      setTimeout(()=>{
+        try{
+          const sourceReady=(Array.isArray(medals) && medals.length) || (Array.isArray(filteredMedals) && filteredMedals.length);
+          if(!sourceReady){
+            currentQuizQuestions=[];
+            wrap.innerHTML=`<div class="empty">${currentLang==='en'
+              ? 'Medals data has not loaded yet. Please wait a moment and try again.'
+              : 'medals 데이터를 아직 불러오지 못했습니다. 잠시 후 다시 눌러 주세요.'}</div>`;
+            return;
+          }
 
-        if(actualCount < requestedCount){
-          const notice=document.createElement('div');
-          notice.className='subnote';
-          notice.style.marginBottom='10px';
-          notice.textContent=currentLang==='en'
-            ? `Only ${actualCount} questions were generated for the selected filters.`
-            : `선택한 조건에서 생성 가능한 문제가 ${actualCount}개라 ${actualCount}문제만 출제했습니다.`;
-          document.getElementById('quizWrap')?.prepend(notice);
-        }
-      }catch(error){
-        console.error('Quiz start error', error);
-        if(wrap){
+          const requestedCount=Number(document.getElementById('quizCount')?.value||10);
+          const candidates=buildQuizCandidates();
+
+          if(!candidates.length){
+            currentQuizQuestions=[];
+            wrap.innerHTML=`<div class="empty">${tr('quizNoData')}<br><br>${currentLang==='en'
+              ? 'Try broadening the filters: All era / All gender / All competitions / Mixed question type.'
+              : '시대·성별·대회 종류를 전체로 넓히거나 문제 유형을 혼합으로 바꿔 보세요.'}</div>`;
+            return;
+          }
+
+          const actualCount=Math.min(requestedCount, candidates.length);
+          currentQuizQuestions=candidates.slice(0, actualCount).map((q,i)=>({...q,id:i}));
+          renderQuizQuestions(false);
+
+          if(actualCount < requestedCount){
+            const notice=document.createElement('div');
+            notice.className='subnote';
+            notice.style.marginBottom='10px';
+            notice.textContent=currentLang==='en'
+              ? `Only ${actualCount} questions were generated for the selected filters.`
+              : `선택한 조건에서 생성 가능한 문제가 ${actualCount}개라 ${actualCount}문제만 출제했습니다.`;
+            document.getElementById('quizWrap')?.prepend(notice);
+          }
+        }catch(error){
+          console.error('Quiz start error', error);
           wrap.innerHTML=`<div class="empty">${currentLang==='en'
             ? 'The quiz could not be generated. Please report this issue.'
             : '퀴즈를 생성하지 못했습니다. 오류 신고로 제보해 주세요.'}<br><small>${escapeHtml(String(error && error.message ? error.message : error))}</small></div>`;
         }
-      }
+      }, 30);
     }
 
     function renderQuizQuestions(showResult=false){
@@ -3497,6 +3520,11 @@
         textarea.value=`[퀴즈 오류 신고]\\n문제: ${q.question}\\n정답 처리: ${q.answer}\\n선택지: ${q.options.join(' / ')}\\n관련 데이터:\\n${rows}`;
       }
     }
+
+    window.startRandomQuiz = startRandomQuiz;
+    window.submitRandomQuiz = submitRandomQuiz;
+    window.resetRandomQuiz = resetRandomQuiz;
+    window.reportQuizIssue = reportQuizIssue;
 
     function openReportModal(){
       const modal=document.getElementById('reportModalBackdrop');
