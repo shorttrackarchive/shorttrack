@@ -3157,6 +3157,24 @@
     }
 
 
+    function escapeAttr(value){
+      return String(value ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/"/g,'&quot;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;');
+    }
+
+    function quizMedalLabel(medal){
+      const value=String(medal||'');
+      if(typeof translateMedal === 'function') return translateMedal(value);
+      if(currentLang==='en') return value;
+      if(value==='Gold') return '금';
+      if(value==='Silver') return '은';
+      if(value==='Bronze') return '동';
+      return value;
+    }
+
     function quizCompetitionGroup(row){
       const bucket=competitionBucket(row.competition_type);
       if(bucket==='olympic') return 'olympic';
@@ -3224,7 +3242,8 @@
     }
 
     function getQuizBaseRows(){
-      return medals.filter(isQuizEligibleRow).filter(quizRowMatchesOptions);
+      const sourceRows = Array.isArray(medals) && medals.length ? medals : (Array.isArray(filteredMedals) ? filteredMedals : []);
+      return sourceRows.filter(isQuizEligibleRow).filter(quizRowMatchesOptions);
     }
 
     function getCompleteQuizPodiums(rows){
@@ -3298,8 +3317,8 @@
 
     function makeMedalQuiz(podium){
       const row=shuffleArray([podium.gold,podium.silver,podium.bronze])[0];
-      const answer=translateMedal(row.medal);
-      const options=['Gold','Silver','Bronze'].map(translateMedal);
+      const answer=quizMedalLabel(row.medal);
+      const options=['Gold','Silver','Bronze'].map(quizMedalLabel);
       return {
         type:'medal',
         question:`${quizEventLabel(row)} · ${row.skater_name}: ${tr('quizMedalQuestion')}`,
@@ -3347,8 +3366,8 @@
       // 메달 색 문제: 행 단위로 출제 가능
       if(selectedType==='mixed'||selectedType==='medal'){
         rows.forEach(row=>{
-          const answer=translateMedal(row.medal);
-          const options=['Gold','Silver','Bronze'].map(translateMedal);
+          const answer=quizMedalLabel(row.medal);
+          const options=['Gold','Silver','Bronze'].map(quizMedalLabel);
           candidates.push({
             type:'medal',
             question:`${quizEventLabel(row)} · ${row.skater_name}: ${tr('quizMedalQuestion')}`,
@@ -3372,31 +3391,40 @@
     }
 
     function startRandomQuiz(){
-      const requestedCount=Number(document.getElementById('quizCount')?.value||10);
-      const candidates=buildQuizCandidates();
       const wrap=document.getElementById('quizWrap');
-      if(!wrap) return;
+      try{
+        const requestedCount=Number(document.getElementById('quizCount')?.value||10);
+        const candidates=buildQuizCandidates();
+        if(!wrap) return;
 
-      if(!candidates.length){
-        currentQuizQuestions=[];
-        wrap.innerHTML=`<div class="empty">${tr('quizNoData')}<br><br>${currentLang==='en'
-          ? 'Try broadening the filters: All era / All gender / All competitions / Mixed question type.'
-          : '시대·성별·대회 종류를 전체로 넓히거나 문제 유형을 혼합으로 바꿔 보세요.'}</div>`;
-        return;
-      }
+        if(!candidates.length){
+          currentQuizQuestions=[];
+          wrap.innerHTML=`<div class="empty">${tr('quizNoData')}<br><br>${currentLang==='en'
+            ? 'Try broadening the filters: All era / All gender / All competitions / Mixed question type.'
+            : '시대·성별·대회 종류를 전체로 넓히거나 문제 유형을 혼합으로 바꿔 보세요.'}</div>`;
+          return;
+        }
 
-      const actualCount=Math.min(requestedCount, candidates.length);
-      currentQuizQuestions=candidates.slice(0, actualCount).map((q,i)=>({...q,id:i}));
-      renderQuizQuestions(false);
+        const actualCount=Math.min(requestedCount, candidates.length);
+        currentQuizQuestions=candidates.slice(0, actualCount).map((q,i)=>({...q,id:i}));
+        renderQuizQuestions(false);
 
-      if(actualCount < requestedCount){
-        const notice=document.createElement('div');
-        notice.className='subnote';
-        notice.style.marginBottom='10px';
-        notice.textContent=currentLang==='en'
-          ? `Only ${actualCount} questions were generated for the selected filters.`
-          : `선택한 조건에서 생성 가능한 문제가 ${actualCount}개라 ${actualCount}문제만 출제했습니다.`;
-        document.getElementById('quizWrap')?.prepend(notice);
+        if(actualCount < requestedCount){
+          const notice=document.createElement('div');
+          notice.className='subnote';
+          notice.style.marginBottom='10px';
+          notice.textContent=currentLang==='en'
+            ? `Only ${actualCount} questions were generated for the selected filters.`
+            : `선택한 조건에서 생성 가능한 문제가 ${actualCount}개라 ${actualCount}문제만 출제했습니다.`;
+          document.getElementById('quizWrap')?.prepend(notice);
+        }
+      }catch(error){
+        console.error('Quiz start error', error);
+        if(wrap){
+          wrap.innerHTML=`<div class="empty">${currentLang==='en'
+            ? 'The quiz could not be generated. Please report this issue.'
+            : '퀴즈를 생성하지 못했습니다. 오류 신고로 제보해 주세요.'}<br><small>${escapeHtml(String(error && error.message ? error.message : error))}</small></div>`;
+        }
       }
     }
 
@@ -3417,7 +3445,7 @@
           <div class="quiz-options">${q.options.map(option=>{
             const isSelected=selected===option;
             const cls=showResult ? (option===q.answer ? ' correct' : (isSelected && option!==q.answer ? ' wrong' : '')) : '';
-            return `<label class="quiz-option${cls}"><input type="radio" name="quiz_${q.id}" value="${escapeHtml(option)}" ${isSelected?'checked':''}> <span>${escapeHtml(option)}</span></label>`;
+            return `<label class="quiz-option${cls}"><input type="radio" name="quiz_${q.id}" value="${escapeAttr(option)}" ${isSelected?'checked':''}> <span>${escapeHtml(option)}</span></label>`;
           }).join('')}</div>
           ${showResult?`<div class="quiz-meta">${tr('quizCorrectAnswer')}: <strong>${escapeHtml(q.answer)}</strong> · ${tr('quizYourAnswer')}: <strong>${escapeHtml(selected||tr('quizUnanswered'))}</strong></div>`:''}
           <div class="quiz-meta">${escapeHtml(q.meta||'')}</div>
