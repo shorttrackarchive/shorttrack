@@ -543,6 +543,23 @@
     @media(max-width:900px){.st-home-feature-grid,.st-page-two-col{grid-template-columns:1fr}.st-page-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:520px){.st-page-grid{grid-template-columns:1fr}}
 
+
+
+    /* Lap time ranking API section */
+    .lap-ranking-controls{border:1px solid var(--line);border-radius:18px;background:#fbfdff;padding:16px;margin:12px 0}
+    .lap-ranking-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:end}
+    .lap-ranking-grid label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin:0 0 5px}
+    .lap-context-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+    .lap-context-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .lap-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+    .lap-kpi{border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px}
+    .lap-kpi .label{font-size:12px;color:var(--muted);margin-bottom:5px}.lap-kpi .value{font-weight:950;font-size:20px;color:#1e3a8a}
+    .lap-badge{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:11px;font-weight:900;background:#f8fafc;white-space:nowrap}
+    .lap-badge.lead{background:#dbeafe;color:#1e40af;border-color:#bfdbfe}.lap-badge.pass{background:#dcfce7;color:#166534;border-color:#bbf7d0}.lap-badge.follow{background:#f3f4f6;color:#374151}.lap-badge.passed{background:#fee2e2;color:#991b1b;border-color:#fecaca}
+    .lap-note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:8px}
+    @media(max-width:980px){.lap-ranking-grid,.lap-kpi-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.lap-ranking-grid,.lap-kpi-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -574,7 +591,7 @@
     <button type="button" data-i18n="navQuiz" onclick="scrollToSection('quizSection')">랜덤 퀴즈</button>
     <button type="button" data-i18n="navReport" onclick="openReportModal()">오류 신고 및 문의</button>
     <button type="button" class="nav-soon" data-i18n="navRecordRank" onclick="showPreparing()">종목별 기록 순위</button>
-    <button type="button" class="nav-soon" data-i18n="navLapRank" onclick="showPreparing()">랩타임 순위</button>
+    <button type="button" data-i18n="navLapRank" onclick="scrollToSection('lapRankingSection'); loadLapRankings();">랩타임 순위</button>
     <button type="button" class="nav-soon" data-i18n="navRecords" onclick="showPreparing()">각종 기록</button>
   </nav>
 
@@ -1296,6 +1313,58 @@
     </section>
 
 
+
+
+    <section class="card anchor-section" id="lapRankingSection">
+      <div class="section-title"><div><h2 data-i18n="navLapRank">랩타임 순위</h2><span>ISU Results의 lap time / split time(rank)를 기준으로 빠른 랩만 모아 보여 줍니다.</span></div></div>
+      <div class="notice">여자 선수는 <strong>8.59초 이하</strong>, 남자 선수는 <strong>8.19초 이하</strong>만 표시합니다. 분류는 ISU split rank 변화로 자동 추정하며, 필요하면 lap_times_raw 시트의 manual_context로 보정할 수 있습니다.</div>
+      <div class="lap-ranking-controls">
+        <div class="lap-ranking-grid">
+          <div>
+            <label for="lapGenderFilter">성별</label>
+            <select id="lapGenderFilter" onchange="renderLapRankings()">
+              <option value="all">전체</option>
+              <option value="Women">여자</option>
+              <option value="Men">남자</option>
+            </select>
+          </div>
+          <div>
+            <label for="lapSeasonFilter">시즌</label>
+            <select id="lapSeasonFilter" onchange="renderLapRankings()"><option value="all">전체 시즌</option></select>
+          </div>
+          <div>
+            <label for="lapEventFilter">종목</label>
+            <select id="lapEventFilter" onchange="renderLapRankings()"><option value="all">전체 종목</option></select>
+          </div>
+          <div>
+            <label for="lapLimitFilter">표시 개수</label>
+            <select id="lapLimitFilter" onchange="renderLapRankings()">
+              <option value="50">50</option><option value="100" selected>100</option><option value="200">200</option><option value="500">500</option>
+            </select>
+          </div>
+          <div>
+            <button type="button" class="sort-btn primary-score-btn" onclick="loadLapRankings(true)">불러오기</button>
+          </div>
+        </div>
+        <div class="lap-context-tabs" aria-label="랩타임 분류">
+          <button type="button" class="tab lap-context-tab active" data-lap-context="all" onclick="setLapContextFilter('all')">전체</button>
+          <button type="button" class="tab lap-context-tab" data-lap-context="lead" onclick="setLapContextFilter('lead')">선두</button>
+          <button type="button" class="tab lap-context-tab" data-lap-context="pass" onclick="setLapContextFilter('pass')">추월</button>
+          <button type="button" class="tab lap-context-tab" data-lap-context="follow" onclick="setLapContextFilter('follow')">따라타기</button>
+          <button type="button" class="tab lap-context-tab" data-lap-context="passed" onclick="setLapContextFilter('passed')">추월당하기</button>
+        </div>
+        <div class="lap-note">전체보기 정렬 우선순위: 랩타임 빠른 순 → 동일 랩타임일 때 선두 &gt; 추월 &gt; 따라타기 &gt; 추월당하기.</div>
+      </div>
+      <div class="lap-kpi-grid" id="lapKpiWrap">
+        <div class="lap-kpi"><div class="label">수집된 빠른 랩</div><div class="value" id="lapKpiTotal">-</div></div>
+        <div class="lap-kpi"><div class="label">여자 기준</div><div class="value">≤ 8.59</div></div>
+        <div class="lap-kpi"><div class="label">남자 기준</div><div class="value">≤ 8.19</div></div>
+        <div class="lap-kpi"><div class="label">마지막 로드</div><div class="value" id="lapKpiLoaded">-</div></div>
+      </div>
+      <div id="lapRankingWrap"><div class="empty">아직 랩타임 데이터를 불러오지 않았습니다. 위의 <strong>불러오기</strong>를 누르세요.</div></div>
+    </section>
+
+
     <section class="card" id="medalListCard">
       <div class="section-title"><div><h2>메달 목록</h2><span>상세 원자료 확인용 목록입니다. 길어지기 쉬워 화면 맨 아래에 배치했습니다.</div></div>
       <div class="tabs" aria-label="성별 보기">
@@ -1447,6 +1516,7 @@
     }
 
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkNr8yBRI_ok8aFZd623RmHhNCpyHFKuTvdwxYiczFi_LFff5olScBXSPGPd_-QWepKg/exec';
+    const LAP_API_URL = APPS_SCRIPT_URL; // 랩타임 API를 별도 배포하면 이 주소만 교체
 
     let medals = [];
     let relayMembers = [];
@@ -4887,7 +4957,119 @@
       window.addEventListener('DOMContentLoaded',()=>{try{refreshTodaySkaterCard();}catch(e){}});
     }
 
-  </script>
+      // Lap time ranking API integration
+    let lapRankingRows = [];
+    let lapRankingLoaded = false;
+    let currentLapContext = 'all';
+
+    function lapContextLabel(key){
+      return {lead:'선두', pass:'추월', follow:'따라타기', passed:'추월당하기', unknown:'미분류'}[key] || key || '미분류';
+    }
+    function lapContextClass(key){
+      return ['lead','pass','follow','passed'].includes(key) ? key : 'unknown';
+    }
+    function lapContextPriority(key){
+      return {lead:0, pass:1, follow:2, passed:3, unknown:4}[key] ?? 5;
+    }
+    function lapGenderThreshold(gender){
+      const g=String(gender||'').toLowerCase();
+      if(g.includes('women')||g.includes('female')||g.includes('여')) return 8.59;
+      if(g.includes('men')||g.includes('male')||g.includes('남')) return 8.19;
+      return 999;
+    }
+    function getLapApiUrl(){
+      return (typeof LAP_API_URL!=='undefined' && LAP_API_URL) ? LAP_API_URL : APPS_SCRIPT_URL;
+    }
+    function setLapContextFilter(context){
+      currentLapContext=context;
+      document.querySelectorAll('.lap-context-tab').forEach(btn=>btn.classList.toggle('active', btn.dataset.lapContext===context));
+      renderLapRankings();
+    }
+    function populateLapFilters(rows){
+      const seasonSel=document.getElementById('lapSeasonFilter');
+      const eventSel=document.getElementById('lapEventFilter');
+      if(!seasonSel||!eventSel) return;
+      const oldSeason=seasonSel.value||'all';
+      const oldEvent=eventSel.value||'all';
+      const seasons=[...new Set(rows.map(r=>r.season).filter(Boolean))].sort().reverse();
+      const events=[...new Set(rows.map(r=>r.event).filter(Boolean))].sort((a,b)=>eventOrder(a)-eventOrder(b)||a.localeCompare(b));
+      seasonSel.innerHTML='<option value="all">전체 시즌</option>'+seasons.map(s=>`<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+      eventSel.innerHTML='<option value="all">전체 종목</option>'+events.map(e=>`<option value="${escapeHtml(e)}">${escapeHtml(e)}</option>`).join('');
+      seasonSel.value=seasons.includes(oldSeason)?oldSeason:'all';
+      eventSel.value=events.includes(oldEvent)?oldEvent:'all';
+    }
+    async function loadLapRankings(force){
+      const wrap=document.getElementById('lapRankingWrap');
+      if(!wrap) return;
+      if(lapRankingLoaded && !force){ renderLapRankings(); return; }
+      const api=getLapApiUrl();
+      if(!api || api.includes('여기에')){
+        wrap.innerHTML='<div class="empty"><strong>랩타임 API 주소가 연결되지 않았습니다.</strong><br>Apps Script에 lap time API 코드를 추가한 뒤 LAP_API_URL을 확인해 주세요.</div>';
+        return;
+      }
+      wrap.innerHTML='<div class="empty">랩타임 순위 데이터를 불러오는 중입니다.</div>';
+      try{
+        const sep=api.includes('?')?'&':'?';
+        const res=await fetch(`${api}${sep}action=lapRankings&limit=1000`, {cache:'no-store'});
+        const json=await res.json();
+        if(!json || json.ok===false) throw new Error(json && json.error ? json.error : 'lapRankings 응답 오류');
+        lapRankingRows=(json.rows||[]).map(row=>({
+          competition_type:String(row.competition_type||''), season:String(row.season||''), competition_name:String(row.competition_name||''), city:String(row.city||''), year:String(row.year||''),
+          gender:String(row.gender||''), event:String(row.event||''), round:String(row.round||''), heat:String(row.heat||''), skater_name:String(row.skater_name||row.name||''), country:String(row.country||''),
+          lap_no:Number(row.lap_no||row.lap_number||0), lap_time:Number(row.lap_time||0), split_time:String(row.split_time||''), split_rank:Number(row.split_rank||0), prev_split_rank:Number(row.prev_split_rank||0),
+          auto_context:String(row.auto_context||row.context||''), manual_context:String(row.manual_context||''), source_url:String(row.source_url||''), note:String(row.note||''), context_basis:String(row.context_basis||'')
+        })).filter(r=>r.lap_time>0);
+        lapRankingLoaded=true;
+        populateLapFilters(lapRankingRows);
+        document.getElementById('lapKpiTotal').textContent=lapRankingRows.length.toLocaleString('ko-KR');
+        document.getElementById('lapKpiLoaded').textContent=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+        renderLapRankings();
+      }catch(err){
+        wrap.innerHTML=`<div class="empty"><strong>랩타임 데이터를 불러오지 못했습니다.</strong><br>${escapeHtml(err.message||err)}<br><small>Apps Script 배포 URL, action=lapRankings, lap_times_raw 시트를 확인해 주세요.</small></div>`;
+      }
+    }
+    function renderLapRankings(){
+      const wrap=document.getElementById('lapRankingWrap');
+      if(!wrap) return;
+      if(!lapRankingLoaded){
+        wrap.innerHTML='<div class="empty">아직 랩타임 데이터를 불러오지 않았습니다. 위의 <strong>불러오기</strong>를 누르세요.</div>';
+        return;
+      }
+      const gender=document.getElementById('lapGenderFilter')?.value||'all';
+      const season=document.getElementById('lapSeasonFilter')?.value||'all';
+      const event=document.getElementById('lapEventFilter')?.value||'all';
+      const limit=Number(document.getElementById('lapLimitFilter')?.value||100);
+      let rows=lapRankingRows.slice();
+      rows=rows.filter(row=>{
+        const context=row.manual_context || row.auto_context || 'unknown';
+        if(gender!=='all' && row.gender!==gender) return false;
+        if(season!=='all' && row.season!==season) return false;
+        if(event!=='all' && row.event!==event) return false;
+        if(currentLapContext!=='all' && context!==currentLapContext) return false;
+        const threshold=lapGenderThreshold(row.gender);
+        if(row.lap_time>threshold) return false;
+        return true;
+      });
+      rows.sort((a,b)=>a.lap_time-b.lap_time || lapContextPriority(a.manual_context||a.auto_context)-lapContextPriority(b.manual_context||b.auto_context) || String(a.skater_name).localeCompare(String(b.skater_name),'ko'));
+      const visible=rows.slice(0,limit);
+      if(!visible.length){
+        wrap.innerHTML='<div class="empty"><strong>조건에 맞는 랩타임이 없습니다.</strong><br>성별·시즌·종목·분류 필터를 조정해 보세요.</div>';
+        return;
+      }
+      const html=`<div class="table-scroll"><table><thead><tr>
+        <th>순위</th><th>랩타임</th><th>선수</th><th>국가</th><th>성별</th><th>종목</th><th>대회</th><th>시즌</th><th>라운드</th><th>Heat</th><th>Lap</th><th>분류</th><th>근거</th>
+      </tr></thead><tbody>${visible.map((row,idx)=>{
+        const context=row.manual_context || row.auto_context || 'unknown';
+        const basis=row.context_basis || (row.prev_split_rank && row.split_rank ? `${row.prev_split_rank}위 → ${row.split_rank}위` : '-');
+        return `<tr>
+          <td>${idx+1}</td><td><strong>${row.lap_time.toFixed(3)}</strong></td><td>${escapeHtml(row.skater_name)}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td>${escapeHtml(row.competition_name)}</td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.round)}</td><td>${escapeHtml(row.heat)}</td><td>${row.lap_no||''}</td><td><span class="lap-badge ${lapContextClass(context)}">${lapContextLabel(context)}</span></td><td>${escapeHtml(basis)}</td>
+        </tr>`;
+      }).join('')}</tbody></table></div><div class="subnote">총 ${rows.length.toLocaleString('ko-KR')}건 중 ${visible.length.toLocaleString('ko-KR')}건 표시</div>`;
+      wrap.innerHTML=html;
+    }
+
+
+</script>
 
 </body>
 </html>
