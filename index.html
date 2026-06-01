@@ -1607,21 +1607,26 @@
 
 
     function setupSectionEraFilters(){
-      const years=[...new Set([...medals,...relayMembers].map(row=>Number(row.year)).filter(Number.isFinite))].sort((a,b)=>a-b);
-      [skaterEraStartSelect, compareEraStartSelect, countryEraStartSelect, eventEraStartSelect].forEach(select=>fillYearSelect(select, years, 'eraStartAll'));
-      [skaterEraEndSelect, compareEraEndSelect, countryEraEndSelect, eventEraEndSelect].forEach(select=>fillYearSelect(select, years, 'eraEndAll'));
+      const seasons=[...new Set([...medals,...relayMembers]
+        .map(row=>String(row.season||'').trim())
+        .filter(season=>/^\d{4}-\d{2}$/.test(season)))]
+        .sort((a,b)=>seasonSortValue(a)-seasonSortValue(b));
+
+      [skaterEraStartSelect, compareEraStartSelect, countryEraStartSelect, eventEraStartSelect].forEach(select=>fillSeasonRangeSelect(select, seasons, 'eraStartAll'));
+      [skaterEraEndSelect, compareEraEndSelect, countryEraEndSelect, eventEraEndSelect].forEach(select=>fillSeasonRangeSelect(select, seasons, 'eraEndAll'));
     }
 
-    function fillYearSelect(el,years,labelKey){
+    function fillSeasonRangeSelect(el,seasons,labelKey){
+      if(!el) return;
       const current=el.value;
       el.innerHTML=`<option value="" data-i18n="${labelKey}">${tr(labelKey)}</option>`;
-      years.forEach(year=>{
+      seasons.forEach(season=>{
         const opt=document.createElement('option');
-        opt.value=String(year);
-        opt.textContent=String(year);
+        opt.value=season;
+        opt.textContent=season;
         el.appendChild(opt);
       });
-      if(current) el.value=current;
+      if(current && seasons.includes(current)) el.value=current;
     }
 
     function getSkaterPrimaryGender(name){
@@ -1749,9 +1754,9 @@
     }
 
     function rowInEra(row,start,end){
-      const yearNumber = Number(row.year);
-      if(start && Number.isFinite(yearNumber) && yearNumber < Number(start)) return false;
-      if(end && Number.isFinite(yearNumber) && yearNumber > Number(end)) return false;
+      const rowSeasonValue = seasonSortValue(row.season, row.year);
+      if(start && rowSeasonValue < seasonSortValue(start, start)) return false;
+      if(end && rowSeasonValue > seasonSortValue(end, end)) return false;
       return true;
     }
 
