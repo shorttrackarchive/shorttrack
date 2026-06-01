@@ -453,7 +453,7 @@
   <nav class="side-nav" aria-label="화면 이동 메뉴">
     <div class="side-nav-title" data-i18n="navTitle">바로가기</div>
     <button type="button" data-i18n="navSearch" onclick="scrollToSection('searchSection')">검색</button>
-    <button type="button" data-i18n="navHelp" onclick="scrollToSection('helpSection')">도움말</button>
+    <button type="button" data-i18n="navHelp" onclick="openHelpModal()">도움말</button>
     <button type="button" data-i18n="navSkaterRank" onclick="scrollToSection('skaterRankingSection')">선수별 종합 순위</button>
     <button type="button" data-i18n="navCompare" onclick="scrollToSection('compareSection')">선수 비교</button>
     <button type="button" data-i18n="navCountryRank" onclick="scrollToSection('countryRankingSection')">국가별 메달 순위</button>
@@ -483,28 +483,28 @@
     </div>
   </div>
 
+
+  <div class="report-modal-backdrop" id="helpModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+    <div class="report-modal">
+      <div class="report-modal-header">
+        <h2 id="helpModalTitle" data-i18n="helpTitle">용어·데이터 기준 도움말</h2>
+        <button type="button" class="report-modal-close" data-i18n="close" onclick="closeHelpModal()">닫기</button>
+      </div>
+      <div class="help-grid">
+        <div class="help-item"><strong data-i18n="helpWorldsOverallTitle">세계선수권 종합</strong><span data-i18n="helpWorldsOverallText">세계선수권 Overall 포디움입니다. 개인 종목 메달과 별도 또는 합산해 볼 수 있습니다.</span></div>
+        <div class="help-item"><strong data-i18n="help3000Title">3000m S.F.</strong><span data-i18n="help3000Text">세계선수권 Super Final 성격의 3000m 개인전 기록입니다. 기본 순위에서는 제외하거나 별도 안내합니다.</span></div>
+        <div class="help-item"><strong data-i18n="helpRelayTitle">계주 데이터</strong><span data-i18n="helpRelayText">계주 멤버 데이터는 올림픽 중심으로 정리되어 있습니다. 세계선수권·월드컵 계주는 불완전할 수 있습니다.</span></div>
+        <div class="help-item"><strong data-i18n="helpScoreTitle">점수 계산</strong><span data-i18n="helpScoreText">점수 입력란의 값에 따라 순위가 즉시 바뀝니다. 기본값은 13·21·34 기반 점수 체계입니다.</span></div>
+      </div>
+    </div>
+  </div>
+
   <main>
     <section class="card anchor-section" id="searchSection">
       <div class="controls">
         <input id="searchInput" type="text" placeholder="선수명, 국가, 대회명, 종목 검색" data-i18n-placeholder="searchPlaceholder" />
       </div>
       <div id="loadingStatus" class="loading-status" data-i18n="loading">데이터를 불러오는 중입니다.</div>
-      <div class="search-tools" aria-label="검색 결과 정렬 및 필터">
-        <label><span data-i18n="searchSort">정렬</span>
-          <select id="searchSortSelect">
-            <option value="recent" data-i18n="sortRecent">최신순</option>
-            <option value="oldest" data-i18n="sortOldest">오래된순</option>
-            <option value="medal" data-i18n="sortMedal">메달순</option>
-            <option value="event" data-i18n="sortEvent">종목순</option>
-            <option value="name" data-i18n="sortName">선수명순</option>
-          </select>
-        </label>
-        <label><input type="checkbox" id="searchIndividualOnly"> <span data-i18n="individualOnly">개인전만</span></label>
-        <label><input type="checkbox" id="searchRelayOnly"> <span data-i18n="relayOnly">계주만</span></label>
-        <label><input type="checkbox" id="searchGoldOnly"> <span data-i18n="goldOnly">금메달만</span></label>
-        <label><input type="checkbox" id="searchExcludeWorldsOverall"> <span data-i18n="excludeWorldsOverall">세계선수권 종합 제외</span></label>
-        <label><input type="checkbox" id="searchExclude3000"> <span data-i18n="exclude3000">3000m 제외</span></label>
-      </div>
     </section>
 
     <section class="card">
@@ -525,20 +525,7 @@
         <div class="reliability-item"><strong data-i18n="reliabilityRelayTitle">계주 멤버</strong><span data-i18n="reliabilityRelayText">계주 멤버는 올림픽 중심으로 정리되어 있습니다.</div>
       </div>
     </section>
-
-
-    <section class="card anchor-section" id="helpSection">
-      <div class="section-title"><div><h2 data-i18n="helpTitle">용어·데이터 기준 도움말</h2><span data-i18n="helpDesc">순위와 기록을 해석할 때 참고할 기준입니다.</span></div></div>
-      <div class="help-grid">
-        <div class="help-item"><strong data-i18n="helpWorldsOverallTitle">세계선수권 종합</strong><span data-i18n="helpWorldsOverallText">세계선수권 Overall 포디움입니다. 개인 종목 메달과 별도 또는 합산해 볼 수 있습니다.</span></div>
-        <div class="help-item"><strong data-i18n="help3000Title">3000m S.F.</strong><span data-i18n="help3000Text">세계선수권 Super Final 성격의 3000m 개인전 기록입니다. 기본 순위에서는 제외하거나 별도 안내합니다.</span></div>
-        <div class="help-item"><strong data-i18n="helpRelayTitle">계주 데이터</strong><span data-i18n="helpRelayText">계주 멤버 데이터는 올림픽 중심으로 정리되어 있습니다. 세계선수권·월드컵 계주는 불완전할 수 있습니다.</span></div>
-        <div class="help-item"><strong data-i18n="helpScoreTitle">점수 계산</strong><span data-i18n="helpScoreText">점수 입력란의 값에 따라 순위가 즉시 바뀝니다. 기본값은 13·21·34 기반 점수 체계입니다.</span></div>
-      </div>
-    </section>
-
-
-    <section id="playerPanel" class="card panel">
+<section id="playerPanel" class="card panel">
       <div class="panel-header">
         <div><h2 id="playerName">선수명</h2><p id="playerInfo">선수 정보</p></div>
         <button class="close-btn" onclick="closePlayerPanel()">닫기</button>
@@ -552,7 +539,7 @@
       <div class="section-title"><div><h2 data-i18n="playerOverviewTitle">선수 요약</h2><span data-i18n="playerOverviewDesc">개인전·계주·대회 유형별 메달을 요약합니다.</div></div>
       <div id="playerOverviewTable"></div>
       <div class="spacer"></div>
-      <div class="section-title"><div><h2 data-i18n="playerTimelineTitle">커리어 타임라인</h2><span data-i18n="playerTimelineDesc">선수의 메달 기록을 연도순으로 보여 줍니다.</span></div></div>
+      <div class="section-title"><div><h2 data-i18n="playerTimelineTitle">커리어 타임라인</h2><span data-i18n="playerTimelineDesc">선수의 메달 기록을 시즌 역순으로 보여 줍니다.</span></div></div>
       <div id="playerTimeline"></div>
       <div class="spacer"></div>
       <div class="section-title"><div><h2 data-i18n="playerMedalDetailTitle">선수별 메달 내역</h2><span data-i18n="playerMedalDetailDesc">개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.</div></div>
@@ -608,10 +595,10 @@
       </div>
 
       <div class="era-controls" aria-label="선수별 종합 순위 시대 선택">
-        <span class="ranking-filter-label" data-i18n="eraRange">시대</span>
-        <select id="skaterEraStart"><option value="" data-i18n="eraStartAll">전체 시작</option></select>
+        <span class="ranking-filter-label" data-i18n="eraRange">시즌</span>
+        <select id="skaterEraStart"><option value="" data-i18n="eraStartAll">전체 시즌 시작</option></select>
         <span>~</span>
-        <select id="skaterEraEnd"><option value="" data-i18n="eraEndAll">전체 끝</option></select>
+        <select id="skaterEraEnd"><option value="" data-i18n="eraEndAll">전체 시즌 끝</option></select>
       </div>
 
       <div class="subnote" data-i18n="skaterFilterNote">현재 검색어와 선수별 종합 순위의 시즌·성별·시대·포함 설정이 반영됩니다. 기본값은 개인전만·전체 시즌·전체 성별·올림픽 시범종목 제외·세계선수권 종합 포함·3000m 제외입니다.</div>
@@ -663,10 +650,10 @@
         <select id="compareSeasonFilter"><option value="" data-i18n="allSeasons">전체 시즌</option></select>
       </div>
       <div class="era-controls" aria-label="선수 비교 시대 선택">
-        <span class="ranking-filter-label" data-i18n="eraRange">시대</span>
-        <select id="compareEraStart"><option value="" data-i18n="eraStartAll">전체 시작</option></select>
+        <span class="ranking-filter-label" data-i18n="eraRange">시즌</span>
+        <select id="compareEraStart"><option value="" data-i18n="eraStartAll">전체 시즌 시작</option></select>
         <span>~</span>
-        <select id="compareEraEnd"><option value="" data-i18n="eraEndAll">전체 끝</option></select>
+        <select id="compareEraEnd"><option value="" data-i18n="eraEndAll">전체 시즌 끝</option></select>
       </div>
       <div class="ranking-filter-row" aria-label="선수 비교 포함 설정">
         <span class="ranking-filter-label" data-i18n="includeSettings">포함 설정</span>
@@ -716,10 +703,10 @@
         <select id="countrySeasonFilter"><option value="" data-i18n="allSeasons">전체 시즌</option></select>
       </div>
       <div class="era-controls" aria-label="국가별 메달 순위 시대 선택">
-        <span class="ranking-filter-label" data-i18n="eraRange">시대</span>
-        <select id="countryEraStart"><option value="" data-i18n="eraStartAll">전체 시작</option></select>
+        <span class="ranking-filter-label" data-i18n="eraRange">시즌</span>
+        <select id="countryEraStart"><option value="" data-i18n="eraStartAll">전체 시즌 시작</option></select>
         <span>~</span>
-        <select id="countryEraEnd"><option value="" data-i18n="eraEndAll">전체 끝</option></select>
+        <select id="countryEraEnd"><option value="" data-i18n="eraEndAll">전체 시즌 끝</option></select>
       </div>
       <div id="countryRankingWrap"><div class="empty"><span data-i18n="loading">데이터를 불러오는 중입니다.</div></div>
     </section>
@@ -739,10 +726,10 @@
         <select id="eventSeasonFilter"><option value="" data-i18n="allSeasons">전체 시즌</option></select>
       </div>
       <div class="era-controls" aria-label="종목별 선수 순위 시대 선택">
-        <span class="ranking-filter-label" data-i18n="eraRange">시대</span>
-        <select id="eventEraStart"><option value="" data-i18n="eraStartAll">전체 시작</option></select>
+        <span class="ranking-filter-label" data-i18n="eraRange">시즌</span>
+        <select id="eventEraStart"><option value="" data-i18n="eraStartAll">전체 시즌 시작</option></select>
         <span>~</span>
-        <select id="eventEraEnd"><option value="" data-i18n="eraEndAll">전체 끝</option></select>
+        <select id="eventEraEnd"><option value="" data-i18n="eraEndAll">전체 시즌 끝</option></select>
       </div>
       <div class="ranking-filter-row" aria-label="종목별 순위 성별 보기">
         <span class="ranking-filter-label" data-i18n="gender">성별</span>
@@ -1174,7 +1161,7 @@
         navTitle:'바로가기', navSearch:'검색', navHelp:'도움말', navSkaterRank:'선수별 종합 순위', navCompare:'선수 비교', navCountryRank:'국가별 메달 순위', navEventRank:'종목별 선수 순위', navHallOfFame:'명예의 전당', navCardMaker:'선수 카드 만들기', navHeatTool:'조편성 계산기', navQuiz:'랜덤 퀴즈',
         navReport:'오류 신고 및 문의', navRecordRank:'종목별 기록 순위', navLapRank:'랩타임 순위', navRecords:'각종 기록',
         reportTitle:'오류 신고 및 문의', close:'닫기', cancel:'취소', submit:'제출',
-        reportPlaceholder:'오류 내용이나 문의 내용을 입력해 주세요.', searchPlaceholder:'선수명, 국가, 대회명, 종목 검색', searchSort:'정렬', sortRecent:'최신순', sortOldest:'오래된순', sortMedal:'메달순', sortEvent:'종목순', sortName:'선수명순', relayOnly:'계주만', goldOnly:'금메달만', excludeWorldsOverall:'세계선수권 종합 제외', exclude3000:'3000m 제외', helpTitle:'용어·데이터 기준 도움말', helpDesc:'순위와 기록을 해석할 때 참고할 기준입니다.', helpWorldsOverallTitle:'세계선수권 종합', helpWorldsOverallText:'세계선수권 Overall 포디움입니다. 개인 종목 메달과 별도 또는 합산해 볼 수 있습니다.', help3000Title:'3000m S.F.', help3000Text:'세계선수권 Super Final 성격의 3000m 개인전 기록입니다. 기본 순위에서는 제외하거나 별도 안내합니다.', helpRelayTitle:'계주 데이터', helpRelayText:'계주 멤버 데이터는 올림픽 중심으로 정리되어 있습니다. 세계선수권·월드컵 계주는 불완전할 수 있습니다.', helpScoreTitle:'점수 계산', helpScoreText:'점수 입력란의 값에 따라 순위가 즉시 바뀝니다. 기본값은 13·21·34 기반 점수 체계입니다.', playerTimelineTitle:'커리어 타임라인', playerTimelineDesc:'선수의 메달 기록을 연도순으로 보여 줍니다.', dataLoaded:'데이터 로드 완료', reportThisRow:'오류 신고',
+        reportPlaceholder:'오류 내용이나 문의 내용을 입력해 주세요.', searchPlaceholder:'선수명, 국가, 대회명, 종목 검색', searchSort:'정렬', sortRecent:'최신순', sortOldest:'오래된순', sortMedal:'메달순', sortEvent:'종목순', sortName:'선수명순', relayOnly:'계주만', goldOnly:'금메달만', excludeWorldsOverall:'세계선수권 종합 제외', exclude3000:'3000m 제외', helpTitle:'용어·데이터 기준 도움말', helpDesc:'순위와 기록을 해석할 때 참고할 기준입니다.', helpWorldsOverallTitle:'세계선수권 종합', helpWorldsOverallText:'세계선수권 Overall 포디움입니다. 개인 종목 메달과 별도 또는 합산해 볼 수 있습니다.', help3000Title:'3000m S.F.', help3000Text:'세계선수권 Super Final 성격의 3000m 개인전 기록입니다. 기본 순위에서는 제외하거나 별도 안내합니다.', helpRelayTitle:'계주 데이터', helpRelayText:'계주 멤버 데이터는 올림픽 중심으로 정리되어 있습니다. 세계선수권·월드컵 계주는 불완전할 수 있습니다.', helpScoreTitle:'점수 계산', helpScoreText:'점수 입력란의 값에 따라 순위가 즉시 바뀝니다. 기본값은 13·21·34 기반 점수 체계입니다.', playerTimelineTitle:'커리어 타임라인', playerTimelineDesc:'선수의 메달 기록을 시즌 역순으로 보여 줍니다.', dataLoaded:'데이터 로드 완료', reportThisRow:'오류 신고',
         skaterRankTitle:'선수별 종합 순위', countryRankTitle:'국가별 메달 순위', eventRankTitle:'종목별 선수 순위',
         skaterRankDesc:'올림픽 / 세계선수권 / 월드컵·월드투어 금·은·동을 나누고 마지막에 총합을 표시합니다.',
         countryRankDesc:'medals 시트 기준입니다. 계주가 선수 수만큼 중복 집계되지 않습니다. 상위 20개 국가까지만 표시합니다.',
@@ -1211,7 +1198,7 @@
         allCompetitions:'전체 대회', allSeasons:'전체 시즌', allGenders:'전체 성별', allEvents:'전체 종목', season:'시즌',
         reliabilityTitle:'자료 신뢰도 안내', reliabilityDesc:'순위를 해석할 때 참고해야 할 데이터 반영 범위입니다.', reliabilityOlympicsTitle:'올림픽', reliabilityOlympicsText:'정식 메달과 시범종목을 구분해 반영했습니다.', reliabilityWorldsTitle:'세계선수권', reliabilityWorldsText:'종합, 개인전 결과를 중심으로 정리했습니다.', reliabilityWorldcupTitle:'월드컵·월드투어', reliabilityWorldcupText:'개인전 중심이며 일부 초기 자료는 보완이 필요할 수 있습니다.', reliabilityRelayTitle:'계주 멤버', reliabilityRelayText:'계주 멤버는 올림픽 중심으로 정리되어 있습니다.',
         playerOverviewTitle:'선수 요약', playerOverviewDesc:'개인전·계주·대회 유형별 메달을 요약합니다.', playerMedalDetailTitle:'선수별 메달 내역', playerMedalDetailDesc:'개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.',
-        eraRange:'시대', eraStartAll:'전체 시작', eraEndAll:'전체 끝',
+        eraRange:'시즌', eraStartAll:'전체 시즌 시작', eraEndAll:'전체 시즌 끝',
         compareTitle:'선수 비교', compareDesc:'두 선수를 선택해 개인전 성적만 기준으로 점수와 종목별 성과를 비교합니다.',
         hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. URL 이미지가 안 뜨면 이미지 직접 첨부를 이용해 주세요. 직접 첨부한 이미지는 카드 저장 시에도 안정적으로 포함됩니다.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardImageFile:'이미지 직접 첨부', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 8개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'조편성 계산기', heatToolDesc:'경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.', heatToolNotice:'팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 순위 그룹 우선·그룹 내 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 배정된 조 안의 SP는 직전 라운드 기록순으로 다시 정렬합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.', heatDistance:'종목', heatRound:'현재 라운드', roundPreliminary:'예비예선', roundHeats:'예선', roundQuarterfinals:'준준결승', roundSemifinals:'준결승', heatCount:'현재 조 수', heatSkatersPerHeat:'조별 선수 수', heatAutoQualifiers:'조별 순위 진출', heatTimeQualifiers:'기록순 추가 진출', heatNextCount:'다음 라운드 조 수', heatSeedMethod:'배정 방식', seedSnake:'지그재그 배정', seedStraight:'순차 배정', heatTimeSort:'기록 정렬', timeFastest:'빠른 기록 우선', timeNone:'기록 미사용', buildHeatTable:'결과 입력표 만들기', calculateHeatDraw:'진출자·조편성 계산', sampleHeatData:'예시 채우기', clearHeatData:'입력 초기화', heatInputEmpty:'결과 입력표를 먼저 만들어 주세요.', heatOutputEmpty:'계산 결과가 여기에 표시됩니다.', heatNoQualifiers:'진출자가 없습니다.', heatAutoQ:'순위 진출', heatTimeQ:'기록 진출', heatAdv:'ADV', heatEliminated:'탈락자', heatQualifiers:'진출자', heatNextDraw:'다음 라운드 조편성', heatName:'선수명', heatCountry:'국가', heatPosition:'순위', heatTime:'기록', heatStatus:'상태', heatHeat:'조', heatReason:'진출 방식', heatRank:'시드', heatSP:'SP', heatOfficialNote:'추정 조편성입니다. 실제 공식 조편성과 다를 수 있습니다.', quizTitle:'랜덤 쇼트트랙 퀴즈', quizDesc:'현재 medals 데이터를 바탕으로 자동 출제합니다. 문제를 따로 만들 필요는 없으며, 데이터가 추가되면 새로고침 후 문제 후보도 자동으로 늘어납니다.', quizNotice:'개인전 중심으로 출제하며 계주, 3000m, 올림픽 시범종목, 공동 메달 또는 불완전 포디움 의심 경기는 제외합니다. 문제에서 오류를 발견하면 문제별 오류 신고 버튼으로 제보할 수 있습니다.', quizCount:'문제 수', quizEra:'시대', quizType:'문제 유형', quizTypeMixed:'혼합', quizTypeGold:'금메달리스트', quizTypePodium:'포디움 순서', quizTypeCountry:'선수 국가', quizTypeMedal:'메달 색', startQuiz:'퀴즈 시작', submitQuiz:'채점하기', resetQuiz:'초기화', quizEmpty:'옵션을 선택한 뒤 퀴즈를 시작해 주세요.', quizNoData:'조건에 맞는 문제 후보가 없습니다.', quizQuestion:'문제', quizReport:'이 문제 오류 신고', quizCorrectAnswer:'정답', quizYourAnswer:'내 답', quizUnanswered:'미응답', quizScoreText:'정답 수', quizAccuracy:'정답률', quizTitleGod:'ISU 데이터베이스 그 자체', quizTitleLegend:'쇼트트랙 백과사전', quizTitleWorld:'월드투어 해설위원', quizTitlePodium:'포디움 추적자', quizTitleFan:'빙상장 상주팬', quizTitleRookie:'다시보기 훈련 필요', quizGoldQuestion:'금메달리스트는?', quizPodiumQuestion:'포디움 순서로 맞는 것은?', quizCountryQuestion:'의 국가로 맞는 것은?', quizMedalQuestion:'이 선수의 메달 색은?', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
         category:'구분', individual:'개인전', relayMedal:'계주', includeRelayTotal:'계주 포함', individualMedals:'개인전 메달', relayIncludedMedals:'계주 포함 메달', bestEvent:'최다 금메달 종목', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'점수', olympicScore:'올림픽 점수', worldsScore:'세계선수권 점수', worldcupScore:'월드컵·월드투어 점수', totalScore:'총점', noData:'데이터 없음',
@@ -1260,7 +1247,7 @@
         allCompetitions:'All competitions', allSeasons:'All seasons', allGenders:'All genders', allEvents:'All events', season:'Season',
         reliabilityTitle:'Data Coverage Notice', reliabilityDesc:'Use this as context when interpreting rankings.', reliabilityOlympicsTitle:'Olympics', reliabilityOlympicsText:'Official medals and demonstration events are separated.', reliabilityWorldsTitle:'World Championships', reliabilityWorldsText:'Overall and individual results are organized as the main focus.', reliabilityWorldcupTitle:'World Cup & World Tour', reliabilityWorldcupText:'Mainly individual events; some early records may still need refinement.', reliabilityRelayTitle:'Relay members', reliabilityRelayText:'Relay member data is organized mainly around the Olympics.',
         playerOverviewTitle:'Skater Summary', playerOverviewDesc:'Summarizes medals by individual/relay and competition type.', playerMedalDetailTitle:'Medal Details', playerMedalDetailDesc:'Shows individual medals together with relay medals from relay_members.',
-        eraRange:'Era', eraStartAll:'Start', eraEndAll:'End',
+        eraRange:'Season range', eraStartAll:'Start', eraEndAll:'End',
         compareTitle:'Compare Skaters', compareDesc:'Select two skaters to compare scores and event performance based on individual results only.',
         hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. If a URL image does not load, upload an image directly. Directly uploaded images are more reliably included when saving the card.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardImageFile:'Upload image directly', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 8 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'Heat Draw Tool', heatToolDesc:'Enter race results to calculate qualifiers and estimate the next-round heat draw.', heatToolNotice:'This is a fan-made helper. Because ADV qualifiers may occur, set the number of skaters per heat manually before building the result table. Qualifiers are seeded by finish-position groups first, then by time within each group; next-round heats are assigned by snake seeding. SP within each next-round heat is then re-sorted by the previous-round time. Actual official heat draws may differ, and ADV/ties should be checked manually.', heatDistance:'Event', heatRound:'Current round', roundPreliminary:'Preliminary', roundHeats:'Heats', roundQuarterfinals:'Quarterfinals', roundSemifinals:'Semifinals', heatCount:'Current heats', heatSkatersPerHeat:'Skaters per heat', heatAutoQualifiers:'Auto qualifiers per heat', heatTimeQualifiers:'Fastest additional qualifiers', heatNextCount:'Next-round heats', heatSeedMethod:'Seeding method', seedSnake:'Snake seeding', seedStraight:'Straight seeding', heatTimeSort:'Time sorting', timeFastest:'Fastest first', timeNone:'Do not use times', buildHeatTable:'Build result table', calculateHeatDraw:'Calculate qualifiers & draw', sampleHeatData:'Fill sample', clearHeatData:'Clear input', heatInputEmpty:'Build a result table first.', heatOutputEmpty:'Results will appear here.', heatNoQualifiers:'No qualifiers.', heatAutoQ:'Auto qualifier', heatTimeQ:'Time qualifier', heatAdv:'ADV', heatEliminated:'Eliminated', heatQualifiers:'Qualifiers', heatNextDraw:'Next-round heat draw', heatName:'Skater', heatCountry:'Country', heatPosition:'Place', heatTime:'Time', heatStatus:'Status', heatHeat:'Heat', heatReason:'Reason', heatRank:'Seed', heatSP:'SP', heatOfficialNote:'Estimated heat draw. Actual official heat draws may differ.', quizTitle:'Random Short Track Quiz', quizDesc:'Questions are generated automatically from the current medals data. You do not need to create questions manually; when new data is added, the quiz pool updates after refresh.', quizNotice:'Questions focus on individual events and exclude relays, 3000m, Olympic demonstration events, joint-medal cases, and incomplete podiums. If you find an error, report it from that question.', quizCount:'Questions', quizEra:'Era', quizType:'Question type', quizTypeMixed:'Mixed', quizTypeGold:'Gold medalist', quizTypePodium:'Podium order', quizTypeCountry:'Skater country', quizTypeMedal:'Medal color', startQuiz:'Start quiz', submitQuiz:'Grade quiz', resetQuiz:'Reset', quizEmpty:'Select options and start the quiz.', quizNoData:'No question candidates match these options.', quizQuestion:'Question', quizReport:'Report this question', quizCorrectAnswer:'Answer', quizYourAnswer:'Your answer', quizUnanswered:'Unanswered', quizScoreText:'Correct', quizAccuracy:'Accuracy', quizTitleGod:'ISU database itself', quizTitleLegend:'Short track encyclopedia', quizTitleWorld:'World Tour commentator', quizTitlePodium:'Podium tracker', quizTitleFan:'Rink regular', quizTitleRookie:'Needs replay training', quizGoldQuestion:'Who was the gold medalist?', quizPodiumQuestion:'Which podium order is correct?', quizCountryQuestion:'is from which country?', quizMedalQuestion:'What medal did this skater win?', heatToolTitle:'조편성 계산기', heatToolDesc:'경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.', heatToolNotice:'팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 순위 그룹 우선·그룹 내 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 배정된 조 안의 SP는 직전 라운드 기록순으로 다시 정렬합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.', heatDistance:'종목', heatRound:'현재 라운드', roundPreliminary:'예비예선', roundHeats:'예선', roundQuarterfinals:'준준결승', roundSemifinals:'준결승', heatCount:'현재 조 수', heatSkatersPerHeat:'조별 선수 수', heatAutoQualifiers:'조별 순위 진출', heatTimeQualifiers:'기록순 추가 진출', heatNextCount:'다음 라운드 조 수', heatSeedMethod:'배정 방식', seedSnake:'지그재그 배정', seedStraight:'순차 배정', heatTimeSort:'기록 정렬', timeFastest:'빠른 기록 우선', timeNone:'기록 미사용', buildHeatTable:'결과 입력표 만들기', calculateHeatDraw:'진출자·조편성 계산', sampleHeatData:'예시 채우기', clearHeatData:'입력 초기화', heatInputEmpty:'결과 입력표를 먼저 만들어 주세요.', heatOutputEmpty:'계산 결과가 여기에 표시됩니다.', heatNoQualifiers:'진출자가 없습니다.', heatAutoQ:'순위 진출', heatTimeQ:'기록 진출', heatAdv:'ADV', heatEliminated:'탈락자', heatQualifiers:'진출자', heatNextDraw:'다음 라운드 조편성', heatName:'선수명', heatCountry:'국가', heatPosition:'순위', heatTime:'기록', heatStatus:'상태', heatHeat:'조', heatReason:'진출 방식', heatRank:'시드', heatSP:'SP', heatOfficialNote:'추정 조편성입니다. 실제 공식 조편성과 다를 수 있습니다.', quizTitle:'랜덤 쇼트트랙 퀴즈', quizDesc:'현재 medals 데이터를 바탕으로 자동 출제합니다. 문제를 따로 만들 필요는 없으며, 데이터가 추가되면 새로고침 후 문제 후보도 자동으로 늘어납니다.', quizNotice:'개인전 중심으로 출제하며 계주, 3000m, 올림픽 시범종목, 공동 메달 또는 불완전 포디움 의심 경기는 제외합니다. 문제에서 오류를 발견하면 문제별 오류 신고 버튼으로 제보할 수 있습니다.', quizCount:'문제 수', quizEra:'시대', quizType:'문제 유형', quizTypeMixed:'혼합', quizTypeGold:'금메달리스트', quizTypePodium:'포디움 순서', quizTypeCountry:'선수 국가', quizTypeMedal:'메달 색', startQuiz:'퀴즈 시작', submitQuiz:'채점하기', resetQuiz:'초기화', quizEmpty:'옵션을 선택한 뒤 퀴즈를 시작해 주세요.', quizNoData:'조건에 맞는 문제 후보가 없습니다.', quizQuestion:'문제', quizReport:'이 문제 오류 신고', quizCorrectAnswer:'정답', quizYourAnswer:'내 답', quizUnanswered:'미응답', quizScoreText:'정답 수', quizAccuracy:'정답률', quizTitleGod:'ISU 데이터베이스 그 자체', quizTitleLegend:'쇼트트랙 백과사전', quizTitleWorld:'월드투어 해설위원', quizTitlePodium:'포디움 추적자', quizTitleFan:'빙상장 상주팬', quizTitleRookie:'다시보기 훈련 필요', quizGoldQuestion:'금메달리스트는?', quizPodiumQuestion:'포디움 순서로 맞는 것은?', quizCountryQuestion:'의 국가로 맞는 것은?', quizMedalQuestion:'이 선수의 메달 색은?', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
         category:'Category', individual:'Individual', relayMedal:'Relay', includeRelayTotal:'Relay included', individualMedals:'Individual medals', relayIncludedMedals:'Relay included medals', bestEvent:'Best gold-medal event', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'Score', olympicScore:'Olympic score', worldsScore:'Worlds score', worldcupScore:'World Cup/Tour score', totalScore:'Total score', noData:'No data',
@@ -2807,19 +2794,41 @@
     }
 
 
+    function seasonSortValue(season, year){
+      const raw=String(season||'').trim();
+      const match=raw.match(/^(\d{4})-(\d{2}|\d{4})$/);
+      if(match) return Number(match[1]);
+      const y=Number(year||0);
+      return Number.isFinite(y) ? y : 0;
+    }
+
     function renderPlayerTimeline(name){
       const wrap=document.getElementById('playerTimeline');
       if(!wrap) return;
-      const rows=skaterMedals.filter(row=>row.skater_name===name).slice().sort((a,b)=>Number(a.year||0)-Number(b.year||0)||competitionOrderForPlayerDetail(a)-competitionOrderForPlayerDetail(b)||playerDetailEventOrder(a)-playerDetailEventOrder(b)||medalOrderForPlayerDetail(a.medal)-medalOrderForPlayerDetail(b.medal));
+      const rows=skaterMedals
+        .filter(row=>row.skater_name===name)
+        .slice()
+        .sort((a,b)=>seasonSortValue(b.season,b.year)-seasonSortValue(a.season,a.year)
+          || Number(b.year||0)-Number(a.year||0)
+          || competitionOrderForPlayerDetail(a)-competitionOrderForPlayerDetail(b)
+          || playerDetailEventOrder(a)-playerDetailEventOrder(b)
+          || medalOrderForPlayerDetail(a.medal)-medalOrderForPlayerDetail(b.medal));
+
       if(!rows.length){wrap.innerHTML=`<div class="empty">${tr('empty')}</div>`;return;}
-      const byYear=new Map();
+      const bySeason=new Map();
       rows.forEach(row=>{
-        const year=row.year||'';
-        if(!byYear.has(year)) byYear.set(year,[]);
-        byYear.get(year).push(row);
+        const season=row.season || row.year || '';
+        if(!bySeason.has(season)) bySeason.set(season,[]);
+        bySeason.get(season).push(row);
       });
       const indexes=buildQualityIndexes(skaterMedals);
-      wrap.innerHTML=`<div class="timeline">${[...byYear.entries()].map(([year,list])=>`<div class="timeline-year"><h4>${escapeHtml(year)}</h4><div class="timeline-list">${list.map(row=>`<div class="timeline-item"><strong>${escapeHtml(row.competition_name||row.season)}</strong> · ${escapeHtml(row.event)} · <span class="medal-pill ${String(row.medal||'').toLowerCase()}">${medalKorean(row.medal)}</span> <small>${escapeHtml(row.competition_type||'')}</small>${renderQualityBadges(row,indexes)}</div>`).join('')}</div></div>`).join('')}</div>`;
+      const sortedSeasons=[...bySeason.entries()].sort((a,b)=>{
+        const aFirst=a[1][0]||{};
+        const bFirst=b[1][0]||{};
+        return seasonSortValue(b[0],bFirst.year)-seasonSortValue(a[0],aFirst.year);
+      });
+
+      wrap.innerHTML=`<div class="timeline">${sortedSeasons.map(([season,list])=>`<div class="timeline-year"><h4>${escapeHtml(season)}</h4><div class="timeline-list">${list.map(row=>`<div class="timeline-item"><strong>${escapeHtml(row.competition_name||row.year)}</strong> · ${escapeHtml(row.event)} · <span class="medal-pill ${String(row.medal||'').toLowerCase()}">${medalKorean(row.medal)}</span> <small>${escapeHtml(row.competition_type||'')}</small>${renderQualityBadges(row,indexes)}</div>`).join('')}</div></div>`).join('')}</div>`;
     }
 
     function renderPlayerMedalTable(name){
@@ -3696,6 +3705,18 @@
     window.resetRandomQuiz = resetRandomQuiz;
     window.reportQuizIssue = reportQuizIssue;
     window.reportRowIssue = reportRowIssue;
+    window.openHelpModal = openHelpModal;
+    window.closeHelpModal = closeHelpModal;
+
+
+    function openHelpModal(){
+      const modal=document.getElementById('helpModalBackdrop');
+      if(modal) modal.classList.add('open');
+    }
+    function closeHelpModal(){
+      const modal=document.getElementById('helpModalBackdrop');
+      if(modal) modal.classList.remove('open');
+    }
 
     function openReportModal(prefill){
       const modal=document.getElementById('reportModalBackdrop');
