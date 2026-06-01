@@ -436,7 +436,7 @@
 
 
     /* Integrated search-result view */
-    body.st-search-active main > section:not(#searchSection):not(#stSearchResultView):not(#playerPanel):not(#competitionPanel){
+    body.st-search-active main > section:not(#searchSection):not(#stSearchResultView):not(#playerPanel):not(#competitionPanel):not(#countryPanel):not(#seasonPanel){
       display:none !important;
     }
     #stSearchResultView{display:none}
@@ -532,6 +532,14 @@
     .rules-item strong{display:block;margin-bottom:3px;color:#111827}
     .rules-code{display:inline-flex;align-items:center;justify-content:center;min-width:46px;border-radius:999px;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;font-size:12px;font-weight:950;padding:4px 8px;margin-right:7px}
     .rules-source-note{margin-top:12px;color:var(--muted);font-size:12px;line-height:1.5}
+
+    .rules-modal{width:min(620px,calc(100vw - 32px)) !important;max-height:82vh;display:flex;flex-direction:column;padding:16px}
+    .rules-modal .report-modal-header{flex:0 0 auto;margin-bottom:10px}
+    .rules-modal .notice{flex:0 0 auto;font-size:13px;line-height:1.55;margin-bottom:10px !important}
+    .rules-modal .rules-list{max-height:48vh;overflow-y:auto;padding-right:6px;margin-top:8px}
+    .rules-modal .rules-item{padding:10px 11px;font-size:13px;line-height:1.5}
+    .rules-modal .rules-source-note{flex:0 0 auto;border-top:1px solid var(--line);padding-top:8px;margin-top:10px;font-size:11.5px}
+    @media(max-width:620px){.rules-modal{max-height:86vh}.rules-modal .rules-list{max-height:52vh}}
     @media(max-width:900px){.st-home-feature-grid,.st-page-two-col{grid-template-columns:1fr}.st-page-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:520px){.st-page-grid{grid-template-columns:1fr}}
 
@@ -602,7 +610,7 @@
   </div>
 
   <div class="report-modal-backdrop" id="rulesModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="rulesModalTitle">
-    <div class="report-modal" style="width:min(760px,100%)">
+    <div class="report-modal rules-modal">
       <div class="report-modal-header">
         <h2 id="rulesModalTitle">판정/규칙 설명</h2>
         <button type="button" class="report-modal-close" onclick="closeRulesModal()">닫기</button>
@@ -629,6 +637,36 @@
       </div>
       <div id="loadingStatus" class="loading-status" data-i18n="loading">데이터를 불러오는 중입니다.</div>
     </section>
+
+    <section class="card anchor-section" id="homeFeatureSection">
+      <div class="section-title"><div><h2>오늘의 추천</h2><span>검색하지 않아도 바로 둘러볼 수 있는 빠른 메뉴입니다.</span></div></div>
+      <div class="st-home-feature-grid">
+        <div class="st-home-feature-card">
+          <div>
+            <div class="kicker">오늘의 선수</div>
+            <h2 id="todaySkaterName">선수 데이터 준비 중</h2>
+            <p id="todaySkaterMeta">데이터를 불러오면 오늘의 선수가 표시됩니다.</p>
+          </div>
+          <div class="st-home-actions">
+            <button type="button" class="primary-soft-btn" onclick="openTodaySkater()">오늘의 선수 보기</button>
+            <button type="button" class="primary-soft-btn secondary" onclick="pickRandomSkater()">랜덤 선수 보기</button>
+          </div>
+        </div>
+        <div class="st-home-feature-card">
+          <div>
+            <div class="kicker">빠른 페이지</div>
+            <h2>국가·시즌 바로 보기</h2>
+            <p>데이터가 가장 많은 국가와 최신 시즌 페이지로 바로 이동합니다.</p>
+          </div>
+          <div class="st-home-actions">
+            <button type="button" class="primary-soft-btn" onclick="openPopularCountryPage()">대표 국가 페이지</button>
+            <button type="button" class="primary-soft-btn secondary" onclick="openLatestSeasonPage()">최신 시즌 페이지</button>
+            <button type="button" class="primary-soft-btn secondary" onclick="openRulesModal()">판정/규칙</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
 
     <section class="card anchor-section" id="reliabilitySection">
       <div class="section-title"><div><h2 data-i18n="reliabilityTitle">자료 신뢰도 안내</h2><span data-i18n="reliabilityDesc">순위를 해석할 때 참고해야 할 데이터 반영 범위입니다.</span></div></div>
@@ -4802,6 +4840,52 @@
       await __stOriginalLoadDataForApprovedPages();
       refreshTodaySkaterCard();
     };
+
+
+    /* Scroll/navigation reliability patch */
+    function stScrollToElementAfterRender(id){
+      window.requestAnimationFrame(()=>{
+        window.setTimeout(()=>{
+          const el=document.getElementById(id);
+          if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+        }, 30);
+      });
+    }
+    if(typeof openCountryPage==='function'){
+      const __stOpenCountryPageWithScroll=openCountryPage;
+      openCountryPage=function(country){
+        __stOpenCountryPageWithScroll(country);
+        stScrollToElementAfterRender('countryPanel');
+      };
+      window.openCountryPage=openCountryPage;
+    }
+    if(typeof openSeasonPage==='function'){
+      const __stOpenSeasonPageWithScroll=openSeasonPage;
+      openSeasonPage=function(season){
+        __stOpenSeasonPageWithScroll(season);
+        stScrollToElementAfterRender('seasonPanel');
+      };
+      window.openSeasonPage=openSeasonPage;
+    }
+    if(typeof openPlayerPanel==='function'){
+      const __stOpenPlayerPanelWithScroll=openPlayerPanel;
+      openPlayerPanel=function(name){
+        __stOpenPlayerPanelWithScroll(name);
+        stScrollToElementAfterRender('playerPanel');
+      };
+      window.openPlayerPanel=openPlayerPanel;
+    }
+    if(typeof openCompetitionPanel==='function'){
+      const __stOpenCompetitionPanelWithScroll=openCompetitionPanel;
+      openCompetitionPanel=function(name){
+        __stOpenCompetitionPanelWithScroll(name);
+        stScrollToElementAfterRender('competitionPanel');
+      };
+      window.openCompetitionPanel=openCompetitionPanel;
+    }
+    if(typeof refreshTodaySkaterCard==='function'){
+      window.addEventListener('DOMContentLoaded',()=>{try{refreshTodaySkaterCard();}catch(e){}});
+    }
 
   </script>
 
