@@ -614,9 +614,6 @@
       <div class="section-title"><div><h2 data-i18n="playerTimelineTitle">커리어 타임라인</h2><span data-i18n="playerTimelineDesc">선수의 메달 기록을 시즌 역순으로 보여 줍니다.</span></div></div>
       <div id="playerTimeline"></div>
       <div class="spacer"></div>
-      <div class="section-title"><div><h2 data-i18n="playerMedalDetailTitle">선수별 메달 내역</h2><span data-i18n="playerMedalDetailDesc">개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.</span></div></div>
-      <div id="playerTable"></div>
-      <div class="spacer"></div>
       <div class="section-title"><div><h2>500·1000·1500m 최종 최고기록</h2><span>best_times 시트에 수동 입력한 선수별 최종 최고기록입니다.</span></div></div>
       <div id="playerBestTimeTable"></div>
     </section>
@@ -2738,7 +2735,7 @@
       document.getElementById('playerGold').textContent=rows.filter(r=>r.medal==='Gold').length;
       document.getElementById('playerSilver').textContent=rows.filter(r=>r.medal==='Silver').length;
       document.getElementById('playerBronze').textContent=rows.filter(r=>r.medal==='Bronze').length;
-      renderPlayerOverview(name);renderPlayerTimeline(name);renderPlayerMedalTable(name);renderPlayerLapTable(name);
+      renderPlayerOverview(name);renderPlayerTimeline(name);renderPlayerLapTable(name);
       const panel=document.getElementById('playerPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
     function closePlayerPanel(){document.getElementById('playerPanel').classList.remove('active');}
@@ -4236,7 +4233,7 @@
       if(labels[2]) labels[2].textContent='개인전 은';
       if(labels[3]) labels[3].textContent='개인전 동';
       setStandaloneBestTimeBlockVisible(false);
-      renderPlayerOverview(name);renderPlayerTimeline(name);renderPlayerMedalTable(name);renderPlayerLapTable(name);
+      renderPlayerOverview(name);renderPlayerTimeline(name);renderPlayerLapTable(name);
       const panel=document.getElementById('playerPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
 
