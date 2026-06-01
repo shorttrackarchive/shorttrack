@@ -579,15 +579,6 @@
       <div id="loadingStatus" class="loading-status" data-i18n="loading">데이터를 불러오는 중입니다.</div>
     </section>
 
-    <section class="card">
-      <div class="summary">
-        <div class="summary-box"><div class="label" data-i18n="resultCount">검색 결과</div><div class="value" id="totalCount">0</div></div>
-        <div class="summary-box"><div class="label" data-i18n="goldMedal">금메달</div><div class="value" id="goldCount">0</div></div>
-        <div class="summary-box"><div class="label" data-i18n="silverMedal">은메달</div><div class="value" id="silverCount">0</div></div>
-        <div class="summary-box"><div class="label" data-i18n="bronzeMedal">동메달</div><div class="value" id="bronzeCount">0</div></div>
-      </div>
-    </section>
-
     <section class="card anchor-section" id="reliabilitySection">
       <div class="section-title"><div><h2 data-i18n="reliabilityTitle">자료 신뢰도 안내</h2><span data-i18n="reliabilityDesc">순위를 해석할 때 참고해야 할 데이터 반영 범위입니다.</span></div></div>
       <div class="reliability-list">
@@ -1999,7 +1990,11 @@
       return tr('all');
     }
 
-    function renderSummary(data){document.getElementById('totalCount').textContent=data.length;document.getElementById('goldCount').textContent=data.filter(r=>r.medal==='Gold').length;document.getElementById('silverCount').textContent=data.filter(r=>r.medal==='Silver').length;document.getElementById('bronzeCount').textContent=data.filter(r=>r.medal==='Bronze').length;}
+    function renderSummary(data){
+      // 홈 화면의 검색결과/메달수 요약 카드는 제거했습니다.
+      // 기존 렌더링 흐름과의 호환성을 위해 함수만 안전하게 남겨 둡니다.
+      return;
+    }
 
     function medalSlotKey(row){
       return [row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal].map(v=>String(v||'').trim()).join(' | ');
