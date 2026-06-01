@@ -434,6 +434,41 @@
     .timeline-item{background:#fbfdff;border:1px solid var(--line);border-radius:12px;padding:9px 10px;font-size:13px;line-height:1.45}
     @media(max-width:760px){.help-grid{grid-template-columns:1fr}.search-tools{display:grid;grid-template-columns:1fr}.search-tools select{max-width:none}}
 
+
+    /* Integrated search-result view */
+    body.st-search-active main > section:not(#searchSection):not(#stSearchResultView):not(#playerPanel):not(#competitionPanel){
+      display:none !important;
+    }
+    #stSearchResultView{display:none}
+    body.st-search-active #stSearchResultView{display:block}
+    .st-search-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px}
+    .st-search-head h2{margin:0 0 6px;font-size:24px;letter-spacing:-.04em}
+    .st-search-head p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+    .st-search-type{display:inline-flex;align-items:center;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:900;margin-top:8px}
+    .st-count-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .st-count-chip{border:1px solid var(--line);background:#fbfdff;border-radius:999px;padding:5px 9px;font-size:12px;color:#334155;font-weight:800}
+    .st-search-featured{border:1px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#fff);border-radius:18px;padding:16px;margin:12px 0 16px}
+    .st-featured-kicker{font-size:12px;color:#1d4ed8;font-weight:950;margin-bottom:6px}
+    .st-featured-title{font-size:22px;font-weight:950;letter-spacing:-.04em;margin-bottom:6px}
+    .st-featured-meta{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+    .st-result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .st-result-section{border:1px solid var(--line);background:#fff;border-radius:18px;padding:14px}
+    .st-result-section h3{margin:0 0 10px;font-size:16px}
+    .st-result-list{display:grid;gap:8px}
+    .st-result-item{border:1px solid var(--line);background:#fbfdff;border-radius:14px;padding:11px}
+    .st-result-item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+    .st-result-name{font-weight:950;line-height:1.35}
+    .st-result-meta{font-size:12px;color:var(--muted);line-height:1.55;margin-top:3px}
+    .st-mini-btn{border:1px solid var(--primary);background:#fff;color:var(--primary);border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap}
+    .st-mini-btn:hover{background:#eff6ff}
+    .st-empty-small{font-size:13px;color:var(--muted);background:#fbfdff;border:1px dashed var(--line);border-radius:12px;padding:12px;text-align:center}
+    .st-result-table th,.st-result-table td{font-size:12.5px}
+    @media(max-width:820px){
+      .st-search-head{flex-direction:column}
+      .st-result-grid{grid-template-columns:1fr}
+      .st-result-item-top{flex-direction:column}
+    }
+
 </style>
 </head>
 <body>
@@ -1701,6 +1736,7 @@
       renderSkaterRanking(getFilteredSkaterMedals());
       renderCountryRanking(getFilteredCountryMedals());
       renderEventRanking(getFilteredEventRankingMedals());
+      if(typeof renderSearchResultView === 'function') renderSearchResultView();
     }
 
     function bindSeasonEraFilters(){
@@ -3772,432 +3808,294 @@
 
     function escapeHtml(value){return String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
     function escapeJs(value){return String(value??'').replaceAll('\\','\\\\').replaceAll("'","\\'").replaceAll('"','\\"');}
-  </script>
-  <script>
-/* Short Track Archive - Search Result View Patch
-   붙이는 위치: 기존 HTML의 모든 원래 <script> 뒤, </body> 바로 앞
-   역할: 검색어가 있으면 홈 콘텐츠를 숨기고 검색 결과 전용 화면을 표시합니다.
-*/
-(function(){
-  'use strict';
+  
+    /* Search result view: 검색어가 있을 때 홈 콘텐츠를 필터링처럼 보이지 않게 하고, 검색 결과 전용 화면을 표시합니다. */
+    const ST_SEARCH_VIEW_ID = 'stSearchResultView';
+    const ST_RESULT_LIMIT = 6;
 
-  const PATCH_ID = 'shorttrack-search-result-view-patch';
-  const SEARCH_VIEW_ID = 'searchResultView';
-  const HOME_HIDDEN_CLASS = 'st-home-hidden-by-search';
-  const LIMIT = 5;
+    function stText(value){return String(value ?? '').trim();}
+    function stLower(value){return stText(value).toLowerCase();}
+    function stHtml(value){return escapeHtml(value);}
+    function stJs(value){return escapeJs(value);}
 
-  function $(id){ return document.getElementById(id); }
-  function text(value){ return String(value == null ? '' : value).trim(); }
-  function lower(value){ return text(value).toLowerCase(); }
-  function esc(value){
-    const fn = window.escapeHtml;
-    if(typeof fn === 'function') return fn(value);
-    return text(value)
-      .replace(/&/g,'&amp;')
-      .replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;')
-      .replace(/'/g,'&#039;');
-  }
-  function js(value){
-    const fn = window.escapeJs;
-    if(typeof fn === 'function') return fn(value);
-    return text(value).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' ');
-  }
-  function medalLabel(medal){
-    const value = text(medal);
-    if(value === 'Gold') return '금';
-    if(value === 'Silver') return '은';
-    if(value === 'Bronze') return '동';
-    return value || '-';
-  }
-  function genderLabel(gender){
-    const value = text(gender);
-    if(value === 'Men') return '남자';
-    if(value === 'Women') return '여자';
-    if(value === 'Mixed') return '혼성';
-    return value || '-';
-  }
+    function stAllSearchRows(){
+      const medalRows = (medals || []).map(row => ({...row, __source:'medals'}));
+      const relayRows = (relayMembers || []).map(row => ({...row, __source:'relay_members'}));
+      const bestRows = (bestTimes || []).map(row => ({
+        competition_type: row.competition_type || 'Best Time',
+        season: row.season || '',
+        competition_name: row.competition_name || '',
+        city: row.city || '',
+        year: row.year || '',
+        gender: row.gender || '',
+        event: row.event || '',
+        medal: '',
+        skater_name: row.skater_name || row.original_skater_name || '',
+        original_skater_name: row.original_skater_name || '',
+        country: row.country || '',
+        time: row.best_time || row.time || '',
+        note: row.note || '',
+        __source:'best_times'
+      }));
+      return [...medalRows, ...relayRows, ...bestRows];
+    }
 
-  function injectStyle(){
-    if($(PATCH_ID)) return;
-    const style = document.createElement('style');
-    style.id = PATCH_ID;
-    style.textContent = `
-      .${HOME_HIDDEN_CLASS}{display:none !important;}
-      #${SEARCH_VIEW_ID}{display:none;}
-      #${SEARCH_VIEW_ID}.open{display:block;}
-      .st-search-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:14px;}
-      .st-search-head h2{margin:0 0 6px;font-size:23px;letter-spacing:-.04em;}
-      .st-search-head p{margin:0;color:var(--muted);font-size:13px;line-height:1.55;}
-      .st-search-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
-      .st-search-type{display:inline-flex;align-items:center;border-radius:999px;background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;padding:5px 10px;font-size:12px;font-weight:900;margin-top:8px;}
-      .st-search-featured{border:1px solid #bfdbfe;background:linear-gradient(180deg,#eff6ff,#fff);border-radius:18px;padding:15px;margin:14px 0;}
-      .st-featured-kicker{font-size:12px;font-weight:900;color:#1d4ed8;margin-bottom:6px;}
-      .st-featured-title{font-size:20px;font-weight:950;letter-spacing:-.04em;margin-bottom:6px;}
-      .st-featured-meta{color:var(--muted);font-size:13px;line-height:1.55;margin-bottom:10px;}
-      .st-result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;}
-      .st-result-section{border:1px solid var(--line);border-radius:18px;background:#fbfdff;padding:14px;}
-      .st-result-section h3{margin:0 0 8px;font-size:16px;letter-spacing:-.03em;}
-      .st-result-list{display:grid;gap:8px;}
-      .st-result-item{border:1px solid var(--line);border-radius:14px;background:#fff;padding:11px 12px;}
-      .st-result-item-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;}
-      .st-result-name{font-weight:950;line-height:1.35;}
-      .st-result-meta{font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:4px;}
-      .st-mini-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 9px;font-size:11.5px;cursor:pointer;white-space:nowrap;color:var(--text);}
-      .st-mini-btn:hover{border-color:var(--primary);color:var(--primary);}
-      .st-empty-small{color:var(--muted);font-size:13px;line-height:1.55;padding:8px 0;}
-      .st-count-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
-      .st-count-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 9px;font-size:12px;color:var(--muted);}
-      .st-result-table{width:100%;border-collapse:collapse;margin-top:10px;}
-      .st-result-table th,.st-result-table td{font-size:12.5px;padding:8px;border-bottom:1px solid var(--line);}
-      .st-result-table th{background:#f8fafc;}
-      @media(max-width:820px){
-        .st-search-head{display:block;}
-        .st-search-actions{justify-content:flex-start;margin-top:10px;}
-        .st-result-grid{grid-template-columns:1fr;}
+    function stRowTarget(row){
+      return [
+        row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,
+        row.skater_name,row.original_skater_name,row.country,row.team_name,row.time,row.note,row.__source
+      ].map(stLower).join(' ');
+    }
+
+    function stUniqueBy(rows, keyFn){
+      const seen = new Set();
+      const out = [];
+      rows.forEach(row => {
+        const key = keyFn(row);
+        if(!key || seen.has(key)) return;
+        seen.add(key);
+        out.push(row);
+      });
+      return out;
+    }
+
+    function stMedalSummary(rows){
+      const gold = rows.filter(row => row.medal === 'Gold').length;
+      const silver = rows.filter(row => row.medal === 'Silver').length;
+      const bronze = rows.filter(row => row.medal === 'Bronze').length;
+      const bits = [];
+      if(gold) bits.push(`금 ${gold}`);
+      if(silver) bits.push(`은 ${silver}`);
+      if(bronze) bits.push(`동 ${bronze}`);
+      return bits.length ? bits.join(' · ') : `관련 기록 ${rows.length}건`;
+    }
+
+    function stGenderLabel(value){
+      const v = stLower(value);
+      if(v === 'women') return '여자';
+      if(v === 'men') return '남자';
+      if(v === 'mixed') return '혼성';
+      return stText(value) || '-';
+    }
+
+    function stMedalLabel(value){
+      const v = stText(value);
+      if(v === 'Gold') return '금';
+      if(v === 'Silver') return '은';
+      if(v === 'Bronze') return '동';
+      return v || '-';
+    }
+
+    function stDetectSearchType(query, pool){
+      const q = stLower(query);
+      const compact = q.replace(/\s+/g,'');
+      if(/^\d{4}-\d{2}$/.test(q)) return {key:'season', label:'시즌 검색어로 인식됨'};
+      if(/^(500|1000|1500)m?$/.test(compact) || compact.includes('계주') || compact.includes('relay') || compact.includes('mixedrelay')) return {key:'event', label:'종목 검색어로 인식됨'};
+
+      const countries = stUniqueBy(pool.filter(row => stText(row.country)), row => stLower(row.country)).map(row => stLower(row.country));
+      if(countries.includes(q) || ['kor','korea','southkorea','republicofkorea','대한민국','한국','can','canada','chn','china','중국','ned','netherlands','네덜란드','ita','italy','이탈리아','hun','hungary','헝가리','usa','unitedstates','미국','jpn','japan','일본'].includes(compact)){
+        return {key:'country', label:'국가 검색어로 인식됨'};
       }
-    `;
-    document.head.appendChild(style);
-  }
 
-  function ensureSearchView(){
-    let view = $(SEARCH_VIEW_ID);
-    if(view) return view;
-    const searchSection = $('searchSection') || $('searchInput')?.closest('section');
-    view = document.createElement('section');
-    view.id = SEARCH_VIEW_ID;
-    view.className = 'card anchor-section';
-    view.setAttribute('aria-live','polite');
-    view.innerHTML = '<div class="empty">검색 결과 영역을 준비 중입니다.</div>';
-    if(searchSection && searchSection.parentNode){
-      searchSection.insertAdjacentElement('afterend', view);
-    } else {
-      const main = document.querySelector('main') || document.body;
-      main.insertBefore(view, main.firstChild);
-    }
-    return view;
-  }
+      if(/olympic|world|championship|championships|tour|cup|games|asian|european|olympics|세계선수권|월드컵|월드투어|올림픽|아시안게임|유럽선수권|사대륙/.test(q)){
+        return {key:'competition', label:'대회 검색어로 인식됨'};
+      }
 
-  function getHomeSections(){
-    const main = document.querySelector('main');
-    if(!main) return [];
-    return Array.from(main.querySelectorAll(':scope > section.card')).filter(section => {
-      if(section.id === 'searchSection') return false;
-      if(section.id === SEARCH_VIEW_ID) return false;
-      if(section.classList.contains('panel')) return false;
-      return true;
-    });
-  }
+      const exactCompetition = pool.some(row => stLower(row.competition_name) === q);
+      if(exactCompetition) return {key:'competition', label:'대회 검색어로 인식됨'};
 
-  function setHomeVisible(visible){
-    getHomeSections().forEach(section => section.classList.toggle(HOME_HIDDEN_CLASS, !visible));
-    const view = $(SEARCH_VIEW_ID);
-    if(view) view.classList.toggle('open', !visible);
-  }
-
-  function rowSearchText(row){
-    return [
-      row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,
-      row.medal,row.skater_name,row.original_skater_name,row.country,row.team_name,row.time,row.note
-    ].map(text).join(' ').toLowerCase();
-  }
-
-  function rowMatchesBasicFilters(row, q){
-    if(typeof window.rowMatchesFilters === 'function'){
-      try { return window.rowMatchesFilters(row, q); } catch(e) {}
-    }
-    const typeFilter = $('typeFilter');
-    const seasonFilter = $('seasonFilter');
-    const genderFilter = $('genderFilter');
-    const eventFilter = $('eventFilter');
-    const currentMedalFilter = window.currentMedalFilter || '';
-    return (!q || rowSearchText(row).includes(q))
-      && (!typeFilter?.value || row.competition_type === typeFilter.value)
-      && (!seasonFilter?.value || row.season === seasonFilter.value)
-      && (!genderFilter?.value || row.gender === genderFilter.value)
-      && (!eventFilter?.value || row.event === eventFilter.value)
-      && (!currentMedalFilter || row.medal === currentMedalFilter);
-  }
-
-  function uniqueBy(list, keyFn){
-    const map = new Map();
-    list.forEach(item => {
-      const key = keyFn(item);
-      if(!key) return;
-      if(!map.has(key)) map.set(key, item);
-    });
-    return Array.from(map.values());
-  }
-
-  function countRows(rows, predicate){
-    return rows.filter(predicate).length;
-  }
-
-  function medalSummary(rows){
-    const g = countRows(rows, r => r.medal === 'Gold');
-    const s = countRows(rows, r => r.medal === 'Silver');
-    const b = countRows(rows, r => r.medal === 'Bronze');
-    return `금 ${g} · 은 ${s} · 동 ${b} · 총 ${rows.length}`;
-  }
-
-  function getRows(){
-    const skaterRows = Array.isArray(window.skaterMedals) && window.skaterMedals.length ? window.skaterMedals : [];
-    const medalRows = Array.isArray(window.medals) ? window.medals : [];
-    const relayRows = Array.isArray(window.relayMembers) ? window.relayMembers : [];
-    const pool = skaterRows.length ? skaterRows : medalRows.concat(relayRows);
-    return {pool, medalRows, relayRows, skaterRows};
-  }
-
-  function detectType(query, data){
-    const q = lower(query);
-    if(/^\d{4}-\d{2}$/.test(q) || /^\d{4}$/.test(q)) return {key:'season', label:'시즌 검색어'};
-    if(/(^|\s)(500|1000|1500|3000)m?(\s|$)/i.test(q) || q.includes('계주') || q.includes('relay') || q.includes('혼성')) return {key:'event', label:'종목 검색어'};
-    const countries = new Set(data.pool.map(r => lower(r.country)).filter(Boolean));
-    const countryAliases = new Map([
-      ['대한민국','kor'],['한국','kor'],['south korea','kor'],['korea','kor'],['republic of korea','kor'],
-      ['중국','chn'],['china','chn'],['캐나다','can'],['canada','can'],['미국','usa'],['united states','usa'],
-      ['네덜란드','ned'],['netherlands','ned'],['dutch','ned'],['이탈리아','ita'],['italy','ita'],
-      ['헝가리','hun'],['hungary','hun'],['일본','jpn'],['japan','jpn'],['러시아','rus'],['russia','rus']
-    ]);
-    if(countries.has(q) || countryAliases.has(q)) return {key:'country', label:'국가 검색어'};
-    const hasCompetitionKeyword = /(world|tour|cup|championship|championships|olympic|olympics|games|isu|asian|european|four continents|세계|월드|투어|컵|선수권|올림픽|아시안|유럽|사대륙)/i.test(q);
-    const competitionExact = data.medalRows.some(r => lower(r.competition_name).includes(q) && q.length >= 3);
-    if(hasCompetitionKeyword || competitionExact) return {key:'competition', label:'대회 검색어'};
-    return {key:'skater', label:'선수 검색어'};
-  }
-
-  function buildData(query){
-    const q = lower(query);
-    const rows = getRows();
-    const matchedPool = rows.pool.filter(row => rowMatchesBasicFilters(row, q));
-    const matchedMedals = rows.medalRows.filter(row => rowMatchesBasicFilters(row, q));
-    const matchedRelays = rows.relayRows.filter(row => rowMatchesBasicFilters(row, q));
-    const allMatched = uniqueBy(matchedPool.concat(matchedMedals, matchedRelays), r => [r.competition_name,r.season,r.event,r.medal,r.skater_name,r.country,r.team_name].join('|'));
-
-    const players = uniqueBy(matchedPool.filter(r => text(r.skater_name)), r => `${lower(r.skater_name)}|${lower(r.country)}`).map(r => {
-      const name = text(r.skater_name);
-      const country = text(r.country);
-      const related = rows.pool.filter(x => text(x.skater_name) === name && (!country || text(x.country) === country));
-      return {name, country, gender:text(r.gender), count:related.length, summary:medalSummary(related), related};
-    }).sort((a,b) => b.count - a.count || a.name.localeCompare(b.name,'ko'));
-
-    const countries = uniqueBy(allMatched.filter(r => text(r.country)), r => lower(r.country)).map(r => {
-      const country = text(r.country);
-      const related = rows.pool.filter(x => text(x.country) === country);
-      const playerCount = uniqueBy(related.filter(x => text(x.skater_name)), x => lower(x.skater_name)).length;
-      return {country, count:related.length, playerCount, summary:medalSummary(related), related};
-    }).sort((a,b) => b.count - a.count || a.country.localeCompare(b.country,'ko'));
-
-    const competitions = uniqueBy(matchedMedals, r => `${text(r.competition_name)}|${text(r.season)}|${text(r.city)}`).map(r => {
-      const name = text(r.competition_name);
-      const season = text(r.season);
-      const city = text(r.city);
-      const related = rows.medalRows.filter(x => text(x.competition_name) === name && text(x.season) === season && text(x.city) === city);
-      return {name, season, city, type:text(r.competition_type), year:text(r.year), count:related.length, summary:medalSummary(related), related};
-    }).sort((a,b) => Number(b.year||0)-Number(a.year||0) || b.count-a.count || a.name.localeCompare(b.name,'ko'));
-
-    const events = uniqueBy(allMatched.filter(r => text(r.event)), r => lower(r.event)).map(r => {
-      const event = text(r.event);
-      const related = rows.pool.filter(x => text(x.event) === event);
-      const playerCount = uniqueBy(related.filter(x => text(x.skater_name)), x => lower(x.skater_name)).length;
-      return {event, gender:text(r.gender), count:related.length, playerCount, summary:medalSummary(related), related};
-    }).sort((a,b) => b.count - a.count || a.event.localeCompare(b.event,'ko'));
-
-    const seasons = uniqueBy(allMatched.filter(r => text(r.season)), r => lower(r.season)).map(r => {
-      const season = text(r.season);
-      const related = rows.pool.filter(x => text(x.season) === season);
-      const competitionCount = uniqueBy(related.filter(x => text(x.competition_name)), x => lower(x.competition_name)).length;
-      return {season, count:related.length, competitionCount, summary:medalSummary(related), related};
-    }).sort((a,b) => b.season.localeCompare(a.season,'ko'));
-
-    const recentRows = allMatched.slice().sort((a,b) => Number(b.year||0)-Number(a.year||0)).slice(0,8);
-    return {query, type:detectType(query, rows), players, countries, competitions, events, seasons, recentRows, total:allMatched.length};
-  }
-
-  function button(label, onclick){
-    return `<button type="button" class="st-mini-btn" onclick="${onclick}">${esc(label)}</button>`;
-  }
-
-  window.stClearSearchView = function(){
-    const input = $('searchInput');
-    if(input) input.value = '';
-    if(typeof window.applyFilters === 'function') window.applyFilters();
-    else renderSearchView();
-    $('searchSection')?.scrollIntoView({behavior:'smooth', block:'start'});
-  };
-
-  window.stSetQuery = function(value){
-    const input = $('searchInput');
-    if(input) input.value = value;
-    if(typeof window.applyFilters === 'function') window.applyFilters();
-    else renderSearchView();
-    $(SEARCH_VIEW_ID)?.scrollIntoView({behavior:'smooth', block:'start'});
-  };
-
-  window.stSetFilterAndReturnHome = function(kind, value){
-    const input = $('searchInput');
-    if(input) input.value = '';
-    const map = {season:'seasonFilter', event:'eventFilter', type:'typeFilter', gender:'genderFilter'};
-    const el = $(map[kind]);
-    if(el){
-      const exists = Array.from(el.options).some(opt => opt.value === value);
-      if(exists) el.value = value;
-    }
-    if(typeof window.applyFilters === 'function') window.applyFilters();
-    else renderSearchView();
-    if(kind === 'event') $('eventRankingSection')?.scrollIntoView({behavior:'smooth', block:'start'});
-    else $('searchSection')?.scrollIntoView({behavior:'smooth', block:'start'});
-  };
-
-  function featuredHtml(data){
-    const type = data.type.key;
-    let item = null;
-    if(type === 'country') item = data.countries[0];
-    else if(type === 'competition') item = data.competitions[0];
-    else if(type === 'event') item = data.events[0];
-    else if(type === 'season') item = data.seasons[0];
-    else item = data.players[0];
-
-    if(!item){
-      return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 결과</div><div class="st-featured-title">결과 없음</div><div class="st-featured-meta">검색어를 다시 확인하거나 다른 표현으로 검색해 주세요. 예: 김길리, KOR, 2025-26, 1500m</div></div>`;
+      return {key:'skater', label:'선수 검색어로 인식됨'};
     }
 
-    if(type === 'country'){
-      return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 국가</div><div class="st-featured-title">${esc(item.country)}</div><div class="st-featured-meta">선수 ${item.playerCount}명 · 관련 기록 ${item.count}건<br>${esc(item.summary)}</div>${button('국가 기록 보기', `stSetQuery('${js(item.country)}')`)}</div>`;
+    function stBuildSearchData(query){
+      const pool = stAllSearchRows();
+      const q = stLower(query);
+      const matched = pool.filter(row => stRowTarget(row).includes(q));
+
+      const players = stUniqueBy(matched.filter(row => stText(row.skater_name)), row => stLower(row.skater_name)).map(row => {
+        const name = stText(row.skater_name);
+        const related = pool.filter(item => stText(item.skater_name) === name || stText(item.original_skater_name) === name);
+        const country = stText(row.country) || stText(related.find(item => stText(item.country))?.country);
+        const gender = stText(row.gender) || stText(related.find(item => stText(item.gender))?.gender);
+        return {name, country, gender, count: related.length, summary: stMedalSummary(related)};
+      }).sort((a,b) => b.count - a.count || a.name.localeCompare(b.name,'ko'));
+
+      const countries = stUniqueBy(matched.filter(row => stText(row.country)), row => stLower(row.country)).map(row => {
+        const country = stText(row.country);
+        const related = pool.filter(item => stText(item.country) === country);
+        const playerCount = stUniqueBy(related.filter(item => stText(item.skater_name)), item => stLower(item.skater_name)).length;
+        const competitionCount = stUniqueBy(related.filter(item => stText(item.competition_name)), item => stLower(item.competition_name)).length;
+        return {country, playerCount, competitionCount, count: related.length, summary: stMedalSummary(related)};
+      }).sort((a,b) => b.count - a.count || a.country.localeCompare(b.country,'ko'));
+
+      const competitions = stUniqueBy(matched.filter(row => stText(row.competition_name)), row => [stLower(row.competition_name), stLower(row.season), stLower(row.year)].join('|')).map(row => {
+        const name = stText(row.competition_name);
+        const season = stText(row.season);
+        const year = stText(row.year);
+        const related = pool.filter(item => stText(item.competition_name) === name && (!season || stText(item.season) === season));
+        return {name, season, year, type: stText(row.competition_type), city: stText(row.city), count: related.length, summary: stMedalSummary(related)};
+      }).sort((a,b) => seasonSortValue(b.season,b.year) - seasonSortValue(a.season,a.year) || b.count - a.count || a.name.localeCompare(b.name,'ko'));
+
+      const events = stUniqueBy(matched.filter(row => stText(row.event)), row => stLower(row.event)).map(row => {
+        const event = stText(row.event);
+        const related = pool.filter(item => stText(item.event) === event);
+        const playerCount = stUniqueBy(related.filter(item => stText(item.skater_name)), item => stLower(item.skater_name)).length;
+        return {event, gender: stText(row.gender), playerCount, count: related.length, summary: stMedalSummary(related)};
+      }).sort((a,b) => b.count - a.count || a.event.localeCompare(b.event,'ko'));
+
+      const seasons = stUniqueBy(matched.filter(row => stText(row.season)), row => stLower(row.season)).map(row => {
+        const season = stText(row.season);
+        const related = pool.filter(item => stText(item.season) === season);
+        const competitionCount = stUniqueBy(related.filter(item => stText(item.competition_name)), item => stLower(item.competition_name)).length;
+        return {season, competitionCount, count: related.length, summary: stMedalSummary(related)};
+      }).sort((a,b) => seasonSortValue(b.season,b.season) - seasonSortValue(a.season,a.season));
+
+      const recentRows = matched.slice().sort((a,b) => seasonSortValue(b.season,b.year) - seasonSortValue(a.season,a.year)).slice(0,8);
+      return {query, type: stDetectSearchType(query, pool), total: matched.length, players, countries, competitions, events, seasons, recentRows};
     }
-    if(type === 'competition'){
-      return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 대회</div><div class="st-featured-title">${esc(item.name)}</div><div class="st-featured-meta">${esc(item.season || '-')} · ${esc(item.type || '-')} · ${esc(item.city || '-')} · 관련 기록 ${item.count}건</div>${button('대회 상세 보기', `openCompetitionPanel('${js(item.name)}')`)}</div>`;
-    }
-    if(type === 'event'){
-      return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 종목</div><div class="st-featured-title">${esc(item.event)}</div><div class="st-featured-meta">관련 선수 ${item.playerCount}명 · 관련 기록 ${item.count}건<br>${esc(item.summary)}</div>${button('종목 필터 적용', `stSetFilterAndReturnHome('event','${js(item.event)}')`)}</div>`;
-    }
-    if(type === 'season'){
-      return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 시즌</div><div class="st-featured-title">${esc(item.season)}</div><div class="st-featured-meta">관련 대회 ${item.competitionCount}개 · 관련 기록 ${item.count}건<br>${esc(item.summary)}</div>${button('시즌 필터 적용', `stSetFilterAndReturnHome('season','${js(item.season)}')`)}</div>`;
-    }
-    return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 선수</div><div class="st-featured-title">${esc(item.name)}</div><div class="st-featured-meta">${esc(item.country || '-')} · ${esc(genderLabel(item.gender))} · 관련 기록 ${item.count}건<br>${esc(item.summary)}</div>${button('선수 상세 보기', `openPlayerPanel('${js(item.name)}')`)}</div>`;
-  }
 
-  function sectionHtml(title, items, renderer){
-    if(!items.length){
-      return `<div class="st-result-section"><h3>${esc(title)}</h3><div class="st-empty-small">관련 결과가 없습니다.</div></div>`;
-    }
-    return `<div class="st-result-section"><h3>${esc(title)}</h3><div class="st-result-list">${items.slice(0,LIMIT).map(renderer).join('')}</div>${items.length > LIMIT ? `<div class="st-empty-small">외 ${items.length - LIMIT}건은 검색어를 더 구체화하면 확인하기 쉽습니다.</div>` : ''}</div>`;
-  }
-
-  function renderSearchView(){
-    injectStyle();
-    const view = ensureSearchView();
-    const input = $('searchInput');
-    const query = text(input?.value);
-
-    if(!query){
-      setHomeVisible(true);
-      return;
+    function stEnsureSearchView(){
+      let view = document.getElementById(ST_SEARCH_VIEW_ID);
+      if(view) return view;
+      view = document.createElement('section');
+      view.id = ST_SEARCH_VIEW_ID;
+      view.className = 'card anchor-section';
+      const searchSection = document.getElementById('searchSection');
+      if(searchSection && searchSection.parentNode){
+        searchSection.parentNode.insertBefore(view, searchSection.nextSibling);
+      }else{
+        document.querySelector('main')?.prepend(view);
+      }
+      return view;
     }
 
-    const data = buildData(query);
-    setHomeVisible(false);
+    function stSetSearchHomeVisible(showHome){
+      document.body.classList.toggle('st-search-active', !showHome);
+      const view = document.getElementById(ST_SEARCH_VIEW_ID);
+      if(view) view.style.display = showHome ? 'none' : '';
+    }
 
-    const ordered = [];
-    const playersSection = sectionHtml('선수 결과', data.players, item => `
-      <div class="st-result-item"><div class="st-result-item-top"><div><div class="st-result-name">${esc(item.name)}</div><div class="st-result-meta">${esc(item.country || '-')} · ${esc(genderLabel(item.gender))} · 관련 기록 ${item.count}건<br>${esc(item.summary)}</div></div>${button('상세', `openPlayerPanel('${js(item.name)}')`)}</div></div>`);
-    const countriesSection = sectionHtml('국가 결과', data.countries, item => `
-      <div class="st-result-item"><div class="st-result-item-top"><div><div class="st-result-name">${esc(item.country)}</div><div class="st-result-meta">선수 ${item.playerCount}명 · 관련 기록 ${item.count}건<br>${esc(item.summary)}</div></div>${button('보기', `stSetQuery('${js(item.country)}')`)}</div></div>`);
-    const competitionsSection = sectionHtml('대회 결과', data.competitions, item => `
-      <div class="st-result-item"><div class="st-result-item-top"><div><div class="st-result-name">${esc(item.name)}</div><div class="st-result-meta">${esc(item.season || '-')} · ${esc(item.type || '-')} · ${esc(item.city || '-')} · 기록 ${item.count}건</div></div>${button('상세', `openCompetitionPanel('${js(item.name)}')`)}</div></div>`);
-    const eventsSection = sectionHtml('종목 결과', data.events, item => `
-      <div class="st-result-item"><div class="st-result-item-top"><div><div class="st-result-name">${esc(item.event)}</div><div class="st-result-meta">관련 선수 ${item.playerCount}명 · 관련 기록 ${item.count}건<br>${esc(item.summary)}</div></div>${button('필터', `stSetFilterAndReturnHome('event','${js(item.event)}')`)}</div></div>`);
-    const seasonsSection = sectionHtml('시즌 결과', data.seasons, item => `
-      <div class="st-result-item"><div class="st-result-item-top"><div><div class="st-result-name">${esc(item.season)}</div><div class="st-result-meta">대회 ${item.competitionCount}개 · 관련 기록 ${item.count}건<br>${esc(item.summary)}</div></div>${button('필터', `stSetFilterAndReturnHome('season','${js(item.season)}')`)}</div></div>`);
+    function stButton(label, onclick){
+      return `<button type="button" class="st-mini-btn" onclick="${onclick}">${stHtml(label)}</button>`;
+    }
 
-    const sections = {skater:playersSection, country:countriesSection, competition:competitionsSection, event:eventsSection, season:seasonsSection};
-    const orderMap = {
-      skater:['skater','competition','event','country','season'],
-      country:['country','skater','competition','event','season'],
-      competition:['competition','event','skater','country','season'],
-      event:['event','skater','competition','country','season'],
-      season:['season','competition','event','skater','country']
-    };
-    (orderMap[data.type.key] || orderMap.skater).forEach(key => ordered.push(sections[key]));
+    function stFeaturedHtml(data){
+      const type = data.type.key;
+      let item = null;
+      if(type === 'country') item = data.countries[0];
+      else if(type === 'competition') item = data.competitions[0];
+      else if(type === 'event') item = data.events[0];
+      else if(type === 'season') item = data.seasons[0];
+      else item = data.players[0];
 
-    const recentRowsHtml = data.recentRows.length ? `
-      <div class="st-result-section" style="grid-column:1/-1"><h3>관련 원자료 일부</h3>
-        <div class="table-scroll"><table class="st-result-table"><thead><tr><th>대회</th><th>시즌</th><th>종목</th><th>메달</th><th>선수/팀</th><th>국가</th></tr></thead><tbody>
-          ${data.recentRows.map(row => `<tr><td>${esc(row.competition_name)}</td><td>${esc(row.season)}</td><td>${esc(row.event)}</td><td>${esc(medalLabel(row.medal))}</td><td>${esc(row.skater_name || row.team_name)}</td><td>${esc(row.country)}</td></tr>`).join('')}
-        </tbody></table></div>
-      </div>` : '';
+      if(!item){
+        return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 결과</div><div class="st-featured-title">결과 없음</div><div class="st-featured-meta">검색어를 다시 확인하거나 다른 표현으로 검색해 주세요. 예: 김길리, KOR, 2025-26, 1500m</div></div>`;
+      }
 
-    const emptyHelp = data.total ? '' : `
-      <div class="notice">검색 결과가 없습니다. 선수명, 국가 코드, 대회명, 시즌 형식을 다시 확인해 주세요. 예: 김길리, KOR, World Tour, 2025-26, 1500m</div>`;
+      if(type === 'country'){
+        return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 국가</div><div class="st-featured-title">${stHtml(item.country)}</div><div class="st-featured-meta">선수 ${item.playerCount}명 · 대회 ${item.competitionCount}개 · 관련 기록 ${item.count}건<br>${stHtml(item.summary)}</div>${stButton('국가 관련 기록 보기', `stSetQuery('${stJs(item.country)}')`)}</div>`;
+      }
+      if(type === 'competition'){
+        return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 대회</div><div class="st-featured-title">${stHtml(item.name)}</div><div class="st-featured-meta">${stHtml(item.season || '-')} · ${stHtml(item.type || '-')} · ${stHtml(item.city || '-')} · 관련 기록 ${item.count}건</div>${stButton('대회 상세 보기', `openCompetitionPanel('${stJs(item.name)}')`)}</div>`;
+      }
+      if(type === 'event'){
+        return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 종목</div><div class="st-featured-title">${stHtml(item.event)}</div><div class="st-featured-meta">관련 선수 ${item.playerCount}명 · 관련 기록 ${item.count}건<br>${stHtml(item.summary)}</div>${stButton('이 종목 다시 검색', `stSetQuery('${stJs(item.event)}')`)}</div>`;
+      }
+      if(type === 'season'){
+        return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 시즌</div><div class="st-featured-title">${stHtml(item.season)}</div><div class="st-featured-meta">관련 대회 ${item.competitionCount}개 · 관련 기록 ${item.count}건<br>${stHtml(item.summary)}</div>${stButton('이 시즌 다시 검색', `stSetQuery('${stJs(item.season)}')`)}</div>`;
+      }
+      return `<div class="st-search-featured"><div class="st-featured-kicker">가장 관련 높은 선수</div><div class="st-featured-title">${stHtml(item.name)}</div><div class="st-featured-meta">${stHtml(item.country || '-')} · ${stHtml(stGenderLabel(item.gender))} · 관련 기록 ${item.count}건<br>${stHtml(item.summary)}</div>${stButton('선수 상세 보기', `openPlayerPanel('${stJs(item.name)}')`)}</div>`;
+    }
 
-    view.innerHTML = `
-      <div class="st-search-head">
-        <div>
-          <h2>“${esc(query)}” 검색 결과</h2>
-          <p>홈 화면을 필터링하지 않고, 검색어와 관련된 결과만 따로 정리합니다.</p>
-          <span class="st-search-type">${esc(data.type.label)}</span>
-          <div class="st-count-row">
-            <span class="st-count-chip">전체 ${data.total}건</span>
-            <span class="st-count-chip">선수 ${data.players.length}</span>
-            <span class="st-count-chip">국가 ${data.countries.length}</span>
-            <span class="st-count-chip">대회 ${data.competitions.length}</span>
-            <span class="st-count-chip">종목 ${data.events.length}</span>
-            <span class="st-count-chip">시즌 ${data.seasons.length}</span>
+    function stSectionHtml(title, items, renderer){
+      if(!items.length){
+        return `<div class="st-result-section"><h3>${stHtml(title)}</h3><div class="st-empty-small">관련 결과가 없습니다.</div></div>`;
+      }
+      return `<div class="st-result-section"><h3>${stHtml(title)}</h3><div class="st-result-list">${items.slice(0,ST_RESULT_LIMIT).map(renderer).join('')}</div>${items.length > ST_RESULT_LIMIT ? `<div class="st-empty-small">외 ${items.length - ST_RESULT_LIMIT}건은 검색어를 더 구체화하면 확인하기 쉽습니다.</div>` : ''}</div>`;
+    }
+
+    function renderSearchResultView(){
+      const view = stEnsureSearchView();
+      const query = stText(searchInput?.value);
+      if(!query){
+        stSetSearchHomeVisible(true);
+        view.innerHTML = '';
+        return;
+      }
+
+      const data = stBuildSearchData(query);
+      stSetSearchHomeVisible(false);
+
+      const playersSection = stSectionHtml('선수 결과', data.players, item => `
+        <div class="st-result-item"><div class="st-result-item-top"><div><div class="st-result-name">${stHtml(item.name)}</div><div class="st-result-meta">${stHtml(item.country || '-')} · ${stHtml(stGenderLabel(item.gender))} · 관련 기록 ${item.count}건<br>${stHtml(item.summary)}</div></div>${stButton('상세', `openPlayerPanel('${stJs(item.name)}')`)}</div></div>`);
+      const countriesSection = stSectionHtml('국가 결과', data.countries, item => `
+        <div class="st-result-item"><div class="st-result-item-top"><div><div class="st-result-name">${stHtml(item.country)}</div><div class="st-result-meta">선수 ${item.playerCount}명 · 대회 ${item.competitionCount}개 · 관련 기록 ${item.count}건<br>${stHtml(item.summary)}</div></div>${stButton('보기', `stSetQuery('${stJs(item.country)}')`)}</div></div>`);
+      const competitionsSection = stSectionHtml('대회 결과', data.competitions, item => `
+        <div class="st-result-item"><div class="st-result-item-top"><div><div class="st-result-name">${stHtml(item.name)}</div><div class="st-result-meta">${stHtml(item.season || '-')} · ${stHtml(item.type || '-')} · ${stHtml(item.city || '-')} · 기록 ${item.count}건</div></div>${stButton('상세', `openCompetitionPanel('${stJs(item.name)}')`)}</div></div>`);
+      const eventsSection = stSectionHtml('종목 결과', data.events, item => `
+        <div class="st-result-item"><div class="st-result-item-top"><div><div class="st-result-name">${stHtml(item.event)}</div><div class="st-result-meta">관련 선수 ${item.playerCount}명 · 관련 기록 ${item.count}건<br>${stHtml(item.summary)}</div></div>${stButton('검색', `stSetQuery('${stJs(item.event)}')`)}</div></div>`);
+      const seasonsSection = stSectionHtml('시즌 결과', data.seasons, item => `
+        <div class="st-result-item"><div class="st-result-item-top"><div><div class="st-result-name">${stHtml(item.season)}</div><div class="st-result-meta">대회 ${item.competitionCount}개 · 관련 기록 ${item.count}건<br>${stHtml(item.summary)}</div></div>${stButton('검색', `stSetQuery('${stJs(item.season)}')`)}</div></div>`);
+
+      const sections = {skater:playersSection, country:countriesSection, competition:competitionsSection, event:eventsSection, season:seasonsSection};
+      const orderMap = {
+        skater:['skater','competition','event','country','season'],
+        country:['country','skater','competition','event','season'],
+        competition:['competition','event','skater','country','season'],
+        event:['event','skater','competition','country','season'],
+        season:['season','competition','event','skater','country']
+      };
+      const ordered = (orderMap[data.type.key] || orderMap.skater).map(key => sections[key]);
+
+      const recentRowsHtml = data.recentRows.length ? `
+        <div class="st-result-section" style="grid-column:1/-1"><h3>관련 원자료 일부</h3>
+          <div class="table-scroll"><table class="st-result-table"><thead><tr><th>대회</th><th>시즌</th><th>종목</th><th>메달</th><th>선수/팀</th><th>국가</th><th>기록</th></tr></thead><tbody>
+            ${data.recentRows.map(row => `<tr><td>${stHtml(row.competition_name || '-')}</td><td>${stHtml(row.season || '-')}</td><td>${stHtml(row.event || '-')}</td><td>${stHtml(stMedalLabel(row.medal))}</td><td>${stHtml(row.skater_name || row.team_name || '-')}</td><td>${stHtml(row.country || '-')}</td><td>${stHtml(row.time || '-')}</td></tr>`).join('')}
+          </tbody></table></div>
+        </div>` : '';
+
+      const emptyHelp = data.total ? '' : `<div class="notice">검색 결과가 없습니다. 선수명, 국가 코드, 대회명, 시즌 형식을 다시 확인해 주세요. 예: 김길리, KOR, World Tour, 2025-26, 1500m</div>`;
+
+      view.innerHTML = `
+        <div class="st-search-head">
+          <div>
+            <h2>“${stHtml(query)}” 검색 결과</h2>
+            <p>초기 화면 콘텐츠를 필터링하지 않고, 검색어와 관련된 결과만 따로 정리합니다.</p>
+            <span class="st-search-type">${stHtml(data.type.label)}</span>
+            <div class="st-count-row">
+              <span class="st-count-chip">전체 ${data.total}건</span>
+              <span class="st-count-chip">선수 ${data.players.length}</span>
+              <span class="st-count-chip">국가 ${data.countries.length}</span>
+              <span class="st-count-chip">대회 ${data.competitions.length}</span>
+              <span class="st-count-chip">종목 ${data.events.length}</span>
+              <span class="st-count-chip">시즌 ${data.seasons.length}</span>
+            </div>
+          </div>
+          <div class="st-search-actions">
+            <button type="button" class="sort-btn" onclick="stClearSearchView()">검색 초기화</button>
           </div>
         </div>
-        <div class="st-search-actions">
-          <button type="button" class="sort-btn" onclick="stClearSearchView()">검색 초기화</button>
-        </div>
-      </div>
-      ${emptyHelp}
-      ${featuredHtml(data)}
-      <div class="st-result-grid">${ordered.join('')}${recentRowsHtml}</div>
-    `;
-  }
-
-  function attachListeners(){
-    const inputs = ['searchInput','typeFilter','seasonFilter','genderFilter','eventFilter']
-      .map($)
-      .filter(Boolean);
-    inputs.forEach(el => {
-      el.addEventListener('input', () => setTimeout(renderSearchView, 0));
-      el.addEventListener('change', () => setTimeout(renderSearchView, 0));
-    });
-    document.querySelectorAll('.gender-tab,.medal-tab,.skater-mode-tab,.ranking-option-tab,.country-ranking-tab,.event-ranking-tab,.event-rank-gender-tab')
-      .forEach(el => el.addEventListener('click', () => setTimeout(renderSearchView, 0)));
-  }
-
-  function patchApplyFilters(){
-    if(window.__stSearchViewApplyPatched) return;
-    const original = window.applyFilters;
-    if(typeof original === 'function'){
-      window.applyFilters = function(){
-        const result = original.apply(this, arguments);
-        setTimeout(renderSearchView, 0);
-        return result;
-      };
-      window.__stSearchViewApplyPatched = true;
+        ${emptyHelp}
+        ${stFeaturedHtml(data)}
+        <div class="st-result-grid">${ordered.join('')}${recentRowsHtml}</div>
+      `;
     }
-  }
 
-  function initPatch(){
-    injectStyle();
-    ensureSearchView();
-    patchApplyFilters();
-    attachListeners();
-    setTimeout(renderSearchView, 0);
-    setTimeout(renderSearchView, 500);
-    setTimeout(renderSearchView, 1500);
-  }
+    function stClearSearchView(){
+      if(searchInput) searchInput.value = '';
+      applyFilters();
+      document.getElementById('searchSection')?.scrollIntoView({behavior:'smooth', block:'start'});
+    }
 
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', initPatch);
-  } else {
-    initPatch();
-  }
-})();
-</script>
+    function stSetQuery(value){
+      if(searchInput) searchInput.value = value;
+      applyFilters();
+      document.getElementById(ST_SEARCH_VIEW_ID)?.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    window.stClearSearchView = stClearSearchView;
+    window.stSetQuery = stSetQuery;
+
+  </script>
 
 </body>
 </html>
