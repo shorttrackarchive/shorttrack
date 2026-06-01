@@ -2656,7 +2656,10 @@
       const agg=createSkaterAgg('', '');
       rows.forEach(row=>{
         let bucket=competitionBucket(row.competition_type);
-        if(bucket==='worlds' && skaterRankingOptions.separateWorldsOverall && isWorldChampionshipOverallRow(row)){
+        // 선수 비교에서는 종합 순위 화면의 '세계선수권 종합 별도' 설정과 무관하게
+        // World Championships Overall 행을 항상 별도 버킷으로 분리합니다.
+        // 그래야 '세계선수권 점수'와 '세계선수권 종합 점수'가 서로 섞이지 않습니다.
+        if(bucket==='worlds' && isWorldChampionshipOverallRow(row)){
           bucket='worldsOverall';
         }
         addMedalCount(agg[bucket], row.medal);
@@ -2680,16 +2683,26 @@
       return countMedalBucket(rows.filter(row=>isDistanceEvent(row.event,distance) && row.medal_type==='Individual'));
     }
 
+    function comparisonEventGroupLabel(eventName){
+      if(isDistanceEvent(eventName,'500')) return '500m';
+      if(isDistanceEvent(eventName,'1000')) return '1000m';
+      if(isDistanceEvent(eventName,'1500')) return '1500m';
+      if(isWorldChampionshipOverallRow({ competition_type:'World Championships', event:eventName })) return tr('overall');
+      return translateEventName(eventName || '');
+    }
+
     function bestGoldEvent(rows){
       const map=new Map();
-      rows.filter(row=>row.medal==='Gold' && row.medal_type==='Individual').forEach(row=>{
-        const event=row.event||'';
-        if(!event) return;
-        map.set(event,(map.get(event)||0)+1);
-      });
+      rows.filter(row=>row.medal==='Gold' && row.medal_type==='Individual')
+        .filter(row=>!isWorldChampionshipOverallRow(row))
+        .forEach(row=>{
+          const label=comparisonEventGroupLabel(row.event||'');
+          if(!label) return;
+          map.set(label,(map.get(label)||0)+1);
+        });
       if(!map.size) return tr('noData');
       const [event,count]=[...map.entries()].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0]),'ko'))[0];
-      return `${translateEventName(event)} (${count})`;
+      return `${event} (${count})`;
     }
 
     function medalBucketText(bucket){
