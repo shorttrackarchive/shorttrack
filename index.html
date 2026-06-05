@@ -1317,7 +1317,7 @@
 
     <section class="card anchor-section" id="lapRankingSection">
       <div class="section-title"><div><h2 data-i18n="navLapRank">랩타임 순위</h2><span>ISU Results의 lap time / split time(rank)를 기준으로 빠른 랩만 모아 보여 줍니다.</span></div></div>
-      <div class="notice">여자 선수는 <strong>8.59초 이하</strong>, 남자 선수는 <strong>8.19초 이하</strong>만 표시합니다.</div>
+      <div class="notice">여자 개인전·여자 계주는 <strong>8.59초 이하</strong>, 남자 개인전·남자 계주는 <strong>8.19초 이하</strong>를 기준으로 표시합니다. <strong>Women 3000 m Relay</strong>, <strong>Men 5000 m Relay</strong>, <strong>Mixed Team Relay</strong>도 랩타임 순위에 포함합니다. 분류는 PLACE 또는 ISU split rank 변화로 자동 추정하며, 필요하면 lap_times_raw 시트의 manual_context로 보정할 수 있습니다.</div>
       <div class="lap-ranking-controls">
         <div class="lap-ranking-grid">
           <div>
@@ -1326,6 +1326,7 @@
               <option value="all">전체</option>
               <option value="Women">여자</option>
               <option value="Men">남자</option>
+              <option value="Mixed">혼성</option>
             </select>
           </div>
           <div>
@@ -1351,15 +1352,15 @@
           <button type="button" class="tab lap-context-tab" data-lap-context="lead" onclick="setLapContextFilter('lead')">선두</button>
           <button type="button" class="tab lap-context-tab" data-lap-context="pass" onclick="setLapContextFilter('pass')">추월</button>
           <button type="button" class="tab lap-context-tab" data-lap-context="follow" onclick="setLapContextFilter('follow')">따라타기</button>
-          <button type="button" class="tab lap-context-tab" data-lap-context="passed" onclick="setLapContextFilter('passed')">추월당함</button>
+          <button type="button" class="tab lap-context-tab" data-lap-context="passed" onclick="setLapContextFilter('passed')">추월당하기</button>
         </div>
-        <div class="lap-note">전체보기 정렬 우선순위: 랩타임 빠른 순 → 동일 랩타임일 때 선두 &gt; 추월 &gt; 따라타기 &gt; 추월당함.</div>
+        <div class="lap-note">전체보기 정렬 우선순위: 랩타임 빠른 순 → 동일 랩타임일 때 선두 &gt; 추월 &gt; 따라타기 &gt; 추월당하기.</div>
       </div>
       <div class="lap-kpi-grid" id="lapKpiWrap">
         <div class="lap-kpi"><div class="label">수집된 빠른 랩</div><div class="value" id="lapKpiTotal">-</div></div>
-        <div class="lap-kpi"><div class="label">여자 기준</div><div class="value">≤ 8.59</div></div>
-        <div class="lap-kpi"><div class="label">남자 기준</div><div class="value">≤ 8.19</div></div>
-        <div class="lap-kpi"><div class="label">마지막 로드</div><div class="value" id="lapKpiLoaded">-</div></div>
+        <div class="lap-kpi"><div class="label">여자/여자 계주 기준</div><div class="value">≤ 8.59</div></div>
+        <div class="lap-kpi"><div class="label">남자/남자 계주 기준</div><div class="value">≤ 8.19</div></div>
+        <div class="lap-kpi"><div class="label">계주 표시</div><div class="value">포함</div></div>
       </div>
       <div id="lapRankingWrap"><div class="empty">아직 랩타임 데이터를 불러오지 않았습니다. 위의 <strong>불러오기</strong>를 누르세요.</div></div>
     </section>
@@ -1384,7 +1385,158 @@
 
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js">
+
+    // Lap time ranking API integration
+    let lapRankingRows = [];
+    let lapRankingLoaded = false;
+    let currentLapContext = 'all';
+
+    function lapContextLabel(key){
+      return {lead:'선두', pass:'추월', follow:'따라타기', passed:'추월당하기', unknown:'미분류'}[key] || key || '미분류';
+    }
+    function lapContextClass(key){
+      return ['lead','pass','follow','passed'].includes(key) ? key : 'unknown';
+    }
+    function lapContextPriority(key){
+      return {lead:0, pass:1, follow:2, passed:3, unknown:4}[key] ?? 5;
+    }
+    function lapEventOrder(event){
+      const e=normalizeLapEvent(event);
+      const order={
+        'Women 500 m':1,
+        'Men 500 m':2,
+        'Women 3000 m Relay':3,
+        'Men 5000 m Relay':4,
+        'Mixed Team Relay':5
+      };
+      return order[e] ?? 99;
+    }
+    function normalizeLapEvent(event){
+      const raw=String(event||'').trim();
+      const upper=raw.toUpperCase().replace(/\s+/g,' ');
+      if(!raw) return '';
+      if(upper==='TEAM RELAY' || upper==='3000M RELAY' || upper==='3000 M RELAY' || upper==='WOMEN RELAY') return 'Women 3000 m Relay';
+      if(upper==='5000M RELAY' || upper==='5000 M RELAY' || upper==='MEN RELAY') return 'Men 5000 m Relay';
+      if(upper==='MIXED RELAY' || upper==='MIXED TEAM RELAY') return 'Mixed Team Relay';
+      if(/WOMEN\s*3000\s*M?\s*RELAY/i.test(raw)) return 'Women 3000 m Relay';
+      if(/MEN\s*5000\s*M?\s*RELAY/i.test(raw)) return 'Men 5000 m Relay';
+      if(/MIXED/i.test(raw) && /RELAY/i.test(raw)) return 'Mixed Team Relay';
+      return raw;
+    }
+    function inferLapGender(gender,event){
+      const g=String(gender||'').trim();
+      const e=String(event||'').toLowerCase();
+      if(/^women$/i.test(g) || /women|female|여/.test(g.toLowerCase())) return 'Women';
+      if(/^men$/i.test(g) || /(^|[^a-z])men([^a-z]|$)|male|남/.test(g.toLowerCase())) return 'Men';
+      if(/^mixed$/i.test(g) || /mixed|혼성/.test(g.toLowerCase())) return 'Mixed';
+      if(e.includes('women')) return 'Women';
+      if(e.includes('men')) return 'Men';
+      if(e.includes('mixed')) return 'Mixed';
+      return g;
+    }
+    function lapGenderThreshold(gender,event){
+      const g=inferLapGender(gender,event);
+      if(g==='Women') return 8.59;
+      if(g==='Men') return 8.19;
+      return 999;
+    }
+    function getLapApiUrl(){
+      return (typeof LAP_API_URL!=='undefined' && LAP_API_URL) ? LAP_API_URL : APPS_SCRIPT_URL;
+    }
+    function setLapContextFilter(context){
+      currentLapContext=context;
+      document.querySelectorAll('.lap-context-tab').forEach(btn=>btn.classList.toggle('active', btn.dataset.lapContext===context));
+      renderLapRankings();
+    }
+    function populateLapFilters(rows){
+      const seasonSel=document.getElementById('lapSeasonFilter');
+      const eventSel=document.getElementById('lapEventFilter');
+      if(!seasonSel||!eventSel) return;
+      const oldSeason=seasonSel.value||'all';
+      const oldEvent=eventSel.value||'all';
+      const seasons=[...new Set(rows.map(r=>r.season).filter(Boolean))].sort().reverse();
+      const events=[...new Set(rows.map(r=>r.event).filter(Boolean))].sort((a,b)=>lapEventOrder(a)-lapEventOrder(b)||eventOrder(a)-eventOrder(b)||a.localeCompare(b));
+      seasonSel.innerHTML='<option value="all">전체 시즌</option>'+seasons.map(s=>`<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+      eventSel.innerHTML='<option value="all">전체 종목</option>'+events.map(e=>`<option value="${escapeHtml(e)}">${escapeHtml(e)}</option>`).join('');
+      seasonSel.value=seasons.includes(oldSeason)?oldSeason:'all';
+      eventSel.value=events.includes(oldEvent)?oldEvent:'all';
+    }
+    async function loadLapRankings(force){
+      const wrap=document.getElementById('lapRankingWrap');
+      if(!wrap) return;
+      if(lapRankingLoaded && !force){ renderLapRankings(); return; }
+      const api=getLapApiUrl();
+      if(!api || api.includes('여기에')){
+        wrap.innerHTML='<div class="empty"><strong>랩타임 API 주소가 연결되지 않았습니다.</strong><br>Apps Script에 lap time API 코드를 추가한 뒤 LAP_API_URL을 확인해 주세요.</div>';
+        return;
+      }
+      wrap.innerHTML='<div class="empty">랩타임 순위 데이터를 불러오는 중입니다.</div>';
+      try{
+        const sep=api.includes('?')?'&':'?';
+        const res=await fetch(`${api}${sep}action=lapRankings&limit=1000`, {cache:'no-store'});
+        const json=await res.json();
+        if(!json || json.ok===false) throw new Error(json && json.error ? json.error : 'lapRankings 응답 오류');
+        lapRankingRows=(json.rows||[]).map(row=>{
+          const normalizedEvent=normalizeLapEvent(row.event||'');
+          const normalizedGender=inferLapGender(row.gender||'', normalizedEvent);
+          return {
+            competition_type:String(row.competition_type||''), season:String(row.season||''), competition_name:String(row.competition_name||''), city:String(row.city||''), year:String(row.year||''),
+            gender:normalizedGender, event:normalizedEvent, round:String(row.round||''), heat:String(row.heat||''), skater_name:String(row.skater_name||row.name||''), country:String(row.country||''),
+            lap_no:Number(row.lap_no||row.lap_number||0), lap_time:Number(row.lap_time||0), split_time:String(row.split_time||''), split_rank:Number(row.split_rank||0), prev_split_rank:Number(row.prev_split_rank||0),
+            auto_context:String(row.auto_context||row.context||''), manual_context:String(row.manual_context||''), source_url:String(row.source_url||''), note:String(row.note||''), context_basis:String(row.context_basis||'')
+          };
+        }).filter(r=>r.lap_time>0);
+        lapRankingLoaded=true;
+        populateLapFilters(lapRankingRows);
+        document.getElementById('lapKpiTotal').textContent=lapRankingRows.length.toLocaleString('ko-KR');
+        document.getElementById('lapKpiLoaded') && (document.getElementById('lapKpiLoaded').textContent=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
+        renderLapRankings();
+      }catch(err){
+        wrap.innerHTML=`<div class="empty"><strong>랩타임 데이터를 불러오지 못했습니다.</strong><br>${escapeHtml(err.message||err)}<br><small>Apps Script 배포 URL, action=lapRankings, lap_times_raw 시트를 확인해 주세요.</small></div>`;
+      }
+    }
+    function renderLapRankings(){
+      const wrap=document.getElementById('lapRankingWrap');
+      if(!wrap) return;
+      if(!lapRankingLoaded){
+        wrap.innerHTML='<div class="empty">아직 랩타임 데이터를 불러오지 않았습니다. 위의 <strong>불러오기</strong>를 누르세요.</div>';
+        return;
+      }
+      const gender=document.getElementById('lapGenderFilter')?.value||'all';
+      const season=document.getElementById('lapSeasonFilter')?.value||'all';
+      const event=document.getElementById('lapEventFilter')?.value||'all';
+      const limit=Number(document.getElementById('lapLimitFilter')?.value||100);
+      let rows=lapRankingRows.slice();
+      rows=rows.filter(row=>{
+        const context=row.manual_context || row.auto_context || 'unknown';
+        if(gender!=='all' && row.gender!==gender) return false;
+        if(season!=='all' && row.season!==season) return false;
+        if(event!=='all' && row.event!==event) return false;
+        if(currentLapContext!=='all' && context!==currentLapContext) return false;
+        const threshold=lapGenderThreshold(row.gender,row.event);
+        if(row.lap_time>threshold) return false;
+        return true;
+      });
+      rows.sort((a,b)=>a.lap_time-b.lap_time || lapContextPriority(a.manual_context||a.auto_context)-lapContextPriority(b.manual_context||b.auto_context) || String(a.skater_name).localeCompare(String(b.skater_name),'ko'));
+      const visible=rows.slice(0,limit);
+      if(!visible.length){
+        wrap.innerHTML='<div class="empty"><strong>조건에 맞는 랩타임이 없습니다.</strong><br>성별·시즌·종목·분류 필터를 조정해 보세요.</div>';
+        return;
+      }
+      const html=`<div class="table-scroll"><table><thead><tr>
+        <th>순위</th><th>랩타임</th><th>선수</th><th>국가</th><th>성별</th><th>종목</th><th>대회</th><th>시즌</th><th>라운드</th><th>Heat</th><th>Lap</th><th>분류</th><th>근거</th>
+      </tr></thead><tbody>${visible.map((row,idx)=>{
+        const context=row.manual_context || row.auto_context || 'unknown';
+        const basis=row.context_basis || (row.prev_split_rank && row.split_rank ? `${row.prev_split_rank}위 → ${row.split_rank}위` : '-');
+        return `<tr>
+          <td>${idx+1}</td><td><strong>${row.lap_time.toFixed(3)}</strong></td><td>${escapeHtml(row.skater_name)}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td>${escapeHtml(row.competition_name)}</td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.round)}</td><td>${escapeHtml(row.heat)}</td><td>${row.lap_no||''}</td><td><span class="lap-badge ${lapContextClass(context)}">${lapContextLabel(context)}</span></td><td>${escapeHtml(basis)}</td>
+        </tr>`;
+      }).join('')}</tbody></table></div><div class="subnote">총 ${rows.length.toLocaleString('ko-KR')}건 중 ${visible.length.toLocaleString('ko-KR')}건 표시</div>`;
+      wrap.innerHTML=html;
+    }
+
+</script>
 <script>
 
     let currentLang = 'ko';
@@ -4957,13 +5109,15 @@
       window.addEventListener('DOMContentLoaded',()=>{try{refreshTodaySkaterCard();}catch(e){}});
     }
 
-      // Lap time ranking API integration
+  
+
+    // Lap time ranking API integration
     let lapRankingRows = [];
     let lapRankingLoaded = false;
     let currentLapContext = 'all';
 
     function lapContextLabel(key){
-      return {lead:'선두', pass:'추월', follow:'따라타기', passed:'추월당함', unknown:'미분류'}[key] || key || '미분류';
+      return {lead:'선두', pass:'추월', follow:'따라타기', passed:'추월당하기', unknown:'미분류'}[key] || key || '미분류';
     }
     function lapContextClass(key){
       return ['lead','pass','follow','passed'].includes(key) ? key : 'unknown';
@@ -4971,10 +5125,44 @@
     function lapContextPriority(key){
       return {lead:0, pass:1, follow:2, passed:3, unknown:4}[key] ?? 5;
     }
-    function lapGenderThreshold(gender){
-      const g=String(gender||'').toLowerCase();
-      if(g.includes('women')||g.includes('female')||g.includes('여')) return 8.59;
-      if(g.includes('men')||g.includes('male')||g.includes('남')) return 8.19;
+    function lapEventOrder(event){
+      const e=normalizeLapEvent(event);
+      const order={
+        'Women 500 m':1,
+        'Men 500 m':2,
+        'Women 3000 m Relay':3,
+        'Men 5000 m Relay':4,
+        'Mixed Team Relay':5
+      };
+      return order[e] ?? 99;
+    }
+    function normalizeLapEvent(event){
+      const raw=String(event||'').trim();
+      const upper=raw.toUpperCase().replace(/\s+/g,' ');
+      if(!raw) return '';
+      if(upper==='TEAM RELAY' || upper==='3000M RELAY' || upper==='3000 M RELAY' || upper==='WOMEN RELAY') return 'Women 3000 m Relay';
+      if(upper==='5000M RELAY' || upper==='5000 M RELAY' || upper==='MEN RELAY') return 'Men 5000 m Relay';
+      if(upper==='MIXED RELAY' || upper==='MIXED TEAM RELAY') return 'Mixed Team Relay';
+      if(/WOMEN\s*3000\s*M?\s*RELAY/i.test(raw)) return 'Women 3000 m Relay';
+      if(/MEN\s*5000\s*M?\s*RELAY/i.test(raw)) return 'Men 5000 m Relay';
+      if(/MIXED/i.test(raw) && /RELAY/i.test(raw)) return 'Mixed Team Relay';
+      return raw;
+    }
+    function inferLapGender(gender,event){
+      const g=String(gender||'').trim();
+      const e=String(event||'').toLowerCase();
+      if(/^women$/i.test(g) || /women|female|여/.test(g.toLowerCase())) return 'Women';
+      if(/^men$/i.test(g) || /(^|[^a-z])men([^a-z]|$)|male|남/.test(g.toLowerCase())) return 'Men';
+      if(/^mixed$/i.test(g) || /mixed|혼성/.test(g.toLowerCase())) return 'Mixed';
+      if(e.includes('women')) return 'Women';
+      if(e.includes('men')) return 'Men';
+      if(e.includes('mixed')) return 'Mixed';
+      return g;
+    }
+    function lapGenderThreshold(gender,event){
+      const g=inferLapGender(gender,event);
+      if(g==='Women') return 8.59;
+      if(g==='Men') return 8.19;
       return 999;
     }
     function getLapApiUrl(){
@@ -4992,7 +5180,7 @@
       const oldSeason=seasonSel.value||'all';
       const oldEvent=eventSel.value||'all';
       const seasons=[...new Set(rows.map(r=>r.season).filter(Boolean))].sort().reverse();
-      const events=[...new Set(rows.map(r=>r.event).filter(Boolean))].sort((a,b)=>eventOrder(a)-eventOrder(b)||a.localeCompare(b));
+      const events=[...new Set(rows.map(r=>r.event).filter(Boolean))].sort((a,b)=>lapEventOrder(a)-lapEventOrder(b)||eventOrder(a)-eventOrder(b)||a.localeCompare(b));
       seasonSel.innerHTML='<option value="all">전체 시즌</option>'+seasons.map(s=>`<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
       eventSel.innerHTML='<option value="all">전체 종목</option>'+events.map(e=>`<option value="${escapeHtml(e)}">${escapeHtml(e)}</option>`).join('');
       seasonSel.value=seasons.includes(oldSeason)?oldSeason:'all';
@@ -5013,16 +5201,20 @@
         const res=await fetch(`${api}${sep}action=lapRankings&limit=1000`, {cache:'no-store'});
         const json=await res.json();
         if(!json || json.ok===false) throw new Error(json && json.error ? json.error : 'lapRankings 응답 오류');
-        lapRankingRows=(json.rows||[]).map(row=>({
-          competition_type:String(row.competition_type||''), season:String(row.season||''), competition_name:String(row.competition_name||''), city:String(row.city||''), year:String(row.year||''),
-          gender:String(row.gender||''), event:String(row.event||''), round:String(row.round||''), heat:String(row.heat||''), skater_name:String(row.skater_name||row.name||''), country:String(row.country||''),
-          lap_no:Number(row.lap_no||row.lap_number||0), lap_time:Number(row.lap_time||0), split_time:String(row.split_time||''), split_rank:Number(row.split_rank||0), prev_split_rank:Number(row.prev_split_rank||0),
-          auto_context:String(row.auto_context||row.context||''), manual_context:String(row.manual_context||''), source_url:String(row.source_url||''), note:String(row.note||''), context_basis:String(row.context_basis||'')
-        })).filter(r=>r.lap_time>0);
+        lapRankingRows=(json.rows||[]).map(row=>{
+          const normalizedEvent=normalizeLapEvent(row.event||'');
+          const normalizedGender=inferLapGender(row.gender||'', normalizedEvent);
+          return {
+            competition_type:String(row.competition_type||''), season:String(row.season||''), competition_name:String(row.competition_name||''), city:String(row.city||''), year:String(row.year||''),
+            gender:normalizedGender, event:normalizedEvent, round:String(row.round||''), heat:String(row.heat||''), skater_name:String(row.skater_name||row.name||''), country:String(row.country||''),
+            lap_no:Number(row.lap_no||row.lap_number||0), lap_time:Number(row.lap_time||0), split_time:String(row.split_time||''), split_rank:Number(row.split_rank||0), prev_split_rank:Number(row.prev_split_rank||0),
+            auto_context:String(row.auto_context||row.context||''), manual_context:String(row.manual_context||''), source_url:String(row.source_url||''), note:String(row.note||''), context_basis:String(row.context_basis||'')
+          };
+        }).filter(r=>r.lap_time>0);
         lapRankingLoaded=true;
         populateLapFilters(lapRankingRows);
         document.getElementById('lapKpiTotal').textContent=lapRankingRows.length.toLocaleString('ko-KR');
-        document.getElementById('lapKpiLoaded').textContent=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+        document.getElementById('lapKpiLoaded') && (document.getElementById('lapKpiLoaded').textContent=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
         renderLapRankings();
       }catch(err){
         wrap.innerHTML=`<div class="empty"><strong>랩타임 데이터를 불러오지 못했습니다.</strong><br>${escapeHtml(err.message||err)}<br><small>Apps Script 배포 URL, action=lapRankings, lap_times_raw 시트를 확인해 주세요.</small></div>`;
@@ -5046,7 +5238,7 @@
         if(season!=='all' && row.season!==season) return false;
         if(event!=='all' && row.event!==event) return false;
         if(currentLapContext!=='all' && context!==currentLapContext) return false;
-        const threshold=lapGenderThreshold(row.gender);
+        const threshold=lapGenderThreshold(row.gender,row.event);
         if(row.lap_time>threshold) return false;
         return true;
       });
@@ -5067,7 +5259,6 @@
       }).join('')}</tbody></table></div><div class="subnote">총 ${rows.length.toLocaleString('ko-KR')}건 중 ${visible.length.toLocaleString('ko-KR')}건 표시</div>`;
       wrap.innerHTML=html;
     }
-
 
 </script>
 
