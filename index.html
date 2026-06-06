@@ -6249,14 +6249,8 @@
         <td><strong>${recordEscape(row.time)}</strong></td>
         <td>${recordEscape(row.skater_name)}</td>
         <td>${recordEscape(row.country)}</td>
-        <td>${recordEscape(row.gender)}</td>
-        <td>${recordEscape(row.event)}</td>
         <td>${recordEscape(row.final_rank)}</td>
-        <td>${recordEscape(row.round)}</td>
-        <td>${recordEscape(row.heat)}</td>
         <td>${recordEscape(row.competition_name)}</td>
-        <td>${recordEscape(row.city)}</td>
-        <td>${recordEscape(row.date)}</td>
         <td>${recordEscape(row.season)}</td>
         <td>${source}</td>
       </tr>`;
@@ -6264,7 +6258,7 @@
 
     wrap.innerHTML = `<div class="table-scroll"><table>
       <thead><tr>
-        <th>순위</th><th>기록</th><th>선수/팀</th><th>국가</th><th>성별</th><th>종목</th><th>라운드 최종 순위</th><th>라운드</th><th>Heat</th><th>대회</th><th>도시</th><th>날짜</th><th>시즌</th><th>출처</th>
+        <th>순위</th><th>기록</th><th>선수/팀</th><th>국가</th><th>라운드 최종 순위</th><th>대회</th><th>시즌</th><th>출처</th>
       </tr></thead>
       <tbody>${body}</tbody>
     </table></div>
