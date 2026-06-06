@@ -612,6 +612,22 @@
       color:#78350f;
     }
 
+    /* Event record ranking section */
+    .record-ranking-controls{border:1px solid var(--line);border-radius:18px;background:#fbfdff;padding:16px;margin:12px 0}
+    .record-ranking-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:end}
+    .record-ranking-grid label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin:0 0 5px}
+    .record-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+    .record-kpi{border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px}
+    .record-kpi .label{font-size:12px;color:var(--muted);margin-bottom:5px}
+    .record-kpi .value{font-weight:950;font-size:20px;color:#1e3a8a}
+    .record-threshold-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .record-threshold-chip{display:inline-flex;border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:850;color:#334155}
+    .record-source-link{color:var(--primary);font-weight:800;text-decoration:none}
+    .record-source-link:hover{text-decoration:underline}
+    .record-note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:8px}
+    @media(max-width:1100px){.record-ranking-grid{grid-template-columns:repeat(3,1fr)}.record-kpi-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:620px){.record-ranking-grid,.record-kpi-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -632,7 +648,6 @@
     <div class="side-nav-title" data-i18n="navTitle">바로가기</div>
     <button type="button" data-i18n="navSearch" onclick="scrollToSection('searchSection')">검색</button>
     <button type="button" data-i18n="navHelp" onclick="openHelpModal()">도움말</button>
-    <button type="button" onclick="openRulesModal()">판정/규칙</button>
     <button type="button" data-i18n="navSkaterRank" onclick="scrollToSection('skaterRankingSection')">선수별 종합 순위</button>
     <button type="button" data-i18n="navCompare" onclick="scrollToSection('compareSection')">선수 비교</button>
     <button type="button" data-i18n="navCountryRank" onclick="scrollToSection('countryRankingSection')">국가별 메달 순위</button>
@@ -641,9 +656,9 @@
     <button type="button" data-i18n="navCardMaker" onclick="scrollToSection('cardMakerSection')">선수 카드 만들기</button>
     <button type="button" data-i18n="navHeatTool" onclick="scrollToSection('heatToolSection')">조편성 계산기</button>
     <button type="button" data-i18n="navQuiz" onclick="scrollToSection('quizSection')">랜덤 퀴즈</button>
-    <button type="button" data-i18n="navReport" onclick="openReportModal()">오류 신고 및 문의</button>
-    <button type="button" class="nav-soon" data-i18n="navRecordRank" onclick="showPreparing()">종목별 기록 순위</button>
     <button type="button" data-i18n="navLapRank" onclick="scrollToSection('lapRankingSection'); loadLapRankings();">랩타임 순위</button>
+    <button type="button" data-i18n="navRecordRank" onclick="scrollToSection('recordRankingSection'); loadEventRecords();">종목별 기록 순위</button>
+    <button type="button" data-i18n="navReport" onclick="openReportModal()">오류 신고 및 문의</button>
     <button type="button" class="nav-soon" data-i18n="navRecords" onclick="showPreparing()">각종 기록</button>
   </nav>
 
@@ -1401,6 +1416,73 @@
 
 
 
+
+
+    <section class="card anchor-section" id="recordRankingSection">
+      <div class="section-title">
+        <div>
+          <h2 data-i18n="navRecordRank">종목별 기록 순위</h2>
+          <span>500m·1000m·1500m 및 계주 종목의 기준 기록 이내 결과를 빠른 순서로 표시합니다.</span>
+        </div>
+      </div>
+      <div class="notice">
+        기준: 여오백 <strong>42.999 이하</strong>, 남오백 <strong>40.999 이하</strong>, 여천 <strong>1:28.999 이하</strong>, 남천 <strong>1:25.999 이하</strong>, 여천오백 <strong>2:18.999 이하</strong>, 남천오백 <strong>2:10.999 이하</strong>, 혼계 <strong>2:38.999 이하</strong>, 여계 <strong>4:07.999 이하</strong>, 남계 <strong>6:31.999 이하</strong>.
+      </div>
+      <div class="record-ranking-controls">
+        <div class="record-ranking-grid">
+          <div>
+            <label for="recordGenderFilter">성별</label>
+            <select id="recordGenderFilter" onchange="renderEventRecords()">
+              <option value="all">전체</option>
+              <option value="Women">여자</option>
+              <option value="Men">남자</option>
+              <option value="Mixed">혼성</option>
+            </select>
+          </div>
+          <div>
+            <label for="recordSeasonFilter">시즌</label>
+            <select id="recordSeasonFilter" onchange="renderEventRecords()"><option value="all">전체 시즌</option></select>
+          </div>
+          <div>
+            <label for="recordEventFilter">종목</label>
+            <select id="recordEventFilter" onchange="renderEventRecords()"><option value="all">전체 종목</option></select>
+          </div>
+          <div>
+            <label for="recordCompetitionFilter">대회 구분</label>
+            <select id="recordCompetitionFilter" onchange="renderEventRecords()">
+              <option value="all">전체</option>
+              <option value="Olympics">올림픽</option>
+              <option value="World Championships">세계선수권</option>
+              <option value="World Tour">월드투어</option>
+              <option value="World Cup">월드컵</option>
+            </select>
+          </div>
+          <div>
+            <label for="recordLimitFilter">표시 개수</label>
+            <select id="recordLimitFilter" onchange="renderEventRecords()">
+              <option value="50">50</option>
+              <option value="100" selected>100</option>
+              <option value="200">200</option>
+              <option value="500">500</option>
+              <option value="1000">1000</option>
+            </select>
+          </div>
+          <div>
+            <button type="button" class="sort-btn primary-score-btn" onclick="loadEventRecords(true)">불러오기</button>
+          </div>
+        </div>
+        <div class="record-note">
+          원본 시트명은 <strong>event_records_raw</strong> 또는 <strong>event_records</strong>를 권장합니다. Apps Script가 해당 시트를 반환하면 자동으로 종목별 기준을 적용해 표시합니다.
+        </div>
+      </div>
+      <div class="record-kpi-grid">
+        <div class="record-kpi"><div class="label">기준 통과 기록</div><div class="value" id="recordKpiTotal">-</div></div>
+        <div class="record-kpi"><div class="label">개인 종목</div><div class="value" id="recordKpiIndividual">-</div></div>
+        <div class="record-kpi"><div class="label">계주 종목</div><div class="value" id="recordKpiRelay">-</div></div>
+        <div class="record-kpi"><div class="label">현재 표시</div><div class="value" id="recordKpiVisible">-</div></div>
+      </div>
+      <div id="recordRankingWrap"><div class="empty">아직 종목별 기록 데이터를 불러오지 않았습니다. 위의 <strong>불러오기</strong>를 누르세요.</div></div>
+    </section>
 
     <section class="card anchor-section" id="lapRankingSection">
       <div class="section-title"><div><h2 data-i18n="navLapRank">랩타임 순위</h2><span>ISU Results의 lap time / split time(rank)를 기준으로 빠른 랩만 모아 보여 줍니다.</span></div></div>
@@ -5715,6 +5797,412 @@
     });
     observer.observe(title, {childList:true, characterData:true, subtree:true});
   });
+})();
+</script>
+
+
+<script>
+/* Event record ranking integration */
+(function(){
+  let eventRecordRows = [];
+  let eventRecordsLoaded = false;
+
+  function recordEscape(v){
+    if(typeof escapeHtml === 'function') return escapeHtml(v);
+    return String(v || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  }
+
+  function recordSeconds(value){
+    const s = String(value || '').trim();
+    if(!s || /^(nan|null|undefined)$/i.test(s)) return null;
+    const n = Number(s);
+    if(Number.isFinite(n)) return n;
+    if(s.includes(':')){
+      const parts = s.split(':').map(x => x.trim());
+      if(parts.length === 2){
+        const sec = Number(parts[0]) * 60 + Number(parts[1]);
+        return Number.isFinite(sec) ? sec : null;
+      }
+      if(parts.length === 3){
+        const sec = Number(parts[0]) * 3600 + Number(parts[1]) * 60 + Number(parts[2]);
+        return Number.isFinite(sec) ? sec : null;
+      }
+    }
+    return null;
+  }
+
+  function normalizeRecordText(value){
+    return String(value || '').replace(/\r/g,' ').replace(/\n/g,' ').replace(/\s+/g,' ').trim();
+  }
+
+  function cleanRecordEventText(value){
+    return normalizeRecordText(value).replace(/^\d{1,2}\s+[A-Za-z]{3}\s+\d{4},\s*\d{1,2}:\d{2}\s*/,'').trim();
+  }
+
+  function inferRecordGender(gender, event){
+    const g = normalizeRecordText(gender);
+    const e = normalizeRecordText(event).toLowerCase();
+    if(/^women$/i.test(g) || /women|female|ladies|여/.test(g.toLowerCase())) return 'Women';
+    if(/^men$/i.test(g) || /(^|[^a-z])men([^a-z]|$)|male|남/.test(g.toLowerCase())) return 'Men';
+    if(/^mixed$/i.test(g) || /mixed|혼성/.test(g.toLowerCase())) return 'Mixed';
+    if(/women|ladies/.test(e)) return 'Women';
+    if(/(^|[^a-z])men([^a-z]|$)/.test(e)) return 'Men';
+    if(/mixed/.test(e)) return 'Mixed';
+    return g || '';
+  }
+
+  function normalizeRecordEvent(row){
+    const gender = inferRecordGender(row.gender, row.event);
+    const raw = cleanRecordEventText(row.event || row.distance || row.discipline || '');
+    let e = raw.toLowerCase();
+    e = e.replace(/metres|metre|meters|meter/g,'m').replace(/\s+/g,' ');
+    e = e.replace(/(\d+)\s*m\b/g,'$1m');
+
+    if(/mixed/.test(e) && /relay/.test(e)) return 'Mixed Team Relay';
+    if((gender === 'Women' || /women|ladies/.test(e)) && /relay/.test(e) && (/3000/.test(e) || /relay/.test(e))) return 'Women 3000 m Relay';
+    if((gender === 'Men' || /(^|[^a-z])men([^a-z]|$)/.test(e)) && /relay/.test(e) && (/5000/.test(e) || /relay/.test(e))) return 'Men 5000 m Relay';
+
+    if((gender === 'Women' || /women|ladies/.test(e)) && /\b500m\b/.test(e) && !/1500/.test(e)) return 'Women 500 m';
+    if((gender === 'Men' || /(^|[^a-z])men([^a-z]|$)/.test(e)) && /\b500m\b/.test(e) && !/1500/.test(e)) return 'Men 500 m';
+    if((gender === 'Women' || /women|ladies/.test(e)) && /\b1000m\b/.test(e)) return 'Women 1000 m';
+    if((gender === 'Men' || /(^|[^a-z])men([^a-z]|$)/.test(e)) && /\b1000m\b/.test(e)) return 'Men 1000 m';
+    if((gender === 'Women' || /women|ladies/.test(e)) && /\b1500m\b/.test(e)) return 'Women 1500 m';
+    if((gender === 'Men' || /(^|[^a-z])men([^a-z]|$)/.test(e)) && /\b1500m\b/.test(e)) return 'Men 1500 m';
+
+    return raw;
+  }
+
+  function recordThreshold(event){
+    return {
+      'Women 500 m':42.999,
+      'Men 500 m':40.999,
+      'Women 1000 m':88.999,
+      'Men 1000 m':85.999,
+      'Women 1500 m':138.999,
+      'Men 1500 m':130.999,
+      'Mixed Team Relay':158.999,
+      'Women 3000 m Relay':247.999,
+      'Men 5000 m Relay':391.999
+    }[event] ?? null;
+  }
+
+  function recordEventOrder(event){
+    return {
+      'Women 500 m':1,
+      'Men 500 m':2,
+      'Women 1000 m':3,
+      'Men 1000 m':4,
+      'Women 1500 m':5,
+      'Men 1500 m':6,
+      'Mixed Team Relay':7,
+      'Women 3000 m Relay':8,
+      'Men 5000 m Relay':9
+    }[event] ?? 99;
+  }
+
+  function recordIsRelay(event){
+    return /Relay/i.test(String(event || ''));
+  }
+
+  function recordCompetitionBucket(value){
+    const v = String(value || '').toLowerCase();
+    if(v.includes('olympic')) return 'Olympics';
+    if(v.includes('world championship')) return 'World Championships';
+    if(v.includes('world tour')) return 'World Tour';
+    if(v.includes('world cup')) return 'World Cup';
+    return value || '';
+  }
+
+  function invalidRecordName(name){
+    return /^(HEAT|QUARTER\s*FINAL|QUARTERFINAL|SEMI\s*FINAL|SEMIFINAL|FINAL|PRELIMINARY|PRELIMINARIES|ROUND)\b/i.test(String(name || '').trim());
+  }
+
+  function fixRecordName(row){
+    let name = normalizeRecordText(row.skater_name || row.name || row.athlete || row.team_name || '');
+    if(!invalidRecordName(name)) return name;
+    const raw = String(row.raw_data || '');
+    const parts = raw.split('|').map(x => x.trim()).filter(Boolean);
+    const country = normalizeRecordText(row.country || row.noc || '');
+    if(country && parts.includes(country)){
+      const idx = parts.indexOf(country);
+      if(idx > 0) return parts[idx - 1];
+    }
+    return '';
+  }
+
+  function extractRecordDate(row){
+    const direct = normalizeRecordText(row.date || '');
+    if(direct) return direct;
+    const raw = normalizeRecordText(row.event || '');
+    const m = raw.match(/(\d{1,2}\s+[A-Za-z]{3}\s+\d{4})/);
+    return m ? m[1] : '';
+  }
+
+  function extractRecordRowsFromJson(json){
+    if(!json) return [];
+    if(Array.isArray(json)) return json;
+    const keys = [
+      'event_records_raw',
+      'event_records',
+      'records',
+      'record_rankings',
+      'recordRankings',
+      'eventRecords',
+      'event_records_all',
+      'records_raw',
+      'rows'
+    ];
+    for(const key of keys){
+      if(Array.isArray(json[key])) return json[key];
+    }
+    return [];
+  }
+
+  function normalizeEventRecordRow(row){
+    const event = normalizeRecordEvent(row);
+    const gender = inferRecordGender(row.gender || '', event);
+    const sec = recordSeconds(row.seconds_float || row.time || row.record || row.best_time);
+    const competitionType = recordCompetitionBucket(row.competition_type || row.type || '');
+    return {
+      rank: normalizeRecordText(row.rank || row.final_rank || ''),
+      skater_name: fixRecordName(row),
+      country: normalizeRecordText(row.country || row.noc || ''),
+      time: normalizeRecordText(row.time || row.record || row.best_time || ''),
+      seconds_float: sec,
+      status: normalizeRecordText(row.status || ''),
+      gender,
+      event,
+      final_rank: normalizeRecordText(row.final_rank || row.rank || ''),
+      city: normalizeRecordText(row.city || ''),
+      date: extractRecordDate(row),
+      season: normalizeRecordText(row.season || ''),
+      competition_type: competitionType,
+      competition_name: normalizeRecordText(row.competition_name || row.competition || ''),
+      round: normalizeRecordText(row.round || ''),
+      heat: normalizeRecordText(row.heat || ''),
+      source_url: normalizeRecordText(row.source_url || row.url || ''),
+      raw_data: normalizeRecordText(row.raw_data || '')
+    };
+  }
+
+  function normalizedRecordNameKey(name){
+    return String(name || '')
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase()
+      .replace(/\s+/g,' ');
+  }
+
+  function normalizedRecordTimeKey(value){
+    const sec = recordSeconds(value);
+    if(sec === null || !Number.isFinite(sec)) return String(value || '').trim().toLowerCase();
+    return sec.toFixed(3).replace(/0+$/,'').replace(/\.$/,'');
+  }
+
+  function recordRawLooksLikeGroupHeader(row){
+    return /^(HEAT|QUARTER\s*FINAL|QUARTERFINAL|SEMI\s*FINAL|SEMIFINAL|FINAL)\b/i.test(String(row.raw_data || '').trim());
+  }
+
+  function recordNameAllCaps(row){
+    const letters = String(row.skater_name || '').replace(/[^A-Za-z]/g,'');
+    return !!letters && letters === letters.toUpperCase();
+  }
+
+  function recordRowQuality(row){
+    let score = 0;
+    if(row.skater_name && !invalidRecordName(row.skater_name)) score += 100;
+    // 같은 기록이 2번 들어올 때는 HEAT 1 | ... 형 raw_data 행보다
+    // 일반 결과표 행(예: 1 | 1 | 2 | Xandra ... | Q)을 우선 유지한다.
+    if(!recordRawLooksLikeGroupHeader(row)) score += 30;
+    if(!recordNameAllCaps(row)) score += 10;
+    if(row.status) score += 2;
+    if(row.raw_data) score += 1;
+    return score;
+  }
+
+  function dedupeEventRecords(rows){
+    const bestByKey = new Map();
+
+    rows.forEach(row => {
+      // HEAT/SEMIFINAL/QUARTERFINAL 등이 선수명 칸에 들어간 행은 표시하지 않는다.
+      if(invalidRecordName(row.skater_name)) return;
+
+      // 같은 선수의 같은 라운드 기록이
+      // ① HEAT 1 | ... 형 행과 ② 일반 결과표 행으로 중복 수집되는 경우가 있어
+      // heat/raw_data 차이는 중복 판단에서 제외한다.
+      const key = [
+        row.season,
+        String(row.competition_type || '').toLowerCase(),
+        String(row.competition_name || '').toLowerCase(),
+        row.event,
+        String(row.round || '').toLowerCase(),
+        String(row.source_url || '').split('#')[0],
+        normalizedRecordNameKey(row.skater_name),
+        String(row.country || '').toLowerCase(),
+        normalizedRecordTimeKey(row.seconds_float || row.time),
+        String(row.final_rank || '').toLowerCase()
+      ].map(v => String(v || '').trim()).join('||');
+
+      const prev = bestByKey.get(key);
+      if(!prev || recordRowQuality(row) > recordRowQuality(prev)){
+        bestByKey.set(key, row);
+      }
+    });
+
+    return [...bestByKey.values()];
+  }
+
+
+  function getRecordApiUrl(){
+    return (typeof RECORD_API_URL !== 'undefined' && RECORD_API_URL) ? RECORD_API_URL : APPS_SCRIPT_URL;
+  }
+
+  function populateEventRecordFilters(rows){
+    const seasonSel = document.getElementById('recordSeasonFilter');
+    const eventSel = document.getElementById('recordEventFilter');
+    if(!seasonSel || !eventSel) return;
+
+    const oldSeason = seasonSel.value || 'all';
+    const oldEvent = eventSel.value || 'all';
+
+    const seasons = [...new Set(rows.map(r => r.season).filter(Boolean))].sort().reverse();
+    const events = [...new Set(rows.map(r => r.event).filter(Boolean))]
+      .sort((a,b) => recordEventOrder(a) - recordEventOrder(b) || String(a).localeCompare(String(b),'ko'));
+
+    seasonSel.innerHTML = '<option value="all">전체 시즌</option>' + seasons.map(s => `<option value="${recordEscape(s)}">${recordEscape(s)}</option>`).join('');
+    eventSel.innerHTML = '<option value="all">전체 종목</option>' + events.map(e => `<option value="${recordEscape(e)}">${recordEscape(e)}</option>`).join('');
+
+    seasonSel.value = seasons.includes(oldSeason) ? oldSeason : 'all';
+    eventSel.value = events.includes(oldEvent) ? oldEvent : 'all';
+    seasonSel.disabled = false;
+    eventSel.disabled = false;
+  }
+
+  window.loadEventRecords = async function(force){
+    const wrap = document.getElementById('recordRankingWrap');
+    if(!wrap) return;
+    if(eventRecordsLoaded && !force){ renderEventRecords(); return; }
+
+    const api = getRecordApiUrl();
+    if(!api || api.includes('여기에')){
+      wrap.innerHTML = '<div class="empty"><strong>종목별 기록 API 주소가 연결되지 않았습니다.</strong><br>Apps Script에서 event_records_raw 또는 event_records 시트를 반환하도록 연결해 주세요.</div>';
+      return;
+    }
+
+    wrap.innerHTML = '<div class="empty">종목별 기록 데이터를 불러오는 중입니다.</div>';
+    ['recordSeasonFilter','recordEventFilter'].forEach(id => { const el = document.getElementById(id); if(el) el.disabled = true; });
+
+    try{
+      let sourceRows = [];
+      const sep = api.includes('?') ? '&' : '?';
+
+      try{
+        const res = await fetch(`${api}${sep}action=eventRecords&limit=50000`, {cache:'no-store'});
+        const json = await res.json();
+        sourceRows = sourceRows.concat(extractRecordRowsFromJson(json));
+      }catch(_e){}
+
+      try{
+        const baseRes = await fetch(api, {cache:'no-store'});
+        const baseJson = await baseRes.json();
+        sourceRows = sourceRows.concat(extractRecordRowsFromJson(baseJson));
+      }catch(_e){}
+
+      eventRecordRows = dedupeEventRecords(sourceRows.map(normalizeEventRecordRow).filter(row => {
+        if(!row.skater_name || invalidRecordName(row.skater_name)) return false;
+        if(row.seconds_float === null || !Number.isFinite(row.seconds_float)) return false;
+        const threshold = recordThreshold(row.event);
+        if(threshold === null) return false;
+        return row.seconds_float <= threshold;
+      }));
+
+      eventRecordsLoaded = true;
+      populateEventRecordFilters(eventRecordRows);
+      const total = eventRecordRows.length;
+      document.getElementById('recordKpiTotal').textContent = total.toLocaleString('ko-KR');
+      document.getElementById('recordKpiIndividual').textContent = eventRecordRows.filter(r => !recordIsRelay(r.event)).length.toLocaleString('ko-KR');
+      document.getElementById('recordKpiRelay').textContent = eventRecordRows.filter(r => recordIsRelay(r.event)).length.toLocaleString('ko-KR');
+      renderEventRecords();
+    }catch(err){
+      ['recordSeasonFilter','recordEventFilter'].forEach(id => { const el = document.getElementById(id); if(el) el.disabled = false; });
+      wrap.innerHTML = `<div class="empty"><strong>종목별 기록 데이터를 불러오지 못했습니다.</strong><br>${recordEscape(err.message || err)}<br><small>Apps Script의 action=eventRecords 또는 event_records_raw 시트를 확인해 주세요.</small></div>`;
+    }
+  };
+
+  window.renderEventRecords = function(){
+    const wrap = document.getElementById('recordRankingWrap');
+    if(!wrap) return;
+
+    if(!eventRecordsLoaded){
+      wrap.innerHTML = '<div class="empty">아직 종목별 기록 데이터를 불러오지 않았습니다. 위의 <strong>불러오기</strong>를 누르세요.</div>';
+      return;
+    }
+
+    const gender = document.getElementById('recordGenderFilter')?.value || 'all';
+    const season = document.getElementById('recordSeasonFilter')?.value || 'all';
+    const event = document.getElementById('recordEventFilter')?.value || 'all';
+    const competition = document.getElementById('recordCompetitionFilter')?.value || 'all';
+    const limit = Number(document.getElementById('recordLimitFilter')?.value || 100);
+
+    let rows = eventRecordRows.slice().filter(row => {
+      if(gender !== 'all' && row.gender !== gender) return false;
+      if(season !== 'all' && row.season !== season) return false;
+      if(event !== 'all' && row.event !== event) return false;
+      if(competition !== 'all' && row.competition_type !== competition) return false;
+      return true;
+    });
+
+    rows.sort((a,b) =>
+      recordEventOrder(a.event) - recordEventOrder(b.event) ||
+      a.seconds_float - b.seconds_float ||
+      String(a.skater_name).localeCompare(String(b.skater_name),'ko')
+    );
+
+    const visible = rows.slice(0, limit);
+    const visibleKpi = document.getElementById('recordKpiVisible');
+    if(visibleKpi) visibleKpi.textContent = `${visible.length.toLocaleString('ko-KR')}/${rows.length.toLocaleString('ko-KR')}`;
+
+    if(!visible.length){
+      wrap.innerHTML = '<div class="empty"><strong>조건에 맞는 기록이 없습니다.</strong><br>성별·시즌·종목·대회 구분 필터를 조정해 보세요.</div>';
+      return;
+    }
+
+    let currentEvent = '';
+    let rankInEvent = 0;
+    const body = visible.map(row => {
+      if(row.event !== currentEvent){
+        currentEvent = row.event;
+        rankInEvent = 0;
+      }
+      rankInEvent += 1;
+      const source = row.source_url ? `<a class="record-source-link" href="${recordEscape(row.source_url)}" target="_blank" rel="noopener">보기</a>` : '';
+      return `<tr>
+        <td>${rankInEvent}</td>
+        <td><strong>${recordEscape(row.time)}</strong></td>
+        <td>${recordEscape(row.skater_name)}</td>
+        <td>${recordEscape(row.country)}</td>
+        <td>${recordEscape(row.gender)}</td>
+        <td>${recordEscape(row.event)}</td>
+        <td>${recordEscape(row.final_rank)}</td>
+        <td>${recordEscape(row.round)}</td>
+        <td>${recordEscape(row.heat)}</td>
+        <td>${recordEscape(row.competition_name)}</td>
+        <td>${recordEscape(row.city)}</td>
+        <td>${recordEscape(row.date)}</td>
+        <td>${recordEscape(row.season)}</td>
+        <td>${source}</td>
+      </tr>`;
+    }).join('');
+
+    wrap.innerHTML = `<div class="table-scroll"><table>
+      <thead><tr>
+        <th>순위</th><th>기록</th><th>선수/팀</th><th>국가</th><th>성별</th><th>종목</th><th>라운드 최종 순위</th><th>라운드</th><th>Heat</th><th>대회</th><th>도시</th><th>날짜</th><th>시즌</th><th>출처</th>
+      </tr></thead>
+      <tbody>${body}</tbody>
+    </table></div>
+    <div class="subnote">현재 조건 ${rows.length.toLocaleString('ko-KR')}건 중 ${visible.length.toLocaleString('ko-KR')}건 표시</div>`;
+  };
 })();
 </script>
 
