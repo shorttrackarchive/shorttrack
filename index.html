@@ -1317,7 +1317,7 @@
 
     <section class="card anchor-section" id="lapRankingSection">
       <div class="section-title"><div><h2 data-i18n="navLapRank">랩타임 순위</h2><span>ISU Results의 lap time / split time(rank)를 기준으로 빠른 랩만 모아 보여 줍니다.</span></div></div>
-      <div class="notice">여자 개인전·여자 계주는 <strong>8.59초 이하</strong>, 남자 개인전·남자 계주는 <strong>8.19초 이하</strong>를 기준으로 표시합니다. <strong>Women 3000 m Relay</strong>, <strong>Men 5000 m Relay</strong>, <strong>Mixed Team Relay</strong>도 랩타임 순위에 포함합니다.</div>
+      <div class="notice">여자 개인전·여자 계주는 <strong>8.59초 이하</strong>, 남자 개인전·남자 계주는 <strong>8.19초 이하</strong>를 기준으로 표시합니다. <strong>Women 3000 m Relay</strong>, <strong>Men 5000 m Relay</strong>, <strong>Mixed Team Relay</strong>도 랩타임 순위에 포함합니다. 분류는 PLACE 또는 ISU split rank 변화로 자동 추정하며, 필요하면 lap_times_raw 시트의 manual_context로 보정할 수 있습니다.</div>
       <div class="lap-ranking-controls">
         <div class="lap-ranking-grid">
           <div>
@@ -1566,7 +1566,7 @@
         const context=row.manual_context || row.auto_context || 'unknown';
         const basis=row.context_basis || (row.prev_split_rank && row.split_rank ? `${row.prev_split_rank}위 → ${row.split_rank}위` : '-');
         return `<tr>
-          <td>${idx+1}</td><td><strong>${row.lap_time.toFixed(3)}</strong></td><td>${escapeHtml(row.skater_name)}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td>${escapeHtml(row.competition_name)}</td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.round)}</td><td>${escapeHtml(row.heat)}</td><td>${row.lap_no||''}</td><td><span class="lap-badge ${lapContextClass(context)}">${lapContextLabel(context)}</span></td><td>${escapeHtml(basis)}</td>
+          <td>${idx+1}</td><td><strong>${row.lap_time.toFixed(2)}</strong></td><td>${escapeHtml(row.skater_name)}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td>${escapeHtml(row.competition_name)}</td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.round)}</td><td>${escapeHtml(row.heat)}</td><td>${row.lap_no||''}</td><td><span class="lap-badge ${lapContextClass(context)}">${lapContextLabel(context)}</span></td><td>${escapeHtml(basis)}</td>
         </tr>`;
       }).join('')}</tbody></table></div><div class="subnote">총 ${rows.length.toLocaleString('ko-KR')}건 중 ${visible.length.toLocaleString('ko-KR')}건 표시</div>`;
       wrap.innerHTML=html;
@@ -5328,7 +5328,7 @@
         const context=row.manual_context || row.auto_context || 'unknown';
         const basis=row.context_basis || (row.prev_split_rank && row.split_rank ? `${row.prev_split_rank}위 → ${row.split_rank}위` : '-');
         return `<tr>
-          <td>${idx+1}</td><td><strong>${row.lap_time.toFixed(3)}</strong></td><td>${escapeHtml(row.skater_name)}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td>${escapeHtml(row.competition_name)}</td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.round)}</td><td>${escapeHtml(row.heat)}</td><td>${row.lap_no||''}</td><td><span class="lap-badge ${lapContextClass(context)}">${lapContextLabel(context)}</span></td><td>${escapeHtml(basis)}</td>
+          <td>${idx+1}</td><td><strong>${row.lap_time.toFixed(2)}</strong></td><td>${escapeHtml(row.skater_name)}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td>${escapeHtml(row.competition_name)}</td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.round)}</td><td>${escapeHtml(row.heat)}</td><td>${row.lap_no||''}</td><td><span class="lap-badge ${lapContextClass(context)}">${lapContextLabel(context)}</span></td><td>${escapeHtml(basis)}</td>
         </tr>`;
       }).join('')}</tbody></table></div><div class="subnote">총 ${rows.length.toLocaleString('ko-KR')}건 중 ${visible.length.toLocaleString('ko-KR')}건 표시</div>`;
       wrap.innerHTML=html;
