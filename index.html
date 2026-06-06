@@ -1352,9 +1352,9 @@
           <button type="button" class="tab lap-context-tab" data-lap-context="lead" onclick="setLapContextFilter('lead')">선두</button>
           <button type="button" class="tab lap-context-tab" data-lap-context="pass" onclick="setLapContextFilter('pass')">추월</button>
           <button type="button" class="tab lap-context-tab" data-lap-context="follow" onclick="setLapContextFilter('follow')">따라타기</button>
-          <button type="button" class="tab lap-context-tab" data-lap-context="passed" onclick="setLapContextFilter('passed')">추월당하기</button>
+          <button type="button" class="tab lap-context-tab" data-lap-context="passed" onclick="setLapContextFilter('passed')">추월당함</button>
         </div>
-        <div class="lap-note">전체보기 정렬 우선순위: 랩타임 빠른 순 → 동일 랩타임일 때 선두 &gt; 추월 &gt; 따라타기 &gt; 추월당하기.</div>
+        <div class="lap-note">전체보기 정렬 우선순위: 랩타임 빠른 순 → 동일 랩타임일 때 선두 &gt; 추월 &gt; 따라타기 &gt; 추월당함.</div>
       </div>
       <div class="lap-kpi-grid" id="lapKpiWrap">
         <div class="lap-kpi"><div class="label">수집된 빠른 랩</div><div class="value" id="lapKpiTotal">-</div></div>
@@ -1393,7 +1393,7 @@
     let currentLapContext = 'all';
 
     function lapContextLabel(key){
-      return {lead:'선두', pass:'추월', follow:'따라타기', passed:'추월당하기', unknown:'미분류'}[key] || key || '미분류';
+      return {lead:'선두', pass:'추월', follow:'따라타기', passed:'추월당함', unknown:'미분류'}[key] || key || '미분류';
     }
     function lapContextClass(key){
       return ['lead','pass','follow','passed'].includes(key) ? key : 'unknown';
@@ -5155,7 +5155,7 @@
     let currentLapContext = 'all';
 
     function lapContextLabel(key){
-      return {lead:'선두', pass:'추월', follow:'따라타기', passed:'추월당하기', unknown:'미분류'}[key] || key || '미분류';
+      return {lead:'선두', pass:'추월', follow:'따라타기', passed:'추월당함', unknown:'미분류'}[key] || key || '미분류';
     }
     function lapContextClass(key){
       return ['lead','pass','follow','passed'].includes(key) ? key : 'unknown';
