@@ -1454,6 +1454,13 @@
             </select>
           </div>
           <div>
+            <label for="recordFinalRankFilter">라운드 최종 순위</label>
+            <select id="recordFinalRankFilter" onchange="renderEventRecords()">
+              <option value="all">전체</option>
+              <option value="1" selected>1위만</option>
+            </select>
+          </div>
+          <div>
             <label for="recordLimitFilter">표시 개수</label>
             <select id="recordLimitFilter" onchange="renderEventRecords()">
               <option value="50">50</option>
@@ -5797,6 +5804,7 @@
 
 <script>
 /* Event record ranking integration */
+/* UPDATED_RECORD_THRESHOLDS_2026_06_06: Men 1000 m <= 83.999, Men 1500 m <= 132.999, Men 5000 m Relay <= 398.999, final-rank default = 1 */
 (function(){
   let eventRecordRows = [];
   let eventRecordsLoaded = false;
@@ -5871,12 +5879,12 @@
       'Women 500 m':42.999,
       'Men 500 m':40.999,
       'Women 1000 m':88.999,
-      'Men 1000 m':85.999,
+      'Men 1000 m':83.999,
       'Women 1500 m':138.999,
-      'Men 1500 m':130.999,
+      'Men 1500 m':132.999,
       'Mixed Team Relay':158.999,
       'Women 3000 m Relay':247.999,
-      'Men 5000 m Relay':391.999
+      'Men 5000 m Relay':398.999
     }[event] ?? null;
   }
 
@@ -5945,6 +5953,17 @@
     if(v.includes('world tour')) return 'World Tour';
     if(v.includes('world cup')) return 'World Cup';
     return value || '';
+  }
+
+  function normalizeRecordFinalRank(value){
+    const s = String(value || '').trim();
+    if(!s) return '';
+    const m = s.match(/^\s*(\d+)/);
+    return m ? m[1] : s.toLowerCase();
+  }
+
+  function isConsentRecordRow(row){
+    return String(row && row.round || '').trim().toLowerCase() === 'consent';
   }
 
   function invalidRecordName(name){
@@ -6172,6 +6191,7 @@
 
       eventRecordRows = dedupeEventRecords(sourceRows.map(normalizeEventRecordRow).filter(row => {
         if(!row.skater_name || invalidRecordName(row.skater_name)) return false;
+        if(isConsentRecordRow(row)) return false;
         if(row.seconds_float === null || !Number.isFinite(row.seconds_float)) return false;
         const threshold = recordThreshold(row.event);
         if(threshold === null) return false;
@@ -6210,6 +6230,7 @@
     const season = document.getElementById('recordSeasonFilter')?.value || 'all';
     const event = document.getElementById('recordEventFilter')?.value || 'all';
     const competition = document.getElementById('recordCompetitionFilter')?.value || 'all';
+    const finalRank = document.getElementById('recordFinalRankFilter')?.value || '1';
     const limit = Number(document.getElementById('recordLimitFilter')?.value || 100);
 
     let rows = eventRecordRows.slice().filter(row => {
@@ -6217,6 +6238,7 @@
       if(season !== 'all' && row.season !== season) return false;
       if(row.event !== event) return false;
       if(competition !== 'all' && row.competition_type !== competition) return false;
+      if(finalRank === '1' && normalizeRecordFinalRank(row.final_rank) !== '1') return false;
       return true;
     });
 
