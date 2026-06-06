@@ -560,7 +560,6 @@
     @media(max-width:980px){.lap-ranking-grid,.lap-kpi-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:560px){.lap-ranking-grid,.lap-kpi-grid{grid-template-columns:1fr}}
 
-    #playerAchievementBadgesLine{display:none}
     /* Player achievement badges */
     .player-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
     .player-title-row h2{margin:0 0 6px;font-size:24px}
@@ -587,6 +586,30 @@
       .player-title-row{display:block}
       .player-achievement-badges{margin-top:6px}
       .achievement-badge{font-size:11px;padding:4px 8px}
+    }
+
+    /* Player achievement badges - fixed */
+    .player-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .player-title-row h2{margin:0 0 6px;font-size:24px}
+    #playerAchievementBadges{display:flex !important;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+    .player-achievement-badges{display:flex;flex-wrap:wrap;gap:6px}
+    .achievement-badge{
+      display:inline-flex !important;
+      align-items:center;
+      border:1px solid #fde68a;
+      background:#fffbeb;
+      color:#92400e;
+      border-radius:999px;
+      padding:4px 9px;
+      font-size:12px;
+      font-weight:900;
+      line-height:1.2;
+      white-space:nowrap;
+    }
+    .achievement-badge.grand-slam{
+      border-color:#fbbf24;
+      background:linear-gradient(135deg,#fef3c7,#fff7ed);
+      color:#78350f;
     }
 
 </style>
