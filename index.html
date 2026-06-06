@@ -5555,5 +5555,168 @@
 
 </script>
 
+
+<style>
+#playerAchievementBadges.player-achievement-badges,
+.player-title-row #playerAchievementBadges{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  gap:6px !important;
+  margin:0 0 6px !important;
+}
+.player-title-row{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  flex-wrap:wrap !important;
+}
+.achievement-badge{
+  display:inline-flex !important;
+  align-items:center !important;
+  border:1px solid #fde68a !important;
+  background:#fffbeb !important;
+  color:#92400e !important;
+  border-radius:999px !important;
+  padding:4px 9px !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  line-height:1.2 !important;
+  white-space:nowrap !important;
+}
+.achievement-badge.grand-slam{
+  border-color:#fbbf24 !important;
+  background:linear-gradient(135deg,#fef3c7,#fff7ed) !important;
+  color:#78350f !important;
+}
+</style>
+
+
+<script>
+/* Final robust player achievement badges override */
+(function(){
+  function norm(v){
+    return String(v || '')
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase()
+      .replace(/\s+/g,' ');
+  }
+  function normName(v){
+    return norm(v).replace(/[^a-z0-9가-힣 ]/g,'').replace(/\s+/g,' ').trim();
+  }
+  function escapeBadgeHtml(v){
+    return String(v || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  }
+  function ensureBadgeWrap(){
+    const title = document.getElementById('playerName');
+    if(!title) return null;
+    let wrap = document.getElementById('playerAchievementBadges');
+    if(!wrap){
+      wrap = document.createElement('div');
+      wrap.id = 'playerAchievementBadges';
+      wrap.className = 'player-achievement-badges';
+      wrap.setAttribute('aria-label','선수 주요 업적');
+      if(title.parentElement){
+        title.parentElement.classList.add('player-title-row');
+        title.insertAdjacentElement('afterend', wrap);
+      }
+    }
+    return wrap;
+  }
+  function gold(row){
+    const m = norm(row && row.medal);
+    return m === 'gold' || m === 'g' || m === '금' || m === '금메달' || m === '1' || m === '1위' || m.includes('gold');
+  }
+  function compText(row){
+    return norm([row && row.competition_type, row && row.competition_name, row && row.note].join(' '));
+  }
+  function eventText(row){
+    return norm(row && row.event);
+  }
+  function isOlympic(row){ return compText(row).includes('olympic'); }
+  function isWorlds(row){
+    const c = compText(row);
+    return c.includes('world championship') || c.includes('world championships') || c.includes('world short track');
+  }
+  function isWorldCupTour(row){
+    const c = compText(row);
+    return c.includes('world cup') || c.includes('world tour');
+  }
+  function isOverall(row){
+    const e = eventText(row);
+    return e.includes('overall') || e.includes('allround') || e.includes('classification') || e.includes('종합');
+  }
+  function isRelay(row){
+    const e = eventText(row);
+    const mt = norm(row && row.medal_type);
+    return mt === 'relay' || e.includes('relay') || e.includes('계주') || e.includes('3000m relay') || e.includes('5000m relay') || e.includes('mixed');
+  }
+  function isIndividual(row){ return !isRelay(row); }
+  function playerRows(name){
+    const target = normName(name);
+    const rows = [];
+    try{
+      (medals || []).forEach(r => rows.push(Object.assign({_source_sheet:'medals', medal_type:r.medal_type || 'Individual'}, r)));
+    }catch(e){}
+    try{
+      (relayMembers || []).forEach(r => rows.push(Object.assign({_source_sheet:'relay_members', medal_type:r.medal_type || 'Relay'}, r)));
+    }catch(e){}
+    try{
+      (skaterMedals || []).forEach(r => rows.push(Object.assign({_source_sheet:'skaterMedals'}, r)));
+    }catch(e){}
+    return rows.filter(r => {
+      const names = [r.skater_name, r.original_skater_name, r.name].map(normName);
+      return names.includes(target);
+    });
+  }
+  function badgesFor(name){
+    const rows = playerRows(name).filter(gold);
+    const olympicIndividualGold = rows.some(r => isOlympic(r) && isIndividual(r));
+    const olympicRelayGold = rows.some(r => isOlympic(r) && isRelay(r));
+    const worldsOverallGold = rows.some(r => isWorlds(r) && isOverall(r));
+    const worldsIndividualGold = rows.some(r => isWorlds(r) && isIndividual(r) && !isOverall(r));
+    const worldCupTourIndividualGold = rows.some(r => isWorldCupTour(r) && isIndividual(r));
+    const grandSlam = olympicIndividualGold && olympicRelayGold && worldsIndividualGold && worldCupTourIndividualGold;
+
+    const out = [];
+    if(olympicIndividualGold) out.push(['올림픽 개인전 금메달','']);
+    if(olympicRelayGold) out.push(['올림픽 계주 금메달','']);
+    if(worldsOverallGold) out.push(['세계선수권 종합 우승','']);
+    if(worldsIndividualGold) out.push(['세계선수권 개인전 금메달','']);
+    if(worldCupTourIndividualGold) out.push(['월드컵·월드투어 개인전 금메달','']);
+    if(grandSlam) out.push(['그랜드슬램','grand-slam']);
+    return out;
+  }
+  window.renderPlayerAchievementBadgesForce = function(name){
+    const wrap = ensureBadgeWrap();
+    if(!wrap) return;
+    const playerName = name || (document.getElementById('playerName') ? document.getElementById('playerName').textContent : '');
+    const badges = badgesFor(playerName);
+    wrap.innerHTML = badges.map(([label, cls]) => `<span class="achievement-badge ${cls}">${escapeBadgeHtml(label)}</span>`).join('');
+  };
+
+  const oldOpen = window.openPlayerPanel;
+  if(typeof oldOpen === 'function'){
+    window.openPlayerPanel = function(name){
+      const result = oldOpen.apply(this, arguments);
+      setTimeout(() => window.renderPlayerAchievementBadgesForce(name), 0);
+      setTimeout(() => window.renderPlayerAchievementBadgesForce(name), 120);
+      setTimeout(() => window.renderPlayerAchievementBadgesForce(name), 500);
+      return result;
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    const title = document.getElementById('playerName');
+    if(!title) return;
+    const observer = new MutationObserver(function(){
+      window.renderPlayerAchievementBadgesForce(title.textContent);
+    });
+    observer.observe(title, {childList:true, characterData:true, subtree:true});
+  });
+})();
+</script>
+
 </body>
 </html>
