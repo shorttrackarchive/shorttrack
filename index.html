@@ -4778,7 +4778,12 @@
     }
 
     function escapeHtml(value){return String(value??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');}
-    function escapeJs(value){return String(value??'').replaceAll('\\','\\\').replaceAll("'","\\'").replaceAll('"','\\"');}
+    function escapeJs(value){
+      return String(value ?? '')
+        .replaceAll('\\', '\\\\')
+        .replaceAll("'", "\\'")
+        .replaceAll('"', '\\"');
+    }
   
     /* Search result view: 검색어가 있을 때 홈 콘텐츠를 필터링처럼 보이지 않게 하고, 검색 결과 전용 화면을 표시합니다. */
     const ST_SEARCH_VIEW_ID = 'stSearchResultView';
