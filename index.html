@@ -614,7 +614,7 @@
 
     /* Event record ranking section */
     .record-ranking-controls{border:1px solid var(--line);border-radius:18px;background:#fbfdff;padding:16px;margin:12px 0}
-    .record-ranking-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:end}
+    .record-ranking-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;align-items:end}
     .record-ranking-grid label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin:0 0 5px}
     .record-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
     .record-kpi{border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px}
@@ -1458,6 +1458,13 @@
             <select id="recordFinalRankFilter" onchange="renderEventRecords()">
               <option value="all">전체</option>
               <option value="1" selected>1위만</option>
+            </select>
+          </div>
+          <div>
+            <label for="recordBestOnlyFilter">선수별 기록</label>
+            <select id="recordBestOnlyFilter" onchange="renderEventRecords()">
+              <option value="all">전체 기록</option>
+              <option value="best">선수별 최고 기록만</option>
             </select>
           </div>
           <div>
@@ -5937,6 +5944,34 @@
     return events[0] || '';
   }
 
+  function normalizeRecordBestKey(value){
+    return String(value || '')
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase()
+      .replace(/\s+/g,' ');
+  }
+
+  function bestRecordPerSkater(rows){
+    const best = new Map();
+
+    rows.forEach(row => {
+      const key = [
+        row.event,
+        normalizeRecordBestKey(row.skater_name),
+        normalizeRecordBestKey(row.country)
+      ].join('|');
+
+      const prev = best.get(key);
+      if(!prev || Number(row.seconds_float || 999999) < Number(prev.seconds_float || 999999)){
+        best.set(key, row);
+      }
+    });
+
+    return [...best.values()];
+  }
+
   window.handleRecordGenderChange = function(){
     const gender = document.getElementById('recordGenderFilter')?.value || 'Women';
     const eventSel = document.getElementById('recordEventFilter');
@@ -6231,6 +6266,7 @@
     const event = document.getElementById('recordEventFilter')?.value || 'all';
     const competition = document.getElementById('recordCompetitionFilter')?.value || 'all';
     const finalRank = document.getElementById('recordFinalRankFilter')?.value || '1';
+    const bestOnly = document.getElementById('recordBestOnlyFilter')?.value || 'all';
     const limit = Number(document.getElementById('recordLimitFilter')?.value || 100);
 
     let rows = eventRecordRows.slice().filter(row => {
@@ -6241,6 +6277,10 @@
       if(finalRank === '1' && normalizeRecordFinalRank(row.final_rank) !== '1') return false;
       return true;
     });
+
+    if(bestOnly === 'best'){
+      rows = bestRecordPerSkater(rows);
+    }
 
     rows.sort((a,b) =>
       recordEventOrder(a.event) - recordEventOrder(b.event) ||
