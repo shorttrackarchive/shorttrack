@@ -628,6 +628,39 @@
     @media(max-width:1100px){.record-ranking-grid{grid-template-columns:repeat(3,1fr)}.record-kpi-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:620px){.record-ranking-grid,.record-kpi-grid{grid-template-columns:1fr}}
 
+    /* Tier maker */
+    .tier-maker-controls{border:1px solid var(--line);border-radius:18px;background:#fbfdff;padding:16px;margin:12px 0}
+    .tier-maker-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr auto auto;gap:10px;align-items:end}
+    .tier-maker-grid label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin:0 0 5px}
+    .tier-maker-wrap{display:grid;grid-template-columns:1.4fr 2fr;gap:14px;align-items:start}
+    .tier-pool,.tier-board{border:1px solid var(--line);border-radius:18px;background:#fff;padding:12px}
+    .tier-pool-title,.tier-board-title{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px;font-weight:950;color:#0f172a}
+    .tier-card-list{display:flex;flex-wrap:wrap;gap:8px;max-height:520px;overflow:auto;padding:4px}
+    .tier-skater-card{
+      border:1px solid #cbd5e1;background:#fff;border-radius:12px;padding:8px 10px;cursor:grab;
+      min-width:138px;box-shadow:0 6px 18px rgba(15,23,42,.06);user-select:none;
+    }
+    .tier-skater-card:active{cursor:grabbing}
+    .tier-skater-name{font-weight:950;font-size:13px;color:#0f172a}
+    .tier-skater-meta{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.35}
+    .tier-row{display:grid;grid-template-columns:86px 1fr;min-height:76px;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:8px;background:#fff}
+    .tier-label{
+      display:flex;align-items:center;justify-content:center;text-align:center;font-weight:950;font-size:18px;
+      background:#e0f2fe;color:#075985;padding:8px;border-right:1px solid var(--line);outline:none;
+    }
+    .tier-row:nth-child(2) .tier-label{background:#dcfce7;color:#166534}
+    .tier-row:nth-child(3) .tier-label{background:#fef3c7;color:#92400e}
+    .tier-row:nth-child(4) .tier-label{background:#fee2e2;color:#991b1b}
+    .tier-row:nth-child(5) .tier-label{background:#ede9fe;color:#5b21b6}
+    .tier-row:nth-child(6) .tier-label{background:#f1f5f9;color:#334155}
+    .tier-dropzone{display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;min-height:76px;padding:10px;background:#fff}
+    .tier-dropzone.drag-over,.tier-card-list.drag-over{outline:3px dashed #38bdf8;outline-offset:-5px;background:#f0f9ff}
+    .tier-empty{font-size:13px;color:var(--muted);padding:12px}
+    .tier-copy-box{width:100%;min-height:120px;margin-top:10px;font-size:12px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+    .tier-note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:8px}
+    @media(max-width:1100px){.tier-maker-wrap{grid-template-columns:1fr}.tier-maker-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:620px){.tier-maker-grid{grid-template-columns:1fr}.tier-row{grid-template-columns:72px 1fr}.tier-skater-card{min-width:120px}}
+
 </style>
 </head>
 <body>
@@ -654,6 +687,7 @@
     <button type="button" data-i18n="navEventRank" onclick="scrollToSection('eventRankingSection')">종목별 선수 순위</button>
     <button type="button" data-i18n="navHallOfFame" onclick="scrollToSection('hallOfFameSection')">명예의 전당</button>
     <button type="button" data-i18n="navCardMaker" onclick="scrollToSection('cardMakerSection')">선수 카드 만들기</button>
+    <button type="button" onclick="scrollToSection('tierMakerSection'); initTierMaker();">티어메이커</button>
     <button type="button" data-i18n="navHeatTool" onclick="scrollToSection('heatToolSection')">조편성 계산기</button>
     <button type="button" data-i18n="navQuiz" onclick="scrollToSection('quizSection')">랜덤 퀴즈</button>
     <button type="button" data-i18n="navRecordRank" onclick="scrollToSection('recordRankingSection'); loadEventRecords();">종목별 기록 순위</button>
@@ -1270,6 +1304,74 @@
     </section>
 
 
+
+
+    <section class="card anchor-section" id="tierMakerSection">
+      <div class="section-title">
+        <div>
+          <h2>티어메이커</h2>
+          <span>선수 카드를 직접 드래그해 S/A/B/C/D/보류 티어표를 만들 수 있습니다. 공식 평가가 아닌 사용자 제작용 기능입니다.</span>
+        </div>
+      </div>
+
+      <div class="tier-maker-controls">
+        <div class="tier-maker-grid">
+          <div>
+            <label for="tierSearchInput">선수 검색</label>
+            <input id="tierSearchInput" type="search" placeholder="선수명 또는 국가 검색" oninput="renderTierPool()">
+          </div>
+          <div>
+            <label for="tierGenderFilter">성별</label>
+            <select id="tierGenderFilter" onchange="renderTierPool()">
+              <option value="all">전체</option>
+              <option value="Women">여자</option>
+              <option value="Men">남자</option>
+              <option value="Mixed">혼성/계주 포함</option>
+            </select>
+          </div>
+          <div>
+            <label for="tierCountryFilter">국가</label>
+            <select id="tierCountryFilter" onchange="renderTierPool()">
+              <option value="all">전체 국가</option>
+            </select>
+          </div>
+          <div>
+            <label for="tierSourceFilter">선수 범위</label>
+            <select id="tierSourceFilter" onchange="renderTierPool()">
+              <option value="medal">메달 기록 보유 선수</option>
+              <option value="all">전체 선수</option>
+            </select>
+          </div>
+          <button type="button" class="sort-btn primary-score-btn" onclick="initTierMaker(true)">새로고침</button>
+          <button type="button" class="sort-btn" onclick="resetTierMaker()">초기화</button>
+        </div>
+        <div class="tier-note">티어 이름은 직접 클릭해서 수정할 수 있습니다. 선수 카드는 드래그해서 티어 칸이나 왼쪽 선수 목록으로 옮길 수 있습니다.</div>
+      </div>
+
+      <div class="tier-maker-wrap">
+        <div class="tier-pool">
+          <div class="tier-pool-title">
+            <span>선수 목록</span>
+            <small id="tierPoolCount">0명</small>
+          </div>
+          <div id="tierPool" class="tier-card-list" ondragover="tierDragOver(event)" ondragleave="tierDragLeave(event)" ondrop="tierDropToPool(event)">
+            <div class="tier-empty">데이터를 불러온 뒤 표시됩니다.</div>
+          </div>
+        </div>
+
+        <div class="tier-board">
+          <div class="tier-board-title">
+            <span>티어표</span>
+            <div>
+              <button type="button" class="sort-btn" onclick="copyTierMakerText()">텍스트 복사</button>
+              <button type="button" class="sort-btn" onclick="generateTierMakerText()">텍스트 만들기</button>
+            </div>
+          </div>
+          <div id="tierBoard"></div>
+          <textarea id="tierCopyText" class="tier-copy-box" readonly placeholder="텍스트 만들기를 누르면 티어표 결과가 여기에 표시됩니다."></textarea>
+        </div>
+      </div>
+    </section>
 
     <section class="card anchor-section" id="heatToolSection">
       <div class="section-title"><div><h2 data-i18n="heatToolTitle">조편성 계산기</h2><span data-i18n="heatToolDesc">경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.</span></div></div>
@@ -1973,6 +2075,7 @@
         btn.classList.add('active');
         currentMedalFilter = btn.dataset.medal;
         applyFilters();
+        initTierMaker();
       }));
 
       document.querySelectorAll('.skater-mode-tab').forEach(btn=>btn.addEventListener('click',()=>{
@@ -6325,6 +6428,254 @@
       <tbody>${body}</tbody>
     </table></div>
     <div class="subnote">현재 조건 ${rows.length.toLocaleString('ko-KR')}건 중 ${visible.length.toLocaleString('ko-KR')}건 표시</div>`;
+  };
+})();
+</script>
+
+
+<script>
+/* Tier maker 1차 구현 */
+(function(){
+  const DEFAULT_TIER_LABELS = ['S','A','B','C','D','보류'];
+  let tierMakerInitialized = false;
+  let tierSkaters = [];
+  let tierAssignments = {};
+  let tierDraggedName = '';
+
+  function tierEscape(v){
+    if(typeof escapeHtml === 'function') return escapeHtml(v);
+    return String(v || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  }
+
+  function tierNorm(v){
+    return String(v || '').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ');
+  }
+
+  function tierPrimaryGender(name){
+    const rows = (typeof skaterMedals !== 'undefined' ? skaterMedals : []).filter(row => row.skater_name === name);
+    if(rows.some(row => row.gender === 'Women')) return 'Women';
+    if(rows.some(row => row.gender === 'Men')) return 'Men';
+    if(rows.some(row => row.gender === 'Mixed')) return 'Mixed';
+    return '';
+  }
+
+  function tierMedalSummary(name){
+    const rows = (typeof skaterMedals !== 'undefined' ? skaterMedals : []).filter(row => row.skater_name === name);
+    const gold = rows.filter(row => String(row.medal || '').toLowerCase() === 'gold').length;
+    const silver = rows.filter(row => String(row.medal || '').toLowerCase() === 'silver').length;
+    const bronze = rows.filter(row => String(row.medal || '').toLowerCase() === 'bronze').length;
+    const total = rows.length;
+    if(total) return `금 ${gold} · 은 ${silver} · 동 ${bronze}`;
+    return '기록 없음';
+  }
+
+  function tierBuildSkaters(){
+    const sourceRows = (typeof skaterMedals !== 'undefined' ? skaterMedals : []);
+    const map = new Map();
+
+    sourceRows.forEach(row => {
+      const name = row.skater_name;
+      if(!name) return;
+      const key = tierNorm(name);
+      const prev = map.get(key) || {
+        name,
+        country: row.country || '',
+        gender: row.gender || '',
+        count: 0
+      };
+      if(!prev.country && row.country) prev.country = row.country;
+      if(!prev.gender && row.gender) prev.gender = row.gender;
+      prev.count += 1;
+      map.set(key, prev);
+    });
+
+    return [...map.values()].sort((a,b) => a.name.localeCompare(b.name,'ko'));
+  }
+
+  function tierAssignedSet(){
+    const set = new Set();
+    Object.values(tierAssignments).forEach(list => list.forEach(name => set.add(name)));
+    return set;
+  }
+
+  function tierCreateCard(skater){
+    return `<div class="tier-skater-card" draggable="true" data-name="${tierEscape(skater.name)}" ondragstart="tierDragStart(event)">
+      <div class="tier-skater-name">${tierEscape(skater.name)}</div>
+      <div class="tier-skater-meta">${tierEscape(skater.country || '-')} · ${tierEscape(skater.gender || tierPrimaryGender(skater.name) || '-')}</div>
+      <div class="tier-skater-meta">${tierEscape(tierMedalSummary(skater.name))}</div>
+    </div>`;
+  }
+
+  window.initTierMaker = function(force){
+    const board = document.getElementById('tierBoard');
+    if(!board) return;
+
+    if(force || !tierMakerInitialized){
+      tierSkaters = tierBuildSkaters();
+      DEFAULT_TIER_LABELS.forEach(label => {
+        if(!tierAssignments[label]) tierAssignments[label] = [];
+      });
+
+      board.innerHTML = DEFAULT_TIER_LABELS.map(label => `<div class="tier-row" data-tier="${tierEscape(label)}">
+        <div class="tier-label" contenteditable="true" oninput="syncTierLabels()">${tierEscape(label)}</div>
+        <div class="tier-dropzone" data-tier="${tierEscape(label)}" ondragover="tierDragOver(event)" ondragleave="tierDragLeave(event)" ondrop="tierDropToTier(event)"></div>
+      </div>`).join('');
+
+      populateTierCountryFilter();
+      tierMakerInitialized = true;
+    }
+
+    renderTierPool();
+    renderTierBoard();
+  };
+
+  window.populateTierCountryFilter = function(){
+    const select = document.getElementById('tierCountryFilter');
+    if(!select) return;
+    const current = select.value || 'all';
+    const countries = [...new Set(tierSkaters.map(s => s.country).filter(Boolean))].sort();
+    select.innerHTML = '<option value="all">전체 국가</option>' + countries.map(c => `<option value="${tierEscape(c)}">${tierEscape(c)}</option>`).join('');
+    if(countries.includes(current)) select.value = current;
+  };
+
+  window.renderTierPool = function(){
+    const pool = document.getElementById('tierPool');
+    const count = document.getElementById('tierPoolCount');
+    if(!pool) return;
+
+    if(!tierMakerInitialized) initTierMaker();
+
+    const q = tierNorm(document.getElementById('tierSearchInput')?.value || '');
+    const gender = document.getElementById('tierGenderFilter')?.value || 'all';
+    const country = document.getElementById('tierCountryFilter')?.value || 'all';
+    const assigned = tierAssignedSet();
+
+    let list = tierSkaters.filter(skater => !assigned.has(skater.name));
+    list = list.filter(skater => {
+      const text = tierNorm([skater.name, skater.country, skater.gender].join(' '));
+      if(q && !text.includes(q)) return false;
+      if(gender !== 'all' && skater.gender !== gender) return false;
+      if(country !== 'all' && skater.country !== country) return false;
+      return true;
+    });
+
+    if(count) count.textContent = `${list.length.toLocaleString('ko-KR')}명`;
+    pool.innerHTML = list.length ? list.slice(0, 200).map(tierCreateCard).join('') : '<div class="tier-empty">조건에 맞는 선수가 없습니다.</div>';
+  };
+
+  window.renderTierBoard = function(){
+    if(!tierMakerInitialized) return;
+    const rows = [...document.querySelectorAll('#tierBoard .tier-row')];
+
+    rows.forEach(row => {
+      const label = row.querySelector('.tier-label')?.textContent.trim() || row.dataset.tier;
+      const zone = row.querySelector('.tier-dropzone');
+      const names = tierAssignments[label] || [];
+      if(zone){
+        zone.dataset.tier = label;
+        zone.innerHTML = names.length
+          ? names.map(name => {
+              const skater = tierSkaters.find(s => s.name === name) || {name, country:'', gender:''};
+              return tierCreateCard(skater);
+            }).join('')
+          : '<div class="tier-empty">여기로 드래그</div>';
+      }
+      row.dataset.tier = label;
+    });
+  };
+
+  window.syncTierLabels = function(){
+    const newAssignments = {};
+    [...document.querySelectorAll('#tierBoard .tier-row')].forEach(row => {
+      const oldLabel = row.dataset.tier;
+      const newLabel = row.querySelector('.tier-label')?.textContent.trim() || oldLabel;
+      newAssignments[newLabel] = tierAssignments[oldLabel] || tierAssignments[newLabel] || [];
+      row.dataset.tier = newLabel;
+      const zone = row.querySelector('.tier-dropzone');
+      if(zone) zone.dataset.tier = newLabel;
+    });
+    tierAssignments = newAssignments;
+  };
+
+  window.tierDragStart = function(event){
+    tierDraggedName = event.currentTarget.dataset.name || '';
+    event.dataTransfer.setData('text/plain', tierDraggedName);
+    event.dataTransfer.effectAllowed = 'move';
+  };
+
+  window.tierDragOver = function(event){
+    event.preventDefault();
+    event.currentTarget.classList.add('drag-over');
+  };
+
+  window.tierDragLeave = function(event){
+    event.currentTarget.classList.remove('drag-over');
+  };
+
+  function removeFromAllTiers(name){
+    Object.keys(tierAssignments).forEach(label => {
+      tierAssignments[label] = (tierAssignments[label] || []).filter(item => item !== name);
+    });
+  }
+
+  window.tierDropToTier = function(event){
+    event.preventDefault();
+    event.currentTarget.classList.remove('drag-over');
+    const name = event.dataTransfer.getData('text/plain') || tierDraggedName;
+    const tier = event.currentTarget.dataset.tier;
+    if(!name || !tier) return;
+
+    removeFromAllTiers(name);
+    tierAssignments[tier] = tierAssignments[tier] || [];
+    if(!tierAssignments[tier].includes(name)) tierAssignments[tier].push(name);
+
+    renderTierPool();
+    renderTierBoard();
+  };
+
+  window.tierDropToPool = function(event){
+    event.preventDefault();
+    event.currentTarget.classList.remove('drag-over');
+    const name = event.dataTransfer.getData('text/plain') || tierDraggedName;
+    if(!name) return;
+    removeFromAllTiers(name);
+    renderTierPool();
+    renderTierBoard();
+  };
+
+  window.resetTierMaker = function(){
+    if(!confirm('현재 티어 배치를 초기화할까요?')) return;
+    tierAssignments = {};
+    DEFAULT_TIER_LABELS.forEach(label => tierAssignments[label] = []);
+    tierMakerInitialized = false;
+    const text = document.getElementById('tierCopyText');
+    if(text) text.value = '';
+    initTierMaker(true);
+  };
+
+  window.generateTierMakerText = function(){
+    syncTierLabels();
+    const lines = [];
+    [...document.querySelectorAll('#tierBoard .tier-row')].forEach(row => {
+      const label = row.querySelector('.tier-label')?.textContent.trim() || row.dataset.tier;
+      const names = tierAssignments[label] || [];
+      lines.push(`[${label}] ${names.length ? names.join(', ') : '-'}`);
+    });
+    const box = document.getElementById('tierCopyText');
+    if(box) box.value = lines.join('\n');
+    return lines.join('\n');
+  };
+
+  window.copyTierMakerText = async function(){
+    const text = generateTierMakerText();
+    try{
+      await navigator.clipboard.writeText(text);
+      alert('티어표 텍스트를 복사했습니다.');
+    }catch(_e){
+      const box = document.getElementById('tierCopyText');
+      if(box){ box.focus(); box.select(); }
+      alert('자동 복사가 막혔습니다. 아래 텍스트를 직접 복사해 주세요.');
+    }
   };
 })();
 </script>
