@@ -1425,16 +1425,12 @@
           <span>500m·1000m·1500m 및 계주 종목의 기준 기록 이내 결과를 빠른 순서로 표시합니다.</span>
         </div>
       </div>
-      <div class="notice">
-        기준: 여오백 <strong>42.999 이하</strong>, 남오백 <strong>40.999 이하</strong>, 여천 <strong>1:28.999 이하</strong>, 남천 <strong>1:25.999 이하</strong>, 여천오백 <strong>2:18.999 이하</strong>, 남천오백 <strong>2:10.999 이하</strong>, 혼계 <strong>2:38.999 이하</strong>, 여계 <strong>4:07.999 이하</strong>, 남계 <strong>6:31.999 이하</strong>.
-      </div>
       <div class="record-ranking-controls">
         <div class="record-ranking-grid">
           <div>
             <label for="recordGenderFilter">성별</label>
-            <select id="recordGenderFilter" onchange="renderEventRecords()">
-              <option value="all">전체</option>
-              <option value="Women">여자</option>
+            <select id="recordGenderFilter" onchange="handleRecordGenderChange(); renderEventRecords()">
+              <option value="Women" selected>여자</option>
               <option value="Men">남자</option>
               <option value="Mixed">혼성</option>
             </select>
@@ -1445,7 +1441,7 @@
           </div>
           <div>
             <label for="recordEventFilter">종목</label>
-            <select id="recordEventFilter" onchange="renderEventRecords()"><option value="all">전체 종목</option></select>
+            <select id="recordEventFilter" onchange="renderEventRecords()"><option value="Women 500 m">여자 500m</option></select>
           </div>
           <div>
             <label for="recordCompetitionFilter">대회 구분</label>
@@ -1471,9 +1467,7 @@
             <button type="button" class="sort-btn primary-score-btn" onclick="loadEventRecords(true)">불러오기</button>
           </div>
         </div>
-        <div class="record-note">
-          원본 시트명은 <strong>event_records_raw</strong> 또는 <strong>event_records</strong>를 권장합니다. Apps Script가 해당 시트를 반환하면 자동으로 종목별 기준을 적용해 표시합니다.
-        </div>
+
       </div>
       <div class="record-kpi-grid">
         <div class="record-kpi"><div class="label">기준 통과 기록</div><div class="value" id="recordKpiTotal">-</div></div>
@@ -5904,6 +5898,46 @@
     return /Relay/i.test(String(event || ''));
   }
 
+  function recordEventLabel(event){
+    return {
+      'Women 500 m':'여자 500m',
+      'Men 500 m':'남자 500m',
+      'Women 1000 m':'여자 1000m',
+      'Men 1000 m':'남자 1000m',
+      'Women 1500 m':'여자 1500m',
+      'Men 1500 m':'남자 1500m',
+      'Mixed Team Relay':'혼성계주',
+      'Women 3000 m Relay':'여자계주',
+      'Men 5000 m Relay':'남자계주'
+    }[event] || event || '';
+  }
+
+  function recordEventsForGender(gender, rows){
+    const allEvents = [...new Set((rows || eventRecordRows || []).map(r => r.event).filter(Boolean))]
+      .sort((a,b) => recordEventOrder(a) - recordEventOrder(b) || String(a).localeCompare(String(b),'ko'));
+    if(gender === 'Women') return allEvents.filter(e => e === 'Women 500 m' || e === 'Women 1000 m' || e === 'Women 1500 m' || e === 'Women 3000 m Relay');
+    if(gender === 'Men') return allEvents.filter(e => e === 'Men 500 m' || e === 'Men 1000 m' || e === 'Men 1500 m' || e === 'Men 5000 m Relay');
+    if(gender === 'Mixed') return allEvents.filter(e => e === 'Mixed Team Relay');
+    return allEvents;
+  }
+
+  function defaultRecordEventForGender(gender, rows){
+    const events = recordEventsForGender(gender, rows);
+    if(gender === 'Women' && events.includes('Women 500 m')) return 'Women 500 m';
+    if(gender === 'Men' && events.includes('Men 500 m')) return 'Men 500 m';
+    if(gender === 'Mixed' && events.includes('Mixed Team Relay')) return 'Mixed Team Relay';
+    return events[0] || '';
+  }
+
+  window.handleRecordGenderChange = function(){
+    const gender = document.getElementById('recordGenderFilter')?.value || 'Women';
+    const eventSel = document.getElementById('recordEventFilter');
+    if(!eventSel) return;
+    const events = recordEventsForGender(gender, eventRecordRows);
+    eventSel.innerHTML = events.map(e => `<option value="${recordEscape(e)}">${recordEscape(recordEventLabel(e))}</option>`).join('');
+    eventSel.value = defaultRecordEventForGender(gender, eventRecordRows);
+  };
+
   function recordCompetitionBucket(value){
     const v = String(value || '').toLowerCase();
     if(v.includes('olympic')) return 'Olympics';
@@ -5941,21 +5975,44 @@
   function extractRecordRowsFromJson(json){
     if(!json) return [];
     if(Array.isArray(json)) return json;
-    const keys = [
-      'event_records_raw',
+
+    // action=eventRecords 또는 기본 doGet 응답에서 event_records 계열을 최대한 넓게 찾는다.
+    const directKeys = [
       'event_records',
-      'records',
+      'event_records_raw',
+      'eventRecords',
+      'eventRecordsRaw',
       'record_rankings',
       'recordRankings',
-      'eventRecords',
       'event_records_all',
       'records_raw',
-      'rows'
+      'records'
     ];
-    for(const key of keys){
-      if(Array.isArray(json[key])) return json[key];
+
+    let out = [];
+    directKeys.forEach(key => {
+      if(Array.isArray(json[key])) out = out.concat(json[key]);
+    });
+
+    // {sheets:{event_records:[...]}} 또는 {data:{event_records:[...]}} 구조도 대응
+    ['sheets','data','payload'].forEach(parentKey => {
+      const parent = json[parentKey];
+      if(parent && typeof parent === 'object'){
+        directKeys.forEach(key => {
+          if(Array.isArray(parent[key])) out = out.concat(parent[key]);
+        });
+      }
+    });
+
+    // 단, 일반 rows는 medals 검색 응답 등과 충돌할 수 있으므로 event record 형태일 때만 사용
+    if(!out.length && Array.isArray(json.rows)){
+      const sample = json.rows[0] || {};
+      const keys = Object.keys(sample).map(k => String(k).toLowerCase());
+      const looksLikeEventRecords = keys.includes('seconds_float') && keys.includes('event') && (keys.includes('time') || keys.includes('record'));
+      if(looksLikeEventRecords) out = out.concat(json.rows);
     }
-    return [];
+
+    return out;
   }
 
   function normalizeEventRecordRow(row){
@@ -6061,20 +6118,24 @@
   function populateEventRecordFilters(rows){
     const seasonSel = document.getElementById('recordSeasonFilter');
     const eventSel = document.getElementById('recordEventFilter');
+    const genderSel = document.getElementById('recordGenderFilter');
     if(!seasonSel || !eventSel) return;
 
     const oldSeason = seasonSel.value || 'all';
-    const oldEvent = eventSel.value || 'all';
+    const preferredGender = genderSel?.value || 'Women';
 
     const seasons = [...new Set(rows.map(r => r.season).filter(Boolean))].sort().reverse();
-    const events = [...new Set(rows.map(r => r.event).filter(Boolean))]
-      .sort((a,b) => recordEventOrder(a) - recordEventOrder(b) || String(a).localeCompare(String(b),'ko'));
-
     seasonSel.innerHTML = '<option value="all">전체 시즌</option>' + seasons.map(s => `<option value="${recordEscape(s)}">${recordEscape(s)}</option>`).join('');
-    eventSel.innerHTML = '<option value="all">전체 종목</option>' + events.map(e => `<option value="${recordEscape(e)}">${recordEscape(e)}</option>`).join('');
-
     seasonSel.value = seasons.includes(oldSeason) ? oldSeason : 'all';
-    eventSel.value = events.includes(oldEvent) ? oldEvent : 'all';
+
+    if(genderSel && !['Women','Men','Mixed'].includes(genderSel.value)) genderSel.value = 'Women';
+
+    const events = recordEventsForGender(preferredGender, rows);
+    eventSel.innerHTML = events.map(e => `<option value="${recordEscape(e)}">${recordEscape(recordEventLabel(e))}</option>`).join('');
+    eventSel.value = events.includes('Women 500 m') && preferredGender === 'Women'
+      ? 'Women 500 m'
+      : defaultRecordEventForGender(preferredGender, rows);
+
     seasonSel.disabled = false;
     eventSel.disabled = false;
   }
@@ -6117,6 +6178,12 @@
         return row.seconds_float <= threshold;
       }));
 
+      if(!eventRecordRows.length && !sourceRows.length){
+        wrap.innerHTML = '<div class="empty"><strong>event_records 데이터를 찾지 못했습니다.</strong><br>구글시트에 event_records 탭을 만든 뒤, Apps Script doGet 응답에도 event_records를 포함해야 합니다.</div>';
+        ['recordSeasonFilter','recordEventFilter'].forEach(id => { const el = document.getElementById(id); if(el) el.disabled = false; });
+        return;
+      }
+
       eventRecordsLoaded = true;
       populateEventRecordFilters(eventRecordRows);
       const total = eventRecordRows.length;
@@ -6146,9 +6213,9 @@
     const limit = Number(document.getElementById('recordLimitFilter')?.value || 100);
 
     let rows = eventRecordRows.slice().filter(row => {
-      if(gender !== 'all' && row.gender !== gender) return false;
+      if(row.gender !== gender) return false;
       if(season !== 'all' && row.season !== season) return false;
-      if(event !== 'all' && row.event !== event) return false;
+      if(row.event !== event) return false;
       if(competition !== 'all' && row.competition_type !== competition) return false;
       return true;
     });
