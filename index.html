@@ -560,6 +560,7 @@
     @media(max-width:980px){.lap-ranking-grid,.lap-kpi-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:560px){.lap-ranking-grid,.lap-kpi-grid{grid-template-columns:1fr}}
 
+    #playerAchievementBadgesLine{display:none}
     /* Player achievement badges */
     .player-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
     .player-title-row h2{margin:0 0 6px;font-size:24px}
@@ -724,7 +725,7 @@
     </section>
 <section id="playerPanel" class="card panel">
       <div class="panel-header">
-        <div><div class="player-title-row"><h2 id="playerName">선수명</h2><div id="playerAchievementBadges" class="player-achievement-badges" aria-label="선수 주요 업적"></div></div><p id="playerInfo">선수 정보</p></div>
+        <div><div class="player-title-row"><h2 id="playerName">선수명</h2><div id="playerAchievementBadges" class="player-achievement-badges" aria-label="선수 주요 업적"></div></div><p id="playerInfo">선수 정보</p><div id="playerAchievementBadgesLine" class="player-achievement-badges" aria-label="선수 주요 업적"></div></div>
         <button class="close-btn" onclick="closePlayerPanel()">닫기</button>
       </div>
       <div class="summary" style="margin-bottom:16px">
@@ -3161,45 +3162,113 @@
     }
 
 
+
+    function normalizeBadgeText(value){
+      return String(value || '')
+        .trim()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g,'')
+        .toLowerCase()
+        .replace(/\s+/g,' ');
+    }
+
     function medalTextIsGold(row){
-      const medal = String(row && row.medal || '').trim().toLowerCase();
-      return medal === 'gold' || medal === '금' || medal === '1' || medal === '1위';
+      const medal = normalizeBadgeText(row && row.medal);
+      return medal === 'gold' || medal === 'g' || medal === '금' || medal === '금메달' || medal === '1' || medal === '1위' || medal.includes('gold');
     }
 
     function isWorldCupOrWorldTourRow(row){
-      const type = String(row && row.competition_type || '').toLowerCase();
-      const name = String(row && row.competition_name || '').toLowerCase();
+      const type = normalizeBadgeText(row && row.competition_type);
+      const name = normalizeBadgeText(row && row.competition_name);
       return type.includes('world cup') || type.includes('world tour') || name.includes('world cup') || name.includes('world tour');
     }
 
+    function badgeCompetitionBucket(row){
+      const type = normalizeBadgeText(row && row.competition_type);
+      const name = normalizeBadgeText(row && row.competition_name);
+      if(type.includes('olympic') || name.includes('olympic')) return 'olympic';
+      if(type.includes('world championship') || type.includes('world championships') || name.includes('world championship') || name.includes('world championships')) return 'worlds';
+      if(type.includes('world cup') || type.includes('world tour') || name.includes('world cup') || name.includes('world tour')) return 'worldcup';
+      return '';
+    }
+
+    function badgeEventText(row){
+      return normalizeBadgeText(row && row.event).replace(/\s+/g,' ');
+    }
+
+    function badgeIsOverall(row){
+      const event = badgeEventText(row);
+      return /overall|allround|classification|종합/.test(event);
+    }
+
+    function badgeIsRelay(row){
+      const event = badgeEventText(row);
+      const medalType = normalizeBadgeText(row && row.medal_type);
+      return medalType === 'relay' || event.includes('relay') || event.includes('계주');
+    }
+
+    function badgeIsIndividual(row){
+      const medalType = normalizeBadgeText(row && row.medal_type);
+      if(medalType === 'individual') return true;
+      return !badgeIsRelay(row);
+    }
+
+    function badgeAllPlayerRows(name){
+      const canonical = canonicalSkaterName(name);
+      const rows = [];
+      (medals || []).forEach(row => {
+        if(canonicalSkaterName(row.skater_name) === canonical){
+          rows.push({...row, medal_type: row.medal_type || 'Individual', skater_name: canonical});
+        }
+      });
+      (relayMembers || []).forEach(row => {
+        if(canonicalSkaterName(row.skater_name) === canonical){
+          rows.push({...row, medal_type: row.medal_type || 'Relay', skater_name: canonical});
+        }
+      });
+      (skaterMedals || []).forEach(row => {
+        if(canonicalSkaterName(row.skater_name) === canonical){
+          rows.push(row);
+        }
+      });
+
+      const seen = new Set();
+      return rows.filter(row => {
+        const key = [
+          row.competition_type, row.season, row.competition_name, row.event,
+          row.medal, row.medal_type, row.country
+        ].map(v => String(v || '')).join('|');
+        if(seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
     function getPlayerAchievementBadges(name){
-      const rows = skaterMedals.filter(row => row.skater_name === name);
+      const rows = badgeAllPlayerRows(name).filter(medalTextIsGold);
+
       const olympicIndividualGold = rows.some(row =>
-        medalTextIsGold(row) &&
-        row.medal_type === 'Individual' &&
-        competitionBucket(row.competition_type) === 'olympic' &&
+        badgeCompetitionBucket(row) === 'olympic' &&
+        badgeIsIndividual(row) &&
         !isOlympicDemonstrationRow(row)
       );
       const olympicRelayGold = rows.some(row =>
-        medalTextIsGold(row) &&
-        row.medal_type === 'Relay' &&
-        competitionBucket(row.competition_type) === 'olympic' &&
+        badgeCompetitionBucket(row) === 'olympic' &&
+        badgeIsRelay(row) &&
         !isOlympicDemonstrationRow(row)
       );
       const worldsOverallGold = rows.some(row =>
-        medalTextIsGold(row) &&
-        isWorldChampionshipOverallRow(row)
+        badgeCompetitionBucket(row) === 'worlds' &&
+        badgeIsOverall(row)
       );
       const worldsIndividualGold = rows.some(row =>
-        medalTextIsGold(row) &&
-        row.medal_type === 'Individual' &&
-        competitionBucket(row.competition_type) === 'worlds' &&
-        !isWorldChampionshipOverallRow(row)
+        badgeCompetitionBucket(row) === 'worlds' &&
+        badgeIsIndividual(row) &&
+        !badgeIsOverall(row)
       );
       const worldCupTourIndividualGold = rows.some(row =>
-        medalTextIsGold(row) &&
-        row.medal_type === 'Individual' &&
-        isWorldCupOrWorldTourRow(row)
+        badgeCompetitionBucket(row) === 'worldcup' &&
+        badgeIsIndividual(row)
       );
       const grandSlam = olympicIndividualGold && olympicRelayGold && worldsIndividualGold && worldCupTourIndividualGold;
 
@@ -3214,10 +3283,12 @@
     }
 
     function renderPlayerAchievementBadges(name){
-      const wrap = document.getElementById('playerAchievementBadges');
-      if(!wrap) return;
       const badges = getPlayerAchievementBadges(name);
-      wrap.innerHTML = badges.map(badge => `<span class="achievement-badge ${badge.cls || ''}">${escapeHtml(badge.label)}</span>`).join('');
+      const html = badges.map(badge => `<span class="achievement-badge ${badge.cls || ''}">${escapeHtml(badge.label)}</span>`).join('');
+      ['playerAchievementBadges','playerAchievementBadgesLine'].forEach(id => {
+        const wrap = document.getElementById(id);
+        if(wrap) wrap.innerHTML = html;
+      });
     }
 
 
