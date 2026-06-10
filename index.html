@@ -478,7 +478,7 @@
     .approved-profile-box .value{font-size:17px;font-weight:950;line-height:1.35}
     .approved-overview-split{display:grid;grid-template-columns:1fr;gap:14px}
     .approved-overview-heading{font-weight:950;margin:2px 0 8px;color:#111827}
-    .distance-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+    .distance-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:10px}
     .distance-summary-card{border:1px solid var(--line);border-radius:15px;background:#fff;padding:12px}
     .distance-summary-card strong{display:block;font-size:18px;margin-bottom:7px;color:#1e3a8a}
     .distance-summary-card span{display:block;font-size:12.5px;color:var(--muted);line-height:1.55}
@@ -2140,6 +2140,7 @@
     let medals = [];
     let relayMembers = [];
     let bestTimes = [];
+    let eventRecordsCache = [];
     let skaterAliases = [];
     let skaterAliasMap = new Map();
     let skaterMedals = [];
@@ -2370,8 +2371,17 @@
         medals=(json.medals||[]).map(normalizeMedalRow);
         relayMembers=(json.relay_members||[]).map(normalizeRelayRow);
         bestTimes=(json.best_times||json.lap_times||[]).map(normalizeBestTimeRow);
+        eventRecordsCache=extractEventRecordsFromJson(json).map(normalizeEventRecordCacheRow).filter(row=>row.skater_name && row.personal_best_event);
+        if(!eventRecordsCache.length){
+          try{
+            eventRecordsCache=await fetchEventRecordsForPersonalBest();
+          }catch(_pbError){
+            eventRecordsCache=[];
+          }
+        }
+        window.eventRecordsCache = eventRecordsCache;
         const loadingStatus=document.getElementById('loadingStatus');
-        if(loadingStatus) loadingStatus.textContent=`${tr('dataLoaded')}: medals ${medals.length.toLocaleString()} · relay_members ${relayMembers.length.toLocaleString()} · best_times ${bestTimes.length.toLocaleString()}`;
+        if(loadingStatus) loadingStatus.textContent=`${tr('dataLoaded')}: medals ${medals.length.toLocaleString()} · relay_members ${relayMembers.length.toLocaleString()} · best_times ${bestTimes.length.toLocaleString()} · event_records ${eventRecordsCache.length.toLocaleString()}`;
         skaterMedals=buildSkaterMedals();
         setupSectionSeasonFilters();
         setupSectionEraFilters();
@@ -2414,9 +2424,14 @@
     function canonicalSkaterName(name){const raw=String(name||'').trim();if(!raw)return '';return skaterAliasMap.get(aliasKey(raw))||raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 
     function buildSkaterMedals(){
-      const individual=medals.filter(row=>row.skater_name && !isRelayEvent(row.event)).map(row=>({...row,medal_type:'Individual'}));
+      const individual=medals
+        .filter(row=>row.skater_name && !isRelayEvent(row.event) && !isWorldChampionshipSuperFinalRow(row))
+        .map(row=>({...row,medal_type:'Individual'}));
+      const superFinal=medals
+        .filter(row=>row.skater_name && isWorldChampionshipSuperFinalRow(row))
+        .map(row=>({...row,medal_type:'SuperFinal'}));
       const relay=relayMembers.filter(row=>row.skater_name).map(row=>({...row,medal_type:'Relay'}));
-      return [...individual,...relay];
+      return [...individual,...superFinal,...relay];
     }
 
 
@@ -2660,6 +2675,7 @@
 
       if(!skaterRankingOptions.includeOlympicDemo && isOlympicDemonstrationRow({competition_type:competitionType, competition_name:competitionName, year, note})) return false;
       if(!skaterRankingOptions.includeWorldsOverall && isWorldChampionshipOverallRow({competition_type:competitionType, event})) return false;
+      if(isWorldChampionshipSuperFinalRow(row)) return false;
       if(!skaterRankingOptions.includeIndividual3000m && isIndividual3000mEvent(event)) return false;
 
       return true;
@@ -2680,8 +2696,31 @@
     }
 
     function isIndividual3000mEvent(eventName){
-      const event = String(eventName||'').trim().toLowerCase().replace(/\s+/g,' ');
-      return /^3000\s*m$/.test(event) && !event.includes('relay');
+      const event = String(eventName||'').trim().toLowerCase().replace(/[._-]+/g,' ').replace(/\s+/g,' ');
+      return /3000\s*m/.test(event) && !event.includes('relay');
+    }
+
+    function isSuperFinal3000mEvent(eventName){
+      const event = String(eventName||'').trim().toLowerCase().replace(/[._-]+/g,' ').replace(/\s+/g,' ');
+      return /3000\s*m/.test(event) && !event.includes('relay');
+    }
+
+    function isWorldChampionshipSuperFinalRow(row){
+      const type = String(row && row.competition_type || '').toLowerCase();
+      const name = String(row && row.competition_name || '').toLowerCase();
+      const event = String(row && row.event || '').toLowerCase();
+      const note = String(row && row.note || '').toLowerCase();
+      const isWorlds = type.includes('world championship') || name.includes('world championship');
+      if(!isWorlds) return false;
+      if(event.includes('relay')) return false;
+      return /3000\s*m|3000m|super\s*final|superfinal/.test(event + ' ' + note);
+    }
+
+    function isWorldChampionshipRegularIndividualRow(row){
+      const type = String(row && row.competition_type || '').toLowerCase();
+      const name = String(row && row.competition_name || '').toLowerCase();
+      const isWorlds = type.includes('world championship') || name.includes('world championship');
+      return isWorlds && !isRelayEvent(row && row.event) && !isWorldChampionshipOverallRow(row) && !isWorldChampionshipSuperFinalRow(row);
     }
 
 
@@ -3095,6 +3134,7 @@
     function buildSkaterAggregates(data){
       const map=new Map();
       data.forEach(row=>{
+        if(isWorldChampionshipSuperFinalRow(row)) return;
         const key=row.skater_name;if(!key)return;
         if(!map.has(key)) map.set(key,createSkaterAgg(row.skater_name,row.country));
         const item=map.get(key);
@@ -3577,8 +3617,10 @@
 
     function badgeIsIndividual(row){
       const medalType = normalizeBadgeText(row && row.medal_type);
+      if(medalType === 'superfinal') return false;
+      if(isWorldChampionshipSuperFinalRow(row)) return false;
       if(medalType === 'individual') return true;
-      return !badgeIsRelay(row);
+      return !badgeIsRelay(row) && !isWorldChampionshipSuperFinalRow(row);
     }
 
     function badgeAllPlayerRows(name){
@@ -3857,11 +3899,215 @@
     }
 
     function normalizeBestTimeEvent(value){
-      const v=String(value||'').trim().toLowerCase().replace(/\s+/g,'');
-      if(/^500m?(\(\d+\))?$/.test(v) || v==='500') return '500m';
-      if(/^1000m?(\(\d+\))?$/.test(v) || v==='1000') return '1000m';
-      if(/^1500m?(\(\d+\))?$/.test(v) || v==='1500') return '1500m';
-      return String(value||'').trim();
+      const raw=String(value||'').trim();
+      const v=raw.toLowerCase()
+        .replace(/ladies/g,'women')
+        .replace(/metres|metre|meters|meter/g,'m')
+        .replace(/[._-]+/g,' ')
+        .replace(/\s+/g,' ')
+        .trim();
+      const compact=v.replace(/\s+/g,'');
+      if(/3000m/.test(compact) && !/relay/.test(v)) return '3000m Super Final';
+      if(/^500m(\(\d+\))?$/.test(compact) || compact==='500') return '500m';
+      if(/^1000m(\(\d+\))?$/.test(compact) || compact==='1000') return '1000m';
+      if(/^1500m(\(\d+\))?$/.test(compact) || compact==='1500') return '1500m';
+      return raw;
+    }
+
+    function normalizePersonalBestEvent(value){
+      return normalizeBestTimeEvent(value);
+    }
+
+    function personalBestEventOrder(event){
+      const order={'500m':1,'1000m':2,'1500m':3,'3000m Super Final':4};
+      return order[event] || 99;
+    }
+
+    function personalBestDisplayEvent(event){
+      if(event === '3000m Super Final') return '3000m S.F.';
+      return event || '';
+    }
+
+    function parseBestSeconds(value){
+      const s=String(value||'').trim();
+      if(!s || /^(nan|null|undefined|no time|pen|dnf|dns|adv|dq)$/i.test(s)) return null;
+      const direct=Number(s);
+      if(Number.isFinite(direct)) return direct;
+      if(s.includes(':')){
+        const parts=s.split(':').map(x=>Number(String(x).trim()));
+        if(parts.length===2 && parts.every(Number.isFinite)) return parts[0]*60+parts[1];
+        if(parts.length===3 && parts.every(Number.isFinite)) return parts[0]*3600+parts[1]*60+parts[2];
+      }
+      return null;
+    }
+
+    function extractEventRecordsFromJson(json){
+      if(!json) return [];
+      if(Array.isArray(json)) return json;
+      const keys=['event_records_cache','event_records','eventRecordsCache','eventRecords','records','record_rankings','event_records_all'];
+      let out=[];
+      keys.forEach(key=>{
+        const value=json[key];
+        if(Array.isArray(value)) out=out.concat(value);
+      });
+      if(json.result) out=out.concat(extractEventRecordsFromJson(json.result));
+      return out;
+    }
+
+    async function fetchEventRecordsForPersonalBest(){
+      if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')) return [];
+      const sep=APPS_SCRIPT_URL.includes('?') ? '&' : '?';
+      const response=await fetch(`${APPS_SCRIPT_URL}${sep}action=eventRecords&limit=50000`, {cache:'no-store'});
+      const json=await response.json();
+      if(json && json.ok === false) throw new Error(json.error || 'event_records 로딩 실패');
+      return extractEventRecordsFromJson(json).map(normalizeEventRecordCacheRow).filter(row=>row.skater_name && row.personal_best_event);
+    }
+
+    function normalizeEventRecordCacheRow(row){
+      const original=String(row && (row.skater_name || row.name || row.athlete || row.team_name) || '').replace(/\s+/g,' ').trim();
+      const event=normalizePersonalBestEvent(row && (row.event || row.distance || row.discipline) || '');
+      const seconds=parseBestSeconds(row && (row.seconds_float || row.best_time || row.time || row.final_time || row.record));
+      const status=String(row && row.status || '').trim();
+      const round=String(row && row.round || '').trim();
+      const normalized={
+        rank:String(row && row.rank || '').trim(),
+        skater_name:canonicalSkaterName(original),
+        original_skater_name:original,
+        country:String(row && row.country || '').trim(),
+        time:String(row && (row.time || row.best_time || row.final_time || row.record) || '').trim(),
+        seconds_float:seconds,
+        status,
+        gender:String(row && row.gender || '').trim(),
+        event:String(row && row.event || '').trim(),
+        personal_best_event:event,
+        final_rank:String(row && (row.final_rank || row.rank) || '').trim(),
+        city:String(row && row.city || '').trim(),
+        date:String(row && row.date || '').trim(),
+        season:normalizeSeasonLabel(row && row.season || '', row && row.year || ''),
+        competition_type:String(row && row.competition_type || '').trim(),
+        competition_name:String(row && row.competition_name || '').trim(),
+        round,
+        heat:String(row && row.heat || '').trim(),
+        source_url:String(row && row.source_url || '').trim(),
+        raw_data:String(row && row.raw_data || '').trim(),
+        note:String(row && row.note || '').trim(),
+        source:'기록자료'
+      };
+      if(!['500m','1000m','1500m','3000m Super Final'].includes(normalized.personal_best_event)) normalized.personal_best_event='';
+      if(/relay/i.test(normalized.event)) normalized.personal_best_event='';
+      if(/^(pen|dnf|dns|dq)$/i.test(status) || String(round).toLowerCase()==='consent') normalized.personal_best_event='';
+      return normalized;
+    }
+
+    function buildSkaterNameKeySet(name){
+      const set=new Set();
+      const add=(v)=>{
+        const raw=String(v||'').trim();
+        if(!raw) return;
+        set.add(aliasKey(raw));
+        set.add(aliasKey(canonicalSkaterName(raw)));
+        const parts=raw.split(/\s+/).filter(Boolean);
+        if(parts.length>=2) set.add(aliasKey([...parts].reverse().join(' ')));
+      };
+      add(name);
+      const canonical=canonicalSkaterName(name);
+      add(canonical);
+      (skaterAliases||[]).forEach(row=>{
+        if(canonicalSkaterName(row.canonical_name)===canonical || aliasKey(row.canonical_name)===aliasKey(canonical)){
+          add(row.alias_name);
+          add(row.canonical_name);
+        }
+      });
+      return set;
+    }
+
+    function sameSkaterByAlias(recordName, targetKeys){
+      const candidates=[recordName, canonicalSkaterName(recordName)];
+      String(recordName||'').split('/').forEach(x=>candidates.push(x));
+      return candidates.some(candidate=>{
+        const raw=String(candidate||'').trim();
+        if(!raw) return false;
+        if(targetKeys.has(aliasKey(raw))) return true;
+        if(targetKeys.has(aliasKey(canonicalSkaterName(raw)))) return true;
+        const parts=raw.split(/\s+/).filter(Boolean);
+        if(parts.length>=2 && targetKeys.has(aliasKey([...parts].reverse().join(' ')))) return true;
+        return false;
+      });
+    }
+
+    function personalBestTieBreakScore(row){
+      const round=String(row.round||'').toLowerCase();
+      let score=0;
+      if(round.includes('final') && !round.includes('rep')) score+=30;
+      if(round.includes('semi')) score+=20;
+      if(round.includes('quarter')) score+=10;
+      if(row.competition_type && /olympic/i.test(row.competition_type)) score+=5;
+      if(row.competition_type && /world championship/i.test(row.competition_type)) score+=4;
+      return score;
+    }
+
+    function isBetterPersonalBest(candidate, current){
+      if(!current) return true;
+      const cSec=Number(candidate.seconds_float);
+      const pSec=Number(current.seconds_float);
+      if(Number.isFinite(cSec) && Number.isFinite(pSec) && cSec !== pSec) return cSec < pSec;
+      const cScore=personalBestTieBreakScore(candidate);
+      const pScore=personalBestTieBreakScore(current);
+      if(cScore !== pScore) return cScore > pScore;
+      return seasonSortValue(candidate.season,candidate.year) > seasonSortValue(current.season,current.year);
+    }
+
+    function bestTimeRowAsPersonalBest(row){
+      const event=normalizePersonalBestEvent(row.event);
+      const seconds=parseBestSeconds(row.best_time || row.time);
+      if(!['500m','1000m','1500m','3000m Super Final'].includes(event) || seconds===null) return null;
+      return {
+        skater_name:row.skater_name,
+        original_skater_name:row.original_skater_name||row.skater_name,
+        country:row.country||'',
+        gender:row.gender||'',
+        personal_best_event:event,
+        event:row.event||event,
+        time:row.best_time||row.time||'',
+        seconds_float:seconds,
+        competition_type:row.competition_type||'',
+        competition_name:row.competition_name||'',
+        city:row.city||'',
+        season:row.season||row.year||'',
+        year:row.year||'',
+        round:row.round||'',
+        note:row.note||'',
+        source:'수동 입력'
+      };
+    }
+
+    function personalBestMapForPlayer(name){
+      const keys=buildSkaterNameKeySet(name);
+      const bestByEvent=new Map();
+
+      (eventRecordsCache||[]).forEach(row=>{
+        if(!row || !row.personal_best_event) return;
+        if(!sameSkaterByAlias(row.skater_name || row.original_skater_name, keys)) return;
+        if(!Number.isFinite(Number(row.seconds_float))) return;
+        const event=row.personal_best_event;
+        if(isBetterPersonalBest(row, bestByEvent.get(event))) bestByEvent.set(event,row);
+      });
+
+      (bestTimes||[]).forEach(row=>{
+        if(!sameSkaterByAlias(row.skater_name || row.original_skater_name, keys)) return;
+        const pb=bestTimeRowAsPersonalBest(row);
+        if(!pb) return;
+        const event=pb.personal_best_event;
+        if(isBetterPersonalBest(pb, bestByEvent.get(event))) bestByEvent.set(event,pb);
+      });
+
+      return bestByEvent;
+    }
+
+    function renderPersonalBestCell(row){
+      if(!row) return '<span class="muted">없음</span>';
+      const details=[row.competition_name,row.round,row.season||row.year].filter(Boolean).join(' · ');
+      return `<strong>${escapeHtml(row.time || '')}</strong><br><small>${escapeHtml(details || '-')}</small>`;
     }
 
     function bestTimeEventOrder(event){
@@ -5125,18 +5371,19 @@
       }
     }
 
-    function individualRowsForPlayer(name){return skaterMedals.filter(row=>row.skater_name===name && row.medal_type==='Individual');}
+    function individualRowsForPlayer(name){return skaterMedals.filter(row=>row.skater_name===name && row.medal_type==='Individual' && !isWorldChampionshipSuperFinalRow(row));}
     function relayRowsForPlayer(name){return skaterMedals.filter(row=>row.skater_name===name && row.medal_type==='Relay');}
     function medalBucketInline(rows){const b=countMedalBucket(rows);return `금 ${b.gold} · 은 ${b.silver} · 동 ${b.bronze} · 총 ${medalTotal(b)}`;}
     function mainEventForPlayer(rows){
       const map=new Map();
       rows.forEach(row=>{
+        if(isWorldChampionshipSuperFinalRow(row)) return;
         const event=normalizeBestTimeEvent(row.event);
         if(!['500m','1000m','1500m'].includes(event)) return;
         map.set(event,(map.get(event)||0)+1);
       });
       if(!map.size) return '-';
-      const [event,count]=[...map.entries()].sort((a,b)=>b[1]-a[1]||bestTimeEventOrder(a[0])-bestTimeEventOrder(b[0]))[0];
+      const [event,count]=[...map.entries()].sort((a,b)=>b[1]-a[1]||personalBestEventOrder(a[0])-personalBestEventOrder(b[0]))[0];
       return `${event} (${count}회)`;
     }
     function activeSeasonsForPlayer(rows, laps){
@@ -5147,24 +5394,22 @@
       return `${seasons[seasons.length-1]} ~ ${seasons[0]}`;
     }
     function bestTimeMapForPlayer(name){
-      const rows=bestTimes.filter(row=>row.skater_name===name).filter(row=>['500m','1000m','1500m'].includes(normalizeBestTimeEvent(row.event)));
-      const bestByEvent=new Map();
-      rows.forEach(row=>{
-        const event=normalizeBestTimeEvent(row.event);
-        if(!bestByEvent.has(event) || parseTimeToSeconds(row.best_time) < parseTimeToSeconds(bestByEvent.get(event).best_time)) bestByEvent.set(event,row);
-      });
-      return bestByEvent;
+      return personalBestMapForPlayer(name);
     }
 
     function openPlayerPanel(name){
       const rows=skaterMedals.filter(row=>row.skater_name===name);
-      const lapRows=bestTimes.filter(row=>row.skater_name===name);
-      if(!rows.length&&!lapRows.length)return;
-      const sample=rows[0]||lapRows[0];
-      const individual=rows.filter(r=>r.medal_type==='Individual');
+      const keys=buildSkaterNameKeySet(name);
+      const lapRows=bestTimes.filter(row=>sameSkaterByAlias(row.skater_name||row.original_skater_name, keys));
+      const pbRows=(eventRecordsCache||[]).filter(row=>sameSkaterByAlias(row.skater_name||row.original_skater_name, keys));
+      if(!rows.length&&!lapRows.length&&!pbRows.length)return;
+      const sample=rows[0]||lapRows[0]||pbRows[0]||{};
+      const individual=rows.filter(r=>r.medal_type==='Individual' && !isWorldChampionshipSuperFinalRow(r));
       const relay=rows.filter(r=>r.medal_type==='Relay');
+      const superFinal=rows.filter(r=>r.medal_type==='SuperFinal' || isWorldChampionshipSuperFinalRow(r));
       document.getElementById('playerName').textContent=name;
-      document.getElementById('playerInfo').textContent=`${sample.country||''} · ${genderKorean(sample.gender)||'-'} · 개인전 메달 ${individual.length}개 · 계주 ${relay.length}개 · 활동 시즌 ${activeSeasonsForPlayer(rows,lapRows)}`;
+      renderPlayerAchievementBadges(name);
+      document.getElementById('playerInfo').textContent=`${sample.country||''} · ${genderKorean(sample.gender)||'-'} · 개인전 메달 ${individual.length}개 · 계주 ${relay.length}개 · 3000m S.F. ${superFinal.length}개 · 활동 시즌 ${activeSeasonsForPlayer(rows,lapRows.concat(pbRows))}`;
       document.getElementById('playerTotal').textContent=individual.length;
       document.getElementById('playerGold').textContent=individual.filter(r=>r.medal==='Gold').length;
       document.getElementById('playerSilver').textContent=individual.filter(r=>r.medal==='Silver').length;
@@ -5183,36 +5428,66 @@
       const wrap=document.getElementById('playerOverviewTable');
       if(!wrap) return;
       const rows=skaterMedals.filter(row=>row.skater_name===name);
-      const laps=bestTimes.filter(row=>row.skater_name===name);
-      if(!rows.length&&!laps.length){wrap.innerHTML=`<div class="empty">${tr('empty')}</div>`;return;}
-      const individual=rows.filter(row=>row.medal_type==='Individual');
+      const keys=buildSkaterNameKeySet(name);
+      const laps=bestTimes.filter(row=>sameSkaterByAlias(row.skater_name||row.original_skater_name, keys));
+      const recordRows=(eventRecordsCache||[]).filter(row=>sameSkaterByAlias(row.skater_name||row.original_skater_name, keys));
+      if(!rows.length&&!laps.length&&!recordRows.length){wrap.innerHTML=`<div class="empty">${tr('empty')}</div>`;return;}
+      const individual=rows.filter(row=>row.medal_type==='Individual' && !isWorldChampionshipSuperFinalRow(row));
       const relay=rows.filter(row=>row.medal_type==='Relay');
-      const sample=rows[0]||laps[0]||{};
+      const superFinal=rows.filter(row=>row.medal_type==='SuperFinal' || isWorldChampionshipSuperFinalRow(row));
+      const sample=rows[0]||laps[0]||recordRows[0]||{};
       const bestMap=bestTimeMapForPlayer(name);
-      const bestTimeRows=['500m','1000m','1500m'].map(event=>{
+
+      const pbEvents=['500m','1000m','1500m','3000m Super Final'];
+      const bestTimeRows=pbEvents.map(event=>{
         const row=bestMap.get(event);
-        if(!row) return `<tr><td><strong>${event}</strong></td><td colspan="4" class="muted">수동 입력 최고기록 없음</td></tr>`;
-        return `<tr><td><strong>${event}</strong></td><td><strong>${escapeHtml(row.best_time)}</strong></td><td>${escapeHtml(row.competition_name||'-')}</td><td>${escapeHtml(row.season||row.year||'-')}</td><td>${escapeHtml(row.note||'')}</td></tr>`;
+        if(!row) return `<tr><td><strong>${personalBestDisplayEvent(event)}</strong></td><td colspan="5" class="muted">기록 없음</td></tr>`;
+        const source=row.source||'기록자료';
+        const comp=[row.competition_name,row.round].filter(Boolean).join(' · ') || '-';
+        return `<tr>
+          <td><strong>${personalBestDisplayEvent(event)}</strong></td>
+          <td><strong>${escapeHtml(row.time||row.best_time||'')}</strong></td>
+          <td>${escapeHtml(comp)}</td>
+          <td>${escapeHtml(row.competition_type||'-')}</td>
+          <td>${escapeHtml(row.season||row.year||'-')}</td>
+          <td>${escapeHtml(source)}</td>
+        </tr>`;
       }).join('');
+
       const groups=[
         {label:'개인전 메달', rows:individual},
         {label:'계주 메달', rows:relay},
+        {label:'3000m Super Final', rows:superFinal},
         {label:tr('olympic'), rows:individual.filter(row=>competitionBucket(row.competition_type)==='olympic')},
         {label:worldSummaryLabel(), rows:individual.filter(row=>competitionBucket(row.competition_type)==='worlds')},
         {label:tr('worldCupTour'), rows:individual.filter(row=>competitionBucket(row.competition_type)==='worldcup')}
       ];
+
       const distanceCards=['500m','1000m','1500m'].map(event=>{
         const eventRows=individual.filter(row=>normalizeBestTimeEvent(row.event)===event);
         const medalText=medalBucketInline(eventRows);
         const best=bestMap.get(event);
-        return `<div class="distance-summary-card"><strong>${event}</strong><span>${escapeHtml(medalText)}</span><span>최고기록: ${best?escapeHtml(best.best_time):'없음'}</span></div>`;
+        return `<div class="distance-summary-card"><strong>${event}</strong><span>${escapeHtml(medalText)}</span><span>개인 최고기록: ${best?escapeHtml(best.time||best.best_time):'없음'}</span></div>`;
       }).join('');
+
+      const superBest=bestMap.get('3000m Super Final');
+      const superBucket=countMedalBucket(superFinal);
+      const superFinalCard=`<div class="distance-summary-card"><strong>3000m S.F.</strong><span>세계선수권 개인전 메달 집계 제외 · 금 ${superBucket.gold} · 은 ${superBucket.silver} · 동 ${superBucket.bronze}</span><span>개인 최고기록: ${superBest?escapeHtml(superBest.time||superBest.best_time):'없음'}</span></div>`;
+
+      const superFinalRows=superFinal.slice().sort(comparePlayerDetailMedals).map(row=>`<tr>
+        <td>${escapeHtml(row.year||row.season||'')}</td>
+        <td>${escapeHtml(row.competition_name||row.season||'-')}</td>
+        <td>${escapeHtml(row.event||'3000m')}</td>
+        <td><span class="medal-pill ${String(row.medal||'').toLowerCase()}">${medalKorean(row.medal)}</span></td>
+        <td>${escapeHtml(row.time||'')}</td>
+      </tr>`).join('');
+
       wrap.innerHTML=`
         <div class="approved-profile-grid">
           <div class="approved-profile-box"><div class="label">국가</div><div class="value">${escapeHtml(sample.country||'-')}</div></div>
           <div class="approved-profile-box"><div class="label">성별</div><div class="value">${escapeHtml(genderKorean(sample.gender)||'-')}</div></div>
           <div class="approved-profile-box"><div class="label">주요 종목</div><div class="value">${escapeHtml(mainEventForPlayer(individual))}</div></div>
-          <div class="approved-profile-box"><div class="label">활동 시즌</div><div class="value">${escapeHtml(activeSeasonsForPlayer(rows,laps))}</div></div>
+          <div class="approved-profile-box"><div class="label">활동 시즌</div><div class="value">${escapeHtml(activeSeasonsForPlayer(rows,laps.concat(recordRows)))}</div></div>
         </div>
         <div class="approved-overview-split">
           <div>
@@ -5221,12 +5496,14 @@
           </div>
           <div>
             <div class="approved-overview-heading">거리별 성적 요약</div>
-            <div class="distance-summary-grid">${distanceCards}</div>
+            <div class="distance-summary-grid">${distanceCards}${superFinalCard}</div>
           </div>
           <div>
-            <div class="approved-overview-heading">수동 입력 최고기록</div>
-            <div class="table-scroll"><table><thead><tr><th>종목</th><th>최종 최고기록</th><th>대회</th><th>시즌/연도</th><th>비고</th></tr></thead><tbody>${bestTimeRows}</tbody></table></div>
+            <div class="approved-overview-heading">개인 최고기록</div>
+            <div class="table-scroll"><table><thead><tr><th>종목</th><th>개인 최고기록</th><th>대회/라운드</th><th>구분</th><th>시즌/연도</th><th>출처</th></tr></thead><tbody>${bestTimeRows}</tbody></table></div>
+            <div class="subnote" style="margin-top:8px">3000m Super Final은 세계선수권 개인전 메달 집계와 분리해 표시합니다.</div>
           </div>
+          ${superFinalRows ? `<div><div class="approved-overview-heading">3000m Super Final 성적</div><div class="table-scroll"><table><thead><tr><th>연도</th><th>대회</th><th>종목</th><th>순위</th><th>기록</th></tr></thead><tbody>${superFinalRows}</tbody></table></div></div>` : ''}
         </div>`;
     }
 
@@ -6492,6 +6769,13 @@
         if(threshold === null) return false;
         return row.seconds_float <= threshold;
       }));
+
+      try{
+        if(typeof normalizeEventRecordCacheRow === 'function'){
+          eventRecordsCache = eventRecordRows.map(normalizeEventRecordCacheRow).filter(row=>row.skater_name && row.personal_best_event);
+          window.eventRecordsCache = eventRecordsCache;
+        }
+      }catch(_syncError){}
 
       if(!eventRecordRows.length && !sourceRows.length){
         wrap.innerHTML = '<div class="empty"><strong>event_records 데이터를 찾지 못했습니다.</strong><br>구글시트에 event_records 탭을 만든 뒤, Apps Script doGet 응답에도 event_records를 포함해야 합니다.</div>';
