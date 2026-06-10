@@ -703,6 +703,8 @@
       color:rgba(255,255,255,.22);
     }
 
+
+    #playerAchievementBadgesLine{display:none !important}
 </style>
 </head>
 <body>
@@ -839,7 +841,7 @@
     </section>
 <section id="playerPanel" class="card panel">
       <div class="panel-header">
-        <div><div class="player-title-row"><h2 id="playerName">선수명</h2><div id="playerAchievementBadges" class="player-achievement-badges" aria-label="선수 주요 업적"></div></div><p id="playerInfo">선수 정보</p><div id="playerAchievementBadgesLine" class="player-achievement-badges" aria-label="선수 주요 업적"></div></div>
+        <div><div class="player-title-row"><h2 id="playerName">선수명</h2><div id="playerAchievementBadges" class="player-achievement-badges" aria-label="선수 주요 업적"></div></div><p id="playerInfo">선수 정보</p></div>
         <button class="close-btn" onclick="closePlayerPanel()">닫기</button>
       </div>
       <div class="summary" style="margin-bottom:16px">
@@ -2421,7 +2423,23 @@
 
     function buildSkaterAliasMap(rows){const map=new Map();rows.forEach(row=>{if(!row.alias_name||!row.canonical_name)return;map.set(aliasKey(row.alias_name),row.canonical_name);map.set(aliasKey(row.canonical_name),row.canonical_name);});return map;}
     function aliasKey(name){return String(name||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[\s._-]+/g,' ');}
+    function looseNameKey(name){return String(name||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9가-힣]/g,'');}
     function canonicalSkaterName(name){const raw=String(name||'').trim();if(!raw)return '';return skaterAliasMap.get(aliasKey(raw))||raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+    function addNameMatchingVariantsToSet(set, value){
+      const raw=String(value||'').trim();
+      if(!raw) return;
+      const candidates=[raw, canonicalSkaterName(raw)];
+      raw.split('/').forEach(v=>candidates.push(v));
+      candidates.slice().forEach(v=>{
+        const parts=String(v||'').trim().split(/\s+/).filter(Boolean);
+        if(parts.length>=2) candidates.push([...parts].reverse().join(' '));
+      });
+      candidates.forEach(v=>{
+        if(!v) return;
+        set.add(aliasKey(v));
+        set.add(looseNameKey(v));
+      });
+    }
 
     function buildSkaterMedals(){
       const individual=medals
@@ -3695,10 +3713,10 @@
     function renderPlayerAchievementBadges(name){
       const badges = getPlayerAchievementBadges(name);
       const html = badges.map(badge => `<span class="achievement-badge ${badge.cls || ''}">${escapeHtml(badge.label)}</span>`).join('');
-      ['playerAchievementBadges','playerAchievementBadgesLine'].forEach(id => {
-        const wrap = document.getElementById(id);
-        if(wrap) wrap.innerHTML = html;
-      });
+      const wrap = document.getElementById('playerAchievementBadges');
+      if(wrap) wrap.innerHTML = html;
+      const duplicateLine = document.getElementById('playerAchievementBadgesLine');
+      if(duplicateLine) duplicateLine.remove();
     }
 
 
@@ -3727,7 +3745,7 @@
     }
 
     function worldSummaryLabel(){
-      return currentLang === 'en' ? 'World Championships (incl. 3000m S.F.)' : '세계선수권 (3000m S.F. 포함)';
+      return currentLang === 'en' ? 'World Championships' : '세계선수권';
     }
 
     function relaySummaryLabel(){
@@ -3907,24 +3925,28 @@
         .replace(/\s+/g,' ')
         .trim();
       const compact=v.replace(/\s+/g,'');
-      if(/3000m/.test(compact) && !/relay/.test(v)) return '3000m Super Final';
-      if(/^500m(\(\d+\))?$/.test(compact) || compact==='500') return '500m';
-      if(/^1000m(\(\d+\))?$/.test(compact) || compact==='1000') return '1000m';
-      if(/^1500m(\(\d+\))?$/.test(compact) || compact==='1500') return '1500m';
+      if(/relay/.test(v) || /mixed/.test(v)) return raw;
+      if(/3000m/.test(compact)) return '3000m Super Final';
+      if(/(?:^|women|men)500m(?:\(\d+\))?$/.test(compact) && !/1500m/.test(compact)) return '500m';
+      if(/(?:^|women|men)1000m(?:\(\d+\))?$/.test(compact)) return '1000m';
+      if(/(?:^|women|men)1500m(?:\(\d+\))?$/.test(compact)) return '1500m';
+      if(compact==='500') return '500m';
+      if(compact==='1000') return '1000m';
+      if(compact==='1500') return '1500m';
       return raw;
     }
 
     function normalizePersonalBestEvent(value){
-      return normalizeBestTimeEvent(value);
+      const event=normalizeBestTimeEvent(value);
+      return ['500m','1000m','1500m'].includes(event) ? event : '';
     }
 
     function personalBestEventOrder(event){
-      const order={'500m':1,'1000m':2,'1500m':3,'3000m Super Final':4};
+      const order={'500m':1,'1000m':2,'1500m':3};
       return order[event] || 99;
     }
 
     function personalBestDisplayEvent(event){
-      if(event === '3000m Super Final') return '3000m S.F.';
       return event || '';
     }
 
@@ -3993,7 +4015,7 @@
         note:String(row && row.note || '').trim(),
         source:'기록자료'
       };
-      if(!['500m','1000m','1500m','3000m Super Final'].includes(normalized.personal_best_event)) normalized.personal_best_event='';
+      if(!['500m','1000m','1500m'].includes(normalized.personal_best_event)) normalized.personal_best_event='';
       if(/relay/i.test(normalized.event)) normalized.personal_best_event='';
       if(/^(pen|dnf|dns|dq)$/i.test(status) || String(round).toLowerCase()==='consent') normalized.personal_best_event='';
       return normalized;
@@ -4001,19 +4023,16 @@
 
     function buildSkaterNameKeySet(name){
       const set=new Set();
-      const add=(v)=>{
-        const raw=String(v||'').trim();
-        if(!raw) return;
-        set.add(aliasKey(raw));
-        set.add(aliasKey(canonicalSkaterName(raw)));
-        const parts=raw.split(/\s+/).filter(Boolean);
-        if(parts.length>=2) set.add(aliasKey([...parts].reverse().join(' ')));
-      };
+      const add=(v)=>addNameMatchingVariantsToSet(set, v);
       add(name);
       const canonical=canonicalSkaterName(name);
       add(canonical);
       (skaterAliases||[]).forEach(row=>{
-        if(canonicalSkaterName(row.canonical_name)===canonical || aliasKey(row.canonical_name)===aliasKey(canonical)){
+        const rowCanonical=canonicalSkaterName(row.canonical_name);
+        const related = rowCanonical===canonical
+          || aliasKey(row.canonical_name)===aliasKey(canonical)
+          || looseNameKey(row.canonical_name)===looseNameKey(canonical);
+        if(related){
           add(row.alias_name);
           add(row.canonical_name);
         }
@@ -4022,16 +4041,19 @@
     }
 
     function sameSkaterByAlias(recordName, targetKeys){
-      const candidates=[recordName, canonicalSkaterName(recordName)];
-      String(recordName||'').split('/').forEach(x=>candidates.push(x));
+      const candidates=[];
+      const addCandidate=(v)=>{
+        const raw=String(v||'').trim();
+        if(!raw) return;
+        candidates.push(raw, canonicalSkaterName(raw));
+        raw.split('/').forEach(x=>candidates.push(x));
+        const parts=raw.split(/\s+/).filter(Boolean);
+        if(parts.length>=2) candidates.push([...parts].reverse().join(' '));
+      };
+      addCandidate(recordName);
       return candidates.some(candidate=>{
         const raw=String(candidate||'').trim();
-        if(!raw) return false;
-        if(targetKeys.has(aliasKey(raw))) return true;
-        if(targetKeys.has(aliasKey(canonicalSkaterName(raw)))) return true;
-        const parts=raw.split(/\s+/).filter(Boolean);
-        if(parts.length>=2 && targetKeys.has(aliasKey([...parts].reverse().join(' ')))) return true;
-        return false;
+        return raw && (targetKeys.has(aliasKey(raw)) || targetKeys.has(looseNameKey(raw)) || targetKeys.has(aliasKey(canonicalSkaterName(raw))) || targetKeys.has(looseNameKey(canonicalSkaterName(raw))));
       });
     }
 
@@ -4060,7 +4082,7 @@
     function bestTimeRowAsPersonalBest(row){
       const event=normalizePersonalBestEvent(row.event);
       const seconds=parseBestSeconds(row.best_time || row.time);
-      if(!['500m','1000m','1500m','3000m Super Final'].includes(event) || seconds===null) return null;
+      if(!['500m','1000m','1500m'].includes(event) || seconds===null) return null;
       return {
         skater_name:row.skater_name,
         original_skater_name:row.original_skater_name||row.skater_name,
@@ -5438,7 +5460,7 @@
       const sample=rows[0]||laps[0]||recordRows[0]||{};
       const bestMap=bestTimeMapForPlayer(name);
 
-      const pbEvents=['500m','1000m','1500m','3000m Super Final'];
+      const pbEvents=['500m','1000m','1500m'];
       const bestTimeRows=pbEvents.map(event=>{
         const row=bestMap.get(event);
         if(!row) return `<tr><td><strong>${personalBestDisplayEvent(event)}</strong></td><td colspan="5" class="muted">기록 없음</td></tr>`;
@@ -5470,17 +5492,6 @@
         return `<div class="distance-summary-card"><strong>${event}</strong><span>${escapeHtml(medalText)}</span><span>개인 최고기록: ${best?escapeHtml(best.time||best.best_time):'없음'}</span></div>`;
       }).join('');
 
-      const superBest=bestMap.get('3000m Super Final');
-      const superBucket=countMedalBucket(superFinal);
-      const superFinalCard=`<div class="distance-summary-card"><strong>3000m S.F.</strong><span>세계선수권 개인전 메달 집계 제외 · 금 ${superBucket.gold} · 은 ${superBucket.silver} · 동 ${superBucket.bronze}</span><span>개인 최고기록: ${superBest?escapeHtml(superBest.time||superBest.best_time):'없음'}</span></div>`;
-
-      const superFinalRows=superFinal.slice().sort(comparePlayerDetailMedals).map(row=>`<tr>
-        <td>${escapeHtml(row.year||row.season||'')}</td>
-        <td>${escapeHtml(row.competition_name||row.season||'-')}</td>
-        <td>${escapeHtml(row.event||'3000m')}</td>
-        <td><span class="medal-pill ${String(row.medal||'').toLowerCase()}">${medalKorean(row.medal)}</span></td>
-        <td>${escapeHtml(row.time||'')}</td>
-      </tr>`).join('');
 
       wrap.innerHTML=`
         <div class="approved-profile-grid">
@@ -5496,14 +5507,12 @@
           </div>
           <div>
             <div class="approved-overview-heading">거리별 성적 요약</div>
-            <div class="distance-summary-grid">${distanceCards}${superFinalCard}</div>
+            <div class="distance-summary-grid">${distanceCards}</div>
           </div>
           <div>
             <div class="approved-overview-heading">개인 최고기록</div>
             <div class="table-scroll"><table><thead><tr><th>종목</th><th>개인 최고기록</th><th>대회/라운드</th><th>구분</th><th>시즌/연도</th><th>출처</th></tr></thead><tbody>${bestTimeRows}</tbody></table></div>
-            <div class="subnote" style="margin-top:8px">3000m Super Final은 세계선수권 개인전 메달 집계와 분리해 표시합니다.</div>
           </div>
-          ${superFinalRows ? `<div><div class="approved-overview-heading">3000m Super Final 성적</div><div class="table-scroll"><table><thead><tr><th>연도</th><th>대회</th><th>종목</th><th>순위</th><th>기록</th></tr></thead><tbody>${superFinalRows}</tbody></table></div></div>` : ''}
         </div>`;
     }
 
@@ -6279,7 +6288,11 @@
     const mt = norm(row && row.medal_type);
     return mt === 'relay' || e.includes('relay') || e.includes('계주') || e.includes('3000m relay') || e.includes('5000m relay') || e.includes('mixed');
   }
-  function isIndividual(row){ return !isRelay(row); }
+  function isIndividual(row){
+    const mt = norm(row && row.medal_type);
+    const e = eventText(row);
+    return mt !== 'superfinal' && !e.includes('super final') && !e.includes('superfinal') && !e.includes('3000') && !isRelay(row);
+  }
   function playerRows(name){
     const target = normName(name);
     const rows = [];
@@ -6316,6 +6329,8 @@
     return out;
   }
   window.renderPlayerAchievementBadgesForce = function(name){
+    const duplicateLine = document.getElementById('playerAchievementBadgesLine');
+    if(duplicateLine) duplicateLine.remove();
     const wrap = ensureBadgeWrap();
     if(!wrap) return;
     const playerName = name || (document.getElementById('playerName') ? document.getElementById('playerName').textContent : '');
