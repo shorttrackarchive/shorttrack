@@ -3760,8 +3760,20 @@
 
       const groups=[
         {label:tr('individual'), rows:rows.filter(row=>row.medal_type==='Individual')},
-        {label:relaySummaryLabel(), rows:rows.filter(row=>row.medal_type==='Relay')},
-        {label:tr('olympic'), rows:rows.filter(row=>competitionBucket(row.competition_type)==='olympic')},
+        {
+          label:currentLang === 'en' ? 'Olympic relay medals' : '올림픽 계주 메달',
+          rows:rows.filter(row=>
+            competitionBucket(row.competition_type)==='olympic' &&
+            row.medal_type==='Relay'
+          )
+        },
+        {
+          label:currentLang === 'en' ? 'Olympic individual medals' : '올림픽 개인전 메달',
+          rows:rows.filter(row=>
+            competitionBucket(row.competition_type)==='olympic' &&
+            row.medal_type==='Individual'
+          )
+        },
         {label:worldSummaryLabel(), rows:rows.filter(row=>competitionBucket(row.competition_type)==='worlds')},
         {label:tr('worldCupTour'), rows:rows.filter(row=>competitionBucket(row.competition_type)==='worldcup')}
       ];
