@@ -708,6 +708,7 @@
     .view-btn{border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:7px 10px;cursor:pointer;font-weight:800;font-size:12px}
     .view-btn.active{background:#fff;color:#1e3a8a;border-color:#fff}
     @media(max-width:820px){header .view-toggle{position:static;margin:0 auto 16px}}
+    .mobile-settings-btn{display:none;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);color:#fff;border-radius:999px;padding:8px 12px;cursor:pointer;font-weight:850;font-size:13px}
 
     .mobile-home-section,.mobile-bottom-nav{display:none}
     .mobile-home-hero{display:grid;gap:14px}
@@ -728,7 +729,9 @@
     body.st-view-mobile header h1{font-size:24px;letter-spacing:-.03em}
     body.st-view-mobile header p{font-size:13px;line-height:1.45}
     body.st-view-mobile header .visitor-widget{display:none !important}
-    body.st-view-mobile header .language-toggle,body.st-view-mobile header .view-toggle{position:static !important;margin:0 0 10px !important;justify-content:flex-start}
+    body.st-view-mobile .mobile-settings-btn{display:inline-flex;align-items:center;justify-content:center;margin:0 0 10px}
+    body.st-view-mobile header .language-toggle,body.st-view-mobile header .view-toggle{display:none !important;position:static !important;margin:0 0 8px !important;justify-content:flex-start}
+    body.st-view-mobile header.mobile-settings-open .language-toggle,body.st-view-mobile header.mobile-settings-open .view-toggle{display:flex !important}
     body.st-view-mobile .side-nav{display:none !important}
     body.st-view-mobile main{max-width:720px !important;margin:0 auto 76px !important;padding:12px 12px 94px !important}
     body.st-view-mobile .mobile-home-section{display:block}
@@ -773,6 +776,7 @@
         <div class="visitor-row"><span data-i18n="todayVisitors">오늘 방문자 수</span><strong id="todayVisitors">-</strong></div>
         <div class="visitor-row"><span data-i18n="totalVisitors">총 방문자 수</span><strong id="totalVisitors">-</strong></div>
       </aside>
+    <button type="button" class="mobile-settings-btn" onclick="toggleMobileSettings()" aria-expanded="false" data-i18n="mobileSettings">설정</button>
     <div class="language-toggle" aria-label="Language">
       <button type="button" class="lang-btn active" data-lang="ko" onclick="setLanguage('ko')">한국어</button>
       <button type="button" class="lang-btn" data-lang="en" onclick="setLanguage('en')">ENG</button>
@@ -1920,7 +1924,7 @@
         appSubtitle:'월드컵 · 월드투어 · 세계선수권 · 올림픽 쇼트트랙 포디움 아카이브', todayVisitors:'오늘 방문자 수', totalVisitors:'총 방문자 수',
         navTitle:'바로가기', navSearch:'검색', navHelp:'도움말', navAcademy:'쇼트트랙 아카데미', navSkaterRank:'선수별 종합 순위', navCompare:'선수 비교', navCountryRank:'국가별 메달 순위', navEventRank:'종목별 선수 순위', navHallOfFame:'명예의 전당', navCardMaker:'선수 카드 만들기', navHeatTool:'조편성 계산기', navQuiz:'랜덤 퀴즈',
         navReport:'오류 신고 및 문의', navRecordRank:'종목별 기록 순위', navLapRank:'랩타임 순위', navRecords:'각종 기록',
-        viewAuto:'자동', viewMobile:'모바일', viewDesktop:'데스크탑',
+        viewAuto:'자동', viewMobile:'모바일', viewDesktop:'데스크탑', mobileSettings:'설정',
         bottomHome:'홈', bottomSearch:'검색', bottomRank:'랭킹', bottomRecords:'기록', bottomMore:'더보기',
         mobileHomeKicker:'Mobile Archive', mobileHomeTitle:'검색부터 빠르게 시작하세요', mobileHomeDesc:'선수, 국가, 대회, 종목을 한 번에 찾고 자주 보는 기록으로 바로 이동합니다.', mobileSearchPlaceholder:'선수·국가·대회 검색',
         mobileQuickSkaterRank:'선수 종합 순위', mobileQuickSkaterRankDesc:'가장 많이 보는 기본 랭킹', mobileQuickRecordRank:'종목별 기록', mobileQuickRecordRankDesc:'500m·1000m·1500m 기록 순위', mobileQuickLapRank:'랩타임 순위', mobileQuickLapRankDesc:'빠른 랩 기록 확인', mobileQuickHall:'명예의 전당', mobileQuickHallDesc:'대표 기록 카드 모음',
@@ -1973,7 +1977,7 @@
         appSubtitle:'Short track podium archive for World Cup, World Tour, World Championships, and Olympics',
         navTitle:'Menu', navSearch:'Search', navHelp:'Help', navAcademy:'Short Track Academy', navSkaterRank:'Overall Skater Ranking', navCompare:'Compare Skaters', navCountryRank:'Country Medal Ranking', navEventRank:'Event Ranking', navHallOfFame:'Hall of Fame', navCardMaker:'Card Maker', navHeatTool:'Heat Draw Tool', navQuiz:'Random Quiz',
         navReport:'Report / Contact', navRecordRank:'Event Record Ranking', navLapRank:'Lap Time Ranking', navRecords:'Records',
-        viewAuto:'Auto', viewMobile:'Mobile', viewDesktop:'Desktop',
+        viewAuto:'Auto', viewMobile:'Mobile', viewDesktop:'Desktop', mobileSettings:'Settings',
         bottomHome:'Home', bottomSearch:'Search', bottomRank:'Rank', bottomRecords:'Records', bottomMore:'More',
         mobileHomeKicker:'Mobile Archive', mobileHomeTitle:'Start with search', mobileHomeDesc:'Find skaters, countries, competitions, and events at once, then jump to frequently used records.', mobileSearchPlaceholder:'Search skater, country, or competition',
         mobileQuickSkaterRank:'Skater ranking', mobileQuickSkaterRankDesc:'The main ranking most users check', mobileQuickRecordRank:'Event records', mobileQuickRecordRankDesc:'500m, 1000m, and 1500m record ranking', mobileQuickLapRank:'Lap ranking', mobileQuickLapRankDesc:'Check the fastest lap records', mobileQuickHall:'Hall of Fame', mobileQuickHallDesc:'Featured record cards',
@@ -2151,6 +2155,14 @@
       setTimeout(()=>target?.focus(), 260);
     }
     window.focusMobileSearch = focusMobileSearch;
+    function toggleMobileSettings(){
+      const header = document.querySelector('header');
+      if(!header) return;
+      const open = !header.classList.contains('mobile-settings-open');
+      header.classList.toggle('mobile-settings-open', open);
+      document.querySelector('.mobile-settings-btn')?.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    window.toggleMobileSettings = toggleMobileSettings;
     function initViewModeControls(){
       currentViewMode = readSavedViewMode();
       applyViewMode();
@@ -2423,6 +2435,24 @@
     }
 
     function normalizeAliasRow(row){return {alias_name:String(row.alias_name||'').trim(),canonical_name:String(row.canonical_name||'').trim(),country:String(row.country||'').trim(),note:String(row.note||'').trim()};}
+    function koreanAliasForSkater(name){
+      const canonical = canonicalSkaterName(name);
+      const keys = new Set([aliasKey(name), aliasKey(canonical), looseNameKey(name), looseNameKey(canonical)]);
+      const row = (skaterAliases || []).find(item => {
+        const alias = String(item.alias_name || '').trim();
+        const itemCanonical = canonicalSkaterName(item.canonical_name);
+        if(!/[가-힣]/.test(alias)) return false;
+        return keys.has(aliasKey(item.canonical_name)) || keys.has(aliasKey(itemCanonical)) || keys.has(looseNameKey(item.canonical_name)) || keys.has(looseNameKey(itemCanonical));
+      });
+      return row ? String(row.alias_name || '').trim() : '';
+    }
+    function displaySkaterNameHtml(name){
+      const local = koreanAliasForSkater(name);
+      if(local && aliasKey(local) !== aliasKey(name)){
+        return `${escapeHtml(name)}<span class="skater-local-name">${escapeHtml(local)}</span>`;
+      }
+      return escapeHtml(name);
+    }
     function normalizeMedalRow(row){const original=String(row.skater_name||'').trim();return {competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,country:String(row.country||'').trim(),time:String(row.time||'').trim(),note:String(row.note||'').trim()};}
     function normalizeRelayRow(row){const original=String(row.skater_name||'').trim();return {competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),country:String(row.country||'').trim(),team_name:String(row.team_name||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,time:String(row.time||'').trim(),note:String(row.note||'').trim()};}
     function normalizeBestTimeRow(row){
@@ -3050,6 +3080,18 @@
 
       rows=rows.slice(0,50);
 
+      const mobileCards = `<div class="mobile-card-list rank-mobile-cards">${rows.map((row,i)=>`
+        <article class="mobile-data-card rank-mobile-card">
+          <div class="mobile-card-topline"><span class="mobile-rank-badge">#${i+1}</span>${skaterCustomScoreEnabled?`<strong class="mobile-record-time">${formatScore(row.customScore)}</strong>`:''}</div>
+          <div class="mobile-card-title"><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${displaySkaterNameHtml(row.name)}</span></div>
+          <div class="mobile-card-meta">${escapeHtml(row.country || '-')} · 금 ${row.total.gold} · 은 ${row.total.silver} · 동 ${row.total.bronze} · 합계 ${medalTotal(row.total)}</div>
+          <div class="mobile-rank-medal-grid">
+            <div><span>올림픽</span><strong>${row.olympic.gold}/${row.olympic.silver}/${row.olympic.bronze}</strong></div>
+            <div><span>세계선수권</span><strong>${row.worlds.gold}/${row.worlds.silver}/${row.worlds.bronze}</strong></div>
+            <div><span>월드컵·투어</span><strong>${row.worldcup.gold}/${row.worldcup.silver}/${row.worldcup.bronze}</strong></div>
+          </div>
+        </article>`).join('')}</div>`;
+
       const scoreHead = skaterCustomScoreEnabled ? `<th rowspan="2" class="sort-th score-col" onclick="setSkaterSort('custom_score')">${tr('score')}${sortArrow('custom_score')}</th>` : '';
       const worldsOverallHead = skaterRankingOptions.separateWorldsOverall
         ? `<th colspan="4" class="group-head">${tr('worldsOverallGroup')}</th>`
@@ -3067,7 +3109,8 @@
       const rankingOptionSummary = getSkaterRankingOptionSummary();
 
       wrap.innerHTML=`<div class="subnote">${tr('top50Only')} ${rankingOptionSummary}</div>
-      <div class="table-scroll"><table class="medal-detail-table">
+      ${mobileCards}
+      <div class="desktop-data-table table-scroll"><table class="medal-detail-table">
         <thead>
           <tr>
             <th rowspan="2" class="rank-col">${tr('rank')}</th>
@@ -3106,7 +3149,7 @@
         </thead>
         <tbody>${rows.map((row,i)=>`<tr>
           <td class="rank-col">${i+1}</td>
-          <td class="name-col"><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}</span></td>
+          <td class="name-col"><span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${displaySkaterNameHtml(row.name)}</span></td>
           <td class="country-col">${escapeHtml(row.country)}</td>
           <td class="medal-num">${row.olympic.gold}</td><td class="medal-num">${row.olympic.silver}</td><td class="medal-num">${row.olympic.bronze}</td><td class="medal-num rank-total">${medalTotal(row.olympic)}</td>
           <td class="medal-num">${row.worlds.gold}</td><td class="medal-num">${row.worlds.silver}</td><td class="medal-num">${row.worlds.bronze}</td><td class="medal-num rank-total">${medalTotal(row.worlds)}</td>
@@ -3333,7 +3376,19 @@
       });
       const ranking=[...map.values()].sort(rankSort).slice(0,20);
       const groupLabel = countryRankingGroup==='olympics'?tr('olympics'):countryRankingGroup==='worlds'?tr('worlds'):countryRankingGroup==='worldcup'?tr('worldcupTour'):tr('all');
-      wrap.innerHTML=`<div class="subnote">${tr('currentCompetition')}: ${groupLabel} · ${tr('top20')}</div><div class="table-scroll"><table><thead><tr><th>${tr('rank')}</th><th>${tr('country')}</th><th>${tr('gold')}</th><th>${tr('silver')}</th><th>${tr('bronze')}</th><th>${tr('total')}</th></tr></thead><tbody>${ranking.map((row,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHtml(row.country)}</strong></td><td>${row.gold}</td><td>${row.silver}</td><td>${row.bronze}</td><td><strong>${row.total}</strong></td></tr>`).join('')}</tbody></table></div>`;
+      const mobileCards = `<div class="mobile-card-list country-mobile-cards">${ranking.map((row,i)=>`
+        <article class="mobile-data-card country-mobile-card">
+          <div class="mobile-card-topline"><span class="mobile-rank-badge">#${i+1}</span><strong class="mobile-record-time">${row.total}</strong></div>
+          <div class="mobile-card-title">${escapeHtml(row.country)}</div>
+          <div class="mobile-card-meta">${groupLabel} · 금 ${row.gold} · 은 ${row.silver} · 동 ${row.bronze}</div>
+          <div class="mobile-rank-medal-grid">
+            <div><span>금</span><strong>${row.gold}</strong></div>
+            <div><span>은</span><strong>${row.silver}</strong></div>
+            <div><span>동</span><strong>${row.bronze}</strong></div>
+          </div>
+          <div class="mobile-card-action"><button type="button" class="st-mini-btn" onclick="openCountryPage('${escapeJs(row.country)}')">국가 페이지</button></div>
+        </article>`).join('')}</div>`;
+      wrap.innerHTML=`<div class="subnote">${tr('currentCompetition')}: ${groupLabel} · ${tr('top20')}</div>${mobileCards}<div class="desktop-data-table table-scroll"><table><thead><tr><th>${tr('rank')}</th><th>${tr('country')}</th><th>${tr('gold')}</th><th>${tr('silver')}</th><th>${tr('bronze')}</th><th>${tr('total')}</th></tr></thead><tbody>${ranking.map((row,i)=>`<tr><td>${i+1}</td><td><strong>${escapeHtml(row.country)}</strong></td><td>${row.gold}</td><td>${row.silver}</td><td>${row.bronze}</td><td><strong>${row.total}</strong></td></tr>`).join('')}</tbody></table></div>`;
     }
 
 
@@ -5380,12 +5435,16 @@
 
     function stClearSearchView(){
       if(searchInput) searchInput.value = '';
+      const mobileInput=document.getElementById('mobileSearchInput');
+      if(mobileInput) mobileInput.value = '';
       applyFilters();
       document.getElementById('searchSection')?.scrollIntoView({behavior:'smooth', block:'start'});
     }
 
     function stSetQuery(value){
       if(searchInput) searchInput.value = value;
+      const mobileInput=document.getElementById('mobileSearchInput');
+      if(mobileInput) mobileInput.value = value;
       applyFilters();
       document.getElementById(ST_SEARCH_VIEW_ID)?.scrollIntoView({behavior:'smooth', block:'start'});
     }
@@ -5675,10 +5734,21 @@
         return ch;
       }).join('');
     }
+    function stDistanceSearchKey(value){
+      const raw = String(value || '').toLowerCase().replace(/\s+/g,' ');
+      if(/\b500\s*m\b|500m|500미터/.test(raw) && !/\b1500\s*m\b|1500m/.test(raw)) return '500m';
+      if(/\b1000\s*m\b|1000m|1000미터/.test(raw)) return '1000m';
+      if(/\b1500\s*m\b|1500m|1500미터/.test(raw)) return '1500m';
+      if(/mixed.*relay|혼성.*계주/.test(raw)) return 'mixedrelay';
+      if(/women.*relay|여자.*계주|3000\s*m.*relay|3000m.*relay/.test(raw)) return 'womenrelay';
+      if(/men.*relay|남자.*계주|5000\s*m.*relay|5000m.*relay/.test(raw)) return 'menrelay';
+      return '';
+    }
     function stNormalizeForSearch(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[\s._\-–—/()\[\],·]+/g,'');}
     function stSearchCandidatesForRow(row){
       const values=[row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.original_skater_name,row.country,row.team_name,row.time,row.note,row.__source].filter(Boolean).map(String);
-      return [...values, ...values.map(stKoreanInitials)];
+      const distanceValues = values.map(stDistanceSearchKey).filter(Boolean);
+      return [...values, ...distanceValues, ...values.map(stKoreanInitials)];
     }
     function stEditDistance(a,b,limit=2){
       a=stNormalizeForSearch(a); b=stNormalizeForSearch(b);
@@ -5700,9 +5770,11 @@
       const raw=stText(query);
       if(!raw) return true;
       const q=stNormalizeForSearch(raw);
+      const distanceQuery=stDistanceSearchKey(raw);
       const initials=stNormalizeForSearch(stKoreanInitials(raw));
       const candidates=stSearchCandidatesForRow(row);
       const normalizedCandidates=candidates.map(stNormalizeForSearch).filter(Boolean);
+      if(distanceQuery && normalizedCandidates.includes(distanceQuery)) return true;
       if(normalizedCandidates.some(c=>c.includes(q) || q.includes(c))) return true;
       if(initials && normalizedCandidates.some(c=>c.includes(initials))) return true;
       const tokens=raw.split(/\s+/).filter(Boolean);
@@ -7338,6 +7410,11 @@
   body.st-view-mobile .mobile-card-detail span{color:var(--muted);flex:0 0 auto}
   body.st-view-mobile .mobile-card-detail strong{font-weight:850;text-align:right;color:#172033}
   body.st-view-mobile .mobile-card-action{margin-top:10px}
+  body.st-view-mobile .mobile-rank-medal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+  body.st-view-mobile .mobile-rank-medal-grid div{border:1px solid #eef2f7;background:#fbfdff;border-radius:12px;padding:8px;text-align:center}
+  body.st-view-mobile .mobile-rank-medal-grid span{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
+  body.st-view-mobile .mobile-rank-medal-grid strong{font-size:15px;color:#172033}
+  .skater-local-name{display:block;font-size:11px;font-weight:750;color:var(--muted);line-height:1.3;margin-top:2px}
 
   body.st-view-mobile .mobile-player-snapshot{display:block;border:1px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#fff);border-radius:18px;padding:14px;margin:0 0 12px}
   body.st-view-mobile .mobile-player-snapshot h3{margin:0 0 5px;font-size:18px;line-height:1.25}
@@ -7348,6 +7425,12 @@
   body.st-view-mobile .mobile-player-stat strong{font-size:18px;color:#1e3a8a}
   body.st-view-mobile .mobile-player-tabs{display:flex;gap:8px;overflow-x:auto;margin:10px 0 2px;padding-bottom:3px}
   body.st-view-mobile .mobile-player-tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;font-size:13px;font-weight:850;white-space:nowrap}
+  body.st-view-mobile .mobile-player-tabs button.active{background:#2563eb;color:#fff;border-color:#2563eb}
+  .mobile-player-best-panel{display:none}
+  body.st-view-mobile .mobile-player-best-panel{display:none;gap:10px;margin:10px 0}
+  body.st-view-mobile .mobile-player-best-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:13px}
+  body.st-view-mobile .mobile-player-best-card strong{display:block;font-size:18px;color:#1e3a8a;margin-bottom:6px}
+  body.st-view-mobile .mobile-player-best-card span{display:block;font-size:12px;color:var(--muted);line-height:1.5}
   body.st-view-mobile #playerPanel > .summary{display:none}
   body.st-view-mobile #playerPanel .approved-profile-grid{grid-template-columns:repeat(2,1fr)}
   body.st-view-mobile #playerPanel .approved-overview-split{display:grid;gap:12px}
@@ -7409,13 +7492,40 @@
         tabs.id = 'mobilePlayerTabs';
         tabs.className = 'mobile-player-tabs';
         tabs.innerHTML = `
-          <button type="button" onclick="stMobileScrollPlayer('playerOverviewTable')">요약</button>
-          <button type="button" onclick="stMobileScrollPlayer('playerOverviewTable')">최고기록</button>
-          <button type="button" onclick="stMobileScrollPlayer('playerTimeline')">타임라인</button>
+          <button type="button" data-mobile-player-tab="overview" onclick="stMobileSetPlayerTab('overview')">요약</button>
+          <button type="button" data-mobile-player-tab="best" onclick="stMobileSetPlayerTab('best')">최고기록</button>
+          <button type="button" data-mobile-player-tab="timeline" onclick="stMobileSetPlayerTab('timeline')">타임라인</button>
         `;
         snapshot.insertAdjacentElement('afterend', tabs);
       }
       return tabs;
+    }
+    function ensurePlayerBestPanel(){
+      const tabs = ensurePlayerTabs();
+      if(!tabs) return null;
+      let panel = document.getElementById('mobilePlayerBestPanel');
+      if(!panel){
+        panel = document.createElement('div');
+        panel.id = 'mobilePlayerBestPanel';
+        panel.className = 'mobile-player-best-panel';
+        tabs.insertAdjacentElement('afterend', panel);
+      }
+      return panel;
+    }
+    function buildMobilePlayerBestPanel(name){
+      const panel = ensurePlayerBestPanel();
+      if(!panel) return;
+      let bestMap = null;
+      try{
+        bestMap = typeof personalBestMapForPlayer === 'function' ? personalBestMapForPlayer(name) : null;
+      }catch(_e){}
+      const events = ['500m','1000m','1500m'];
+      panel.innerHTML = events.map(event=>{
+        const row = bestMap && bestMap.get ? bestMap.get(event) : null;
+        const time = row ? (row.time || row.best_time || '-') : '-';
+        const details = row ? [row.competition_name, row.round, row.season || row.year].filter(Boolean).join(' · ') : '기록 없음';
+        return `<article class="mobile-player-best-card"><strong>${mobileEscape(event)} · ${mobileEscape(time)}</strong><span>${mobileEscape(details)}</span></article>`;
+      }).join('');
     }
     function buildMobilePlayerSnapshot(){
       const snapshot = ensurePlayerSnapshot();
@@ -7437,9 +7547,26 @@
         </div>
       `;
       ensurePlayerTabs();
+      buildMobilePlayerBestPanel(name);
+      stMobileSetPlayerTab(document.getElementById('playerPanel')?.dataset.mobileTab || 'overview');
     }
-    window.stMobileScrollPlayer = function(id){
-      document.getElementById(id)?.scrollIntoView({behavior:'smooth', block:'start'});
+    window.stMobileSetPlayerTab = function(tab){
+      const panel = document.getElementById('playerPanel');
+      const overview = document.getElementById('playerOverviewTable');
+      const timeline = document.getElementById('playerTimeline');
+      const best = document.getElementById('mobilePlayerBestPanel');
+      const overviewTitle = overview?.previousElementSibling;
+      const timelineTitle = timeline?.previousElementSibling;
+      const oldBestTitle = document.getElementById('playerBestTimeTable')?.previousElementSibling;
+      const next = ['overview','best','timeline'].includes(tab) ? tab : 'overview';
+      if(panel) panel.dataset.mobileTab = next;
+      if(overview) overview.style.display = next === 'overview' ? '' : 'none';
+      if(best) best.style.display = next === 'best' ? 'grid' : 'none';
+      if(timeline) timeline.style.display = next === 'timeline' ? '' : 'none';
+      if(overviewTitle?.classList?.contains('section-title')) overviewTitle.style.display = next === 'overview' ? '' : 'none';
+      if(timelineTitle?.classList?.contains('section-title')) timelineTitle.style.display = next === 'timeline' ? '' : 'none';
+      if(oldBestTitle?.classList?.contains('section-title')) oldBestTitle.style.display = 'none';
+      document.querySelectorAll('[data-mobile-player-tab]').forEach(btn=>btn.classList.toggle('active', btn.dataset.mobilePlayerTab === next));
     };
     function setupMobileFilter(sectionId, controlsSelector, title){
       const section = document.getElementById(sectionId);
