@@ -7444,6 +7444,16 @@
   body.st-view-mobile .mobile-card-more{border-top:1px solid #eef2f7;margin-top:10px;padding-top:8px}
   body.st-view-mobile .mobile-card-more summary{cursor:pointer;font-size:12px;font-weight:900;color:#1e40af;list-style:none}
   body.st-view-mobile .mobile-card-more summary::-webkit-details-marker{display:none}
+  .mobile-table-cards{display:none}
+  body.st-view-mobile .mobile-table-source{display:none}
+  body.st-view-mobile .mobile-table-cards{display:grid}
+  body.st-view-mobile .mobile-table-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+  body.st-view-mobile .mobile-table-card-head strong{font-size:15px;line-height:1.35;color:#111827}
+  body.st-view-mobile .mobile-table-card-head span{font-size:12px;font-weight:900;color:#1e40af;text-align:right}
+  body.st-view-mobile .mobile-table-row-list{display:grid;gap:7px;border-top:1px solid #eef2f7;padding-top:8px}
+  body.st-view-mobile .mobile-table-row{display:flex;justify-content:space-between;gap:12px;font-size:12px;line-height:1.45}
+  body.st-view-mobile .mobile-table-row span{color:var(--muted);flex:0 0 auto}
+  body.st-view-mobile .mobile-table-row strong{font-weight:850;text-align:right;color:#172033}
   body.st-view-mobile .mobile-rank-medal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
   body.st-view-mobile .mobile-rank-medal-grid div{border:1px solid #eef2f7;background:#fbfdff;border-radius:12px;padding:8px;text-align:center}
   body.st-view-mobile .mobile-rank-medal-grid span{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
@@ -7497,8 +7507,11 @@
   body.st-view-mobile #playerPanel .timeline-item{font-size:12.5px}
 
   body.st-view-mobile .mobile-filter-toggle{display:inline-flex;align-items:center;justify-content:center;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;border-radius:999px;padding:9px 13px;font-size:13px;font-weight:900;margin:0 0 10px;cursor:pointer}
+  .mobile-filter-panel{display:contents}
+  body.st-view-mobile .mobile-filter-panel{display:none}
   body.st-view-mobile #recordRankingSection:not(.mobile-filter-open) .record-ranking-controls,
   body.st-view-mobile #lapRankingSection:not(.mobile-filter-open) .lap-ranking-controls{display:none}
+  body.st-view-mobile .mobile-filter-open .mobile-filter-panel,
   body.st-view-mobile .mobile-filter-open .record-ranking-controls,
   body.st-view-mobile .mobile-filter-open .lap-ranking-controls{display:block;position:fixed;left:10px;right:10px;bottom:calc(66px + env(safe-area-inset-bottom));z-index:150;max-height:72vh;overflow:auto;border-radius:22px;background:#fff;box-shadow:0 24px 70px rgba(15,23,42,.32);padding:14px}
   body.st-view-mobile .mobile-filter-open .mobile-filter-backdrop{display:block;position:fixed;inset:0;z-index:140;border:0;background:rgba(15,23,42,.36);cursor:pointer}
@@ -7506,7 +7519,14 @@
   body.st-view-mobile .mobile-filter-sheet-head strong{font-size:16px}
   body.st-view-mobile .mobile-filter-sheet-head button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-weight:850}
   body.st-view-mobile .mobile-filter-open .record-ranking-grid,
-  body.st-view-mobile .mobile-filter-open .lap-ranking-grid{grid-template-columns:1fr}
+  body.st-view-mobile .mobile-filter-open .lap-ranking-grid,
+  body.st-view-mobile .mobile-filter-open .score-grid,
+  body.st-view-mobile .mobile-filter-open .quiz-grid{grid-template-columns:1fr}
+  body.st-view-mobile .mobile-filter-open .ranking-filter-row,
+  body.st-view-mobile .mobile-filter-open .era-controls,
+  body.st-view-mobile .mobile-filter-open .tabs,
+  body.st-view-mobile .mobile-filter-open .compare-controls,
+  body.st-view-mobile .mobile-filter-open .quiz-actions{overflow:visible;flex-wrap:wrap}
 
   body.st-view-mobile .st-search-head h2{font-size:20px}
   body.st-view-mobile .st-search-featured{border-radius:18px;padding:14px}
@@ -7677,6 +7697,7 @@
       if(list.classList.contains('record-mobile-cards')) return '기록 더 보기';
       if(list.classList.contains('lap-mobile-cards')) return '랩타임 더 보기';
       if(list.classList.contains('search-mobile-row-cards')) return '원자료 더 보기';
+      if(list.classList.contains('mobile-table-cards')) return '표 항목 더 보기';
       return '더 보기';
     }
     let mobileListRefreshQueued = false;
@@ -7728,10 +7749,72 @@
         refreshMobileCardListLimits();
       });
     }
+    let mobileTableRefreshQueued = false;
+    function cleanCellText(cell){
+      return (cell?.textContent || '').replace(/\s+/g,' ').trim();
+    }
+    function shouldSkipMobileTable(table){
+      if(!table || table.closest('.desktop-data-table,.mobile-table-cards,.st-mobile-raw-details')) return true;
+      if(table.querySelector('input,select,textarea')) return true;
+      const rows = table.querySelectorAll('tbody tr');
+      return rows.length === 0;
+    }
+    function tableSignature(table){
+      const rows = table.querySelectorAll('tbody tr').length;
+      const cols = table.querySelector('tbody tr')?.children.length || 0;
+      return `${rows}:${cols}:${cleanCellText(table).slice(0,400)}`;
+    }
+    function tableHeaders(table){
+      const headers = Array.from(table.querySelectorAll('thead th')).map(cleanCellText);
+      if(headers.length) return headers;
+      const first = table.querySelector('tbody tr');
+      return first ? Array.from(first.children).map((_,idx)=>`항목 ${idx+1}`) : [];
+    }
+    function convertTableToMobileCards(table){
+      if(shouldSkipMobileTable(table)) return;
+      const source = table.closest('.table-scroll') || table;
+      const signature = tableSignature(table);
+      if(source.dataset.mobileTableSignature === signature) return;
+      source.dataset.mobileTableSignature = signature;
+      source.classList.add('mobile-table-source');
+      const old = source.nextElementSibling?.classList?.contains('mobile-table-cards') ? source.nextElementSibling : null;
+      if(old) old.remove();
+      const headers = tableHeaders(table);
+      const rows = Array.from(table.querySelectorAll('tbody tr')).slice(0,120);
+      if(!headers.length || !rows.length) return;
+      const cards = rows.map(row=>{
+        const cells = Array.from(row.children);
+        const title = cells[0]?.innerHTML || '-';
+        const side = cells[1]?.innerHTML || '';
+        const details = cells.slice(2).map((cell,idx)=>{
+          const label = headers[idx+2] || `항목 ${idx+3}`;
+          return `<div class="mobile-table-row"><span>${mobileEscape(label)}</span><strong>${cell.innerHTML || '-'}</strong></div>`;
+        }).join('');
+        return `<article class="mobile-data-card mobile-table-card">
+          <div class="mobile-table-card-head"><strong>${title}</strong>${side ? `<span>${side}</span>` : ''}</div>
+          ${details ? `<div class="mobile-table-row-list">${details}</div>` : ''}
+        </article>`;
+      }).join('');
+      const hidden = Math.max(0, table.querySelectorAll('tbody tr').length - rows.length);
+      source.insertAdjacentHTML('afterend', `<div class="mobile-card-list mobile-table-cards">${cards}${hidden ? `<div class="st-empty-small">외 ${hidden}건은 표 보기에서 확인할 수 있습니다.</div>` : ''}</div>`);
+    }
+    function refreshMobileTableCards(){
+      document.querySelectorAll('.table-scroll table').forEach(convertTableToMobileCards);
+      refreshMobileCardListLimits();
+    }
+    function scheduleMobileTableCardRefresh(){
+      if(mobileTableRefreshQueued) return;
+      mobileTableRefreshQueued = true;
+      requestAnimationFrame(()=>{
+        mobileTableRefreshQueued = false;
+        refreshMobileTableCards();
+      });
+    }
     function initMobileMutationObserver(){
       if(window.__stMobileMutationObserver) return;
       window.__stMobileMutationObserver = new MutationObserver(()=>{
         scheduleMobileCardListRefresh();
+        scheduleMobileTableCardRefresh();
         scheduleMobileNavActive();
       });
       window.__stMobileMutationObserver.observe(document.body,{childList:true,subtree:true});
@@ -7932,10 +8015,11 @@
       const controls = section?.querySelector(controlsSelector);
       if(!section || !controls || section.dataset.mobileFilterReady) return;
       section.dataset.mobileFilterReady = '1';
+      controls.classList.add('mobile-filter-panel');
       const toggle = document.createElement('button');
       toggle.type = 'button';
       toggle.className = 'mobile-filter-toggle';
-      toggle.textContent = '필터';
+      toggle.textContent = '필터 설정';
       toggle.addEventListener('click', () => section.classList.add('mobile-filter-open'));
       controls.insertAdjacentElement('beforebegin', toggle);
 
@@ -7952,7 +8036,46 @@
       head.querySelector('button')?.addEventListener('click', () => section.classList.remove('mobile-filter-open'));
       controls.prepend(head);
     }
+    function setupMobileFilterGroup(sectionId, selectors, title){
+      const section = document.getElementById(sectionId);
+      if(!section || section.dataset.mobileFilterGroupReady) return;
+      const rawNodes = selectors.flatMap(selector=>Array.from(section.querySelectorAll(selector)))
+        .filter((node,idx,list)=>node && !node.closest('.mobile-filter-panel') && list.indexOf(node) === idx);
+      const nodes = rawNodes.filter(node=>!rawNodes.some(other=>other !== node && other.contains(node)));
+      if(!nodes.length) return;
+      section.dataset.mobileFilterGroupReady = '1';
+      const panel = document.createElement('div');
+      panel.className = 'mobile-filter-panel';
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'mobile-filter-toggle';
+      toggle.textContent = '필터 설정';
+      toggle.addEventListener('click', () => section.classList.add('mobile-filter-open'));
+
+      const head = document.createElement('div');
+      head.className = 'mobile-filter-sheet-head';
+      head.innerHTML = `<strong>${mobileEscape(title)}</strong><button type="button">닫기</button>`;
+      head.querySelector('button')?.addEventListener('click', () => section.classList.remove('mobile-filter-open'));
+      panel.appendChild(head);
+
+      const first = nodes[0];
+      first.insertAdjacentElement('beforebegin', toggle);
+      toggle.insertAdjacentElement('afterend', panel);
+      nodes.forEach(node=>panel.appendChild(node));
+
+      const backdrop = document.createElement('button');
+      backdrop.type = 'button';
+      backdrop.className = 'mobile-filter-backdrop';
+      backdrop.setAttribute('aria-label', '필터 닫기');
+      backdrop.addEventListener('click', () => section.classList.remove('mobile-filter-open'));
+      section.appendChild(backdrop);
+    }
     function initMobileEnhancements(){
+      setupMobileFilterGroup('skaterRankingSection', ['.ranking-filter-row','.era-controls','.score-actions','#skaterScorePanel'], '선수 순위 필터 설정');
+      setupMobileFilterGroup('countryRankingSection', ['.tabs','.era-controls'], '국가 순위 필터 설정');
+      setupMobileFilterGroup('eventRankingSection', ['.tabs','.era-controls','.ranking-filter-row','#eventScorePanel'], '종목별 선수 순위 필터 설정');
+      setupMobileFilterGroup('compareSection', ['.ranking-filter-row','.era-controls','#compareScorePanel','.compare-controls'], '선수 비교 설정');
+      setupMobileFilterGroup('quizSection', ['.quiz-controls'], '퀴즈 설정');
       setupMobileFilter('recordRankingSection', '.record-ranking-controls', '종목별 기록 필터');
       setupMobileFilter('lapRankingSection', '.lap-ranking-controls', '랩타임 필터');
       document.querySelectorAll('.mobile-bottom-nav [data-mobile-nav-target]').forEach(btn=>{
@@ -7964,6 +8087,7 @@
       buildMobilePlayerSnapshot();
       initMobileMutationObserver();
       refreshMobileCardListLimits();
+      refreshMobileTableCards();
       updateMobileBottomNavActive();
     }
     window.addEventListener('scroll', scheduleMobileNavActive, {passive:true});
