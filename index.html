@@ -723,7 +723,8 @@
     .mobile-quick-btn span{display:block;font-size:12px;color:var(--muted);line-height:1.35}
     .mobile-bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:120;grid-template-columns:repeat(5,1fr);gap:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);box-shadow:0 -12px 30px rgba(15,23,42,.12);backdrop-filter:blur(12px);padding:7px max(8px,env(safe-area-inset-left)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-right))}
     .mobile-bottom-nav button{border:0;background:transparent;color:#334155;border-radius:14px;padding:8px 4px;font-size:12px;font-weight:850;cursor:pointer}
-    .mobile-bottom-nav button:active{background:#eff6ff;color:#1d4ed8}
+    .mobile-bottom-nav button:active,.mobile-bottom-nav button.active{background:#eff6ff;color:#1d4ed8}
+    .mobile-bottom-nav button.active{box-shadow:inset 0 0 0 1px #bfdbfe}
     body.st-view-mobile{background:#eef2f7}
     body.st-view-mobile header{padding:22px 14px 18px;text-align:left}
     body.st-view-mobile header h1{font-size:24px;letter-spacing:-.03em}
@@ -811,11 +812,11 @@
   </nav>
 
   <nav class="mobile-bottom-nav" aria-label="모바일 하단 메뉴">
-    <button type="button" data-i18n="bottomHome" onclick="scrollToSection('mobileHomeSection')">홈</button>
-    <button type="button" data-i18n="bottomSearch" onclick="focusMobileSearch()">검색</button>
-    <button type="button" data-i18n="bottomRank" onclick="scrollToSection('skaterRankingSection')">랭킹</button>
-    <button type="button" data-i18n="bottomRecords" onclick="scrollToSection('recordRankingSection'); loadEventRecords();">기록</button>
-    <button type="button" data-i18n="bottomMore" onclick="scrollToSection('hallOfFameSection')">더보기</button>
+    <button type="button" data-i18n="bottomHome" data-mobile-nav-target="mobileHomeSection" onclick="scrollToSection('mobileHomeSection')">홈</button>
+    <button type="button" data-i18n="bottomSearch" data-mobile-nav-target="searchSection" onclick="focusMobileSearch()">검색</button>
+    <button type="button" data-i18n="bottomRank" data-mobile-nav-target="skaterRankingSection" onclick="scrollToSection('skaterRankingSection')">랭킹</button>
+    <button type="button" data-i18n="bottomRecords" data-mobile-nav-target="recordRankingSection" onclick="scrollToSection('recordRankingSection'); loadEventRecords();">기록</button>
+    <button type="button" data-i18n="bottomMore" data-mobile-nav-target="hallOfFameSection" onclick="scrollToSection('hallOfFameSection')">더보기</button>
   </nav>
 
   <div class="report-modal-backdrop" id="reportModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
@@ -887,6 +888,7 @@
           <button type="button" class="mobile-quick-btn" onclick="scrollToSection('lapRankingSection'); loadLapRankings();"><strong data-i18n="mobileQuickLapRank">랩타임 순위</strong><span data-i18n="mobileQuickLapRankDesc">빠른 랩 기록 확인</span></button>
           <button type="button" class="mobile-quick-btn" onclick="scrollToSection('hallOfFameSection')"><strong data-i18n="mobileQuickHall">명예의 전당</strong><span data-i18n="mobileQuickHallDesc">대표 기록 카드 모음</span></button>
         </div>
+        <div class="mobile-recent-players" id="mobileRecentPlayers"></div>
       </div>
     </section>
 
@@ -6052,6 +6054,28 @@
       return __stOriginalStFeaturedHtml ? __stOriginalStFeaturedHtml(data) : '';
     };
 
+    function stRecentRowsTableHtml(rows, extraClass=''){
+      return `<div class="${extraClass}table-scroll"><table class="st-result-table"><thead><tr><th>대회</th><th>시즌</th><th>종목</th><th>메달</th><th>선수/팀</th><th>국가</th><th>기록</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${competitionTypeBadgeHtml(row.competition_type)}${stHtml(row.competition_name||'-')}</td><td>${stHtml(normalizeSeasonLabel(row.season,row.year)||'-')}</td><td>${stHtml(row.event||'-')}</td><td>${stHtml(stMedalLabel(row.medal))}</td><td>${stHtml(row.skater_name||row.team_name||'-')}</td><td>${stHtml(row.country||'-')}</td><td>${stHtml(row.time||'-')}</td></tr>`).join('')}</tbody></table></div>`;
+    }
+    function stMobileRecentRowsHtml(rows){
+      return `<div class="mobile-card-list search-mobile-row-cards">${rows.map((row,idx)=>{
+        const season=normalizeSeasonLabel(row.season,row.year)||'-';
+        const medal=stMedalLabel(row.medal);
+        const player=row.skater_name||row.team_name||'-';
+        const playerHtml=(row.skater_name && !(typeof isRelayEvent === 'function' && isRelayEvent(row.event))) ? `<span class="link" onclick="openPlayerPanel('${stJs(row.skater_name)}')">${stHtml(row.skater_name)}</span>` : stHtml(player);
+        return `<article class="mobile-data-card search-mobile-row-card">
+          <div class="mobile-card-topline"><span class="mobile-rank-badge">#${idx+1}</span><strong class="mobile-record-time">${stHtml(row.time||medal||'-')}</strong></div>
+          <div class="mobile-card-title">${playerHtml}</div>
+          <div class="mobile-card-meta">${stHtml(row.country||'-')} · ${stHtml(row.event||'-')} · ${stHtml(medal||'-')}</div>
+          <details class="mobile-card-more">
+            <summary>대회 보기</summary>
+            <div class="mobile-card-detail"><span>대회</span><strong>${competitionTypeBadgeHtml(row.competition_type)}${stHtml(row.competition_name||'-')}</strong></div>
+            <div class="mobile-card-detail"><span>시즌</span><strong>${stHtml(season)}</strong></div>
+          </details>
+        </article>`;
+      }).join('')}</div>`;
+    }
+
     const __stOriginalRenderSearchResultView = typeof renderSearchResultView === 'function' ? renderSearchResultView : null;
     renderSearchResultView = function(){
       const view=stEnsureSearchView();
@@ -6067,7 +6091,7 @@
       const sections={skater:playersSection,country:countriesSection,competition:competitionsSection,event:eventsSection,season:seasonsSection};
       const orderMap={skater:['skater','competition','event','country','season'],country:['country','skater','competition','event','season'],competition:['competition','event','skater','country','season'],event:['event','skater','competition','country','season'],season:['season','competition','event','skater','country']};
       const ordered=(orderMap[data.type.key]||orderMap.skater).map(key=>sections[key]);
-      const recentRowsHtml=data.recentRows.length?`<div class="st-result-section" style="grid-column:1/-1"><h3>관련 원자료 일부</h3><div class="table-scroll"><table class="st-result-table"><thead><tr><th>대회</th><th>시즌</th><th>종목</th><th>메달</th><th>선수/팀</th><th>국가</th><th>기록</th></tr></thead><tbody>${data.recentRows.map(row=>`<tr><td>${competitionTypeBadgeHtml(row.competition_type)}${stHtml(row.competition_name||'-')}</td><td>${stHtml(normalizeSeasonLabel(row.season,row.year)||'-')}</td><td>${stHtml(row.event||'-')}</td><td>${stHtml(stMedalLabel(row.medal))}</td><td>${stHtml(row.skater_name||row.team_name||'-')}</td><td>${stHtml(row.country||'-')}</td><td>${stHtml(row.time||'-')}</td></tr>`).join('')}</tbody></table></div></div>`:'';
+      const recentRowsHtml=data.recentRows.length?`<div class="st-result-section" style="grid-column:1/-1"><h3>관련 원자료 일부</h3>${stMobileRecentRowsHtml(data.recentRows)}<details class="st-mobile-raw-details"><summary>표로 보기</summary>${stRecentRowsTableHtml(data.recentRows)}</details>${stRecentRowsTableHtml(data.recentRows,'desktop-data-table ')}</div>`:'';
       const suggestions=(data.suggestions||[]).map(v=>`<button type="button" class="suggest-chip" onclick="stSetQuery('${stJs(v)}')">${stHtml(v)}</button>`).join('');
       const emptyHelp=data.total?'':`<div class="notice"><strong>검색 결과가 없습니다.</strong><br>철자, 띄어쓰기, 영문 표기를 조금 바꿔 보세요. 예: 김길리, KOR, World Tour, 2025-26, 1500m${suggestions?`<div class="suggestion-row">${suggestions}</div>`:''}</div>`;
       view.innerHTML=`<div class="st-search-head"><div><h2>“${stHtml(query)}” 검색 결과</h2><p>검색어 유형에 맞춰 선수·국가·대회·종목·시즌 결과를 따로 정리합니다.</p><span class="st-search-type">${stHtml(data.type.label)}</span><div class="st-count-row"><span class="st-count-chip">전체 ${data.total}건</span><span class="st-count-chip">선수 ${data.players.length}</span><span class="st-count-chip">국가 ${data.countries.length}</span><span class="st-count-chip">대회 ${data.competitions.length}</span><span class="st-count-chip">종목 ${data.events.length}</span><span class="st-count-chip">시즌 ${data.seasons.length}</span></div></div><div class="st-search-actions"><button type="button" class="sort-btn" onclick="stClearSearchView()">검색 초기화</button></div></div>${emptyHelp}${stFeaturedHtml(data)}<div class="st-result-grid">${ordered.join('')}${recentRowsHtml}</div>`;
@@ -6305,10 +6329,13 @@
           <div class="mobile-card-topline"><span class="mobile-rank-badge">#${idx+1}</span><strong class="mobile-record-time">${row.lap_time.toFixed(2)}</strong></div>
           <div class="mobile-card-title">${escapeHtml(row.skater_name || '-')}</div>
           <div class="mobile-card-meta">${escapeHtml(row.country || '-')} · ${escapeHtml(row.gender || '-')} · ${escapeHtml(row.event || '-')}</div>
-          <div class="mobile-card-detail"><span>대회</span><strong>${escapeHtml(row.competition_name || '-')}</strong></div>
-          <div class="mobile-card-detail"><span>시즌/라운드</span><strong>${escapeHtml(row.season || '-')} · ${escapeHtml(row.round || '-')} · H${escapeHtml(row.heat || '-')}</strong></div>
-          <div class="mobile-card-detail"><span>Lap / 분류</span><strong>${row.lap_no || '-'} · <span class="lap-badge ${lapContextClass(context)}">${lapContextLabel(context)}</span></strong></div>
-          <div class="mobile-card-detail"><span>근거</span><strong>${escapeHtml(basis)}</strong></div>
+          <details class="mobile-card-more">
+            <summary>상세 보기</summary>
+            <div class="mobile-card-detail"><span>대회</span><strong>${escapeHtml(row.competition_name || '-')}</strong></div>
+            <div class="mobile-card-detail"><span>시즌/라운드</span><strong>${escapeHtml(row.season || '-')} · ${escapeHtml(row.round || '-')} · H${escapeHtml(row.heat || '-')}</strong></div>
+            <div class="mobile-card-detail"><span>Lap / 분류</span><strong>${row.lap_no || '-'} · <span class="lap-badge ${lapContextClass(context)}">${lapContextLabel(context)}</span></strong></div>
+            <div class="mobile-card-detail"><span>근거</span><strong>${escapeHtml(basis)}</strong></div>
+          </details>
         </article>`;
       }).join('')}</div>`;
       const html=`${cards}<div class="desktop-data-table table-scroll"><table><thead><tr>
@@ -7015,9 +7042,12 @@
         <div class="mobile-card-topline"><span class="mobile-rank-badge">#${idx + 1}</span><strong class="mobile-record-time">${recordEscape(row.time)}</strong></div>
         <div class="mobile-card-title">${recordEscape(row.skater_name)}</div>
         <div class="mobile-card-meta">${recordEscape(row.country || '-')} · ${recordEscape(recordEventLabel(row.event))} · ${recordEscape(row.season || '-')}</div>
-        <div class="mobile-card-detail"><span>대회</span><strong>${recordEscape(row.competition_name || '-')}</strong></div>
-        <div class="mobile-card-detail"><span>라운드 최종 순위</span><strong>${recordEscape(row.final_rank || '-')}</strong></div>
-        ${source ? `<div class="mobile-card-action">${source}</div>` : ''}
+        <details class="mobile-card-more">
+          <summary>상세 보기</summary>
+          <div class="mobile-card-detail"><span>대회</span><strong>${recordEscape(row.competition_name || '-')}</strong></div>
+          <div class="mobile-card-detail"><span>라운드 최종 순위</span><strong>${recordEscape(row.final_rank || '-')}</strong></div>
+          ${source ? `<div class="mobile-card-action">${source}</div>` : ''}
+        </details>
       </article>`;
     }).join('')}</div>`;
 
@@ -7394,6 +7424,7 @@
   .mobile-card-list,
   .mobile-player-snapshot,
   .mobile-player-tabs,
+  .mobile-player-medals-panel,
   .mobile-filter-toggle,
   .mobile-filter-backdrop,
   .mobile-filter-sheet-head{display:none}
@@ -7410,11 +7441,27 @@
   body.st-view-mobile .mobile-card-detail span{color:var(--muted);flex:0 0 auto}
   body.st-view-mobile .mobile-card-detail strong{font-weight:850;text-align:right;color:#172033}
   body.st-view-mobile .mobile-card-action{margin-top:10px}
+  body.st-view-mobile .mobile-card-more{border-top:1px solid #eef2f7;margin-top:10px;padding-top:8px}
+  body.st-view-mobile .mobile-card-more summary{cursor:pointer;font-size:12px;font-weight:900;color:#1e40af;list-style:none}
+  body.st-view-mobile .mobile-card-more summary::-webkit-details-marker{display:none}
   body.st-view-mobile .mobile-rank-medal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
   body.st-view-mobile .mobile-rank-medal-grid div{border:1px solid #eef2f7;background:#fbfdff;border-radius:12px;padding:8px;text-align:center}
   body.st-view-mobile .mobile-rank-medal-grid span{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
   body.st-view-mobile .mobile-rank-medal-grid strong{font-size:15px;color:#172033}
   .skater-local-name{display:block;font-size:11px;font-weight:750;color:var(--muted);line-height:1.3;margin-top:2px}
+  .mobile-recent-players{display:none}
+  body.st-view-mobile #searchSection{padding:8px 12px;background:transparent;box-shadow:none;border:0;margin-top:-4px}
+  body.st-view-mobile #searchSection .controls{display:none}
+  body.st-view-mobile #loadingStatus{display:block;text-align:left;padding:0 2px;color:var(--muted);font-size:12px;line-height:1.45}
+  body.st-view-mobile #loadingStatus::before{content:'상태 · ';font-weight:900;color:#1e40af}
+  body.st-view-mobile.st-search-active #searchSection{display:block}
+  body.st-view-mobile .mobile-recent-players{display:block;border-top:1px solid #eef2f7;padding-top:12px}
+  body.st-view-mobile .mobile-recent-players:empty{display:none}
+  body.st-view-mobile .mobile-recent-title{font-size:12px;font-weight:900;color:var(--muted);margin-bottom:8px}
+  body.st-view-mobile .mobile-recent-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+  body.st-view-mobile .mobile-recent-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:850;white-space:nowrap;cursor:pointer}
+  body.st-view-mobile .player-local-alias{font-size:13px;color:#1e40af;font-weight:900;margin-top:3px}
+  body.st-view-mobile .mobile-player-local-name{margin:0 0 6px;color:#1e40af;font-size:13px;font-weight:900}
 
   body.st-view-mobile .mobile-player-snapshot{display:block;border:1px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#fff);border-radius:18px;padding:14px;margin:0 0 12px}
   body.st-view-mobile .mobile-player-snapshot h3{margin:0 0 5px;font-size:18px;line-height:1.25}
@@ -7431,6 +7478,18 @@
   body.st-view-mobile .mobile-player-best-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:13px}
   body.st-view-mobile .mobile-player-best-card strong{display:block;font-size:18px;color:#1e3a8a;margin-bottom:6px}
   body.st-view-mobile .mobile-player-best-card span{display:block;font-size:12px;color:var(--muted);line-height:1.5}
+  body.st-view-mobile .mobile-player-medals-panel{display:none;margin:10px 0}
+  body.st-view-mobile .mobile-medal-group{border:1px solid var(--line);background:#fff;border-radius:16px;margin-bottom:10px;overflow:hidden}
+  body.st-view-mobile .mobile-medal-group summary{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;padding:12px 13px;font-weight:950;list-style:none}
+  body.st-view-mobile .mobile-medal-group summary::-webkit-details-marker{display:none}
+  body.st-view-mobile .mobile-medal-group summary span{font-size:14px;color:#111827}
+  body.st-view-mobile .mobile-medal-group summary strong{font-size:12px;color:#1e40af;white-space:nowrap}
+  body.st-view-mobile .mobile-medal-list{display:grid;gap:8px;padding:0 10px 10px}
+  body.st-view-mobile .mobile-medal-card{border:1px solid #eef2f7;background:#fbfdff;border-radius:14px;padding:11px}
+  body.st-view-mobile .mobile-medal-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}
+  body.st-view-mobile .mobile-medal-card-head strong{font-size:15px;color:#111827}
+  body.st-view-mobile .mobile-medal-card-meta{font-size:12px;color:var(--muted);line-height:1.45}
+  body.st-view-mobile .mobile-medal-card-note{border-top:1px solid #eef2f7;margin-top:8px;padding-top:7px;font-size:12px;color:#374151;line-height:1.45}
   body.st-view-mobile #playerPanel > .summary{display:none}
   body.st-view-mobile #playerPanel .approved-profile-grid{grid-template-columns:repeat(2,1fr)}
   body.st-view-mobile #playerPanel .approved-overview-split{display:grid;gap:12px}
@@ -7453,10 +7512,21 @@
   body.st-view-mobile .st-search-featured{border-radius:18px;padding:14px}
   body.st-view-mobile .st-result-grid{grid-template-columns:1fr;gap:10px}
   body.st-view-mobile .st-result-section{border-radius:16px;padding:12px}
+  body.st-view-mobile .st-count-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+  body.st-view-mobile .st-count-chip{white-space:nowrap}
   body.st-view-mobile .st-result-item,
   body.st-view-mobile .st-result-card-rich{border-radius:15px;background:#fff}
   body.st-view-mobile .st-result-item-top{flex-direction:column}
   body.st-view-mobile .st-mini-btn{width:100%;justify-content:center}
+  .search-mobile-row-cards,
+  .st-mobile-raw-details{display:none}
+  body.st-view-mobile .search-mobile-row-cards{display:grid}
+  body.st-view-mobile .st-mobile-raw-details{display:block;border-top:1px solid #eef2f7;margin-top:10px;padding-top:8px}
+  body.st-view-mobile .st-mobile-raw-details summary{cursor:pointer;font-size:12px;font-weight:900;color:#1e40af;list-style:none}
+  body.st-view-mobile .st-mobile-raw-details summary::-webkit-details-marker{display:none}
+  .mobile-list-toggle{display:none}
+  body.st-view-mobile .mobile-list-toggle{display:flex;align-items:center;justify-content:center;position:relative;z-index:2;width:100%;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;border-radius:999px;padding:10px 13px;font-size:13px;font-weight:900;cursor:pointer;margin:8px 0 12px}
+  body.st-view-mobile .mobile-list-toggle .count{font-weight:800;color:#475569;margin-left:6px}
 
   @media(max-width:430px){
     body.st-view-mobile .mobile-player-stat-grid{grid-template-columns:repeat(2,1fr)}
@@ -7466,9 +7536,205 @@
 
 <script>
   (function(){
+    const RECENT_PLAYERS_KEY = 'shorttrack_recent_players_v1';
     function mobileEscape(value){
       if(typeof escapeHtml === 'function') return escapeHtml(value);
-      return String(value || '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+      return String(value == null ? '' : value).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+    }
+    function mobileJs(value){
+      if(typeof escapeJs === 'function') return escapeJs(value);
+      return String(value == null ? '' : value).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n').replace(/\r/g,'');
+    }
+    function localNameFor(name){
+      try{
+        return typeof koreanAliasForSkater === 'function' ? koreanAliasForSkater(name) : '';
+      }catch(_e){
+        return '';
+      }
+    }
+    function updatePlayerLocalAlias(name){
+      const title = document.getElementById('playerName');
+      if(!title) return;
+      let alias = document.getElementById('playerLocalAlias');
+      if(!alias){
+        alias = document.createElement('div');
+        alias.id = 'playerLocalAlias';
+        alias.className = 'player-local-alias';
+        const row = title.closest('.player-title-row');
+        if(row) row.insertAdjacentElement('afterend', alias);
+        else title.insertAdjacentElement('afterend', alias);
+      }
+      const local = localNameFor(name);
+      alias.textContent = local && local !== name ? local : '';
+      alias.style.display = alias.textContent ? '' : 'none';
+    }
+    function readRecentPlayers(){
+      try{
+        const parsed = JSON.parse(localStorage.getItem(RECENT_PLAYERS_KEY) || '[]');
+        return Array.isArray(parsed) ? parsed.filter(Boolean).slice(0, 8) : [];
+      }catch(_e){
+        return [];
+      }
+    }
+    function saveRecentPlayer(name){
+      const clean = String(name || '').trim();
+      if(!clean) return;
+      const next = [clean].concat(readRecentPlayers().filter(item => item !== clean)).slice(0, 8);
+      try{ localStorage.setItem(RECENT_PLAYERS_KEY, JSON.stringify(next)); }catch(_e){}
+    }
+    function renderRecentPlayers(){
+      const wrap = document.getElementById('mobileRecentPlayers');
+      if(!wrap) return;
+      const items = readRecentPlayers();
+      if(!items.length){
+        wrap.innerHTML = '';
+        return;
+      }
+      wrap.innerHTML = `<div class="mobile-recent-title">최근 본 선수</div><div class="mobile-recent-list">${items.map(name => `<button type="button" class="mobile-recent-chip" onclick="openPlayerPanel('${mobileJs(name)}')">${mobileEscape(name)}</button>`).join('')}</div>`;
+    }
+    const mobileNavSections = [
+      ['mobileHomeSection','mobileHomeSection'],
+      ['searchSection','searchSection'],
+      ['stSearchResultView','searchSection'],
+      ['playerPanel','skaterRankingSection'],
+      ['skaterRankingSection','skaterRankingSection'],
+      ['countryRankingSection','skaterRankingSection'],
+      ['eventRankingSection','skaterRankingSection'],
+      ['recordRankingSection','recordRankingSection'],
+      ['lapRankingSection','recordRankingSection'],
+      ['hallOfFameSection','hallOfFameSection'],
+      ['compareSection','hallOfFameSection'],
+      ['cardMakerSection','hallOfFameSection'],
+      ['tierMakerSection','hallOfFameSection'],
+      ['heatToolSection','hallOfFameSection'],
+      ['quizSection','hallOfFameSection']
+    ];
+    let mobileNavTicking = false;
+    let mobileNavIntentTarget = '';
+    let mobileNavIntentUntil = 0;
+    function setMobileNavActive(target){
+      document.querySelectorAll('.mobile-bottom-nav [data-mobile-nav-target]').forEach(btn=>{
+        btn.classList.toggle('active', btn.dataset.mobileNavTarget === target);
+      });
+    }
+    function setMobileNavIntent(target, duration=1800){
+      if(!target) return;
+      mobileNavIntentTarget = target;
+      mobileNavIntentUntil = Date.now() + duration;
+      setMobileNavActive(target);
+    }
+    function mobileNavTargetForSection(sectionId){
+      const found = mobileNavSections.find(([id]) => id === sectionId);
+      return found ? found[1] : '';
+    }
+    function updateMobileBottomNavActive(){
+      if(!document.body.classList.contains('st-view-mobile')){
+        setMobileNavActive('');
+        return;
+      }
+      if(mobileNavIntentTarget && Date.now() < mobileNavIntentUntil){
+        setMobileNavActive(mobileNavIntentTarget);
+        return;
+      }
+      if(document.body.classList.contains('st-search-active')){
+        setMobileNavActive('searchSection');
+        return;
+      }
+      const anchorY = Math.min(window.innerHeight * 0.32, 260);
+      let bestTarget = 'mobileHomeSection';
+      let bestDistance = Infinity;
+      mobileNavSections.forEach(([sectionId,target])=>{
+        const el = document.getElementById(sectionId);
+        if(!el) return;
+        const rect = el.getBoundingClientRect();
+        if(rect.height < 1 || rect.bottom < 72 || rect.top > window.innerHeight * 0.82) return;
+        const distance = Math.abs(rect.top - anchorY);
+        if(distance < bestDistance){
+          bestDistance = distance;
+          bestTarget = target;
+        }
+      });
+      setMobileNavActive(bestTarget);
+    }
+    function scheduleMobileNavActive(){
+      if(mobileNavTicking) return;
+      mobileNavTicking = true;
+      requestAnimationFrame(()=>{
+        mobileNavTicking = false;
+        updateMobileBottomNavActive();
+      });
+    }
+    function mobileListLimitFor(list){
+      if(list.classList.contains('search-mobile-row-cards')) return 4;
+      if(list.classList.contains('country-mobile-cards')) return 10;
+      if(list.classList.contains('rank-mobile-cards')) return 10;
+      if(list.classList.contains('record-mobile-cards') || list.classList.contains('lap-mobile-cards')) return 15;
+      return 12;
+    }
+    function mobileListLabelFor(list){
+      if(list.classList.contains('rank-mobile-cards')) return '선수 더 보기';
+      if(list.classList.contains('country-mobile-cards')) return '국가 더 보기';
+      if(list.classList.contains('record-mobile-cards')) return '기록 더 보기';
+      if(list.classList.contains('lap-mobile-cards')) return '랩타임 더 보기';
+      if(list.classList.contains('search-mobile-row-cards')) return '원자료 더 보기';
+      return '더 보기';
+    }
+    let mobileListRefreshQueued = false;
+    function refreshMobileCardListLimits(){
+      const isMobile = document.body.classList.contains('st-view-mobile');
+      document.querySelectorAll('.mobile-card-list').forEach(list=>{
+        const cards = Array.from(list.children).filter(el=>el.classList.contains('mobile-data-card'));
+        const existing = list.nextElementSibling?.classList?.contains('mobile-list-toggle') ? list.nextElementSibling : null;
+        cards.forEach(card=>{
+          card.hidden = false;
+          card.style.display = '';
+        });
+        if(!isMobile || !cards.length){
+          if(existing) existing.hidden = true;
+          return;
+        }
+        const limit = mobileListLimitFor(list);
+        if(cards.length <= limit){
+          if(existing) existing.hidden = true;
+          return;
+        }
+        if(!list.dataset.mobileListState) list.dataset.mobileListState = 'collapsed';
+        const expanded = list.dataset.mobileListState === 'expanded';
+        cards.forEach((card,idx)=>{
+          card.style.display = !expanded && idx >= limit ? 'none' : '';
+        });
+        let button = existing;
+        if(!button){
+          button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'mobile-list-toggle';
+          button.addEventListener('click', ()=>{
+            list.dataset.mobileListState = list.dataset.mobileListState === 'expanded' ? 'collapsed' : 'expanded';
+            refreshMobileCardListLimits();
+            if(list.dataset.mobileListState === 'collapsed') list.scrollIntoView({behavior:'smooth',block:'start'});
+          });
+          list.insertAdjacentElement('afterend', button);
+        }
+        button.hidden = false;
+        const shown = expanded ? cards.length : Math.min(limit, cards.length);
+        button.innerHTML = `${expanded ? '접기' : mobileListLabelFor(list)} <span class="count">${shown}/${cards.length}</span>`;
+      });
+    }
+    function scheduleMobileCardListRefresh(){
+      if(mobileListRefreshQueued) return;
+      mobileListRefreshQueued = true;
+      requestAnimationFrame(()=>{
+        mobileListRefreshQueued = false;
+        refreshMobileCardListLimits();
+      });
+    }
+    function initMobileMutationObserver(){
+      if(window.__stMobileMutationObserver) return;
+      window.__stMobileMutationObserver = new MutationObserver(()=>{
+        scheduleMobileCardListRefresh();
+        scheduleMobileNavActive();
+      });
+      window.__stMobileMutationObserver.observe(document.body,{childList:true,subtree:true});
     }
     function ensurePlayerSnapshot(){
       const panel = document.getElementById('playerPanel');
@@ -7493,6 +7759,7 @@
         tabs.className = 'mobile-player-tabs';
         tabs.innerHTML = `
           <button type="button" data-mobile-player-tab="overview" onclick="stMobileSetPlayerTab('overview')">요약</button>
+          <button type="button" data-mobile-player-tab="medals" onclick="stMobileSetPlayerTab('medals')">메달</button>
           <button type="button" data-mobile-player-tab="best" onclick="stMobileSetPlayerTab('best')">최고기록</button>
           <button type="button" data-mobile-player-tab="timeline" onclick="stMobileSetPlayerTab('timeline')">타임라인</button>
         `;
@@ -7511,6 +7778,92 @@
         tabs.insertAdjacentElement('afterend', panel);
       }
       return panel;
+    }
+    function ensurePlayerMedalsPanel(){
+      const bestPanel = ensurePlayerBestPanel();
+      if(!bestPanel) return null;
+      let panel = document.getElementById('mobilePlayerMedalsPanel');
+      if(!panel){
+        panel = document.createElement('div');
+        panel.id = 'mobilePlayerMedalsPanel';
+        panel.className = 'mobile-player-medals-panel';
+        bestPanel.insertAdjacentElement('afterend', panel);
+      }
+      return panel;
+    }
+    function medalBucketText(rows){
+      let gold = 0, silver = 0, bronze = 0;
+      rows.forEach(row=>{
+        if(row.medal === 'Gold') gold += 1;
+        else if(row.medal === 'Silver') silver += 1;
+        else if(row.medal === 'Bronze') bronze += 1;
+      });
+      return `금 ${gold} · 은 ${silver} · 동 ${bronze} · 합계 ${rows.length}`;
+    }
+    function medalGroupBucket(row){
+      try{
+        if(typeof competitionBucket === 'function') return competitionBucket(row.competition_type);
+      }catch(_e){}
+      const type = String(row.competition_type || '').toLowerCase();
+      if(type.includes('olympic')) return 'olympic';
+      if(type.includes('world championship')) return 'worlds';
+      if(type.includes('world cup') || type.includes('world tour')) return 'worldcup';
+      return 'other';
+    }
+    function mobileSortPlayerMedals(rows){
+      return rows.slice().sort((a,b)=>{
+        const seasonDiff = (typeof seasonSortValue === 'function' ? seasonSortValue(b.season,b.year) - seasonSortValue(a.season,a.year) : 0);
+        if(seasonDiff) return seasonDiff;
+        const yearDiff = Number(b.year || 0) - Number(a.year || 0);
+        if(yearDiff) return yearDiff;
+        const compDiff = typeof competitionOrderForPlayerDetail === 'function' ? competitionOrderForPlayerDetail(a) - competitionOrderForPlayerDetail(b) : 0;
+        if(compDiff) return compDiff;
+        const eventDiff = typeof playerDetailEventOrder === 'function' ? playerDetailEventOrder(a) - playerDetailEventOrder(b) : 0;
+        if(eventDiff) return eventDiff;
+        return typeof medalOrderForPlayerDetail === 'function' ? medalOrderForPlayerDetail(a.medal) - medalOrderForPlayerDetail(b.medal) : 0;
+      });
+    }
+    function mobileMedalCard(row){
+      const season = typeof normalizeSeasonLabel === 'function' ? normalizeSeasonLabel(row.season, row.year) : (row.season || row.year || '-');
+      const medalText = typeof medalKorean === 'function' ? medalKorean(row.medal) : (row.medal || '-');
+      const medalClass = String(row.medal || '').toLowerCase();
+      const typeBadge = typeof competitionTypeBadgeHtml === 'function' ? competitionTypeBadgeHtml(row.competition_type) : '';
+      const note = [row.time, row.note].filter(Boolean).join(' · ');
+      return `<article class="mobile-medal-card">
+        <div class="mobile-medal-card-head"><span class="medal-pill ${mobileEscape(medalClass)}">${mobileEscape(medalText)}</span><strong>${mobileEscape(row.event || '-')}</strong></div>
+        <div class="mobile-medal-card-meta">${typeBadge}${mobileEscape(row.competition_name || season || '-')} · ${mobileEscape(season || '-')} · ${mobileEscape(row.gender || '-')}</div>
+        ${note ? `<div class="mobile-medal-card-note">${mobileEscape(note)}</div>` : ''}
+      </article>`;
+    }
+    function mobileMedalGroup(label, rows, open){
+      if(!rows.length) return '';
+      const sorted = mobileSortPlayerMedals(rows);
+      const hidden = Math.max(0, sorted.length - 80);
+      return `<details class="mobile-medal-group" ${open ? 'open' : ''}>
+        <summary><span>${mobileEscape(label)}</span><strong>${mobileEscape(medalBucketText(rows))}</strong></summary>
+        <div class="mobile-medal-list">${sorted.slice(0,80).map(mobileMedalCard).join('')}${hidden ? `<div class="st-empty-small">외 ${hidden}건은 타임라인에서 더 볼 수 있습니다.</div>` : ''}</div>
+      </details>`;
+    }
+    function buildMobilePlayerMedalsPanel(name){
+      const panel = ensurePlayerMedalsPanel();
+      if(!panel) return;
+      const rows = (typeof skaterMedals !== 'undefined' ? skaterMedals : []).filter(row => row.skater_name === name);
+      if(!rows.length){
+        panel.innerHTML = '<div class="empty">표시할 메달 기록이 없습니다.</div>';
+        return;
+      }
+      const individual = rows.filter(row => row.medal_type === 'Individual' && !(typeof isWorldChampionshipSuperFinalRow === 'function' && isWorldChampionshipSuperFinalRow(row)));
+      const relay = rows.filter(row => row.medal_type === 'Relay' || (typeof isRelayEvent === 'function' && isRelayEvent(row.event)));
+      const superFinal = rows.filter(row => row.medal_type === 'SuperFinal' || (typeof isWorldChampionshipSuperFinalRow === 'function' && isWorldChampionshipSuperFinalRow(row)));
+      const groups = [
+        ['올림픽 개인전', individual.filter(row => medalGroupBucket(row) === 'olympic')],
+        ['세계선수권 개인전', individual.filter(row => medalGroupBucket(row) === 'worlds')],
+        ['월드컵·월드투어 개인전', individual.filter(row => medalGroupBucket(row) === 'worldcup')],
+        ['계주·팀', relay],
+        ['3000m S.F.', superFinal],
+        ['기타 개인전', individual.filter(row => !['olympic','worlds','worldcup'].includes(medalGroupBucket(row)))]
+      ].filter(([,list]) => list.length);
+      panel.innerHTML = groups.length ? groups.map((group, idx) => mobileMedalGroup(group[0], group[1], idx === 0)).join('') : '<div class="empty">표시할 메달 기록이 없습니다.</div>';
     }
     function buildMobilePlayerBestPanel(name){
       const panel = ensurePlayerBestPanel();
@@ -7532,12 +7885,15 @@
       if(!snapshot) return;
       const name = document.getElementById('playerName')?.textContent || '선수';
       const info = document.getElementById('playerInfo')?.textContent || '';
+      const local = localNameFor(name);
       const total = document.getElementById('playerTotal')?.textContent || '0';
       const gold = document.getElementById('playerGold')?.textContent || '0';
       const silver = document.getElementById('playerSilver')?.textContent || '0';
       const bronze = document.getElementById('playerBronze')?.textContent || '0';
+      updatePlayerLocalAlias(name);
       snapshot.innerHTML = `
         <h3>핵심 요약</h3>
+        ${local && local !== name ? `<p class="mobile-player-local-name">${mobileEscape(local)}</p>` : ''}
         <p>${mobileEscape(info)}</p>
         <div class="mobile-player-stat-grid">
           <div class="mobile-player-stat"><span>개인전</span><strong>${mobileEscape(total)}</strong></div>
@@ -7548,6 +7904,7 @@
       `;
       ensurePlayerTabs();
       buildMobilePlayerBestPanel(name);
+      buildMobilePlayerMedalsPanel(name);
       stMobileSetPlayerTab(document.getElementById('playerPanel')?.dataset.mobileTab || 'overview');
     }
     window.stMobileSetPlayerTab = function(tab){
@@ -7555,13 +7912,15 @@
       const overview = document.getElementById('playerOverviewTable');
       const timeline = document.getElementById('playerTimeline');
       const best = document.getElementById('mobilePlayerBestPanel');
+      const medals = document.getElementById('mobilePlayerMedalsPanel');
       const overviewTitle = overview?.previousElementSibling;
       const timelineTitle = timeline?.previousElementSibling;
       const oldBestTitle = document.getElementById('playerBestTimeTable')?.previousElementSibling;
-      const next = ['overview','best','timeline'].includes(tab) ? tab : 'overview';
+      const next = ['overview','medals','best','timeline'].includes(tab) ? tab : 'overview';
       if(panel) panel.dataset.mobileTab = next;
       if(overview) overview.style.display = next === 'overview' ? '' : 'none';
       if(best) best.style.display = next === 'best' ? 'grid' : 'none';
+      if(medals) medals.style.display = next === 'medals' ? 'block' : 'none';
       if(timeline) timeline.style.display = next === 'timeline' ? '' : 'none';
       if(overviewTitle?.classList?.contains('section-title')) overviewTitle.style.display = next === 'overview' ? '' : 'none';
       if(timelineTitle?.classList?.contains('section-title')) timelineTitle.style.display = next === 'timeline' ? '' : 'none';
@@ -7596,14 +7955,46 @@
     function initMobileEnhancements(){
       setupMobileFilter('recordRankingSection', '.record-ranking-controls', '종목별 기록 필터');
       setupMobileFilter('lapRankingSection', '.lap-ranking-controls', '랩타임 필터');
+      document.querySelectorAll('.mobile-bottom-nav [data-mobile-nav-target]').forEach(btn=>{
+        if(btn.dataset.mobileNavReady) return;
+        btn.dataset.mobileNavReady = '1';
+        btn.addEventListener('click', () => setMobileNavIntent(btn.dataset.mobileNavTarget));
+      });
+      renderRecentPlayers();
       buildMobilePlayerSnapshot();
+      initMobileMutationObserver();
+      refreshMobileCardListLimits();
+      updateMobileBottomNavActive();
+    }
+    window.addEventListener('scroll', scheduleMobileNavActive, {passive:true});
+    window.addEventListener('resize', ()=>{
+      scheduleMobileNavActive();
+      scheduleMobileCardListRefresh();
+    }, {passive:true});
+    const previousScrollToSection = window.scrollToSection;
+    if(typeof previousScrollToSection === 'function'){
+      const wrappedScrollToSection = function(){
+        const intendedTarget = mobileNavTargetForSection(arguments[0]);
+        if(intendedTarget) setMobileNavIntent(intendedTarget);
+        const result = previousScrollToSection.apply(this, arguments);
+        scheduleMobileNavActive();
+        setTimeout(scheduleMobileNavActive, 120);
+        setTimeout(scheduleMobileCardListRefresh, 160);
+        return result;
+      };
+      window.scrollToSection = wrappedScrollToSection;
+      try{ scrollToSection = wrappedScrollToSection; }catch(_e){}
     }
     const previousOpenPlayerPanel = window.openPlayerPanel;
     if(typeof previousOpenPlayerPanel === 'function'){
       window.openPlayerPanel = function(){
+        const playerName = arguments[0];
         const result = previousOpenPlayerPanel.apply(this, arguments);
+        saveRecentPlayer(playerName);
+        renderRecentPlayers();
         setTimeout(buildMobilePlayerSnapshot, 40);
         setTimeout(buildMobilePlayerSnapshot, 180);
+        setTimeout(scheduleMobileNavActive, 220);
         return result;
       };
     }
