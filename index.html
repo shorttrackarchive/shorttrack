@@ -70,6 +70,23 @@
     .side-nav button:hover{background:#eff6ff;color:#1d4ed8}
     .side-nav button.nav-soon{color:var(--muted)}
     .side-nav button.nav-soon:hover{background:#f3f4f6;color:#374151}
+    .side-nav-title{order:0}
+    .side-nav [data-i18n="navSearch"]{order:1}
+    .side-nav [data-i18n="navHelp"]{order:2}
+    .side-nav [data-i18n="navAcademy"]{order:3}
+    .side-nav [data-i18n="navSkaterRank"]{order:4}
+    .side-nav [data-i18n="navEventRank"]{order:5}
+    .side-nav [data-i18n="navRecordRank"]{order:6}
+    .side-nav [data-i18n="navLapRank"]{order:7}
+    .side-nav [data-i18n="navCompare"]{order:8}
+    .side-nav [data-i18n="navCountryRank"]{order:9}
+    .side-nav [data-i18n="navHeatTool"]{order:10}
+    .side-nav [data-i18n="navHallOfFame"]{order:11}
+    .side-nav [data-i18n="navCardMaker"]{order:12}
+    .side-nav button[onclick*="tierMakerSection"]{order:13}
+    .side-nav [data-i18n="navQuiz"]{order:14}
+    .side-nav [data-i18n="navReport"]{order:15}
+    .side-nav [data-i18n="navRecords"]{order:16}
     .report-modal-backdrop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.45);z-index:100;padding:18px}
     .report-modal-backdrop.open{display:flex}
     .report-modal{width:min(520px,100%);background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 24px 60px rgba(15,23,42,.22);padding:18px}
@@ -185,6 +202,8 @@
       margin-left:auto !important;
       margin-right:auto !important;
       max-width:1320px !important;
+      display:flex;
+      flex-direction:column;
     }
     @media(max-width:1050px){
       .side-nav{
@@ -200,6 +219,22 @@
     html{scroll-padding-top:92px}
     section,.anchor-section{scroll-margin-top:92px}
     main{padding-top:18px !important}
+    #searchSection{order:1}
+    #mobileHomeSection{order:2}
+    #playerPanel,#competitionPanel,#countryPanel,#seasonPanel{order:3}
+    #skaterRankingSection{order:4}
+    #eventRankingSection{order:5}
+    #recordRankingSection{order:6}
+    #lapRankingSection{order:7}
+    #compareSection{order:8}
+    #countryRankingSection{order:9}
+    #heatToolSection{order:10}
+    #hallOfFameSection{order:11}
+    #cardMakerSection{order:12}
+    #tierMakerSection{order:13}
+    #quizSection{order:14}
+    #homeFeatureSection{order:90}
+    #reliabilitySection{order:91}
 
 
     /* Visitor widget static position override */
@@ -721,10 +756,17 @@
     .mobile-quick-btn{border:1px solid var(--line);background:#fff;border-radius:16px;padding:13px 12px;text-align:left;cursor:pointer;box-shadow:0 6px 16px rgba(15,23,42,.05)}
     .mobile-quick-btn strong{display:block;font-size:14px;color:#111827;margin-bottom:4px}
     .mobile-quick-btn span{display:block;font-size:12px;color:var(--muted);line-height:1.35}
+    .mobile-quick-btn.is-soon{background:#f8fafc;color:var(--muted);opacity:.72}
+    .mobile-quick-btn.is-soon strong{color:#475569}
     .mobile-bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:120;grid-template-columns:repeat(5,1fr);gap:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);box-shadow:0 -12px 30px rgba(15,23,42,.12);backdrop-filter:blur(12px);padding:7px max(8px,env(safe-area-inset-left)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-right))}
     .mobile-bottom-nav button{border:0;background:transparent;color:#334155;border-radius:14px;padding:8px 4px;font-size:12px;font-weight:850;cursor:pointer}
     .mobile-bottom-nav button:active,.mobile-bottom-nav button.active{background:#eff6ff;color:#1d4ed8}
     .mobile-bottom-nav button.active{box-shadow:inset 0 0 0 1px #bfdbfe}
+    .mobile-bottom-nav [data-mobile-nav-target="searchSection"]{order:1}
+    .mobile-bottom-nav [data-mobile-nav-target="skaterRankingSection"]{order:2}
+    .mobile-bottom-nav [data-mobile-nav-target="recordRankingSection"]{order:3}
+    .mobile-bottom-nav [data-mobile-nav-target="hallOfFameSection"]{order:4}
+    .mobile-bottom-nav [data-mobile-nav-target="mobileHomeSection"]{order:5}
     body.st-view-mobile{background:#eef2f7}
     body.st-view-mobile header{padding:22px 14px 18px;text-align:left}
     body.st-view-mobile header h1{font-size:24px;letter-spacing:-.03em}
@@ -7701,6 +7743,38 @@
       const next = [clean].concat(readRecentPlayers().filter(item => item !== clean)).slice(0, 8);
       try{ localStorage.setItem(RECENT_PLAYERS_KEY, JSON.stringify(next)); }catch(_e){}
     }
+    function buildMobileShortcutMenu(){
+      const grid = document.querySelector('#mobileHomeSection .mobile-quick-grid');
+      if(!grid) return;
+      const en = currentLang === 'en';
+      const items = [
+        {ko:'검색', en:'Search', descKo:'선수·국가·대회 통합 검색', descEn:'Unified skater, country, and competition search', run:()=>focusMobileSearch()},
+        {ko:'도움말', en:'Help', descKo:'데이터 기준과 사용 안내', descEn:'Data notes and usage guide', run:()=>openHelpModal()},
+        {ko:'쇼트트랙 아카데미', en:'Short Track Academy', descKo:'별도 학습 사이트로 이동', descEn:'Open the separate learning site', run:()=>window.open('https://shorttrackacademy.netlify.app/','_blank')},
+        {ko:'선수별 종합 순위', en:'Overall skater ranking', descKo:'전체 선수 메달·점수 순위', descEn:'Overall skater medal and score ranking', run:()=>scrollToSection('skaterRankingSection')},
+        {ko:'종목별 선수 순위', en:'Event skater ranking', descKo:'거리·종목 기준 선수 순위', descEn:'Skater ranking by distance and event', run:()=>scrollToSection('eventRankingSection')},
+        {ko:'종목별 기록 순위', en:'Event record ranking', descKo:'500m·1000m·1500m 기록 순위', descEn:'500m, 1000m, and 1500m record ranking', run:()=>{ scrollToSection('recordRankingSection'); loadEventRecords(); }},
+        {ko:'랩타임 순위', en:'Lap time ranking', descKo:'빠른 랩 기록 확인', descEn:'Fastest lap time records', run:()=>{ scrollToSection('lapRankingSection'); loadLapRankings(); }},
+        {ko:'선수 비교', en:'Compare skaters', descKo:'두 선수 성과 비교', descEn:'Compare two skaters side by side', run:()=>scrollToSection('compareSection')},
+        {ko:'국가별 메달 순위', en:'Country medal ranking', descKo:'국가 단위 메달 집계', descEn:'Medal totals by country', run:()=>scrollToSection('countryRankingSection')},
+        {ko:'조편성 계산기', en:'Heat draw tool', descKo:'진출자와 다음 조 추정', descEn:'Estimate qualifiers and next heats', run:()=>scrollToSection('heatToolSection')},
+        {ko:'명예의 전당', en:'Hall of Fame', descKo:'대표 기록 카드 모음', descEn:'Featured record cards', run:()=>scrollToSection('hallOfFameSection')},
+        {ko:'선수 카드 만들기', en:'Card maker', descKo:'팬메이드 선수 카드 제작', descEn:'Create fan-made skater cards', run:()=>scrollToSection('cardMakerSection')},
+        {ko:'티어메이커', en:'Tier maker', descKo:'선수 티어표 만들기', descEn:'Build a skater tier list', run:()=>{ scrollToSection('tierMakerSection'); initTierMaker(); }},
+        {ko:'랜덤 퀴즈', en:'Random quiz', descKo:'기록 데이터 기반 퀴즈', descEn:'Quiz from archive records', run:()=>scrollToSection('quizSection')},
+        {ko:'오류 신고 및 문의', en:'Report / Contact', descKo:'오류나 문의 보내기', descEn:'Send a report or question', run:()=>openReportModal()},
+        {ko:'각종 기록', en:'Records', descKo:'아직 비활성화', descEn:'Coming soon', soon:true, run:()=>showPreparing()}
+      ];
+      grid.innerHTML = '';
+      items.forEach(item=>{
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `mobile-quick-btn${item.soon ? ' is-soon' : ''}`;
+        button.innerHTML = `<strong>${mobileEscape(en ? item.en : item.ko)}</strong><span>${mobileEscape(en ? item.descEn : item.descKo)}</span>`;
+        button.addEventListener('click', item.run);
+        grid.appendChild(button);
+      });
+    }
     function renderRecentPlayers(){
       const wrap = document.getElementById('mobileRecentPlayers');
       if(!wrap) return;
@@ -7717,15 +7791,15 @@
       ['stSearchResultView','searchSection'],
       ['playerPanel','skaterRankingSection'],
       ['skaterRankingSection','skaterRankingSection'],
-      ['countryRankingSection','skaterRankingSection'],
       ['eventRankingSection','skaterRankingSection'],
       ['recordRankingSection','recordRankingSection'],
       ['lapRankingSection','recordRankingSection'],
-      ['hallOfFameSection','hallOfFameSection'],
       ['compareSection','hallOfFameSection'],
+      ['countryRankingSection','skaterRankingSection'],
+      ['heatToolSection','hallOfFameSection'],
+      ['hallOfFameSection','hallOfFameSection'],
       ['cardMakerSection','hallOfFameSection'],
       ['tierMakerSection','hallOfFameSection'],
-      ['heatToolSection','hallOfFameSection'],
       ['quizSection','hallOfFameSection']
     ];
     let mobileNavTicking = false;
@@ -8435,6 +8509,7 @@
         btn.addEventListener('click', () => setMobileNavIntent(btn.dataset.mobileNavTarget));
       });
       renderRecentPlayers();
+      buildMobileShortcutMenu();
       buildMobilePlayerSnapshot();
       buildMobileHeatInputCards();
       buildMobileHeatResults();
@@ -8474,6 +8549,15 @@
         setTimeout(scheduleMobileNavActive, 220);
         return result;
       };
+    }
+    const previousSetLanguage = window.setLanguage;
+    if(typeof previousSetLanguage === 'function'){
+      window.setLanguage = function(){
+        const result = previousSetLanguage.apply(this, arguments);
+        buildMobileShortcutMenu();
+        return result;
+      };
+      try{ setLanguage = window.setLanguage; }catch(_e){}
     }
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initMobileEnhancements);
     else initMobileEnhancements();
