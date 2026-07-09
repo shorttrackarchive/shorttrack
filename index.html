@@ -3459,9 +3459,51 @@
 
       const labelName = isEventRankingRelay() ? tr('countryLabel') : tr('skaterLabel');
       const titleName = isEventRankingRelay() ? tr('countryLabel') : tr('skaterLabel');
+      const relayMode = isEventRankingRelay();
+      const scoreUnit = currentLang === 'en' ? 'pts' : '점';
+      const bucketSummary = (bucket) => `${tr('gold')} ${bucket.gold} · ${tr('silver')} ${bucket.silver} · ${tr('bronze')} ${bucket.bronze} · ${tr('total')} ${medalTotal(bucket)}`;
+      const bucketCard = (label,bucket) => `<div class="event-rank-bucket ${medalTotal(bucket)?'':'is-empty'}">
+        <div class="event-rank-bucket-title"><span>${escapeHtml(label)}</span><strong>${medalTotal(bucket)}</strong></div>
+        <div class="event-rank-bucket-values">
+          <div><span>${tr('gold')}</span><strong>${bucket.gold}</strong></div>
+          <div><span>${tr('silver')}</span><strong>${bucket.silver}</strong></div>
+          <div><span>${tr('bronze')}</span><strong>${bucket.bronze}</strong></div>
+          <div><span>${tr('total')}</span><strong>${medalTotal(bucket)}</strong></div>
+        </div>
+      </div>`;
+      const mobileCards = `<div class="mobile-card-list event-rank-mobile-cards">${rows.map((row,i)=>{
+        const nameHtml = relayMode
+          ? `<strong>${escapeHtml(row.name)}</strong>`
+          : `<span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${displaySkaterNameHtml(row.name)}</span>`;
+        const action = relayMode
+          ? `<button type="button" class="st-mini-btn" onclick="openCountryPage('${escapeJs(row.name)}')">국가 페이지</button>`
+          : `<button type="button" class="st-mini-btn" onclick="openPlayerPanel('${escapeJs(row.name)}')">선수 상세</button>`;
+        return `<article class="mobile-data-card event-rank-mobile-card">
+          <div class="mobile-card-topline"><span class="mobile-rank-badge">#${i+1}</span><strong class="event-rank-score">${formatScore(row.customScore)}<small>${scoreUnit}</small></strong></div>
+          <div class="mobile-card-title"><span>${nameHtml}</span></div>
+          <div class="mobile-card-meta">${escapeHtml(eventRankingLabel())} · ${escapeHtml(eventGenderLabel())}${row.country && !relayMode ? ` · ${escapeHtml(row.country)}` : ''}</div>
+          <div class="event-rank-total-strip">
+            <div><span>${tr('gold')}</span><strong>${row.total.gold}</strong></div>
+            <div><span>${tr('silver')}</span><strong>${row.total.silver}</strong></div>
+            <div><span>${tr('bronze')}</span><strong>${row.total.bronze}</strong></div>
+            <div><span>${tr('total')}</span><strong>${medalTotal(row.total)}</strong></div>
+          </div>
+          <details class="mobile-card-more">
+            <summary>대회별 세부 보기</summary>
+            <div class="event-rank-bucket-grid">
+              ${bucketCard(tr('olympic'),row.olympic)}
+              ${bucketCard(tr('worldChampionships'),row.worlds)}
+              ${bucketCard(tr('worldCupTour'),row.worldcup)}
+            </div>
+            <div class="mobile-card-detail"><span>${tr('totalGroup')}</span><strong>${escapeHtml(bucketSummary(row.total))}</strong></div>
+          </details>
+          <div class="mobile-card-action">${action}</div>
+        </article>`;
+      }).join('')}</div>`;
 
       wrap.innerHTML=`<div class="subnote">${tr('currentEvent')}: ${eventRankingLabel()} · ${tr('genderLabel')}: ${eventGenderLabel()} · ${titleName} · ${tr('top50')}. ${tr('relayCountryNote')}</div>
-      <div class="table-scroll"><table class="medal-detail-table">
+      ${mobileCards}
+      <div class="desktop-data-table table-scroll"><table class="medal-detail-table">
         <thead>
           <tr>
             <th rowspan="2" class="rank-col">${tr('rank')}</th>
@@ -3496,7 +3538,7 @@
         </thead>
         <tbody>${rows.map((row,i)=>`<tr>
           <td class="rank-col">${i+1}</td>
-          <td class="name-col">${isEventRankingRelay()?`<strong>${escapeHtml(row.name)}</strong>`:`<span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}`}</td>
+          <td class="name-col">${isEventRankingRelay()?`<strong>${escapeHtml(row.name)}</strong>`:`<span class="link" onclick="openPlayerPanel('${escapeJs(row.name)}')">${escapeHtml(row.name)}</span>`}</td>
           <td class="medal-num">${row.olympic.gold}</td><td class="medal-num">${row.olympic.silver}</td><td class="medal-num">${row.olympic.bronze}</td><td class="medal-num rank-total">${medalTotal(row.olympic)}</td>
           <td class="medal-num">${row.worlds.gold}</td><td class="medal-num">${row.worlds.silver}</td><td class="medal-num">${row.worlds.bronze}</td><td class="medal-num rank-total">${medalTotal(row.worlds)}</td>
           <td class="medal-num">${row.worldcup.gold}</td><td class="medal-num">${row.worldcup.silver}</td><td class="medal-num">${row.worldcup.bronze}</td><td class="medal-num rank-total">${medalTotal(row.worldcup)}</td>
@@ -7458,6 +7500,20 @@
   body.st-view-mobile .mobile-rank-medal-grid div{border:1px solid #eef2f7;background:#fbfdff;border-radius:12px;padding:8px;text-align:center}
   body.st-view-mobile .mobile-rank-medal-grid span{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}
   body.st-view-mobile .mobile-rank-medal-grid strong{font-size:15px;color:#172033}
+  body.st-view-mobile .event-rank-mobile-card .mobile-card-title{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  body.st-view-mobile .event-rank-score{font-size:22px;font-weight:950;color:#1e3a8a;white-space:nowrap}
+  body.st-view-mobile .event-rank-score small{font-size:11px;color:var(--muted);margin-left:2px}
+  body.st-view-mobile .event-rank-total-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}
+  body.st-view-mobile .event-rank-total-strip div{border:1px solid #dbeafe;background:#eff6ff;border-radius:12px;padding:8px 5px;text-align:center}
+  body.st-view-mobile .event-rank-total-strip span{display:block;color:#475569;font-size:11px;margin-bottom:3px}
+  body.st-view-mobile .event-rank-total-strip strong{font-size:15px;color:#172033}
+  body.st-view-mobile .event-rank-bucket-grid{display:grid;gap:8px;margin-top:9px}
+  body.st-view-mobile .event-rank-bucket{border:1px solid #eef2f7;background:#fbfdff;border-radius:12px;padding:10px}
+  body.st-view-mobile .event-rank-bucket.is-empty{opacity:.55}
+  body.st-view-mobile .event-rank-bucket-title{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:950;color:#111827;margin-bottom:7px}
+  body.st-view-mobile .event-rank-bucket-values{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;text-align:center}
+  body.st-view-mobile .event-rank-bucket-values span{font-size:11px;color:var(--muted)}
+  body.st-view-mobile .event-rank-bucket-values strong{display:block;font-size:13px;color:#172033}
   .skater-local-name{display:block;font-size:11px;font-weight:750;color:var(--muted);line-height:1.3;margin-top:2px}
   .mobile-recent-players{display:none}
   body.st-view-mobile #searchSection{padding:8px 12px;background:transparent;box-shadow:none;border:0;margin-top:-4px}
@@ -7697,6 +7753,7 @@
       if(list.classList.contains('record-mobile-cards')) return '기록 더 보기';
       if(list.classList.contains('lap-mobile-cards')) return '랩타임 더 보기';
       if(list.classList.contains('search-mobile-row-cards')) return '원자료 더 보기';
+      if(list.classList.contains('event-rank-mobile-cards')) return '종목 순위 더 보기';
       if(list.classList.contains('mobile-table-cards')) return '표 항목 더 보기';
       return '더 보기';
     }
@@ -7754,7 +7811,7 @@
       return (cell?.textContent || '').replace(/\s+/g,' ').trim();
     }
     function shouldSkipMobileTable(table){
-      if(!table || table.closest('.desktop-data-table,.mobile-table-cards,.st-mobile-raw-details')) return true;
+      if(!table || table.closest('#eventRankingWrap,.desktop-data-table,.mobile-table-cards,.st-mobile-raw-details')) return true;
       if(table.querySelector('input,select,textarea')) return true;
       const rows = table.querySelectorAll('tbody tr');
       return rows.length === 0;
