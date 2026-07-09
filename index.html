@@ -219,22 +219,22 @@
     html{scroll-padding-top:92px}
     section,.anchor-section{scroll-margin-top:92px}
     main{padding-top:18px !important}
-    #searchSection{order:1}
-    #mobileHomeSection{order:2}
-    #playerPanel,#competitionPanel,#countryPanel,#seasonPanel{order:3}
-    #skaterRankingSection{order:4}
-    #eventRankingSection{order:5}
-    #recordRankingSection{order:6}
-    #lapRankingSection{order:7}
-    #compareSection{order:8}
-    #countryRankingSection{order:9}
-    #heatToolSection{order:10}
-    #hallOfFameSection{order:11}
-    #cardMakerSection{order:12}
-    #tierMakerSection{order:13}
-    #quizSection{order:14}
-    #homeFeatureSection{order:90}
-    #reliabilitySection{order:91}
+    #homeFeatureSection{order:1}
+    #reliabilitySection{order:2}
+    #searchSection{order:3}
+    #mobileHomeSection{order:4}
+    #playerPanel,#competitionPanel,#countryPanel,#seasonPanel{order:5}
+    #skaterRankingSection{order:6}
+    #eventRankingSection{order:7}
+    #recordRankingSection{order:8}
+    #lapRankingSection{order:9}
+    #compareSection{order:10}
+    #countryRankingSection{order:11}
+    #heatToolSection{order:12}
+    #hallOfFameSection{order:13}
+    #cardMakerSection{order:14}
+    #tierMakerSection{order:15}
+    #quizSection{order:16}
 
 
     /* Visitor widget static position override */
@@ -2470,6 +2470,10 @@
         setupSectionEraFilters();
         setupComparePlayerSelects();
         applyFilters();
+        if(typeof unlockLapFilterControls === 'function') unlockLapFilterControls();
+        if(typeof loadLapRankings === 'function'){
+          loadLapRankings(false).catch(error=>console.warn('랩타임 초기 로드 실패', error));
+        }
       }catch(error){
         console.error(error);
         document.getElementById('tableWrap').innerHTML='<div class="error">데이터를 불러오지 못했습니다.<br>Apps Script 배포 권한, 시트 이름, APPS_SCRIPT_URL을 확인해 주세요.</div>';
@@ -6346,11 +6350,33 @@
       });
       return out;
     }
+    function unlockLapFilterControls(){
+      ['lapSeasonFilter','lapEventFilter'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.disabled=false;
+      });
+    }
+    function applyLoadedLapRankingsJson(json){
+      if(!json || json.ok===false) throw new Error(json && json.error ? json.error : 'lapRankings 응답 오류');
+      let sourceRows=extractLapRowsFromJson(json);
+      lapRankingRows=dedupeLapRows(sourceRows.map(normalizeLapRow).filter(r=>r.lap_time>0 && r.event));
+      lapRankingLoaded=true;
+      populateLapFilters(lapRankingRows);
+      document.getElementById('lapKpiTotal').textContent=lapRankingRows.length.toLocaleString('ko-KR');
+      document.getElementById('lapKpiLoaded') && (document.getElementById('lapKpiLoaded').textContent=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'}));
+      renderLapRankings();
+    }
     async function loadLapRankings(force){
       const wrap=document.getElementById('lapRankingWrap');
       if(!wrap) return;
       if(lapRankingLoaded && !force){ renderLapRankings(); return; }
       const api=getLapApiUrl();
+      unlockLapFilterControls();
+      try{
+        const staticJson = await cachedFetchJson('data/lap-rankings.json', 'shorttrack_static_lap_rankings_v1');
+        applyLoadedLapRankingsJson(staticJson);
+        return;
+      }catch(_staticError){}
       if(!api || api.includes('여기에')){
         wrap.innerHTML='<div class="empty"><strong>랩타임 API 주소가 연결되지 않았습니다.</strong><br>Apps Script에 lap time API 코드를 추가한 뒤 LAP_API_URL을 확인해 주세요.</div>';
         return;
