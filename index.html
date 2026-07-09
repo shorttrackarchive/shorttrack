@@ -7467,6 +7467,8 @@
   .mobile-player-snapshot,
   .mobile-player-tabs,
   .mobile-player-medals-panel,
+  .heat-mobile-input,
+  .heat-mobile-results,
   .mobile-filter-toggle,
   .mobile-filter-backdrop,
   .mobile-filter-sheet-head{display:none}
@@ -7514,6 +7516,44 @@
   body.st-view-mobile .event-rank-bucket-values{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;text-align:center}
   body.st-view-mobile .event-rank-bucket-values span{font-size:11px;color:var(--muted)}
   body.st-view-mobile .event-rank-bucket-values strong{display:block;font-size:13px;color:#172033}
+  body.st-view-mobile #heatInputWrap .table-scroll,
+  body.st-view-mobile #heatOutputWrap .heat-desktop-result-source{display:none}
+  body.st-view-mobile #heatInputWrap .heat-mobile-input{display:grid;gap:10px;margin-top:12px}
+  body.st-view-mobile .heat-mobile-action-row{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px}
+  body.st-view-mobile .heat-mobile-action-row button{border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;border-radius:12px;padding:10px 8px;font-size:12px;font-weight:950;cursor:pointer}
+  body.st-view-mobile .heat-mobile-action-row button:first-child{background:#2563eb;border-color:#2563eb;color:#fff}
+  body.st-view-mobile .heat-mobile-group{border:1px solid var(--line);background:#fff;border-radius:16px;overflow:hidden}
+  body.st-view-mobile .heat-mobile-group summary{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;padding:12px 13px;list-style:none;font-weight:950}
+  body.st-view-mobile .heat-mobile-group summary::-webkit-details-marker{display:none}
+  body.st-view-mobile .heat-mobile-group summary span{font-size:15px;color:#111827}
+  body.st-view-mobile .heat-mobile-group summary strong{font-size:12px;color:#1e40af;white-space:nowrap}
+  body.st-view-mobile .heat-mobile-skater-list{display:grid;gap:9px;padding:0 10px 10px}
+  body.st-view-mobile .heat-mobile-skater{border:1px solid #eef2f7;background:#fbfdff;border-radius:14px;padding:11px}
+  body.st-view-mobile .heat-mobile-skater-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+  body.st-view-mobile .heat-mobile-skater-head strong{font-size:13px;color:#1e3a8a}
+  body.st-view-mobile .heat-mobile-skater-head span{font-size:11px;color:var(--muted);font-weight:850}
+  body.st-view-mobile .heat-mobile-skater-grid{display:grid;grid-template-columns:76px minmax(0,1fr);gap:8px}
+  body.st-view-mobile .heat-mobile-field{display:grid;gap:4px;font-size:11px;font-weight:850;color:var(--muted)}
+  body.st-view-mobile .heat-mobile-field.wide{grid-column:1/-1}
+  body.st-view-mobile .heat-mobile-field input,
+  body.st-view-mobile .heat-mobile-field select{width:100%;min-width:0;border:1px solid var(--line);border-radius:10px;background:#fff;padding:9px 10px;font-size:14px;color:#111827}
+  body.st-view-mobile .heat-mobile-results{display:block}
+  body.st-view-mobile .heat-mobile-result-tabs{display:flex;gap:8px;overflow-x:auto;margin:2px 0 10px;padding-bottom:2px}
+  body.st-view-mobile .heat-mobile-result-tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;font-size:13px;font-weight:900;white-space:nowrap;cursor:pointer}
+  body.st-view-mobile .heat-mobile-result-tabs button.active{background:#2563eb;color:#fff;border-color:#2563eb}
+  .heat-mobile-result-panel{display:none}
+  body.st-view-mobile .heat-mobile-result-panel.active{display:block}
+  body.st-view-mobile .heat-mobile-result-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:13px;box-shadow:0 6px 16px rgba(15,23,42,.05)}
+  body.st-view-mobile .heat-mobile-result-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}
+  body.st-view-mobile .heat-mobile-result-head strong{font-size:13px;color:#1e40af}
+  body.st-view-mobile .heat-mobile-result-head span{font-size:12px;color:var(--muted);font-weight:850}
+  body.st-view-mobile .heat-mobile-result-name{font-size:16px;font-weight:950;color:#111827;line-height:1.35;margin-bottom:7px}
+  body.st-view-mobile .heat-mobile-result-meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:#475569}
+  body.st-view-mobile .heat-mobile-result-meta span{border:1px solid #eef2f7;background:#fbfdff;border-radius:999px;padding:4px 8px}
+  body.st-view-mobile .heat-mobile-next-group{border:1px solid var(--line);background:#fff;border-radius:16px;margin-bottom:10px;overflow:hidden}
+  body.st-view-mobile .heat-mobile-next-group summary{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;padding:12px 13px;list-style:none;font-weight:950}
+  body.st-view-mobile .heat-mobile-next-group summary::-webkit-details-marker{display:none}
+  body.st-view-mobile .heat-mobile-next-list{display:grid;gap:9px;padding:0 10px 10px}
   .skater-local-name{display:block;font-size:11px;font-weight:750;color:var(--muted);line-height:1.3;margin-top:2px}
   .mobile-recent-players{display:none}
   body.st-view-mobile #searchSection{padding:8px 12px;background:transparent;box-shadow:none;border:0;margin-top:-4px}
@@ -7577,12 +7617,15 @@
   body.st-view-mobile .mobile-filter-open .record-ranking-grid,
   body.st-view-mobile .mobile-filter-open .lap-ranking-grid,
   body.st-view-mobile .mobile-filter-open .score-grid,
-  body.st-view-mobile .mobile-filter-open .quiz-grid{grid-template-columns:1fr}
+  body.st-view-mobile .mobile-filter-open .quiz-grid,
+  body.st-view-mobile .mobile-filter-open .heat-tool-grid{grid-template-columns:1fr}
   body.st-view-mobile .mobile-filter-open .ranking-filter-row,
   body.st-view-mobile .mobile-filter-open .era-controls,
   body.st-view-mobile .mobile-filter-open .tabs,
   body.st-view-mobile .mobile-filter-open .compare-controls,
-  body.st-view-mobile .mobile-filter-open .quiz-actions{overflow:visible;flex-wrap:wrap}
+  body.st-view-mobile .mobile-filter-open .quiz-actions,
+  body.st-view-mobile .mobile-filter-open .heat-tool-actions{overflow:visible;flex-wrap:wrap}
+  body.st-view-mobile .mobile-filter-open .heat-tool-actions button{width:100%}
 
   body.st-view-mobile .st-search-head h2{font-size:20px}
   body.st-view-mobile .st-search-featured{border-radius:18px;padding:14px}
@@ -7745,6 +7788,7 @@
       if(list.classList.contains('country-mobile-cards')) return 10;
       if(list.classList.contains('rank-mobile-cards')) return 10;
       if(list.classList.contains('record-mobile-cards') || list.classList.contains('lap-mobile-cards')) return 15;
+      if(list.classList.contains('heat-mobile-result-list')) return 12;
       return 12;
     }
     function mobileListLabelFor(list){
@@ -7811,7 +7855,7 @@
       return (cell?.textContent || '').replace(/\s+/g,' ').trim();
     }
     function shouldSkipMobileTable(table){
-      if(!table || table.closest('#eventRankingWrap,.desktop-data-table,.mobile-table-cards,.st-mobile-raw-details')) return true;
+      if(!table || table.closest('#eventRankingWrap,#heatInputWrap,#heatOutputWrap,.desktop-data-table,.mobile-table-cards,.st-mobile-raw-details')) return true;
       if(table.querySelector('input,select,textarea')) return true;
       const rows = table.querySelectorAll('tbody tr');
       return rows.length === 0;
@@ -7866,6 +7910,254 @@
         mobileTableRefreshQueued = false;
         refreshMobileTableCards();
       });
+    }
+    function heatMobileRows(){
+      return Array.from(document.querySelectorAll('#heatInputWrap tbody tr'));
+    }
+    function heatMobileSourceValue(row, selector){
+      return row?.querySelector(selector)?.value || '';
+    }
+    function heatMobileField(label, field, value, extra=''){
+      return `<label class="heat-mobile-field ${extra.includes('wide') ? 'wide' : ''}">${mobileEscape(label)}
+        <input data-heat-mobile-field="${field}" ${extra} value="${mobileEscape(value)}">
+      </label>`;
+    }
+    function buildMobileHeatInputCards(){
+      const wrap = document.getElementById('heatInputWrap');
+      if(!wrap) return;
+      const old = wrap.querySelector('.heat-mobile-input');
+      const rows = heatMobileRows();
+      if(!rows.length){
+        if(old) old.remove();
+        return;
+      }
+      const groups = [];
+      rows.forEach((row,index)=>{
+        const heat = Number(row.dataset.heatRow || 0) || 1;
+        let group = groups.find(item => item.heat === heat);
+        if(!group){
+          group = {heat, rows:[]};
+          groups.push(group);
+        }
+        group.rows.push({row,index});
+      });
+      const groupHtml = groups.map((group,groupIndex)=>{
+        const cards = group.rows.map(({row,index},itemIndex)=>{
+          const position = heatMobileSourceValue(row,'.heat-pos') || String(itemIndex + 1);
+          const name = heatMobileSourceValue(row,'.heat-name');
+          const country = heatMobileSourceValue(row,'.heat-country');
+          const time = heatMobileSourceValue(row,'.heat-time');
+          const status = heatMobileSourceValue(row,'.heat-status') || 'OK';
+          return `<article class="heat-mobile-skater" data-heat-mobile-index="${index}">
+            <div class="heat-mobile-skater-head"><strong>SP ${mobileEscape(position)}</strong><span>${mobileEscape(group.heat)}조 ${itemIndex + 1}번</span></div>
+            <div class="heat-mobile-skater-grid">
+              ${heatMobileField('순위','position',position,'type="number" min="1" max="20"')}
+              ${heatMobileField('선수명','name',name,'type="text" class="wide" placeholder="Name"')}
+              ${heatMobileField('국가','country',country,'type="text" maxlength="3" placeholder="KOR"')}
+              ${heatMobileField('기록','time',time,'type="text" placeholder="1:23.456"')}
+              <label class="heat-mobile-field wide">상태
+                <select data-heat-mobile-field="status">
+                  <option value="OK" ${status === 'OK' ? 'selected' : ''}>OK</option>
+                  <option value="ADV" ${status === 'ADV' ? 'selected' : ''}>ADV</option>
+                </select>
+              </label>
+            </div>
+          </article>`;
+        }).join('');
+        return `<details class="heat-mobile-group" ${groupIndex === 0 ? 'open' : ''}>
+          <summary><span>${mobileEscape(group.heat)}조 입력</span><strong>${group.rows.length}명</strong></summary>
+          <div class="heat-mobile-skater-list">${cards}</div>
+        </details>`;
+      }).join('');
+      const html = `<div class="heat-mobile-input">
+        <div class="heat-mobile-action-row">
+          <button type="button" onclick="calculateHeatDraw()">진출자 계산</button>
+          <button type="button" onclick="fillSampleHeatData()">예시</button>
+          <button type="button" onclick="clearHeatData()">초기화</button>
+        </div>
+        ${groupHtml}
+      </div>`;
+      if(old) old.outerHTML = html;
+      else wrap.insertAdjacentHTML('beforeend', html);
+
+      const container = wrap.querySelector('.heat-mobile-input');
+      if(!container || container.dataset.heatMobileBound) return;
+      container.dataset.heatMobileBound = '1';
+      const syncField = event => {
+        const field = event.target?.closest?.('[data-heat-mobile-field]');
+        const item = field?.closest?.('[data-heat-mobile-index]');
+        if(!field || !item) return;
+        const source = heatMobileRows()[Number(item.dataset.heatMobileIndex)];
+        const selectors = {
+          position:'.heat-pos',
+          name:'.heat-name',
+          country:'.heat-country',
+          time:'.heat-time',
+          status:'.heat-status'
+        };
+        const selector = selectors[field.dataset.heatMobileField];
+        if(!selector) return;
+        const sourceField = source?.querySelector(selector);
+        if(!sourceField) return;
+        let value = field.value;
+        if(field.dataset.heatMobileField === 'country'){
+          value = value.toUpperCase().slice(0,3);
+          field.value = value;
+        }
+        sourceField.value = value;
+        const head = item.querySelector('.heat-mobile-skater-head strong');
+        if(head && field.dataset.heatMobileField === 'position') head.textContent = `SP ${value || '-'}`;
+      };
+      container.addEventListener('input', syncField);
+      container.addEventListener('change', syncField);
+    }
+    function heatMobileTimeKey(value){
+      const clean = String(value || '').trim();
+      return clean || '-';
+    }
+    function heatMobileRowKey(row){
+      return [row.name,row.country,row.heat,row.position,heatMobileTimeKey(row.time)].join('|');
+    }
+    function heatMobileQualifierKey(cells){
+      const name = cleanCellText(cells[2]?.querySelector('strong') || cells[2]);
+      return [name,cleanCellText(cells[3]),Number(cleanCellText(cells[1])) || '',Number(cleanCellText(cells[4])) || '',heatMobileTimeKey(cleanCellText(cells[5]))].join('|');
+    }
+    function heatMobileResultMeta(items){
+      return `<div class="heat-mobile-result-meta">${items.filter(Boolean).map(item => `<span>${mobileEscape(item)}</span>`).join('')}</div>`;
+    }
+    window.stMobileSetHeatResultTab = function(tab){
+      const root = document.querySelector('#heatOutputWrap .heat-mobile-results');
+      if(!root) return;
+      const next = root.querySelector(`[data-heat-mobile-result-panel="${tab}"]`) ? tab : 'qualifiers';
+      root.querySelectorAll('[data-heat-mobile-result-tab]').forEach(btn=>btn.classList.toggle('active', btn.dataset.heatMobileResultTab === next));
+      root.querySelectorAll('[data-heat-mobile-result-panel]').forEach(panel=>panel.classList.toggle('active', panel.dataset.heatMobileResultPanel === next));
+      scheduleMobileCardListRefresh();
+    };
+    function buildMobileHeatResults(){
+      const wrap = document.getElementById('heatOutputWrap');
+      if(!wrap) return;
+      wrap.querySelector('.heat-mobile-results')?.remove();
+      Array.from(wrap.children).forEach(child=>child.classList.remove('heat-desktop-result-source'));
+      const mainGrid = Array.from(wrap.children).find(child=>child.classList.contains('heat-result-grid'));
+      if(!mainGrid) return;
+      const boxes = Array.from(mainGrid.children).filter(child=>child.classList.contains('heat-output-box'));
+      const qualifierTable = boxes[0]?.querySelector('table');
+      const qualifierRows = Array.from(qualifierTable?.querySelectorAll('tbody tr') || []);
+      const nextCards = Array.from(boxes[1]?.querySelectorAll('.heat-next-card') || []);
+      if(!qualifierRows.length && !nextCards.length) return;
+
+      const qualifierKeys = new Set();
+      const qualifierCards = qualifierRows.map(row=>{
+        const cells = Array.from(row.children);
+        qualifierKeys.add(heatMobileQualifierKey(cells));
+        const rank = cleanCellText(cells[0]) || '-';
+        const heat = cleanCellText(cells[1]) || '-';
+        const name = cells[2]?.innerHTML || '-';
+        const country = cleanCellText(cells[3]) || '-';
+        const position = cleanCellText(cells[4]) || '-';
+        const time = cleanCellText(cells[5]) || '-';
+        return `<article class="mobile-data-card heat-mobile-result-card">
+          <div class="heat-mobile-result-head"><strong>#${mobileEscape(rank)}</strong><span>${mobileEscape(heat)}조</span></div>
+          <div class="heat-mobile-result-name">${name}</div>
+          ${heatMobileResultMeta([country, `${position}위`, time])}
+        </article>`;
+      }).join('');
+
+      const nextGroups = nextCards.map((card,index)=>{
+        const title = cleanCellText(card.querySelector('h4')) || `다음 조 ${index + 1}`;
+        const rows = Array.from(card.querySelectorAll('tbody tr'));
+        const cards = rows.map(row=>{
+          const cells = Array.from(row.children);
+          const sp = cleanCellText(cells[0]) || '-';
+          const name = cells[1]?.innerHTML || '-';
+          const country = cleanCellText(cells[2]) || '-';
+          const time = cleanCellText(cells[3]) || '-';
+          const seed = cleanCellText(cells[4]) || '-';
+          return `<article class="heat-mobile-result-card">
+            <div class="heat-mobile-result-head"><strong>SP ${mobileEscape(sp)}</strong><span>${mobileEscape(seed)}</span></div>
+            <div class="heat-mobile-result-name">${name}</div>
+            ${heatMobileResultMeta([country, time])}
+          </article>`;
+        }).join('');
+        return `<details class="heat-mobile-next-group" ${index === 0 ? 'open' : ''}>
+          <summary><span>${mobileEscape(title)}</span><strong>${rows.length}명</strong></summary>
+          <div class="heat-mobile-next-list">${cards || '<div class="empty">배정된 선수가 없습니다.</div>'}</div>
+        </details>`;
+      }).join('');
+
+      let eliminated = [];
+      try{
+        eliminated = typeof collectHeatRows === 'function' ? collectHeatRows().filter(row=>!qualifierKeys.has(heatMobileRowKey(row))) : [];
+      }catch(_e){
+        eliminated = [];
+      }
+      const eliminatedCards = eliminated.map(row=>`<article class="mobile-data-card heat-mobile-result-card">
+        <div class="heat-mobile-result-head"><strong>${mobileEscape(row.heat)}조</strong><span>${mobileEscape(row.position)}위</span></div>
+        <div class="heat-mobile-result-name"><strong>${mobileEscape(row.name)}</strong></div>
+        ${heatMobileResultMeta([row.country || '-', row.time || '-'])}
+      </article>`).join('');
+
+      Array.from(wrap.children).forEach(child=>child.classList.add('heat-desktop-result-source'));
+      wrap.insertAdjacentHTML('afterbegin', `<div class="heat-mobile-results">
+        <div class="heat-mobile-result-tabs" role="tablist">
+          <button type="button" class="active" data-heat-mobile-result-tab="qualifiers" onclick="stMobileSetHeatResultTab('qualifiers')">진출자</button>
+          <button type="button" data-heat-mobile-result-tab="next" onclick="stMobileSetHeatResultTab('next')">다음 조</button>
+          <button type="button" data-heat-mobile-result-tab="eliminated" onclick="stMobileSetHeatResultTab('eliminated')">미진출</button>
+        </div>
+        <div class="heat-mobile-result-panel active" data-heat-mobile-result-panel="qualifiers">
+          <div class="mobile-card-list heat-mobile-result-list">${qualifierCards || '<div class="empty">진출자가 없습니다.</div>'}</div>
+        </div>
+        <div class="heat-mobile-result-panel" data-heat-mobile-result-panel="next">${nextGroups || '<div class="empty">다음 조 배정이 없습니다.</div>'}</div>
+        <div class="heat-mobile-result-panel" data-heat-mobile-result-panel="eliminated">
+          <div class="mobile-card-list heat-mobile-result-list">${eliminatedCards || '<div class="empty">미진출자가 없습니다.</div>'}</div>
+        </div>
+      </div>`);
+      scheduleMobileCardListRefresh();
+    }
+    function wrapMobileHeatToolFunctions(){
+      if(window.__stMobileHeatToolWrapped) return;
+      window.__stMobileHeatToolWrapped = true;
+      const previousBuildHeatInputTable = window.buildHeatInputTable;
+      if(typeof previousBuildHeatInputTable === 'function'){
+        window.buildHeatInputTable = function(){
+          const result = previousBuildHeatInputTable.apply(this, arguments);
+          setTimeout(buildMobileHeatInputCards, 0);
+          setTimeout(scheduleMobileNavActive, 80);
+          return result;
+        };
+        try{ buildHeatInputTable = window.buildHeatInputTable; }catch(_e){}
+      }
+      const previousCalculateHeatDraw = window.calculateHeatDraw;
+      if(typeof previousCalculateHeatDraw === 'function'){
+        window.calculateHeatDraw = function(){
+          const result = previousCalculateHeatDraw.apply(this, arguments);
+          setTimeout(buildMobileHeatInputCards, 0);
+          setTimeout(buildMobileHeatResults, 0);
+          setTimeout(scheduleMobileNavActive, 80);
+          return result;
+        };
+        try{ calculateHeatDraw = window.calculateHeatDraw; }catch(_e){}
+      }
+      const previousFillSampleHeatData = window.fillSampleHeatData;
+      if(typeof previousFillSampleHeatData === 'function'){
+        window.fillSampleHeatData = function(){
+          const result = previousFillSampleHeatData.apply(this, arguments);
+          setTimeout(buildMobileHeatInputCards, 0);
+          setTimeout(buildMobileHeatResults, 0);
+          return result;
+        };
+        try{ fillSampleHeatData = window.fillSampleHeatData; }catch(_e){}
+      }
+      const previousClearHeatData = window.clearHeatData;
+      if(typeof previousClearHeatData === 'function'){
+        window.clearHeatData = function(){
+          const result = previousClearHeatData.apply(this, arguments);
+          setTimeout(buildMobileHeatInputCards, 0);
+          setTimeout(buildMobileHeatResults, 0);
+          return result;
+        };
+        try{ clearHeatData = window.clearHeatData; }catch(_e){}
+      }
     }
     function initMobileMutationObserver(){
       if(window.__stMobileMutationObserver) return;
@@ -8128,6 +8420,8 @@
       section.appendChild(backdrop);
     }
     function initMobileEnhancements(){
+      wrapMobileHeatToolFunctions();
+      setupMobileFilterGroup('heatToolSection', ['.heat-tool-controls'], '조편성 설정');
       setupMobileFilterGroup('skaterRankingSection', ['.ranking-filter-row','.era-controls','.score-actions','#skaterScorePanel'], '선수 순위 필터 설정');
       setupMobileFilterGroup('countryRankingSection', ['.tabs','.era-controls'], '국가 순위 필터 설정');
       setupMobileFilterGroup('eventRankingSection', ['.tabs','.era-controls','.ranking-filter-row','#eventScorePanel'], '종목별 선수 순위 필터 설정');
@@ -8142,6 +8436,8 @@
       });
       renderRecentPlayers();
       buildMobilePlayerSnapshot();
+      buildMobileHeatInputCards();
+      buildMobileHeatResults();
       initMobileMutationObserver();
       refreshMobileCardListLimits();
       refreshMobileTableCards();
