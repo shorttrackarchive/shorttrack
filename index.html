@@ -847,8 +847,8 @@
     <button type="button" onclick="scrollToSection('tierMakerSection'); initTierMaker();">티어메이커</button>
     <button type="button" data-i18n="navHeatTool" onclick="scrollToSection('heatToolSection')">조편성 계산기</button>
     <button type="button" data-i18n="navQuiz" onclick="scrollToSection('quizSection')">랜덤 퀴즈</button>
-    <button type="button" data-i18n="navRecordRank" onclick="scrollToSection('recordRankingSection'); loadEventRecords();">종목별 기록 순위</button>
-    <button type="button" data-i18n="navLapRank" onclick="scrollToSection('lapRankingSection'); loadLapRankings();">랩타임 순위</button>
+    <button type="button" data-i18n="navRecordRank" onclick="scrollToSection('recordRankingSection')">종목별 기록 순위</button>
+    <button type="button" data-i18n="navLapRank" onclick="scrollToSection('lapRankingSection')">랩타임 순위</button>
     <button type="button" data-i18n="navReport" onclick="openReportModal()">오류 신고 및 문의</button>
     <button type="button" class="nav-soon" data-i18n="navRecords" onclick="showPreparing()">각종 기록</button>
   </nav>
@@ -857,7 +857,7 @@
     <button type="button" data-i18n="bottomHome" data-mobile-nav-target="mobileHomeSection" onclick="scrollToSection('mobileHomeSection')">홈</button>
     <button type="button" data-i18n="bottomSearch" data-mobile-nav-target="searchSection" onclick="focusMobileSearch()">검색</button>
     <button type="button" data-i18n="bottomRank" data-mobile-nav-target="skaterRankingSection" onclick="scrollToSection('skaterRankingSection')">랭킹</button>
-    <button type="button" data-i18n="bottomRecords" data-mobile-nav-target="recordRankingSection" onclick="scrollToSection('recordRankingSection'); loadEventRecords();">기록</button>
+    <button type="button" data-i18n="bottomRecords" data-mobile-nav-target="recordRankingSection" onclick="scrollToSection('recordRankingSection')">기록</button>
     <button type="button" data-i18n="bottomMore" data-mobile-nav-target="hallOfFameSection" onclick="scrollToSection('hallOfFameSection')">더보기</button>
   </nav>
 
@@ -926,8 +926,8 @@
         </div>
         <div class="mobile-quick-grid">
           <button type="button" class="mobile-quick-btn" onclick="scrollToSection('skaterRankingSection')"><strong data-i18n="mobileQuickSkaterRank">선수 종합 순위</strong><span data-i18n="mobileQuickSkaterRankDesc">가장 많이 보는 기본 랭킹</span></button>
-          <button type="button" class="mobile-quick-btn" onclick="scrollToSection('recordRankingSection'); loadEventRecords();"><strong data-i18n="mobileQuickRecordRank">종목별 기록</strong><span data-i18n="mobileQuickRecordRankDesc">500m·1000m·1500m 기록 순위</span></button>
-          <button type="button" class="mobile-quick-btn" onclick="scrollToSection('lapRankingSection'); loadLapRankings();"><strong data-i18n="mobileQuickLapRank">랩타임 순위</strong><span data-i18n="mobileQuickLapRankDesc">빠른 랩 기록 확인</span></button>
+          <button type="button" class="mobile-quick-btn" onclick="scrollToSection('recordRankingSection')"><strong data-i18n="mobileQuickRecordRank">종목별 기록</strong><span data-i18n="mobileQuickRecordRankDesc">500m·1000m·1500m 기록 순위</span></button>
+          <button type="button" class="mobile-quick-btn" onclick="scrollToSection('lapRankingSection')"><strong data-i18n="mobileQuickLapRank">랩타임 순위</strong><span data-i18n="mobileQuickLapRankDesc">빠른 랩 기록 확인</span></button>
           <button type="button" class="mobile-quick-btn" onclick="scrollToSection('hallOfFameSection')"><strong data-i18n="mobileQuickHall">명예의 전당</strong><span data-i18n="mobileQuickHallDesc">대표 기록 카드 모음</span></button>
         </div>
         <div class="mobile-recent-players" id="mobileRecentPlayers"></div>
@@ -2471,9 +2471,6 @@
         setupComparePlayerSelects();
         applyFilters();
         if(typeof unlockLapFilterControls === 'function') unlockLapFilterControls();
-        if(typeof loadLapRankings === 'function'){
-          loadLapRankings(false).catch(error=>console.warn('랩타임 초기 로드 실패', error));
-        }
       }catch(error){
         console.error(error);
         document.getElementById('tableWrap').innerHTML='<div class="error">데이터를 불러오지 못했습니다.<br>Apps Script 배포 권한, 시트 이름, APPS_SCRIPT_URL을 확인해 주세요.</div>';
@@ -7779,8 +7776,8 @@
         {ko:'쇼트트랙 아카데미', en:'Short Track Academy', descKo:'별도 학습 사이트로 이동', descEn:'Open the separate learning site', run:()=>window.open('https://shorttrackacademy.netlify.app/','_blank')},
         {ko:'선수별 종합 순위', en:'Overall skater ranking', descKo:'전체 선수 메달·점수 순위', descEn:'Overall skater medal and score ranking', run:()=>scrollToSection('skaterRankingSection')},
         {ko:'종목별 선수 순위', en:'Event skater ranking', descKo:'거리·종목 기준 선수 순위', descEn:'Skater ranking by distance and event', run:()=>scrollToSection('eventRankingSection')},
-        {ko:'종목별 기록 순위', en:'Event record ranking', descKo:'500m·1000m·1500m 기록 순위', descEn:'500m, 1000m, and 1500m record ranking', run:()=>{ scrollToSection('recordRankingSection'); loadEventRecords(); }},
-        {ko:'랩타임 순위', en:'Lap time ranking', descKo:'빠른 랩 기록 확인', descEn:'Fastest lap time records', run:()=>{ scrollToSection('lapRankingSection'); loadLapRankings(); }},
+        {ko:'종목별 기록 순위', en:'Event record ranking', descKo:'500m·1000m·1500m 기록 순위', descEn:'500m, 1000m, and 1500m record ranking', run:()=>scrollToSection('recordRankingSection')},
+        {ko:'랩타임 순위', en:'Lap time ranking', descKo:'빠른 랩 기록 확인', descEn:'Fastest lap time records', run:()=>scrollToSection('lapRankingSection')},
         {ko:'선수 비교', en:'Compare skaters', descKo:'두 선수 성과 비교', descEn:'Compare two skaters side by side', run:()=>scrollToSection('compareSection')},
         {ko:'국가별 메달 순위', en:'Country medal ranking', descKo:'국가 단위 메달 집계', descEn:'Medal totals by country', run:()=>scrollToSection('countryRankingSection')},
         {ko:'조편성 계산기', en:'Heat draw tool', descKo:'진출자와 다음 조 추정', descEn:'Estimate qualifiers and next heats', run:()=>scrollToSection('heatToolSection')},
