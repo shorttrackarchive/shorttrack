@@ -994,6 +994,14 @@
       <div class="section-title"><div><h2 data-i18n="playerOverviewTitle">선수 요약</h2><span data-i18n="playerOverviewDesc">개인전·계주·대회 유형별 메달을 요약합니다.</span></div></div>
       <div id="playerOverviewTable"></div>
       <div class="spacer"></div>
+      <details id="playerMedalDetails" class="player-medal-details" ontoggle="handlePlayerMedalDetailsToggle(this)">
+        <summary>
+          <span class="player-medal-details-title"><strong data-i18n="playerMedalDetailTitle">선수별 메달 내역</strong><small data-i18n="playerMedalDetailDesc">개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.</small></span>
+          <span class="player-medal-details-action">전체 메달 목록 보기</span>
+        </summary>
+        <div id="playerTable"><div class="empty">전체 메달 목록 보기 버튼을 누르면 표시됩니다.</div></div>
+      </details>
+      <div class="spacer player-medal-detail-spacer"></div>
       <div class="section-title"><div><h2 data-i18n="playerTimelineTitle">커리어 타임라인</h2><span data-i18n="playerTimelineDesc">선수의 메달 기록을 시즌 역순으로 보여 줍니다.</span></div></div>
       <div id="playerTimeline"></div>
       <div class="spacer"></div>
@@ -2082,6 +2090,46 @@
       return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.ko && I18N.ko[key]) || key;
     }
 
+    function playerMedalDetailsCopy(open){
+      if(currentLang === 'en'){
+        return {
+          action: open ? 'Hide' : 'Show full medal list',
+          placeholder: 'Open the full medal list to display it.'
+        };
+      }
+      return {
+        action: open ? '접기' : '전체 메달 목록 보기',
+        placeholder: '전체 메달 목록 보기 버튼을 누르면 표시됩니다.'
+      };
+    }
+
+    function updatePlayerMedalDetailsAction(open){
+      const action=document.querySelector('#playerMedalDetails .player-medal-details-action');
+      if(action) action.textContent=playerMedalDetailsCopy(open).action;
+    }
+
+    function resetPlayerMedalDetails(name){
+      const details=document.getElementById('playerMedalDetails');
+      const wrap=document.getElementById('playerTable');
+      if(details){
+        details.open=false;
+        details.dataset.playerName=name||'';
+        details.dataset.rendered='';
+      }
+      if(wrap) wrap.innerHTML=`<div class="empty">${escapeHtml(playerMedalDetailsCopy(false).placeholder)}</div>`;
+      updatePlayerMedalDetailsAction(false);
+    }
+
+    function handlePlayerMedalDetailsToggle(details){
+      if(!details) return;
+      updatePlayerMedalDetailsAction(details.open);
+      if(!details.open) return;
+      const name=details.dataset.playerName || document.getElementById('playerName')?.textContent || '';
+      if(!name || details.dataset.rendered===name) return;
+      renderPlayerMedalTable(name);
+      details.dataset.rendered=name;
+    }
+
     function setLanguage(lang){
       currentLang = lang === 'en' ? 'en' : 'ko';
       document.documentElement.lang = currentLang;
@@ -2095,6 +2143,7 @@
       if(typeof getFilteredSkaterMedals === 'function') renderSkaterRanking(getFilteredSkaterMedals());
       if(typeof getFilteredEventRankingMedals === 'function') renderEventRanking(getFilteredEventRankingMedals());
       if(typeof renderPlayerComparison === 'function') renderPlayerComparison();
+      updatePlayerMedalDetailsAction(document.getElementById('playerMedalDetails')?.open);
     }
 
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkNr8yBRI_ok8aFZd623RmHhNCpyHFKuTvdwxYiczFi_LFff5olScBXSPGPd_-QWepKg/exec';
@@ -3903,6 +3952,7 @@
       document.getElementById('playerGold').textContent=rows.filter(r=>r.medal==='Gold').length;
       document.getElementById('playerSilver').textContent=rows.filter(r=>r.medal==='Silver').length;
       document.getElementById('playerBronze').textContent=rows.filter(r=>r.medal==='Bronze').length;
+      resetPlayerMedalDetails(name);
       renderPlayerOverview(name);renderPlayerTimeline(name);renderPlayerLapTable(name);
       const panel=document.getElementById('playerPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
@@ -5645,6 +5695,7 @@
       if(labels[2]) labels[2].textContent='개인전 은';
       if(labels[3]) labels[3].textContent='개인전 동';
       setStandaloneBestTimeBlockVisible(false);
+      resetPlayerMedalDetails(name);
       renderPlayerOverview(name);renderPlayerTimeline(name);renderPlayerLapTable(name);
       const panel=document.getElementById('playerPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
@@ -7617,7 +7668,20 @@
   .mobile-filter-backdrop,
   .mobile-filter-sheet-head{display:none}
 
+  .player-medal-details{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+  .player-medal-details>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 16px;cursor:pointer;list-style:none}
+  .player-medal-details>summary::-webkit-details-marker{display:none}
+  .player-medal-details-title{display:grid;gap:3px;min-width:0}
+  .player-medal-details-title strong{font-size:18px;color:var(--text)}
+  .player-medal-details-title small{font-size:13px;color:var(--muted);line-height:1.45}
+  .player-medal-details-action{flex:0 0 auto;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:900}
+  .player-medal-details[open]>summary{border-bottom:1px solid var(--line)}
+  .player-medal-details #playerTable{padding:14px 16px 16px}
+  .player-medal-details #playerTable .table-scroll{margin:0}
+
   body.st-view-mobile .desktop-data-table{display:none}
+  body.st-view-mobile .player-medal-details,
+  body.st-view-mobile .player-medal-detail-spacer{display:none}
   body.st-view-mobile .mobile-card-list{display:grid;gap:10px;margin:10px 0 12px}
   body.st-view-mobile .mobile-data-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:13px;box-shadow:0 6px 16px rgba(15,23,42,.05)}
   body.st-view-mobile .mobile-card-topline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
