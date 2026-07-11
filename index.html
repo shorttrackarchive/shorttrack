@@ -2471,19 +2471,32 @@
       }
       return json;
     }
+    function hasUsableBestTimes(rows){
+      return Array.isArray(rows) && rows.some(row => String(row && (row.best_time || row.final_time || row.time || row.record || row.lap_time || row.cumulative_time) || '').trim());
+    }
+    async function refreshBestTimesIfNeeded(json){
+      if(hasUsableBestTimes(json && json.best_times)) return json;
+      try{
+        const bestJson = await cachedFetchJson(buildApiUrl({type:'best_times'}), 'shorttrack_best_times_v4');
+        if(hasUsableBestTimes(bestJson && bestJson.best_times)){
+          return {...json, best_times: bestJson.best_times};
+        }
+      }catch(_bestTimesError){}
+      return json;
+    }
     async function fetchInitialData(){
       try{
         const json = await cachedFetchJson('data/initial.json', 'shorttrack_static_initial_v1');
-        if(json && json.ok !== false && Array.isArray(json.medals)) return json;
+        if(json && json.ok !== false && Array.isArray(json.medals)) return await refreshBestTimesIfNeeded(json);
       }catch(_staticError){}
       try{
         const json = await cachedFetchJson(buildApiUrl({action:'initialData'}), 'shorttrack_initial_data_v3');
-        if(json && json.ok !== false && Array.isArray(json.medals)) return json;
+        if(json && json.ok !== false && Array.isArray(json.medals)) return await refreshBestTimesIfNeeded(json);
       }catch(_e){}
       const [medalJson, relayJson, bestJson, aliasJson] = await Promise.all([
         cachedFetchJson(buildApiUrl({type:'medals'}), 'shorttrack_medals_v3'),
         cachedFetchJson(buildApiUrl({type:'relay_members'}), 'shorttrack_relay_members_v3'),
-        cachedFetchJson(buildApiUrl({type:'best_times'}), 'shorttrack_best_times_v3'),
+        cachedFetchJson(buildApiUrl({type:'best_times'}), 'shorttrack_best_times_v4'),
         cachedFetchJson(buildApiUrl({type:'skater_aliases'}), 'shorttrack_skater_aliases_v3')
       ]);
       return {
@@ -4391,37 +4404,29 @@
     function renderPlayerBestTimeTable(name){
       const wrap=document.getElementById('playerBestTimeTable');
       if(!wrap) return;
-      const rows=bestTimes
-        .filter(row=>row.skater_name===name)
-        .filter(row=>['500m','1000m','1500m'].includes(normalizeBestTimeEvent(row.event)))
-        .slice()
-        .sort((a,b)=>bestTimeEventOrder(a.event)-bestTimeEventOrder(b.event)||parseTimeToSeconds(a.best_time)-parseTimeToSeconds(b.best_time));
-
-      const bestByEvent=new Map();
-      rows.forEach(row=>{
-        const event=normalizeBestTimeEvent(row.event);
-        if(!bestByEvent.has(event) || parseTimeToSeconds(row.best_time) < parseTimeToSeconds(bestByEvent.get(event).best_time)){
-          bestByEvent.set(event,row);
-        }
-      });
-
+      const bestByEvent=personalBestMapForPlayer(name);
       const events=['500m','1000m','1500m'];
       const tableRows=events.map(event=>{
         const row=bestByEvent.get(event);
         if(!row){
           return `<tr><td><strong>${event}</strong></td><td colspan="5" class="muted">수동 입력된 최고기록이 없습니다.</td></tr>`;
         }
+        const time=row.time||row.best_time||'';
+        const comp=[row.competition_name,row.round].filter(Boolean).join(' · ') || '-';
+        const season=row.season||row.year||'-';
+        const source=row.source||'수동 입력';
+        const note=[source,row.note].filter(Boolean).join(' · ');
         return `<tr>
           <td><strong>${event}</strong></td>
-          <td><strong>${escapeHtml(row.best_time)}</strong></td>
-          <td>${escapeHtml(row.competition_name||'-')}</td>
+          <td><strong>${escapeHtml(time)}</strong></td>
+          <td>${escapeHtml(comp)}</td>
           <td>${escapeHtml(row.competition_type||'-')}</td>
-          <td>${escapeHtml(row.season||row.year||'-')}</td>
-          <td>${escapeHtml(row.note||'')}</td>
+          <td>${escapeHtml(season)}</td>
+          <td>${escapeHtml(note)}</td>
         </tr>`;
       }).join('');
 
-      wrap.innerHTML=`<div class="table-scroll"><table><thead><tr><th>종목</th><th>최종 최고기록</th><th>대회</th><th>구분</th><th>시즌/연도</th><th>비고</th></tr></thead><tbody>${tableRows}</tbody></table></div>`;
+      wrap.innerHTML=`<div class="table-scroll"><table><thead><tr><th>종목</th><th>최종 최고기록</th><th>대회/라운드</th><th>구분</th><th>시즌/연도</th><th>출처/비고</th></tr></thead><tbody>${tableRows}</tbody></table></div>`;
     }
 
     function openCompetitionPanel(name){
@@ -5694,7 +5699,7 @@
       if(labels[1]) labels[1].textContent='개인전 금';
       if(labels[2]) labels[2].textContent='개인전 은';
       if(labels[3]) labels[3].textContent='개인전 동';
-      setStandaloneBestTimeBlockVisible(false);
+      setStandaloneBestTimeBlockVisible(true);
       resetPlayerMedalDetails(name);
       renderPlayerOverview(name);renderPlayerTimeline(name);renderPlayerLapTable(name);
       const panel=document.getElementById('playerPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
@@ -5771,9 +5776,8 @@
     }
 
     function renderPlayerLapTable(name){
-      setStandaloneBestTimeBlockVisible(false);
-      const wrap=document.getElementById('playerBestTimeTable');
-      if(wrap) wrap.innerHTML='';
+      setStandaloneBestTimeBlockVisible(true);
+      renderPlayerBestTimeTable(name);
     }
 
     function renderTimelineBadges(row){
@@ -7132,6 +7136,12 @@
     try{
       const json = await cachedFetchJson('data/event-records.json', 'shorttrack_static_event_records_v1');
       eventRecordRows = prepareEventRecordRows(extractRecordRowsFromJson(json));
+      try{
+        if(typeof normalizeEventRecordCacheRow === 'function'){
+          eventRecordsCache = eventRecordRows.map(normalizeEventRecordCacheRow).filter(row=>row.skater_name && row.personal_best_event);
+          window.eventRecordsCache = eventRecordsCache;
+        }
+      }catch(_syncError){}
       populateEventRecordFilters(eventRecordRows);
       unlockEventRecordFilterControls();
     }catch(error){
@@ -8587,9 +8597,24 @@
       const medals = document.getElementById('mobilePlayerMedalsPanel');
       const overviewTitle = overview?.previousElementSibling;
       const timelineTitle = timeline?.previousElementSibling;
-      const oldBestTitle = document.getElementById('playerBestTimeTable')?.previousElementSibling;
+      const oldBestWrap = document.getElementById('playerBestTimeTable');
+      const oldBestTitle = oldBestWrap?.previousElementSibling;
+      const oldBestSpacer = oldBestTitle?.previousElementSibling;
       const next = ['overview','medals','best','timeline'].includes(tab) ? tab : 'overview';
       if(panel) panel.dataset.mobileTab = next;
+      if(!document.body.classList.contains('st-view-mobile')){
+        if(overview) overview.style.display = '';
+        if(timeline) timeline.style.display = '';
+        if(best) best.style.display = 'none';
+        if(medals) medals.style.display = 'none';
+        if(overviewTitle?.classList?.contains('section-title')) overviewTitle.style.display = '';
+        if(timelineTitle?.classList?.contains('section-title')) timelineTitle.style.display = '';
+        if(oldBestTitle?.classList?.contains('section-title')) oldBestTitle.style.display = '';
+        if(oldBestSpacer?.classList?.contains('spacer')) oldBestSpacer.style.display = '';
+        if(oldBestWrap) oldBestWrap.style.display = '';
+        document.querySelectorAll('[data-mobile-player-tab]').forEach(btn=>btn.classList.remove('active'));
+        return;
+      }
       if(overview) overview.style.display = next === 'overview' ? '' : 'none';
       if(best) best.style.display = next === 'best' ? 'grid' : 'none';
       if(medals) medals.style.display = next === 'medals' ? 'block' : 'none';
@@ -8597,6 +8622,8 @@
       if(overviewTitle?.classList?.contains('section-title')) overviewTitle.style.display = next === 'overview' ? '' : 'none';
       if(timelineTitle?.classList?.contains('section-title')) timelineTitle.style.display = next === 'timeline' ? '' : 'none';
       if(oldBestTitle?.classList?.contains('section-title')) oldBestTitle.style.display = 'none';
+      if(oldBestSpacer?.classList?.contains('spacer')) oldBestSpacer.style.display = 'none';
+      if(oldBestWrap) oldBestWrap.style.display = 'none';
       document.querySelectorAll('[data-mobile-player-tab]').forEach(btn=>btn.classList.toggle('active', btn.dataset.mobilePlayerTab === next));
     };
     function setupMobileFilter(sectionId, controlsSelector, title){
