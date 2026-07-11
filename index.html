@@ -994,16 +994,13 @@
       <div class="section-title"><div><h2 data-i18n="playerOverviewTitle">선수 요약</h2><span data-i18n="playerOverviewDesc">개인전·계주·대회 유형별 메달을 요약합니다.</span></div></div>
       <div id="playerOverviewTable"></div>
       <div class="spacer"></div>
-      <details id="playerMedalDetails" class="player-medal-details" ontoggle="handlePlayerMedalDetailsToggle(this)">
+      <details id="playerTimelineDetails" class="player-timeline-details" ontoggle="handlePlayerTimelineDetailsToggle(this)">
         <summary>
-          <span class="player-medal-details-title"><strong data-i18n="playerMedalDetailTitle">선수별 메달 내역</strong><small data-i18n="playerMedalDetailDesc">개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.</small></span>
-          <span class="player-medal-details-action">전체 메달 목록 보기</span>
+          <span class="player-timeline-details-title"><strong data-i18n="playerTimelineTitle">커리어 타임라인</strong><small data-i18n="playerTimelineDesc">선수의 메달 기록을 시즌 역순으로 보여 줍니다.</small></span>
+          <span class="player-timeline-details-action">타임라인 보기</span>
         </summary>
-        <div id="playerTable"><div class="empty">전체 메달 목록 보기 버튼을 누르면 표시됩니다.</div></div>
+        <div id="playerTimeline"><div class="empty">타임라인 보기 버튼을 누르면 표시됩니다.</div></div>
       </details>
-      <div class="spacer player-medal-detail-spacer"></div>
-      <div class="section-title"><div><h2 data-i18n="playerTimelineTitle">커리어 타임라인</h2><span data-i18n="playerTimelineDesc">선수의 메달 기록을 시즌 역순으로 보여 줍니다.</span></div></div>
-      <div id="playerTimeline"></div>
       <div class="spacer"></div>
       <div class="section-title"><div><h2>500·1000·1500m 최종 최고기록</h2><span>best_times 시트에 수동 입력한 선수별 최종 최고기록입니다.</span></div></div>
       <div id="playerBestTimeTable"></div>
@@ -2090,43 +2087,43 @@
       return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.ko && I18N.ko[key]) || key;
     }
 
-    function playerMedalDetailsCopy(open){
+    function playerTimelineDetailsCopy(open){
       if(currentLang === 'en'){
         return {
-          action: open ? 'Hide' : 'Show full medal list',
-          placeholder: 'Open the full medal list to display it.'
+          action: open ? 'Hide' : 'Show timeline',
+          placeholder: 'Open the timeline to display it.'
         };
       }
       return {
-        action: open ? '접기' : '전체 메달 목록 보기',
-        placeholder: '전체 메달 목록 보기 버튼을 누르면 표시됩니다.'
+        action: open ? '접기' : '타임라인 보기',
+        placeholder: '타임라인 보기 버튼을 누르면 표시됩니다.'
       };
     }
 
-    function updatePlayerMedalDetailsAction(open){
-      const action=document.querySelector('#playerMedalDetails .player-medal-details-action');
-      if(action) action.textContent=playerMedalDetailsCopy(open).action;
+    function updatePlayerTimelineDetailsAction(open){
+      const action=document.querySelector('#playerTimelineDetails .player-timeline-details-action');
+      if(action) action.textContent=playerTimelineDetailsCopy(open).action;
     }
 
-    function resetPlayerMedalDetails(name){
-      const details=document.getElementById('playerMedalDetails');
-      const wrap=document.getElementById('playerTable');
+    function resetPlayerTimelineDetails(name){
+      const details=document.getElementById('playerTimelineDetails');
+      const wrap=document.getElementById('playerTimeline');
       if(details){
         details.open=false;
         details.dataset.playerName=name||'';
         details.dataset.rendered='';
       }
-      if(wrap) wrap.innerHTML=`<div class="empty">${escapeHtml(playerMedalDetailsCopy(false).placeholder)}</div>`;
-      updatePlayerMedalDetailsAction(false);
+      if(wrap) wrap.innerHTML=`<div class="empty">${escapeHtml(playerTimelineDetailsCopy(false).placeholder)}</div>`;
+      updatePlayerTimelineDetailsAction(false);
     }
 
-    function handlePlayerMedalDetailsToggle(details){
+    function handlePlayerTimelineDetailsToggle(details){
       if(!details) return;
-      updatePlayerMedalDetailsAction(details.open);
+      updatePlayerTimelineDetailsAction(details.open);
       if(!details.open) return;
       const name=details.dataset.playerName || document.getElementById('playerName')?.textContent || '';
       if(!name || details.dataset.rendered===name) return;
-      renderPlayerMedalTable(name);
+      renderPlayerTimeline(name);
       details.dataset.rendered=name;
     }
 
@@ -2143,7 +2140,7 @@
       if(typeof getFilteredSkaterMedals === 'function') renderSkaterRanking(getFilteredSkaterMedals());
       if(typeof getFilteredEventRankingMedals === 'function') renderEventRanking(getFilteredEventRankingMedals());
       if(typeof renderPlayerComparison === 'function') renderPlayerComparison();
-      updatePlayerMedalDetailsAction(document.getElementById('playerMedalDetails')?.open);
+      updatePlayerTimelineDetailsAction(document.getElementById('playerTimelineDetails')?.open);
     }
 
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkNr8yBRI_ok8aFZd623RmHhNCpyHFKuTvdwxYiczFi_LFff5olScBXSPGPd_-QWepKg/exec';
@@ -3965,8 +3962,8 @@
       document.getElementById('playerGold').textContent=rows.filter(r=>r.medal==='Gold').length;
       document.getElementById('playerSilver').textContent=rows.filter(r=>r.medal==='Silver').length;
       document.getElementById('playerBronze').textContent=rows.filter(r=>r.medal==='Bronze').length;
-      resetPlayerMedalDetails(name);
-      renderPlayerOverview(name);renderPlayerTimeline(name);renderPlayerLapTable(name);
+      resetPlayerTimelineDetails(name);
+      renderPlayerOverview(name);renderPlayerLapTable(name);
       const panel=document.getElementById('playerPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
     function closePlayerPanel(){document.getElementById('playerPanel').classList.remove('active');}
@@ -4147,19 +4144,6 @@
       });
 
       wrap.innerHTML=`<div class="timeline">${sortedSeasons.map(([season,list])=>`<div class="timeline-year"><h4>${escapeHtml(season)}</h4><div class="timeline-list">${list.map(row=>`<div class="timeline-item"><strong>${escapeHtml(row.competition_name||row.year)}</strong> · ${escapeHtml(row.event)} · <span class="medal-pill ${String(row.medal||'').toLowerCase()}">${medalKorean(row.medal)}</span> <small>${escapeHtml(row.competition_type||'')}</small>${renderQualityBadges(row,indexes)}</div>`).join('')}</div></div>`).join('')}</div>`;
-    }
-
-    function renderPlayerMedalTable(name){
-      const rows=skaterMedals
-        .filter(row=>row.skater_name===name)
-        .slice()
-        .sort(comparePlayerDetailMedals);
-
-      const wrap=document.getElementById('playerTable');
-      if(!rows.length){wrap.innerHTML='<div class="empty">메달 내역이 없습니다.</div>';return;}
-      const indexes=buildQualityIndexes(skaterMedals);
-
-      wrap.innerHTML=`<div class="table-scroll"><table><thead><tr><th>연도</th><th>대회</th><th>구분</th><th>성별</th><th>종목</th><th>메달</th><th>상태</th><th>신고</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${escapeHtml(row.year)}</td><td>${escapeHtml(row.competition_name||row.season)}</td><td>${escapeHtml(row.competition_type)}</td><td>${escapeHtml(genderKorean(row.gender))}</td><td>${escapeHtml(row.event)}</td><td><span class="medal-pill ${String(row.medal||'').toLowerCase()}">${medalKorean(row.medal)}</span></td><td>${renderQualityBadges(row,indexes)}</td><td><button type="button" class="row-report-btn" onclick="reportRowIssue('${escapeJs(rowReportText(row,'선수 상세 페이지'))}')">${tr('reportThisRow')}</button></td></tr>`).join('')}</tbody></table></div>`;
     }
 
     function normalizeBestTimeEvent(value){
@@ -5700,8 +5684,8 @@
       if(labels[2]) labels[2].textContent='개인전 은';
       if(labels[3]) labels[3].textContent='개인전 동';
       setStandaloneBestTimeBlockVisible(true);
-      resetPlayerMedalDetails(name);
-      renderPlayerOverview(name);renderPlayerTimeline(name);renderPlayerLapTable(name);
+      resetPlayerTimelineDetails(name);
+      renderPlayerOverview(name);renderPlayerLapTable(name);
       const panel=document.getElementById('playerPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
 
@@ -7678,20 +7662,17 @@
   .mobile-filter-backdrop,
   .mobile-filter-sheet-head{display:none}
 
-  .player-medal-details{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
-  .player-medal-details>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 16px;cursor:pointer;list-style:none}
-  .player-medal-details>summary::-webkit-details-marker{display:none}
-  .player-medal-details-title{display:grid;gap:3px;min-width:0}
-  .player-medal-details-title strong{font-size:18px;color:var(--text)}
-  .player-medal-details-title small{font-size:13px;color:var(--muted);line-height:1.45}
-  .player-medal-details-action{flex:0 0 auto;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:900}
-  .player-medal-details[open]>summary{border-bottom:1px solid var(--line)}
-  .player-medal-details #playerTable{padding:14px 16px 16px}
-  .player-medal-details #playerTable .table-scroll{margin:0}
+  .player-timeline-details{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}
+  .player-timeline-details>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 16px;cursor:pointer;list-style:none}
+  .player-timeline-details>summary::-webkit-details-marker{display:none}
+  .player-timeline-details-title{display:grid;gap:3px;min-width:0}
+  .player-timeline-details-title strong{font-size:18px;color:var(--text)}
+  .player-timeline-details-title small{font-size:13px;color:var(--muted);line-height:1.45}
+  .player-timeline-details-action{flex:0 0 auto;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:900}
+  .player-timeline-details[open]>summary{border-bottom:1px solid var(--line)}
+  .player-timeline-details #playerTimeline{padding:14px 16px 16px}
 
   body.st-view-mobile .desktop-data-table{display:none}
-  body.st-view-mobile .player-medal-details,
-  body.st-view-mobile .player-medal-detail-spacer{display:none}
   body.st-view-mobile .mobile-card-list{display:grid;gap:10px;margin:10px 0 12px}
   body.st-view-mobile .mobile-data-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:13px;box-shadow:0 6px 16px rgba(15,23,42,.05)}
   body.st-view-mobile .mobile-card-topline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
@@ -8593,10 +8574,10 @@
       const panel = document.getElementById('playerPanel');
       const overview = document.getElementById('playerOverviewTable');
       const timeline = document.getElementById('playerTimeline');
+      const timelineDetails = document.getElementById('playerTimelineDetails');
       const best = document.getElementById('mobilePlayerBestPanel');
       const medals = document.getElementById('mobilePlayerMedalsPanel');
       const overviewTitle = overview?.previousElementSibling;
-      const timelineTitle = timeline?.previousElementSibling;
       const oldBestWrap = document.getElementById('playerBestTimeTable');
       const oldBestTitle = oldBestWrap?.previousElementSibling;
       const oldBestSpacer = oldBestTitle?.previousElementSibling;
@@ -8605,10 +8586,10 @@
       if(!document.body.classList.contains('st-view-mobile')){
         if(overview) overview.style.display = '';
         if(timeline) timeline.style.display = '';
+        if(timelineDetails) timelineDetails.style.display = '';
         if(best) best.style.display = 'none';
         if(medals) medals.style.display = 'none';
         if(overviewTitle?.classList?.contains('section-title')) overviewTitle.style.display = '';
-        if(timelineTitle?.classList?.contains('section-title')) timelineTitle.style.display = '';
         if(oldBestTitle?.classList?.contains('section-title')) oldBestTitle.style.display = '';
         if(oldBestSpacer?.classList?.contains('spacer')) oldBestSpacer.style.display = '';
         if(oldBestWrap) oldBestWrap.style.display = '';
@@ -8619,8 +8600,8 @@
       if(best) best.style.display = next === 'best' ? 'grid' : 'none';
       if(medals) medals.style.display = next === 'medals' ? 'block' : 'none';
       if(timeline) timeline.style.display = next === 'timeline' ? '' : 'none';
+      if(timelineDetails) timelineDetails.style.display = next === 'timeline' ? '' : 'none';
       if(overviewTitle?.classList?.contains('section-title')) overviewTitle.style.display = next === 'overview' ? '' : 'none';
-      if(timelineTitle?.classList?.contains('section-title')) timelineTitle.style.display = next === 'timeline' ? '' : 'none';
       if(oldBestTitle?.classList?.contains('section-title')) oldBestTitle.style.display = 'none';
       if(oldBestSpacer?.classList?.contains('spacer')) oldBestSpacer.style.display = 'none';
       if(oldBestWrap) oldBestWrap.style.display = 'none';
