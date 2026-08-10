@@ -1053,6 +1053,12 @@
     </section>
     <section class="card anchor-section" id="seasonDirectorySection">
       <div class="section-title"><div><h2 data-i18n="seasonDirectoryTitle">시즌 목록</h2><span data-i18n="seasonDirectoryDesc">데이터에 존재하는 시즌만 최신순으로 정리합니다.</span></div></div>
+      <div class="archive-explorer-toolbar" aria-label="시즌 목록 필터">
+        <select id="seasonDirectorySeason" aria-label="시즌 선택"><option value="" data-i18n="filterSeason">시즌 선택</option></select>
+        <select id="seasonDirectoryType" aria-label="대회 종류 선택"><option value="" data-i18n="allTypes">전체 종류</option></select>
+        <input id="seasonDirectoryKeyword" class="wide" type="search" placeholder="시즌·대회 종류 빠른 검색" data-i18n-placeholder="seasonDirectoryKeyword" />
+        <button type="button" class="sort-btn" data-i18n="resetAll" onclick="resetSeasonDirectoryFilters()">전체 초기화</button>
+      </div>
       <div id="seasonDirectorySummary" class="subnote"></div>
       <div id="seasonDirectoryWrap"><div class="empty" data-i18n="loading">데이터를 불러오는 중입니다.</div></div>
     </section>
@@ -2085,7 +2091,7 @@
         exploreBySeason:'시즌으로 보기', exploreBySeasonDesc:'특정 시즌의 대회와 결과 탐색', exploreByCompetition:'대회로 보기', exploreByCompetitionDesc:'올림픽·세계선수권·월드컵·월드투어 탐색', exploreByAthlete:'선수로 보기', exploreByAthleteDesc:'선수의 시즌별 성적과 출전 기록 탐색',
         todayFeatureTitle:'오늘의 추천', todayFeatureDesc:'검색하지 않아도 바로 둘러볼 수 있는 빠른 메뉴입니다.', todaySkater:'오늘의 선수', todaySkaterLoading:'선수 데이터 준비 중', todaySkaterLoadingMeta:'데이터를 불러오면 오늘의 선수가 표시됩니다.', viewTodaySkater:'오늘의 선수 보기', randomSkater:'랜덤 선수 보기', quickPage:'빠른 탐색', quickCountrySeason:'아카이브 바로 보기', quickPageDesc:'시즌·대회·선수 목록과 판정/규칙 안내로 바로 이동합니다.', popularCountryPage:'대표 국가 페이지', latestSeasonPage:'최신 시즌 페이지', rulesGuide:'판정/규칙',
         seasonDirectoryTitle:'시즌 목록', seasonDirectoryDesc:'데이터에 존재하는 시즌만 최신순으로 정리합니다.', competitionDirectoryTitle:'대회 목록', competitionDirectoryDesc:'시즌과 대회 종류로 기존 대회 상세 페이지를 찾습니다.', athleteDirectoryTitle:'선수 목록', athleteDirectoryDesc:'이름, 국가, 성별, 활동 시즌으로 선수 상세 페이지를 찾습니다.',
-        latestSeason:'최신 시즌', recentCompetitions:'최근 개최 대회', recentPlayers:'최근 본 선수', viewSeason:'시즌 상세 보기', viewCompetition:'대회 결과 보기', viewAthlete:'선수 상세 보기', resetAll:'전체 초기화', filterSeason:'시즌 선택', filterCompetitionType:'대회 종류 선택', filterCity:'개최 도시/국가', filterCountry:'국가', filterGender:'성별', filterActiveSeason:'활동 시즌', quickSearch:'빠른 검색', allTypes:'전체 종류', allCountries:'전체 국가', allCities:'전체 도시/국가', allLetters:'전체 색인', showMore:'더보기', collapse:'접기', dataNone:'표시할 데이터가 없습니다.',
+        latestSeason:'최신 시즌', recentCompetitions:'최근 개최 대회', recentPlayers:'최근 본 선수', viewSeason:'시즌 상세 보기', viewCompetition:'대회 결과 보기', viewAthlete:'선수 상세 보기', resetAll:'전체 초기화', filterSeason:'시즌 선택', filterCompetitionType:'대회 종류 선택', filterCity:'개최 도시/국가', filterCountry:'국가', filterGender:'성별', filterActiveSeason:'활동 시즌', quickSearch:'빠른 검색', seasonDirectoryKeyword:'시즌·대회 종류 빠른 검색', allTypes:'전체 종류', allCountries:'전체 국가', allCities:'전체 도시/국가', allLetters:'전체 색인', showMore:'더보기', collapse:'접기', dataNone:'표시할 데이터가 없습니다.',
         reportTitle:'오류 신고 및 문의', close:'닫기', cancel:'취소', submit:'제출',
         reportPlaceholder:'오류 내용이나 문의 내용을 입력해 주세요.', searchPlaceholder:'선수명, 국가, 대회명, 종목 검색', searchSort:'정렬', sortRecent:'최신순', sortOldest:'오래된순', sortMedal:'메달순', sortEvent:'종목순', sortName:'선수명순', relayOnly:'계주만', goldOnly:'금메달만', excludeWorldsOverall:'세계선수권 종합 제외', exclude3000:'3000m 제외', helpTitle:'용어·데이터 기준 도움말', helpDesc:'순위와 기록을 해석할 때 참고할 기준입니다.', helpWorldsOverallTitle:'세계선수권 종합', helpWorldsOverallText:'세계선수권 Overall 포디움입니다. 선수별 종합 순위에서는 기본적으로 개인 종목 메달과 별도 집계합니다.', help3000Title:'3000m S.F.', help3000Text:'세계선수권 Super Final 성격의 3000m 개인전 기록입니다. 기본 순위에서는 제외하거나 별도 안내합니다.', helpRelayTitle:'계주 데이터', helpRelayText:'계주 멤버 데이터는 올림픽 중심으로 정리되어 있습니다. 세계선수권·월드컵 계주는 불완전할 수 있습니다.', helpScoreTitle:'점수 계산', helpScoreText:'점수 입력란의 값에 따라 순위가 즉시 바뀝니다. 기본값은 13·21·34 기반 점수 체계입니다.', playerTimelineTitle:'커리어 타임라인', playerTimelineDesc:'선수의 메달 기록을 시즌 역순으로 보여 줍니다.', dataLoaded:'데이터 로드 완료', reportThisRow:'오류 신고',
         skaterRankTitle:'선수별 종합 순위', countryRankTitle:'국가별 메달 순위', eventRankTitle:'종목별 선수 순위',
@@ -2145,7 +2151,7 @@
         exploreBySeason:'Browse by season', exploreBySeasonDesc:'Find competitions and results from a season', exploreByCompetition:'Browse by competition', exploreByCompetitionDesc:'Explore Olympics, World Championships, World Cup, and World Tour events', exploreByAthlete:'Browse by athlete', exploreByAthleteDesc:'Find season results and competition history by athlete',
         todayFeatureTitle:'Today’s Picks', todayFeatureDesc:'Quick entry points you can browse without starting from search.', todaySkater:'Today’s athlete', todaySkaterLoading:'Athlete data is loading', todaySkaterLoadingMeta:'Today’s athlete will appear after the data loads.', viewTodaySkater:'View today’s athlete', randomSkater:'Random athlete', quickPage:'Quick browse', quickCountrySeason:'Browse the archive', quickPageDesc:'Jump to seasons, competitions, athletes, or the judging/rules guide.', popularCountryPage:'Representative country page', latestSeasonPage:'Latest season page', rulesGuide:'Rules guide',
         seasonDirectoryTitle:'Season Directory', seasonDirectoryDesc:'Only seasons present in the data are listed, newest first.', competitionDirectoryTitle:'Competition Directory', competitionDirectoryDesc:'Find existing competition detail pages by season and competition type.', athleteDirectoryTitle:'Athlete Directory', athleteDirectoryDesc:'Find athlete detail pages by name, country, gender, and active season.',
-        latestSeason:'Latest season', recentCompetitions:'Recent competitions', recentPlayers:'Recently viewed athletes', viewSeason:'View season details', viewCompetition:'View competition results', viewAthlete:'View athlete details', resetAll:'Reset all', filterSeason:'Season', filterCompetitionType:'Competition type', filterCity:'Host city/country', filterCountry:'Country', filterGender:'Gender', filterActiveSeason:'Active season', quickSearch:'Quick search', allTypes:'All types', allCountries:'All countries', allCities:'All cities/countries', allLetters:'All index', showMore:'Show more', collapse:'Collapse', dataNone:'No data to display.',
+        latestSeason:'Latest season', recentCompetitions:'Recent competitions', recentPlayers:'Recently viewed athletes', viewSeason:'View season details', viewCompetition:'View competition results', viewAthlete:'View athlete details', resetAll:'Reset all', filterSeason:'Season', filterCompetitionType:'Competition type', filterCity:'Host city/country', filterCountry:'Country', filterGender:'Gender', filterActiveSeason:'Active season', quickSearch:'Quick search', seasonDirectoryKeyword:'Quick search season or competition type', allTypes:'All types', allCountries:'All countries', allCities:'All cities/countries', allLetters:'All index', showMore:'Show more', collapse:'Collapse', dataNone:'No data to display.',
         reportTitle:'Report / Contact', close:'Close', cancel:'Cancel', submit:'Submit',
         reportPlaceholder:'Enter an error report or question.', searchPlaceholder:'Search skater, country, competition, or event',
         skaterRankTitle:'Overall Skater Ranking', countryRankTitle:'Country Medal Ranking', eventRankTitle:'Event Ranking',
@@ -2224,7 +2230,11 @@
       filterSettings:'필터 설정', closeFilters:'필터 닫기', heatFilterTitle:'조편성 설정', skaterFilterTitle:'선수 순위 필터 설정', countryFilterTitle:'국가 순위 필터 설정', eventFilterTitle:'종목별 선수 순위 필터 설정', compareFilterTitle:'선수 비교 설정', quizFilterTitle:'퀴즈 설정', recordFilterTitle:'종목별 기록 필터', lapFilterTitle:'랩타임 필터',
       countryPage:'국가 페이지', skaterDetail:'선수 상세', competitionDetails:'대회별 세부 보기',
       showMoreSkaters:'선수 더 보기', showMoreCountries:'국가 더 보기', showMoreRecords:'기록 더 보기', showMoreLaps:'랩타임 더 보기', showMoreRawRows:'원자료 더 보기', showMoreEventRanks:'종목 순위 더 보기', showMoreTableRows:'표 항목 더 보기',
-      heatNoAssigned:'배정된 선수가 없습니다.', heatNoNextDraw:'다음 조 배정이 없습니다.', heatNoEliminated:'미진출자가 없습니다.'
+      heatNoAssigned:'배정된 선수가 없습니다.', heatNoNextDraw:'다음 조 배정이 없습니다.', heatNoEliminated:'미진출자가 없습니다.',
+      heatInputNote:'현재 라운드 결과에 필요한 선수들을 입력합니다. 심판 판정으로 진출한 선수만 ADV로 표시해 주세요.',
+      heatSeedOrderNote:'시드 순서: 순위 그룹 우선, 같은 순위 안에서는 기록순입니다.',
+      heatAssignmentNote:'조 배정은 시드 지그재그 방식입니다. 각 조 안의 SP는 직전 라운드 기록순으로 다시 정렬됩니다.',
+      searchRawPrompt:'선수명, 국가, 대회명, 시즌, 종목을 검색하면 원자료 결과가 표시됩니다.'
     });
 
     Object.assign(I18N.en, {
@@ -2254,6 +2264,10 @@
       countryPage:'Country page', skaterDetail:'Skater details', competitionDetails:'Competition details',
       showMoreSkaters:'Show more skaters', showMoreCountries:'Show more countries', showMoreRecords:'Show more records', showMoreLaps:'Show more lap times', showMoreRawRows:'Show more source rows', showMoreEventRanks:'Show more event rankings', showMoreTableRows:'Show more table rows',
       heatNoAssigned:'No skaters assigned.', heatNoNextDraw:'No next-round draw assigned.', heatNoEliminated:'No eliminated skaters.',
+      heatInputNote:'Enter the skaters needed for the current heat results. Use ADV only for skaters advanced by referee decision.',
+      heatSeedOrderNote:'Seed order: finish-position groups first, then time within each group.',
+      heatAssignmentNote:'Heat assignment uses snake seeding. SP inside each heat is sorted again by previous-round time.',
+      searchRawPrompt:'Search by skater, country, competition, season, or event to show source rows.',
       heatToolTitle:'Heat Draw Tool', heatToolDesc:'Enter race results to calculate qualifiers and estimate the next-round heat draw.', heatToolNotice:'This is a fan-made helper. Because ADV qualifiers may occur, set the number of skaters per heat manually before building the result table. Qualifiers are seeded by finish-position groups first, then by time within each group; next-round heats are assigned by snake seeding. SP within each next-round heat is then re-sorted by the previous-round time. Actual official heat draws may differ, and ADV/ties should be checked manually.', heatDistance:'Event', heatRound:'Current round', roundPreliminary:'Preliminary', roundHeats:'Heats', roundQuarterfinals:'Quarterfinals', roundSemifinals:'Semifinals', heatCount:'Current heats', heatSkatersPerHeat:'Skaters per heat', heatAutoQualifiers:'Auto qualifiers per heat', heatTimeQualifiers:'Fastest additional qualifiers', heatNextCount:'Next-round heats', heatSeedMethod:'Seeding method', seedSnake:'Snake seeding', seedStraight:'Straight seeding', heatTimeSort:'Time sorting', timeFastest:'Fastest first', timeNone:'Do not use times', buildHeatTable:'Build result table', calculateHeatDraw:'Calculate qualifiers & draw', sampleHeatData:'Fill sample', clearHeatData:'Clear input', heatInputEmpty:'Build a result table first.', heatOutputEmpty:'Results will appear here.', heatNoQualifiers:'No qualifiers.', heatAutoQ:'Auto qualifier', heatTimeQ:'Time qualifier', heatAdv:'ADV', heatEliminated:'Eliminated', heatQualifiers:'Qualifiers', heatNextDraw:'Next-round heat draw', heatName:'Skater', heatCountry:'Country', heatPosition:'Place', heatTime:'Time', heatStatus:'Status', heatHeat:'Heat', heatReason:'Reason', heatRank:'Seed', heatSP:'SP', heatOfficialNote:'Estimated heat draw. Actual official heat draws may differ.',
       quizTitle:'Random Short Track Quiz', quizDesc:'Questions are generated automatically from the current medals data. You do not need to create questions manually; when new data is added, the quiz pool updates after refresh.', quizNotice:'Questions focus on individual events and exclude relays, 3000m, Olympic demonstration events, joint-medal cases, and incomplete podiums. If you find an error, report it from that question.', quizCount:'Questions', quizEra:'Era', quizType:'Question type', quizTypeMixed:'Mixed', quizTypeGold:'Gold medalist', quizTypePodium:'Podium order', quizTypeCountry:'Skater country', quizTypeMedal:'Medal color', startQuiz:'Start quiz', submitQuiz:'Grade quiz', resetQuiz:'Reset', quizEmpty:'Select options and start the quiz.', quizNoData:'No question candidates match these options.', quizQuestion:'Question', quizReport:'Report this question', quizCorrectAnswer:'Answer', quizYourAnswer:'Your answer', quizUnanswered:'Unanswered', quizScoreText:'Correct', quizAccuracy:'Accuracy', quizTitleGod:'ISU database itself', quizTitleLegend:'Short track encyclopedia', quizTitleWorld:'World Tour commentator', quizTitlePodium:'Podium tracker', quizTitleFan:'Rink regular', quizTitleRookie:'Needs replay training', quizGoldQuestion:'Who was the gold medalist?', quizPodiumQuestion:'Which podium order is correct?', quizCountryQuestion:'is from which country?', quizMedalQuestion:'What medal did this skater win?'
     });
@@ -2540,7 +2554,6 @@
       updateCompareOptionTabs();
       updateEventGenderTabs();
       updateFanCard();
-      buildHeatInputTable();
       updateWorldsOverallScoreFields();
       const loadingStatus=document.getElementById('loadingStatus');
       if(loadingStatus) loadingStatus.textContent=tr('loading');
@@ -2725,13 +2738,8 @@
       }
       return new URL(clean, document.baseURI || location.href).href;
     }
-    async function cachedFetchJson(url, storageKey, ttlMs = API_CACHE_TTL_MS){
-      const now = Date.now();
-      try{
-        const cached = JSON.parse(localStorage.getItem(storageKey) || 'null');
-        if(cached && cached.expires > now && cached.value) return cached.value;
-      }catch(_e){}
-      const response = await fetch(url);
+    async function fetchJson(url, fetchOptions){
+      const response = await fetch(url, fetchOptions);
       if(!response.ok) throw new Error(`Request failed ${response.status}: ${url}`);
       const text = await response.text();
       let json;
@@ -2740,6 +2748,23 @@
       }catch(error){
         throw new Error('API response was not JSON');
       }
+      return json;
+    }
+    async function fetchStaticJson(path){
+      return fetchJson(staticDataUrl(path), {cache:'force-cache'});
+    }
+    function runWhenIdle(callback, timeout = 1200){
+      if(typeof callback !== 'function') return 0;
+      if('requestIdleCallback' in window) return window.requestIdleCallback(callback, {timeout});
+      return window.setTimeout(callback, 0);
+    }
+    async function cachedFetchJson(url, storageKey, ttlMs = API_CACHE_TTL_MS){
+      const now = Date.now();
+      try{
+        const cached = JSON.parse(localStorage.getItem(storageKey) || 'null');
+        if(cached && cached.expires > now && cached.value) return cached.value;
+      }catch(_e){}
+      const json = await fetchJson(url);
       if(json && json.ok !== false){
         try{ localStorage.setItem(storageKey, JSON.stringify({expires: now + ttlMs, value: json})); }catch(_e){}
       }
@@ -2760,9 +2785,11 @@
     }
     async function fetchInitialData(){
       try{
-        const json = await cachedFetchJson(staticDataUrl('data/initial.json'), 'shorttrack_static_initial_v5');
+        const [json, countryHistory] = await Promise.all([
+          fetchStaticJson('data/initial.json'),
+          fetchAthleteCountryHistory()
+        ]);
         if(json && json.ok !== false && Array.isArray(json.medals)){
-          const countryHistory = await fetchAthleteCountryHistory();
           if(countryHistory.length) json.athlete_country_history = countryHistory;
           return await refreshBestTimesIfNeeded(json);
         }
@@ -2819,7 +2846,7 @@
         skaterMedals=buildSkaterMedals();
         setupSectionSeasonFilters();
         setupSectionEraFilters();
-        setupComparePlayerSelects();
+        runWhenIdle(()=>setupComparePlayerSelects(), 1600);
         applyFilters();
         if(typeof unlockLapFilterControls === 'function') unlockLapFilterControls();
         return true;
@@ -3236,7 +3263,8 @@
       const q=searchInput.value.trim().toLowerCase();
       filteredMedals=medals.filter(row=>rowMatchesSearchAndMedal(row,q));
       renderSummary(filteredMedals);
-      renderMedalTable(filteredMedals);
+      if(q) renderMedalTable(filteredMedals);
+      else renderMedalTablePrompt();
       renderSkaterRanking(getFilteredSkaterMedals());
       renderCountryRanking(getFilteredCountryMedals());
       renderEventRanking(getFilteredEventRankingMedals());
@@ -3582,6 +3610,10 @@
       const sorted=sortSearchRows(data);
       const indexes=buildQualityIndexes(medals);
       wrap.innerHTML=`<div class="table-scroll"><table><thead><tr><th>대회</th><th>시즌</th><th>개최지</th><th>성별</th><th>종목</th><th>메달</th><th>선수/팀</th><th>국가</th><th>기록</th><th>상태</th><th>신고</th></tr></thead><tbody>${sorted.map(row=>`<tr><td><span class="link" onclick="openCompetitionPanel('${escapeJs(row.competition_name)}')">${escapeHtml(row.competition_name)}<br><small>${escapeHtml(row.competition_type)}</small></span></td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.city)}</td><td>${genderKorean(row.gender)}</td><td>${escapeHtml(row.event)}</td><td><span class="medal ${escapeHtml(row.medal)}">${medalKorean(row.medal)}</span></td><td>${isRelayEvent(row.event)?escapeHtml(row.skater_name):`<span class="link" onclick="openPlayerPanel('${escapeJs(row.skater_name)}')">${escapeHtml(row.skater_name)}</span>`}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.time)}</td><td>${renderQualityBadges(row,indexes)}${escapeHtml(row.note||'')}</td><td><button type="button" class="row-report-btn" onclick="reportRowIssue('${escapeJs(rowReportText(row,'검색 결과'))}')">${tr('reportThisRow')}</button></td></tr>`).join('')}</tbody></table></div>`;
+    }
+    function renderMedalTablePrompt(){
+      const wrap=document.getElementById('tableWrap');
+      if(wrap) wrap.innerHTML=`<div class="empty">${tr('searchRawPrompt')}</div>`;
     }
 
 
@@ -5325,7 +5357,7 @@
       }
 
       wrap.innerHTML=`<div class="heat-output-title">${tr('heatRound')} ${escapeHtml(document.getElementById('heatRound')?.value||'')}</div>
-      <div class="subnote">${currentLang==='en'?'Enter the skaters needed for the current heat results. Use ADV only for skaters advanced by referee decision.':'현재 라운드 결과에 필요한 선수들을 입력합니다. 심판 판정으로 진출한 선수만 ADV로 표시해 주세요.'}</div>
+      <div class="subnote">${tr('heatInputNote')}</div>
       <div class="table-scroll"><table class="heat-table"><thead><tr>
         <th>${tr('heatHeat')}</th><th>${tr('heatPosition')}</th><th>${tr('heatName')}</th><th>${tr('heatCountry')}</th><th>${tr('heatTime')}</th><th>${tr('heatStatus')}</th>
       </tr></thead><tbody>${rows}</tbody></table></div>`;
@@ -5454,11 +5486,11 @@
 
       wrap.innerHTML=`<div class="heat-result-grid">
         <div class="heat-output-box"><div class="heat-output-title">${tr('heatQualifiers')}</div>
-          <div class="subnote">${currentLang==='en'?'Seed order: finish-position groups first, then time within each group.':'시드 순서: 순위 그룹 우선, 같은 순위 안에서는 기록순입니다.'}</div>
+          <div class="subnote">${tr('heatSeedOrderNote')}</div>
           <div class="table-scroll"><table class="heat-table"><thead><tr><th>${tr('heatRank')}</th><th>${tr('heatHeat')}</th><th>${tr('heatName')}</th><th>${tr('heatCountry')}</th><th>${tr('heatPosition')}</th><th>${tr('heatTime')}</th></tr></thead><tbody>${qualifierRows}</tbody></table></div>
         </div>
         <div class="heat-output-box"><div class="heat-output-title">${tr('heatNextDraw')}</div>
-          <div class="subnote">${currentLang==='en'?'Heat assignment uses snake seeding. SP inside each heat is sorted again by previous-round time.':'조 배정은 시드 지그재그 방식입니다. 각 조 안의 SP는 직전 라운드 기록순으로 다시 정렬됩니다.'} ${tr('heatOfficialNote')}</div>
+          <div class="subnote">${tr('heatAssignmentNote')} ${tr('heatOfficialNote')}</div>
           <div class="heat-result-grid">${nextHtml}</div>
         </div>
       </div>`;
@@ -6493,17 +6525,23 @@
       let list=document.getElementById('stSearchSuggestions');
       if(!list){list=document.createElement('datalist');list.id='stSearchSuggestions';document.body.appendChild(list);}
       input.setAttribute('list','stSearchSuggestions');
+      input.addEventListener('focus',()=>refreshSearchAutocomplete(),{once:true});
+      document.getElementById('mobileSearchInput')?.addEventListener('focus',()=>refreshSearchAutocomplete(),{once:true});
       window.__stAutocompleteReady=true;
     }
     function refreshSearchAutocomplete(){
       setupSearchAutocomplete();
+      if(window.__stAutocompletePopulated) return;
       const list=document.getElementById('stSearchSuggestions');
       if(!list) return;
+      const rows = stAllSearchRows();
+      if(!rows.length) return;
       const values=new Set();
-      stAllSearchRows().forEach(row=>{
+      rows.forEach(row=>{
         [row.skater_name,row.original_skater_name,row.country,row.competition_name,row.event,row.season].forEach(v=>{v=stText(v); if(v) values.add(v);});
       });
       list.innerHTML=[...values].sort((a,b)=>a.localeCompare(b,'ko')).slice(0,600).map(v=>`<option value="${escapeAttr(v)}"></option>`).join('');
+      window.__stAutocompletePopulated=true;
     }
 
     function stKoreanInitials(value){
@@ -6685,13 +6723,13 @@
 
     function applyFilters(){
       setupSearchAutocomplete();
-      refreshSearchAutocomplete();
       stRenderRecentSearches();
       resetRankingVisibleCounts();
       const q=searchInput.value.trim().toLowerCase();
       filteredMedals=medals.filter(row=>rowMatchesSearchAndMedal(row,q));
       renderSummary(filteredMedals);
-      renderMedalTable(filteredMedals);
+      if(q) renderMedalTable(filteredMedals);
+      else renderMedalTablePrompt();
       renderSkaterRanking(getFilteredSkaterMedals());
       renderCountryRanking(getFilteredCountryMedals());
       renderEventRanking(getFilteredEventRankingMedals());
@@ -8545,6 +8583,13 @@
   body.st-view-mobile .event-rank-bucket-values{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;text-align:center}
   body.st-view-mobile .event-rank-bucket-values span{font-size:11px;color:var(--muted)}
   body.st-view-mobile .event-rank-bucket-values strong{display:block;font-size:13px;color:#172033}
+  body.st-view-mobile #heatToolSection,
+  body.st-view-mobile #heatToolSection .heat-tool-layout,
+  body.st-view-mobile #heatToolSection .heat-output-box,
+  body.st-view-mobile #heatToolSection .heat-mobile-input,
+  body.st-view-mobile #heatToolSection .heat-mobile-results,
+  body.st-view-mobile #heatToolSection .heat-mobile-result-panel,
+  body.st-view-mobile #heatToolSection .mobile-card-list{width:100%;max-width:100%;min-width:0}
   body.st-view-mobile #heatInputWrap .table-scroll,
   body.st-view-mobile #heatOutputWrap .heat-desktop-result-source{display:none}
   body.st-view-mobile #heatInputWrap .heat-mobile-input{display:grid;gap:10px;margin-top:12px}
@@ -9020,7 +9065,7 @@
           const time = heatMobileSourceValue(row,'.heat-time');
           const status = heatMobileSourceValue(row,'.heat-status') || 'OK';
           return `<article class="heat-mobile-skater" data-heat-mobile-index="${index}">
-            <div class="heat-mobile-skater-head"><strong>SP ${mobileEscape(position)}</strong><span>${currentLang === 'en' ? `Heat ${mobileEscape(group.heat)} · #${itemIndex + 1}` : `${mobileEscape(group.heat)}조 ${itemIndex + 1}번`}</span></div>
+            <div class="heat-mobile-skater-head"><strong>SP ${mobileEscape(position)}</strong><span>${currentLang === 'en' ? `Heat ${mobileEscape(group.heat)} #${itemIndex + 1}` : `${mobileEscape(group.heat)}조 ${itemIndex + 1}번`}</span></div>
             <div class="heat-mobile-skater-grid">
               ${heatMobileField(tr('heatPosition'),'position',position,'type="number" min="1" max="20"')}
               ${heatMobileField(tr('heatName'),'name',name,'type="text" class="wide" placeholder="Name"')}
@@ -9780,10 +9825,28 @@
       const wrap = document.getElementById('seasonDirectoryWrap');
       const summary = document.getElementById('seasonDirectorySummary');
       if(!wrap) return;
-      if(summary) summary.textContent = seasons.length ? archiveText(`총 ${seasons.length}개 시즌`, `${seasons.length} seasons`) : tr('dataNone');
-      if(!seasons.length){wrap.innerHTML = archiveEmpty(); return;}
+      const seasonValue = document.getElementById('seasonDirectorySeason')?.value || '';
+      const type = document.getElementById('seasonDirectoryType')?.value || '';
+      const keyword = String(document.getElementById('seasonDirectoryKeyword')?.value || '').trim().toLowerCase();
+      const hasCriteria = !!(seasonValue || type || keyword);
+      if(!hasCriteria){
+        if(summary) summary.textContent = archiveText(
+          '시즌, 대회 종류, 검색어 중 하나를 선택하면 시즌 결과가 표시됩니다.',
+          'Choose a season, competition type, or search term to show season results.'
+        );
+        wrap.innerHTML = `<div class="empty">${archiveHtml(archiveText('시즌 조건을 먼저 선택해 주세요.','Choose season filters first.'))}</div>`;
+        return;
+      }
+      let rows = seasons.filter(item=>{
+        const haystack = [item.season,...item.types].join(' ').toLowerCase();
+        return (!seasonValue || item.season === seasonValue) &&
+          (!type || item.types.includes(type)) &&
+          (!keyword || haystack.includes(keyword));
+      });
+      if(summary) summary.textContent = archiveText(`총 ${rows.length}개 시즌 표시`, `Showing ${rows.length} seasons`);
+      if(!rows.length){wrap.innerHTML = archiveEmpty(); return;}
       const groups = new Map();
-      seasons.forEach(item=>{
+      rows.forEach(item=>{
         const label = archiveDecadeLabel(item.season);
         if(!groups.has(label)) groups.set(label,[]);
         groups.get(label).push(item);
@@ -9813,6 +9876,15 @@
       const season = document.getElementById('competitionDirectorySeason')?.value || '';
       const type = document.getElementById('competitionDirectoryType')?.value || '';
       const city = String(document.getElementById('competitionDirectoryCity')?.value || '').trim().toLowerCase();
+      const hasCriteria = !!(season || type || city);
+      if(!hasCriteria){
+        if(summary) summary.textContent = archiveText(
+          '시즌, 대회 종류, 개최지 중 하나를 선택하면 대회 결과가 표시됩니다.',
+          'Choose a season, competition type, or host keyword to show competition results.'
+        );
+        wrap.innerHTML = `<div class="empty">${archiveHtml(archiveText('대회 조건을 먼저 선택해 주세요.','Choose competition filters first.'))}</div>`;
+        return;
+      }
       let rows = cache.competitions.filter(item=>
         (!season || item.season === season) &&
         (!type || archiveCompetitionTypeLabel(item.type) === type) &&
@@ -9893,6 +9965,8 @@
       const types = [...new Set(cache.competitions.map(item=>archiveCompetitionTypeLabel(item.type)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,currentLang === 'en' ? 'en' : 'ko'));
       const countries = [...new Set(cache.athletes.map(item=>item.country).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'ko'));
       const genders = [...new Set(cache.athletes.map(item=>item.gender).filter(Boolean))];
+      archiveFillSelect('seasonDirectorySeason', seasons, 'filterSeason');
+      archiveFillSelect('seasonDirectoryType', types, 'allTypes');
       archiveFillSelect('competitionDirectorySeason', seasons, 'filterSeason');
       archiveFillSelect('competitionDirectoryType', types, 'allTypes');
       archiveFillSelect('athleteDirectoryCountry', countries, 'allCountries');
@@ -9905,8 +9979,6 @@
         });
       }
       archiveFillSelect('athleteDirectorySeason', seasons, 'filterActiveSeason');
-      const compSeason = document.getElementById('competitionDirectorySeason');
-      if(compSeason && !compSeason.value && cache.latestSeason) compSeason.value = cache.latestSeason;
     }
     function renderArchiveDirectories(){
       if(!archiveDirectoryReady) return;
@@ -9959,8 +10031,8 @@
       const el = ensureArchiveRelatedLinks('seasonPanelInfo','seasonRelatedLinks');
       if(!el) return;
       el.innerHTML = [
-        archiveRelatedLink(tr('navSeasons'), {section:'seasonDirectorySection'}, "scrollToSection('seasonDirectorySection')"),
-        archiveRelatedLink(tr('navCompetitions'), {section:'competitionDirectorySection',dirSeason:season}, "scrollToSection('competitionDirectorySection')")
+        archiveRelatedLink(tr('navSeasons'), {section:'seasonDirectorySection',seasonDirSeason:season}, `openSeasonDirectoryForSeason('${archiveJs(season)}')`),
+        archiveRelatedLink(tr('navCompetitions'), {section:'competitionDirectorySection',dirSeason:season}, `openCompetitionDirectoryForSeason('${archiveJs(season)}')`)
       ].join('');
     }
     function wrapArchiveDetailPanels(){
@@ -10014,6 +10086,12 @@
       }
     }
     function attachArchiveDirectoryEvents(){
+      ['seasonDirectorySeason','seasonDirectoryType','seasonDirectoryKeyword'].forEach(id=>{
+        document.getElementById(id)?.addEventListener(id === 'seasonDirectoryKeyword' ? 'input' : 'change',()=>{
+          renderSeasonDirectory();
+          updateDirectoryQuery('season');
+        });
+      });
       ['competitionDirectorySeason','competitionDirectoryType','competitionDirectoryCity'].forEach(id=>{
         document.getElementById(id)?.addEventListener(id === 'competitionDirectoryCity' ? 'input' : 'change',()=>{
           competitionDirectoryVisible = 40;
@@ -10031,7 +10109,12 @@
     function updateDirectoryQuery(kind){
       if(!history || typeof history.replaceState !== 'function') return;
       const params = {};
-      if(kind === 'competition'){
+      if(kind === 'season'){
+        params.section = 'seasonDirectorySection';
+        params.seasonDirSeason = document.getElementById('seasonDirectorySeason')?.value || '';
+        params.seasonDirType = document.getElementById('seasonDirectoryType')?.value || '';
+        params.seasonDirKeyword = document.getElementById('seasonDirectoryKeyword')?.value || '';
+      }else if(kind === 'competition'){
         params.section = 'competitionDirectorySection';
         params.dirSeason = document.getElementById('competitionDirectorySeason')?.value || '';
         params.dirType = document.getElementById('competitionDirectoryType')?.value || '';
@@ -10053,6 +10136,9 @@
     function applyArchiveDirectoryQuery(){
       const params = new URLSearchParams(location.search);
       const setValue = (id,value)=>{const el=document.getElementById(id); if(el && value !== null) el.value = value || '';};
+      setValue('seasonDirectorySeason', params.get('seasonDirSeason'));
+      setValue('seasonDirectoryType', params.get('seasonDirType'));
+      setValue('seasonDirectoryKeyword', params.get('seasonDirKeyword'));
       setValue('competitionDirectorySeason', params.get('dirSeason'));
       setValue('competitionDirectoryType', params.get('dirType'));
       setValue('competitionDirectoryCity', params.get('dirCity'));
@@ -10080,11 +10166,64 @@
       attachArchiveDirectoryEvents();
       renderArchiveDirectories();
     }
+    function renderArchiveDirectoryDeferredPrompts(){
+      const set = (summaryId, wrapId, summaryKo, summaryEn, emptyKo, emptyEn)=>{
+        const summary=document.getElementById(summaryId);
+        const wrap=document.getElementById(wrapId);
+        if(summary) summary.textContent = archiveText(summaryKo, summaryEn);
+        if(wrap) wrap.innerHTML = `<div class="empty">${archiveHtml(archiveText(emptyKo, emptyEn))}</div>`;
+      };
+      set('seasonDirectorySummary','seasonDirectoryWrap',
+        '시즌, 대회 종류, 검색어 중 하나를 선택하면 시즌 결과가 표시됩니다.',
+        'Choose a season, competition type, or search term to show season results.',
+        '시즌 조건을 먼저 선택해 주세요.',
+        'Choose season filters first.'
+      );
+      set('competitionDirectorySummary','competitionDirectoryWrap',
+        '시즌, 대회 종류, 개최지 중 하나를 선택하면 대회 결과가 표시됩니다.',
+        'Choose a season, competition type, or host keyword to show competition results.',
+        '대회 조건을 먼저 선택해 주세요.',
+        'Choose competition filters first.'
+      );
+      set('athleteDirectorySummary','athleteDirectoryWrap',
+        '빠른 검색어를 입력하거나 국가·성별·시즌을 선택하면 선수 결과가 표시됩니다.',
+        'Enter a quick search or choose a country, gender, or season to show athlete results.',
+        '선수 조건을 먼저 선택해 주세요.',
+        'Choose athlete filters first.'
+      );
+    }
+    window.openSeasonDirectoryForSeason = function(season){
+      if(!archiveDirectoryReady) initArchiveDirectories();
+      const select = document.getElementById('seasonDirectorySeason');
+      if(select) select.value = season || '';
+      const type = document.getElementById('seasonDirectoryType');
+      if(type) type.value = '';
+      const keyword = document.getElementById('seasonDirectoryKeyword');
+      if(keyword) keyword.value = '';
+      renderSeasonDirectory();
+      updateDirectoryQuery('season');
+      scrollToSection('seasonDirectorySection');
+    };
+    window.openCompetitionDirectoryForSeason = function(season){
+      if(!archiveDirectoryReady) initArchiveDirectories();
+      const select = document.getElementById('competitionDirectorySeason');
+      if(select) select.value = season || '';
+      const type = document.getElementById('competitionDirectoryType');
+      if(type) type.value = '';
+      const city = document.getElementById('competitionDirectoryCity');
+      if(city) city.value = '';
+      competitionDirectoryVisible = 40;
+      renderCompetitionDirectory();
+      updateDirectoryQuery('competition');
+      scrollToSection('competitionDirectorySection');
+    };
+    window.resetSeasonDirectoryFilters = function(){
+      ['seasonDirectorySeason','seasonDirectoryType','seasonDirectoryKeyword'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+      renderSeasonDirectory();
+      updateDirectoryQuery('season');
+    };
     window.resetCompetitionDirectoryFilters = function(){
-      ['competitionDirectoryType','competitionDirectoryCity'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
-      const cache = archiveBuildCache();
-      const season = document.getElementById('competitionDirectorySeason');
-      if(season) season.value = cache.latestSeason || '';
+      ['competitionDirectorySeason','competitionDirectoryType','competitionDirectoryCity'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
       competitionDirectoryVisible = 40;
       renderCompetitionDirectory();
       updateDirectoryQuery('competition');
@@ -10118,8 +10257,22 @@
     }
     window.addEventListener('scroll',()=>window.requestAnimationFrame(updateExplorerActiveNav),{passive:true});
     window.addEventListener('popstate',()=>{if(archiveDirectoryReady){applyArchiveDirectoryQuery(); renderArchiveDirectories();}});
-    if(window.shorttrackDataReady) initArchiveDirectories();
-    else window.addEventListener('shorttrack:data-ready', initArchiveDirectories, {once:true});
+    function shouldInitArchiveDirectoriesNow(){
+      const params = new URLSearchParams(location.search);
+      const section = params.get('section') || '';
+      return ['seasonDirectorySection','competitionDirectorySection','athleteDirectorySection'].includes(section) ||
+        ['seasonDirSeason','seasonDirType','seasonDirKeyword','dirSeason','dirType','dirCity','athleteQ','athleteCountry','athleteGender','athleteSeason'].some(key=>params.has(key));
+    }
+    function scheduleArchiveDirectoryInit(){
+      if(archiveDirectoryReady) return;
+      if(shouldInitArchiveDirectoriesNow()) initArchiveDirectories();
+      else{
+        renderArchiveDirectoryDeferredPrompts();
+        runWhenIdle(()=>{if(!archiveDirectoryReady) initArchiveDirectories();}, 1800);
+      }
+    }
+    if(window.shorttrackDataReady) scheduleArchiveDirectoryInit();
+    else window.addEventListener('shorttrack:data-ready', scheduleArchiveDirectoryInit, {once:true});
   })();
 </script>
 
