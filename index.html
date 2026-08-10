@@ -9589,6 +9589,7 @@
     }
     body.st-view-mobile .mobile-recent-list{display:flex!important;flex-wrap:nowrap!important}
     body.st-view-mobile .mobile-recent-chip{flex:0 0 auto!important}
+    body.st-view-mobile #playerPanel .mobile-player-stat-grid{display:none!important}
   }
 </style>
 
@@ -10353,12 +10354,7 @@
         <h3>${currentLang === 'en' ? 'Key summary' : '핵심 요약'}</h3>
         ${local && local !== name ? `<p class="mobile-player-local-name">${mobileEscape(local)}</p>` : ''}
         <p>${mobileEscape(info)}</p>
-        <div class="mobile-player-stat-grid">
-          <div class="mobile-player-stat"><span>${currentLang === 'en' ? 'Individual' : '개인전'}</span><strong>${mobileEscape(total)}</strong></div>
-          <div class="mobile-player-stat"><span>${currentLang === 'en' ? 'Gold' : '금'}</span><strong>${mobileEscape(gold)}</strong></div>
-          <div class="mobile-player-stat"><span>${currentLang === 'en' ? 'Silver' : '은'}</span><strong>${mobileEscape(silver)}</strong></div>
-          <div class="mobile-player-stat"><span>${currentLang === 'en' ? 'Bronze' : '동'}</span><strong>${mobileEscape(bronze)}</strong></div>
-        </div>
+
       `;
       ensurePlayerTabs();
       buildMobilePlayerBestPanel(name);
