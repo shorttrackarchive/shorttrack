@@ -2510,7 +2510,7 @@
     }
     async function fetchInitialData(){
       try{
-        const json = await cachedFetchJson('data/initial.json', 'shorttrack_static_initial_v2');
+        const json = await cachedFetchJson('data/initial.json', 'shorttrack_static_initial_v3');
         if(json && json.ok !== false && Array.isArray(json.medals)){
           const countryHistory = await fetchAthleteCountryHistory();
           if(countryHistory.length) json.athlete_country_history = countryHistory;
