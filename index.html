@@ -920,9 +920,9 @@
 
   <nav class="mobile-bottom-nav" aria-label="모바일 하단 메뉴">
     <button type="button" data-mobile-nav-target="mobileHomeSection" onclick="focusMobileSearch()"><span class="mobile-nav-icon" aria-hidden="true">Q</span><span data-i18n="bottomSearch">검색</span></button>
-    <button type="button" data-mobile-nav-target="athleteDirectorySection" onclick="scrollToSection('athleteDirectorySection')"><span class="mobile-nav-icon" aria-hidden="true">A</span><span data-i18n="bottomAthlete">선수</span></button>
     <button type="button" data-mobile-nav-target="skaterRankingSection" onclick="scrollToSection('skaterRankingSection')"><span class="mobile-nav-icon" aria-hidden="true">R</span><span data-i18n="bottomRank">랭킹</span></button>
     <button type="button" data-mobile-nav-target="recordRankingSection" onclick="scrollToSection('recordRankingSection')"><span class="mobile-nav-icon" aria-hidden="true">T</span><span data-i18n="bottomRecords">기록</span></button>
+    <button type="button" data-mobile-nav-target="compareSection" onclick="scrollToSection('compareSection')"><span class="mobile-nav-icon" aria-hidden="true">C</span><span data-i18n="navCompare">선수 비교</span></button>
     <button type="button" data-mobile-nav-target="mobileMoreSheet" onclick="toggleMobileMoreMenu()"><span class="mobile-nav-icon" aria-hidden="true">M</span><span data-i18n="bottomMore">더보기</span></button>
   </nav>
 
@@ -9058,6 +9058,217 @@
     body.st-view-mobile .archive-explorer-toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
     body.st-view-mobile .archive-explorer-toolbar .wide,
     body.st-view-mobile .archive-explorer-toolbar button{grid-column:auto}
+  }
+
+  /* Mobile density override: keep desktop logic, remove phone-only card sprawl. */
+  @media(max-width:768px){
+    body.st-view-mobile header{
+      min-height:42px!important;
+      padding:5px 8px!important;
+      background:#0f172a!important;
+      color:#fff!important;
+      border:0!important;
+    }
+    body.st-view-mobile header h1,
+    body.st-view-mobile header p,
+    body.st-view-mobile header .language-toggle,
+    body.st-view-mobile header .lang-btn{color:inherit!important}
+    body.st-view-mobile .language-toggle{margin:0 0 4px!important}
+    body.st-view-mobile .lang-btn,
+    body.st-view-mobile .view-toggle button,
+    body.st-view-mobile .lang-toggle button{
+      min-height:30px!important;
+      border-color:rgba(255,255,255,.4)!important;
+      background:rgba(255,255,255,.12)!important;
+      color:#fff!important;
+    }
+    body.st-view-mobile .lang-btn.active,
+    body.st-view-mobile .view-toggle button.active,
+    body.st-view-mobile .lang-toggle button.active{
+      background:#fff!important;
+      color:#0f172a!important;
+      border-color:#fff!important;
+    }
+    body.st-view-mobile .visitor-widget{display:none!important}
+
+    body.st-view-mobile main{display:flex!important;flex-direction:column!important}
+    body.st-view-mobile #mobileHomeSection{order:1}
+    body.st-view-mobile #searchSection{order:2}
+    body.st-view-mobile #playerPanel.active,
+    body.st-view-mobile #competitionPanel.active,
+    body.st-view-mobile #countryPanel.active,
+    body.st-view-mobile #seasonPanel.active{order:3}
+    body.st-view-mobile #skaterRankingSection{order:4}
+    body.st-view-mobile #eventRankingSection{order:5}
+    body.st-view-mobile #recordRankingSection{order:6}
+    body.st-view-mobile #lapRankingSection{order:7}
+    body.st-view-mobile #compareSection{order:8}
+    body.st-view-mobile #countryRankingSection{order:9}
+    body.st-view-mobile #heatToolSection{order:10}
+    body.st-view-mobile #hallOfFameSection{order:11}
+    body.st-view-mobile #cardMakerSection{order:12}
+    body.st-view-mobile #tierMakerSection{order:13}
+    body.st-view-mobile #quizSection{order:14}
+    body.st-view-mobile #athleteDirectorySection{order:15}
+    body.st-view-mobile #seasonDirectorySection{order:16}
+    body.st-view-mobile #competitionDirectorySection{order:17}
+
+    body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="mobileHomeSection"]{order:1}
+    body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="skaterRankingSection"]{order:2}
+    body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="recordRankingSection"]{order:3}
+    body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="compareSection"]{order:4}
+    body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="mobileMoreSheet"]{order:5}
+
+    body.st-view-mobile .section-title span,
+    body.st-view-mobile #athleteDirectoryWrap .archive-directory-meta,
+    body.st-view-mobile #competitionDirectoryWrap .archive-directory-meta,
+    body.st-view-mobile #seasonDirectoryWrap .archive-directory-meta,
+    body.st-view-mobile .archive-directory-actions,
+    body.st-view-mobile .st-result-meta,
+    body.st-view-mobile .mobile-player-snapshot p,
+    body.st-view-mobile .mobile-medal-card-meta,
+    body.st-view-mobile .hof-note{display:none!important}
+
+    body.st-view-mobile #athleteDirectoryWrap .archive-directory-grid,
+    body.st-view-mobile #seasonDirectoryWrap .archive-directory-grid,
+    body.st-view-mobile #competitionDirectoryWrap .archive-directory-grid{
+      display:grid!important;
+      grid-template-columns:repeat(2,minmax(0,1fr))!important;
+      gap:0!important;
+      border-top:1px solid #e2e8f0;
+    }
+    body.st-view-mobile #athleteDirectoryWrap .archive-directory-card,
+    body.st-view-mobile #seasonDirectoryWrap .archive-directory-card,
+    body.st-view-mobile #competitionDirectoryWrap .archive-directory-card{
+      min-height:32px!important;
+      padding:5px 5px!important;
+      display:block!important;
+      border-right:1px solid #e2e8f0!important;
+      border-bottom:1px solid #e2e8f0!important;
+      background:#fff!important;
+    }
+    body.st-view-mobile #athleteDirectoryWrap .archive-directory-card:nth-child(2n),
+    body.st-view-mobile #seasonDirectoryWrap .archive-directory-card:nth-child(2n),
+    body.st-view-mobile #competitionDirectoryWrap .archive-directory-card:nth-child(2n){border-right:0!important}
+    body.st-view-mobile #athleteDirectoryWrap .archive-directory-title,
+    body.st-view-mobile #seasonDirectoryWrap .archive-directory-title,
+    body.st-view-mobile #competitionDirectoryWrap .archive-directory-title{
+      font-size:11.5px!important;
+      line-height:1.15!important;
+      display:block!important;
+      white-space:nowrap!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+      color:#0f172a!important;
+    }
+
+    body.st-view-mobile .record-kpi-grid,
+    body.st-view-mobile .lap-kpi-grid,
+    body.st-view-mobile .summary,
+    body.st-view-mobile .st-page-grid,
+    body.st-view-mobile .competition-detail-grid,
+    body.st-view-mobile .mobile-player-stat-grid{
+      display:grid!important;
+      grid-template-columns:repeat(4,minmax(0,1fr))!important;
+      gap:2px!important;
+      margin:4px 0!important;
+    }
+    body.st-view-mobile .record-kpi,
+    body.st-view-mobile .lap-kpi,
+    body.st-view-mobile .summary-box,
+    body.st-view-mobile .st-page-box,
+    body.st-view-mobile .competition-detail-box,
+    body.st-view-mobile .mobile-player-stat{
+      border:0!important;
+      border-radius:0!important;
+      background:#f8fafc!important;
+      padding:4px 2px!important;
+      min-height:0!important;
+      text-align:center!important;
+      box-shadow:none!important;
+    }
+    body.st-view-mobile .record-kpi .label,
+    body.st-view-mobile .lap-kpi .label,
+    body.st-view-mobile .summary-box .label,
+    body.st-view-mobile .st-page-box .label,
+    body.st-view-mobile .competition-detail-box .label,
+    body.st-view-mobile .mobile-player-stat span{display:none!important}
+    body.st-view-mobile .record-kpi .value,
+    body.st-view-mobile .lap-kpi .value,
+    body.st-view-mobile .summary-box .value,
+    body.st-view-mobile .st-page-box .value,
+    body.st-view-mobile .competition-detail-box .value,
+    body.st-view-mobile .mobile-player-stat strong{
+      font-size:11.5px!important;
+      line-height:1.1!important;
+      font-weight:850!important;
+      font-variant-numeric:tabular-nums!important;
+      white-space:nowrap!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+    }
+
+    body.st-view-mobile .lap-context-tabs,
+    body.st-view-mobile #recordRankingSection .tabs,
+    body.st-view-mobile #lapRankingSection .tabs,
+    body.st-view-mobile .mobile-player-tabs{
+      display:grid!important;
+      grid-template-columns:repeat(4,minmax(0,1fr))!important;
+      gap:2px!important;
+      overflow:visible!important;
+      margin:3px 0!important;
+    }
+    body.st-view-mobile .lap-context-tab,
+    body.st-view-mobile #recordRankingSection .tab,
+    body.st-view-mobile #lapRankingSection .tab,
+    body.st-view-mobile .mobile-player-tabs button{
+      min-height:24px!important;
+      padding:2px 3px!important;
+      border-radius:4px!important;
+      font-size:9.5px!important;
+      line-height:1.1!important;
+      white-space:nowrap!important;
+      overflow:hidden!important;
+      text-overflow:ellipsis!important;
+    }
+
+    body.st-view-mobile #competitionPanel .mobile-table-cards,
+    body.st-view-mobile #playerPanel .mobile-table-cards,
+    body.st-view-mobile #countryPanel .mobile-table-cards,
+    body.st-view-mobile #seasonPanel .mobile-table-cards{display:none!important}
+    body.st-view-mobile #competitionPanel .mobile-table-source,
+    body.st-view-mobile #playerPanel .mobile-table-source,
+    body.st-view-mobile #countryPanel .mobile-table-source,
+    body.st-view-mobile #seasonPanel .mobile-table-source,
+    body.st-view-mobile #competitionPanel .desktop-data-table,
+    body.st-view-mobile #playerPanel .desktop-data-table,
+    body.st-view-mobile #countryPanel .desktop-data-table,
+    body.st-view-mobile #seasonPanel .desktop-data-table{display:block!important}
+    body.st-view-mobile #competitionTable table th:nth-child(n+6),
+    body.st-view-mobile #competitionTable table td:nth-child(n+6){display:none!important}
+    body.st-view-mobile #competitionTable table,
+    body.st-view-mobile #playerPanel table,
+    body.st-view-mobile #countryPanel table,
+    body.st-view-mobile #seasonPanel table{
+      min-width:0!important;
+      width:100%!important;
+      table-layout:auto!important;
+      white-space:normal!important;
+    }
+    body.st-view-mobile #competitionTable th,
+    body.st-view-mobile #competitionTable td,
+    body.st-view-mobile #playerPanel th,
+    body.st-view-mobile #playerPanel td,
+    body.st-view-mobile #countryPanel th,
+    body.st-view-mobile #countryPanel td,
+    body.st-view-mobile #seasonPanel th,
+    body.st-view-mobile #seasonPanel td{
+      padding:4px 3px!important;
+      font-size:10px!important;
+      line-height:1.12!important;
+      white-space:nowrap!important;
+    }
+    body.st-view-mobile #competitionTable .medal{min-width:0!important;padding:2px 4px!important;font-size:9.5px!important;border-radius:4px!important}
   }
 </style>
 
