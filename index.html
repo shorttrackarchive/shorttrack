@@ -1032,8 +1032,9 @@
             <p data-i18n="quickPageDesc">데이터가 가장 많은 국가와 최신 시즌 페이지로 바로 이동합니다.</p>
           </div>
           <div class="st-home-actions">
-            <button type="button" class="primary-soft-btn" data-i18n="popularCountryPage" onclick="openPopularCountryPage()">대표 국가 페이지</button>
-            <button type="button" class="primary-soft-btn secondary" data-i18n="latestSeasonPage" onclick="openLatestSeasonPage()">최신 시즌 페이지</button>
+            <button type="button" class="primary-soft-btn" data-i18n="exploreBySeason" onclick="scrollToSection('seasonDirectorySection')">시즌으로 보기</button>
+            <button type="button" class="primary-soft-btn secondary" data-i18n="exploreByCompetition" onclick="scrollToSection('competitionDirectorySection')">대회로 보기</button>
+            <button type="button" class="primary-soft-btn secondary" data-i18n="exploreByAthlete" onclick="scrollToSection('athleteDirectorySection')">선수로 보기</button>
             <button type="button" class="primary-soft-btn secondary" data-i18n="rulesGuide" onclick="openRulesModal()">판정/규칙</button>
           </div>
         </div>
@@ -2082,7 +2083,7 @@
         mobileQuickSkaterRank:'선수 종합 순위', mobileQuickSkaterRankDesc:'가장 많이 보는 기본 랭킹', mobileQuickRecordRank:'종목별 기록', mobileQuickRecordRankDesc:'500m·1000m·1500m 기록 순위', mobileQuickLapRank:'랩타임 순위', mobileQuickLapRankDesc:'빠른 랩 기록 확인', mobileQuickHall:'명예의 전당', mobileQuickHallDesc:'대표 기록 카드 모음',
         exploreTitle:'아카이브 탐색', exploreDesc:'검색하지 않아도 시즌, 대회, 선수 목록에서 기존 상세 페이지로 바로 이동할 수 있습니다.',
         exploreBySeason:'시즌으로 보기', exploreBySeasonDesc:'특정 시즌의 대회와 결과 탐색', exploreByCompetition:'대회로 보기', exploreByCompetitionDesc:'올림픽·세계선수권·월드컵·월드투어 탐색', exploreByAthlete:'선수로 보기', exploreByAthleteDesc:'선수의 시즌별 성적과 출전 기록 탐색',
-        todayFeatureTitle:'오늘의 추천', todayFeatureDesc:'검색하지 않아도 바로 둘러볼 수 있는 빠른 메뉴입니다.', todaySkater:'오늘의 선수', todaySkaterLoading:'선수 데이터 준비 중', todaySkaterLoadingMeta:'데이터를 불러오면 오늘의 선수가 표시됩니다.', viewTodaySkater:'오늘의 선수 보기', randomSkater:'랜덤 선수 보기', quickPage:'빠른 페이지', quickCountrySeason:'국가·시즌 바로 보기', quickPageDesc:'데이터가 가장 많은 국가와 최신 시즌 페이지로 바로 이동합니다.', popularCountryPage:'대표 국가 페이지', latestSeasonPage:'최신 시즌 페이지', rulesGuide:'판정/규칙',
+        todayFeatureTitle:'오늘의 추천', todayFeatureDesc:'검색하지 않아도 바로 둘러볼 수 있는 빠른 메뉴입니다.', todaySkater:'오늘의 선수', todaySkaterLoading:'선수 데이터 준비 중', todaySkaterLoadingMeta:'데이터를 불러오면 오늘의 선수가 표시됩니다.', viewTodaySkater:'오늘의 선수 보기', randomSkater:'랜덤 선수 보기', quickPage:'빠른 탐색', quickCountrySeason:'아카이브 바로 보기', quickPageDesc:'시즌·대회·선수 목록과 판정/규칙 안내로 바로 이동합니다.', popularCountryPage:'대표 국가 페이지', latestSeasonPage:'최신 시즌 페이지', rulesGuide:'판정/규칙',
         seasonDirectoryTitle:'시즌 목록', seasonDirectoryDesc:'데이터에 존재하는 시즌만 최신순으로 정리합니다.', competitionDirectoryTitle:'대회 목록', competitionDirectoryDesc:'시즌과 대회 종류로 기존 대회 상세 페이지를 찾습니다.', athleteDirectoryTitle:'선수 목록', athleteDirectoryDesc:'이름, 국가, 성별, 활동 시즌으로 선수 상세 페이지를 찾습니다.',
         latestSeason:'최신 시즌', recentCompetitions:'최근 개최 대회', recentPlayers:'최근 본 선수', viewSeason:'시즌 상세 보기', viewCompetition:'대회 결과 보기', viewAthlete:'선수 상세 보기', resetAll:'전체 초기화', filterSeason:'시즌 선택', filterCompetitionType:'대회 종류 선택', filterCity:'개최 도시/국가', filterCountry:'국가', filterGender:'성별', filterActiveSeason:'활동 시즌', quickSearch:'빠른 검색', allTypes:'전체 종류', allCountries:'전체 국가', allCities:'전체 도시/국가', allLetters:'전체 색인', showMore:'더보기', collapse:'접기', dataNone:'표시할 데이터가 없습니다.',
         reportTitle:'오류 신고 및 문의', close:'닫기', cancel:'취소', submit:'제출',
@@ -2108,7 +2109,7 @@
         reportFail:'제출하지 못했습니다. Apps Script doPost와 report 시트를 확인해 주세요.',
         currentCompetition:'현재 구분', top20:'기본 10국씩 표시', currentEvent:'현재 종목', genderLabel:'성별',
         relayCountryNote:'계주 3개는 선수별이 아니라 국가별로 집계됩니다. 올림픽 시범종목은 기본 제외입니다.',
-        top50:'상위 50위까지 표시됩니다',
+        top50:'기본 20명씩 표시됩니다',
         countryLabel:'국가', skaterLabel:'선수',
         loading:'데이터를 불러오는 중입니다.', noSearchResults:'검색 결과가 없습니다.', dataLoadFail:'데이터를 불러오지 못했습니다.', appsNotConnected:'Apps Script 주소 연결 후 집계됩니다.',
         resultCount:'검색 결과', goldMedal:'금메달', silverMedal:'은메달', bronzeMedal:'동메달',
@@ -2142,7 +2143,7 @@
         mobileQuickSkaterRank:'Skater ranking', mobileQuickSkaterRankDesc:'The main ranking most users check', mobileQuickRecordRank:'Event records', mobileQuickRecordRankDesc:'500m, 1000m, and 1500m record ranking', mobileQuickLapRank:'Lap ranking', mobileQuickLapRankDesc:'Check the fastest lap records', mobileQuickHall:'Hall of Fame', mobileQuickHallDesc:'Featured record cards',
         exploreTitle:'Explore the Archive', exploreDesc:'Open season, competition, and athlete detail pages without starting from search.',
         exploreBySeason:'Browse by season', exploreBySeasonDesc:'Find competitions and results from a season', exploreByCompetition:'Browse by competition', exploreByCompetitionDesc:'Explore Olympics, World Championships, World Cup, and World Tour events', exploreByAthlete:'Browse by athlete', exploreByAthleteDesc:'Find season results and competition history by athlete',
-        todayFeatureTitle:'Today’s Picks', todayFeatureDesc:'Quick entry points you can browse without starting from search.', todaySkater:'Today’s athlete', todaySkaterLoading:'Athlete data is loading', todaySkaterLoadingMeta:'Today’s athlete will appear after the data loads.', viewTodaySkater:'View today’s athlete', randomSkater:'Random athlete', quickPage:'Quick pages', quickCountrySeason:'Country and season shortcuts', quickPageDesc:'Jump to the most represented country and the latest season in the data.', popularCountryPage:'Representative country page', latestSeasonPage:'Latest season page', rulesGuide:'Rules guide',
+        todayFeatureTitle:'Today’s Picks', todayFeatureDesc:'Quick entry points you can browse without starting from search.', todaySkater:'Today’s athlete', todaySkaterLoading:'Athlete data is loading', todaySkaterLoadingMeta:'Today’s athlete will appear after the data loads.', viewTodaySkater:'View today’s athlete', randomSkater:'Random athlete', quickPage:'Quick browse', quickCountrySeason:'Browse the archive', quickPageDesc:'Jump to seasons, competitions, athletes, or the judging/rules guide.', popularCountryPage:'Representative country page', latestSeasonPage:'Latest season page', rulesGuide:'Rules guide',
         seasonDirectoryTitle:'Season Directory', seasonDirectoryDesc:'Only seasons present in the data are listed, newest first.', competitionDirectoryTitle:'Competition Directory', competitionDirectoryDesc:'Find existing competition detail pages by season and competition type.', athleteDirectoryTitle:'Athlete Directory', athleteDirectoryDesc:'Find athlete detail pages by name, country, gender, and active season.',
         latestSeason:'Latest season', recentCompetitions:'Recent competitions', recentPlayers:'Recently viewed athletes', viewSeason:'View season details', viewCompetition:'View competition results', viewAthlete:'View athlete details', resetAll:'Reset all', filterSeason:'Season', filterCompetitionType:'Competition type', filterCity:'Host city/country', filterCountry:'Country', filterGender:'Gender', filterActiveSeason:'Active season', quickSearch:'Quick search', allTypes:'All types', allCountries:'All countries', allCities:'All cities/countries', allLetters:'All index', showMore:'Show more', collapse:'Collapse', dataNone:'No data to display.',
         reportTitle:'Report / Contact', close:'Close', cancel:'Cancel', submit:'Submit',
@@ -2168,7 +2169,7 @@
         reportFail:'Could not submit. Please check Apps Script doPost and the report sheet.',
         currentCompetition:'Current category', top20:'Showing 10 countries by default', currentEvent:'Current event', genderLabel:'Gender',
         relayCountryNote:'The three relay events are aggregated by country, not by skater. Olympic demonstration events are excluded by default.',
-        top50:'Top 50 shown',
+        top50:'Showing 20 by default',
         countryLabel:'Country', skaterLabel:'Skater',
         loading:'Loading data.', noSearchResults:'No search results.', dataLoadFail:'Could not load data.', appsNotConnected:'Connect Apps Script first.',
         resultCount:'Results', goldMedal:'Gold medals', silverMedal:'Silver medals', bronzeMedal:'Bronze medals',
@@ -2405,8 +2406,10 @@
     let currentQuizQuestions = [];
     const SKATER_RANKING_PAGE_SIZE = 20;
     const COUNTRY_RANKING_PAGE_SIZE = 10;
+    const EVENT_RANKING_PAGE_SIZE = 20;
     let skaterRankingVisibleCount = SKATER_RANKING_PAGE_SIZE;
     let countryRankingVisibleCount = COUNTRY_RANKING_PAGE_SIZE;
+    let eventRankingVisibleCount = EVENT_RANKING_PAGE_SIZE;
     const SKATER_SCORE_DEFAULTS = {
       olympic_gold: 816,
       olympic_silver: 504,
@@ -2574,6 +2577,7 @@
         btn.classList.add('active');
         skaterRankingMode = nextMode;
         resetSkaterRankingVisibleCount();
+        resetEventRankingVisibleCount();
         renderSkaterRanking(getFilteredSkaterMedals());
         renderEventRanking(getFilteredEventRankingMedals());
       }));
@@ -2633,6 +2637,7 @@
         eventRankingEvent = btn.dataset.eventRank || '500';
         eventSortKey = 'score';
         eventSortDir = 'desc';
+        resetEventRankingVisibleCount();
         updateEventGenderTabs();
         renderEventRanking(getFilteredEventRankingMedals());
       }));
@@ -2642,6 +2647,7 @@
         document.querySelectorAll('.event-rank-gender-tab').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
         eventRankingGender = btn.dataset.eventRankGender || 'all';
+        resetEventRankingVisibleCount();
         renderEventRanking(getFilteredEventRankingMedals());
       }));
 
@@ -2660,6 +2666,7 @@
             (opt === 'excludeOlympicDemo' && !eventRankingOptions.includeOlympicDemo)
           );
         });
+        resetEventRankingVisibleCount();
         renderEventRanking(getFilteredEventRankingMedals());
       }));
 
@@ -3635,9 +3642,14 @@
       countryRankingVisibleCount = COUNTRY_RANKING_PAGE_SIZE;
     }
 
+    function resetEventRankingVisibleCount(){
+      eventRankingVisibleCount = EVENT_RANKING_PAGE_SIZE;
+    }
+
     function resetRankingVisibleCounts(){
       resetSkaterRankingVisibleCount();
       resetCountryRankingVisibleCount();
+      resetEventRankingVisibleCount();
     }
 
     function showMoreSkaterRanking(){
@@ -3662,16 +3674,28 @@
       document.getElementById('countryRankingSection')?.scrollIntoView({behavior:'smooth',block:'start'});
     }
 
+    function showMoreEventRanking(){
+      eventRankingVisibleCount += EVENT_RANKING_PAGE_SIZE;
+      renderEventRanking(getFilteredEventRankingMedals());
+    }
+
+    function collapseEventRanking(){
+      resetEventRankingVisibleCount();
+      renderEventRanking(getFilteredEventRankingMedals());
+      document.getElementById('eventRankingSection')?.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
     function rankingLimitControls(kind, visibleCount, totalCount){
-      const pageSize = kind === 'country' ? COUNTRY_RANKING_PAGE_SIZE : SKATER_RANKING_PAGE_SIZE;
+      const pageSize = kind === 'country' ? COUNTRY_RANKING_PAGE_SIZE : kind === 'event' ? EVENT_RANKING_PAGE_SIZE : SKATER_RANKING_PAGE_SIZE;
       const shown = Math.min(visibleCount, totalCount);
-      const unitKo = kind === 'country' ? '국' : '명';
-      const unitEn = kind === 'country' ? 'countries' : 'skaters';
+      const eventRelay = kind === 'event' && typeof isEventRankingRelay === 'function' && isEventRankingRelay();
+      const unitKo = kind === 'country' || eventRelay ? '국' : '명';
+      const unitEn = kind === 'country' || eventRelay ? 'countries' : 'skaters';
       const countText = currentLang === 'en'
         ? `Showing ${shown} of ${totalCount} ${unitEn}`
         : `총 ${totalCount}${unitKo} 중 ${shown}${unitKo} 표시`;
-      const moreFn = kind === 'country' ? 'showMoreCountryRanking' : 'showMoreSkaterRanking';
-      const collapseFn = kind === 'country' ? 'collapseCountryRanking' : 'collapseSkaterRanking';
+      const moreFn = kind === 'country' ? 'showMoreCountryRanking' : kind === 'event' ? 'showMoreEventRanking' : 'showMoreSkaterRanking';
+      const collapseFn = kind === 'country' ? 'collapseCountryRanking' : kind === 'event' ? 'collapseEventRanking' : 'collapseSkaterRanking';
       const moreButton = shown < totalCount ? `<button type="button" class="sort-btn" onclick="${moreFn}()">${currentLang === 'en' ? 'Show more' : '더보기'}</button>` : '';
       const collapseButton = shown > pageSize ? `<button type="button" class="sort-btn" onclick="${collapseFn}()">${currentLang === 'en' ? 'Collapse' : '접기'}</button>` : '';
       return `<div class="ranking-more-actions"><span class="score-mini">${countText}</span>${moreButton}${collapseButton}</div>`;
@@ -4153,14 +4177,16 @@
       if(!data.length){wrap.innerHTML=`<div class="empty">${tr('empty')}</div>`;return;}
 
       const weights=readEventScoreWeights();
-      const rows=(isEventRankingRelay() ? buildCountryAggregatesForEventRanking(data) : buildSkaterAggregates(data))
+      const allRows=(isEventRankingRelay() ? buildCountryAggregatesForEventRanking(data) : buildSkaterAggregates(data))
         .map(row=>({...row,customScore:totalCustomScore(row,weights)}))
-        .sort(eventSortCompare)
-        .slice(0,50);
+        .sort(eventSortCompare);
+      const totalRows = allRows.length;
+      const rows = allRows.slice(0, eventRankingVisibleCount);
 
       const labelName = isEventRankingRelay() ? tr('countryLabel') : tr('skaterLabel');
       const titleName = isEventRankingRelay() ? tr('countryLabel') : tr('skaterLabel');
       const relayMode = isEventRankingRelay();
+      const eventLimitNote = relayMode ? (currentLang === 'en' ? 'Showing 20 countries by default' : '기본 20국씩 표시됩니다') : tr('top50');
       const scoreUnit = currentLang === 'en' ? 'pts' : '점';
       const bucketSummary = (bucket) => `${tr('gold')} ${bucket.gold} · ${tr('silver')} ${bucket.silver} · ${tr('bronze')} ${bucket.bronze} · ${tr('total')} ${medalTotal(bucket)}`;
       const bucketCard = (label,bucket) => `<div class="event-rank-bucket ${medalTotal(bucket)?'':'is-empty'}">
@@ -4202,7 +4228,7 @@
         </article>`;
       }).join('')}</div>`;
 
-      wrap.innerHTML=`<div class="subnote">${tr('currentEvent')}: ${eventRankingLabel()} · ${tr('genderLabel')}: ${eventGenderLabel()} · ${titleName} · ${tr('top50')}. ${tr('relayCountryNote')}</div>
+      wrap.innerHTML=`<div class="subnote">${tr('currentEvent')}: ${eventRankingLabel()} · ${tr('genderLabel')}: ${eventGenderLabel()} · ${titleName} · ${eventLimitNote}. ${tr('relayCountryNote')}</div>
       ${mobileCards}
       <div class="desktop-data-table table-scroll"><table class="medal-detail-table">
         <thead>
@@ -4246,7 +4272,7 @@
           <td class="medal-num">${row.total.gold}</td><td class="medal-num">${row.total.silver}</td><td class="medal-num">${row.total.bronze}</td><td class="medal-num rank-total">${medalTotal(row.total)}</td>
           <td class="score-result score-col">${formatScore(row.customScore)}</td>
         </tr>`).join('')}</tbody>
-      </table></div>`;
+      </table></div>${rankingLimitControls('event', eventRankingVisibleCount, totalRows)}`;
     }
 
     function buildCountryAggregatesForEventRanking(data){
@@ -4280,6 +4306,7 @@
     function applyEventScoreSettings(){
       eventSortKey = 'score';
       eventSortDir = 'desc';
+      resetEventRankingVisibleCount();
       renderEventRanking(getFilteredEventRankingMedals());
     }
 
@@ -9580,7 +9607,6 @@
   (function(){
     let archiveDirectoryCache = null;
     let competitionDirectoryVisible = 40;
-    let athleteDirectoryVisible = 60;
     let athleteDirectoryIndex = 'all';
     let archiveDirectoryReady = false;
 
@@ -9792,11 +9818,9 @@
       return '#';
     }
     function renderAthleteDirectoryIndex(){
-      const cache = archiveBuildCache();
       const wrap = document.getElementById('athleteDirectoryIndex');
       if(!wrap) return;
-      const indexes = ['all', ...new Set(cache.athletes.map(item=>athleteIndexValue(item.name,item.local)))];
-      wrap.innerHTML = indexes.map(index=>`<button type="button" class="${athleteDirectoryIndex === index ? 'active' : ''}" onclick="setAthleteDirectoryIndex('${archiveJs(index)}')">${archiveHtml(index === 'all' ? tr('allLetters') : index)}</button>`).join('');
+      wrap.innerHTML = '';
     }
     function renderAthleteDirectory(){
       const cache = archiveBuildCache();
@@ -9807,18 +9831,26 @@
       const country = document.getElementById('athleteDirectoryCountry')?.value || '';
       const gender = document.getElementById('athleteDirectoryGender')?.value || '';
       const season = document.getElementById('athleteDirectorySeason')?.value || '';
+      const hasCriteria = !!(q || country || gender || season);
+      athleteDirectoryIndex = 'all';
+      renderAthleteDirectoryIndex();
+      if(!hasCriteria){
+        if(summary) summary.textContent = archiveText(
+          '빠른 검색어를 입력하거나 국가·성별·시즌을 선택하면 선수 결과가 표시됩니다.',
+          'Enter a quick search or choose a country, gender, or season to show athlete results.'
+        );
+        wrap.innerHTML = `<div class="empty">${archiveHtml(archiveText('선수 조건을 먼저 선택해 주세요.','Choose athlete filters first.'))}</div>`;
+        return;
+      }
       let rows = cache.athletes.filter(item=>{
         const haystack = [item.name,item.local,item.country,item.gender,item.activity].join(' ').toLowerCase();
         return (!q || haystack.includes(q)) &&
           (!country || item.country === country) &&
           (!gender || item.gender === gender) &&
-          (!season || item.seasons.includes(season)) &&
-          (athleteDirectoryIndex === 'all' || athleteIndexValue(item.name,item.local) === athleteDirectoryIndex);
+          (!season || item.seasons.includes(season));
       });
       const total = rows.length;
-      rows = rows.slice(0, athleteDirectoryVisible);
-      renderAthleteDirectoryIndex();
-      if(summary) summary.textContent = archiveText(`총 ${total}명 중 ${rows.length}명 표시`, `Showing ${rows.length} of ${total} athletes`);
+      if(summary) summary.textContent = archiveText(`총 ${total}명 표시`, `Showing ${total} athletes`);
       if(!rows.length){wrap.innerHTML = archiveEmpty(); return;}
       wrap.innerHTML = `<div class="archive-directory-grid">${rows.map(item=>`
         <article class="archive-directory-card">
@@ -9827,7 +9859,7 @@
           </a>
           <div class="archive-directory-meta">${item.local && item.local !== item.name ? `${archiveHtml(item.local)}<br>` : ''}${archiveHtml(item.country || '-')} · ${archiveHtml(genderKorean(item.gender) || '-')}<br>${archiveText('활동 시즌','Active seasons')}: ${archiveHtml(item.activity)} · ${archiveText('기록','Records')} ${item.rowCount}</div>
           <div class="archive-directory-actions"><a class="archive-directory-link" href="${archiveUrl({player:item.name})}" onclick="event.preventDefault(); openPlayerPanel('${archiveJs(item.name)}')">${archiveHtml(tr('viewAthlete'))}</a></div>
-        </article>`).join('')}</div>${archiveMoreControls('athlete',rows.length,total)}`;
+        </article>`).join('')}</div>`;
     }
     function archiveMoreControls(kind, shown, total){
       const showMore = shown < total ? `<button type="button" class="sort-btn" onclick="showMore${kind === 'competition' ? 'Competition' : 'Athlete'}Directory()">${archiveHtml(tr('showMore'))}</button>` : '';
@@ -9970,7 +10002,6 @@
       });
       ['athleteDirectorySearch','athleteDirectoryCountry','athleteDirectoryGender','athleteDirectorySeason'].forEach(id=>{
         document.getElementById(id)?.addEventListener(id === 'athleteDirectorySearch' ? 'input' : 'change',()=>{
-          athleteDirectoryVisible = 60;
           renderAthleteDirectory();
           updateDirectoryQuery('athlete');
         });
@@ -9990,7 +10021,6 @@
         params.athleteCountry = document.getElementById('athleteDirectoryCountry')?.value || '';
         params.athleteGender = document.getElementById('athleteDirectoryGender')?.value || '';
         params.athleteSeason = document.getElementById('athleteDirectorySeason')?.value || '';
-        params.athleteIndex = athleteDirectoryIndex !== 'all' ? athleteDirectoryIndex : '';
       }
       const url = new URL(location.href);
       const query = new URLSearchParams();
@@ -10009,7 +10039,7 @@
       setValue('athleteDirectoryCountry', params.get('athleteCountry'));
       setValue('athleteDirectoryGender', params.get('athleteGender'));
       setValue('athleteDirectorySeason', params.get('athleteSeason'));
-      athleteDirectoryIndex = params.get('athleteIndex') || 'all';
+      athleteDirectoryIndex = 'all';
     }
     function updateExplorerActiveNav(){
       const sections = ['homeFeatureSection','seasonDirectorySection','competitionDirectorySection','athleteDirectorySection','searchSection'];
@@ -10041,15 +10071,14 @@
     window.resetAthleteDirectoryFilters = function(){
       ['athleteDirectorySearch','athleteDirectoryCountry','athleteDirectoryGender','athleteDirectorySeason'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
       athleteDirectoryIndex = 'all';
-      athleteDirectoryVisible = 60;
       renderAthleteDirectory();
       updateDirectoryQuery('athlete');
     };
     window.showMoreCompetitionDirectory = function(){competitionDirectoryVisible += 40; renderCompetitionDirectory();};
     window.collapseCompetitionDirectory = function(){competitionDirectoryVisible = 40; renderCompetitionDirectory();};
-    window.showMoreAthleteDirectory = function(){athleteDirectoryVisible += 60; renderAthleteDirectory();};
-    window.collapseAthleteDirectory = function(){athleteDirectoryVisible = 60; renderAthleteDirectory();};
-    window.setAthleteDirectoryIndex = function(index){athleteDirectoryIndex = index || 'all'; athleteDirectoryVisible = 60; renderAthleteDirectory(); updateDirectoryQuery('athlete');};
+    window.showMoreAthleteDirectory = function(){renderAthleteDirectory();};
+    window.collapseAthleteDirectory = function(){renderAthleteDirectory();};
+    window.setAthleteDirectoryIndex = function(){athleteDirectoryIndex = 'all'; renderAthleteDirectory(); updateDirectoryQuery('athlete');};
 
     const previousSetLanguageForArchive = window.setLanguage;
     if(typeof previousSetLanguageForArchive === 'function' && !previousSetLanguageForArchive.__archiveDirectoryWrapped){
