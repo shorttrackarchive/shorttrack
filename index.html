@@ -920,9 +920,9 @@
 
   <nav class="mobile-bottom-nav" aria-label="모바일 하단 메뉴">
     <button type="button" data-mobile-nav-target="mobileHomeSection" onclick="focusMobileSearch()"><span class="mobile-nav-icon" aria-hidden="true">Q</span><span data-i18n="bottomSearch">검색</span></button>
-    <button type="button" data-mobile-nav-target="skaterRankingSection" onclick="scrollToSection('skaterRankingSection')"><span class="mobile-nav-icon" aria-hidden="true">R</span><span data-i18n="bottomRank">랭킹</span></button>
-    <button type="button" data-mobile-nav-target="recordRankingSection" onclick="scrollToSection('recordRankingSection')"><span class="mobile-nav-icon" aria-hidden="true">T</span><span data-i18n="bottomRecords">기록</span></button>
-    <button type="button" data-mobile-nav-target="compareSection" onclick="scrollToSection('compareSection')"><span class="mobile-nav-icon" aria-hidden="true">C</span><span data-i18n="navCompare">선수 비교</span></button>
+    <button type="button" data-mobile-nav-target="seasonDirectorySection" onclick="scrollToSection('seasonDirectorySection')"><span class="mobile-nav-icon" aria-hidden="true">S</span><span data-i18n="bottomSeason">시즌</span></button>
+    <button type="button" data-mobile-nav-target="competitionDirectorySection" onclick="scrollToSection('competitionDirectorySection')"><span class="mobile-nav-icon" aria-hidden="true">C</span><span data-i18n="bottomCompetition">대회</span></button>
+    <button type="button" data-mobile-nav-target="athleteDirectorySection" onclick="scrollToSection('athleteDirectorySection')"><span class="mobile-nav-icon" aria-hidden="true">A</span><span data-i18n="bottomAthlete">선수</span></button>
     <button type="button" data-mobile-nav-target="mobileMoreSheet" onclick="toggleMobileMoreMenu()"><span class="mobile-nav-icon" aria-hidden="true">M</span><span data-i18n="bottomMore">더보기</span></button>
   </nav>
 
@@ -6859,8 +6859,7 @@
         const indivRows=rows.filter(row=>!isRelayEvent(row.event));
         body.innerHTML=`${stMedalSummaryTable(rows,stLang('시즌 전체','Season total'))}
         <div class="st-page-two-col"><div class="st-page-section"><h3>${stLang('국가별 메달','Medals by country')}</h3>${stCountryRankingWithinRows(rows)}</div><div class="st-page-section"><h3>${stLang('주요 선수','Key athletes')}</h3>${stTopPlayersHtml(indivRows)}</div></div>
-        <div class="st-page-section"><h3>${stLang('대회 목록','Competition list')}</h3>${stTopCompetitionsHtml(rows,50)}</div>
-        <div class="st-page-section"><h3>${stLang('시즌 기록 일부','Sample season records')}</h3><div class="table-scroll"><table><thead><tr><th>${stLang('대회','Competition')}</th><th>${tr('gender')}</th><th>${stLang('종목','Event')}</th><th>${stLang('메달','Medal')}</th><th>${stLang('선수/팀','Athlete/team')}</th><th>${tr('country')}</th><th>${stLang('기록','Time')}</th></tr></thead><tbody>${rows.slice().sort((a,b)=>competitionOrderForPlayerDetail(a)-competitionOrderForPlayerDetail(b)||genderOrder(a.gender)-genderOrder(b.gender)||eventOrder(a.event)-eventOrder(b.event)||medalOrder(a.medal)-medalOrder(b.medal)).slice(0,100).map(row=>`<tr><td>${competitionTypeBadgeHtml(row.competition_type)}<span class="link" onclick="openCompetitionPanel('${escapeJs(row.competition_name)}')">${escapeHtml(row.competition_name||'-')}</span></td><td>${escapeHtml(genderKorean(row.gender)||'-')}</td><td>${escapeHtml(row.event||'-')}</td><td>${escapeHtml(medalKorean(row.medal))}</td><td>${isRelayEvent(row.event)?escapeHtml(row.skater_name||'-'):`<span class="link" onclick="openPlayerPanel('${escapeJs(row.skater_name)}')">${escapeHtml(row.skater_name||'-')}</span>`}</td><td><span class="link" onclick="openCountryPage('${escapeJs(row.country)}')">${escapeHtml(row.country||'-')}</span></td><td>${escapeHtml(row.time||'-')}</td></tr>`).join('')}</tbody></table></div></div>`;
+        <div class="st-page-section"><h3>${stLang('대회 목록','Competition list')}</h3>${stTopCompetitionsHtml(rows,50)}</div>`;
       }
       panel.classList.add('active'); panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
@@ -9094,32 +9093,39 @@
     body.st-view-mobile main{display:flex!important;flex-direction:column!important}
     body.st-view-mobile #mobileHomeSection{order:1}
     body.st-view-mobile #searchSection{order:2}
+    body.st-view-mobile #seasonDirectorySection{order:3}
+    body.st-view-mobile #competitionDirectorySection{order:4}
+    body.st-view-mobile #athleteDirectorySection{order:5}
     body.st-view-mobile #playerPanel.active,
     body.st-view-mobile #competitionPanel.active,
     body.st-view-mobile #countryPanel.active,
-    body.st-view-mobile #seasonPanel.active{order:3}
-    body.st-view-mobile #skaterRankingSection{order:4}
-    body.st-view-mobile #eventRankingSection{order:5}
-    body.st-view-mobile #recordRankingSection{order:6}
-    body.st-view-mobile #lapRankingSection{order:7}
-    body.st-view-mobile #compareSection{order:8}
-    body.st-view-mobile #countryRankingSection{order:9}
-    body.st-view-mobile #heatToolSection{order:10}
-    body.st-view-mobile #hallOfFameSection{order:11}
-    body.st-view-mobile #cardMakerSection{order:12}
-    body.st-view-mobile #tierMakerSection{order:13}
-    body.st-view-mobile #quizSection{order:14}
-    body.st-view-mobile #athleteDirectorySection{order:15}
-    body.st-view-mobile #seasonDirectorySection{order:16}
-    body.st-view-mobile #competitionDirectorySection{order:17}
+    body.st-view-mobile #seasonPanel.active{order:6}
+    body.st-view-mobile #skaterRankingSection{order:7}
+    body.st-view-mobile #eventRankingSection{order:8}
+    body.st-view-mobile #recordRankingSection{order:9}
+    body.st-view-mobile #lapRankingSection{order:10}
+    body.st-view-mobile #compareSection{order:11}
+    body.st-view-mobile #countryRankingSection{order:12}
+    body.st-view-mobile #heatToolSection{order:13}
+    body.st-view-mobile #hallOfFameSection{order:14}
+    body.st-view-mobile #cardMakerSection{order:15}
+    body.st-view-mobile #tierMakerSection{order:16}
+    body.st-view-mobile #quizSection{order:17}
 
     body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="mobileHomeSection"]{order:1}
-    body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="skaterRankingSection"]{order:2}
-    body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="recordRankingSection"]{order:3}
-    body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="compareSection"]{order:4}
+    body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="seasonDirectorySection"]{order:2}
+    body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="competitionDirectorySection"]{order:3}
+    body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="athleteDirectorySection"]{order:4}
     body.st-view-mobile .mobile-bottom-nav [data-mobile-nav-target="mobileMoreSheet"]{order:5}
 
     body.st-view-mobile .section-title span,
+    body.st-view-mobile .subnote,
+    body.st-view-mobile .lap-note,
+    body.st-view-mobile .record-note,
+    body.st-view-mobile .tier-note,
+    body.st-view-mobile .st-empty-small,
+    body.st-view-mobile .st-search-head p,
+    body.st-view-mobile .mobile-card-meta,
     body.st-view-mobile #athleteDirectoryWrap .archive-directory-meta,
     body.st-view-mobile #competitionDirectoryWrap .archive-directory-meta,
     body.st-view-mobile #seasonDirectoryWrap .archive-directory-meta,
@@ -9246,15 +9252,19 @@
     body.st-view-mobile #seasonPanel .desktop-data-table{display:block!important}
     body.st-view-mobile #competitionTable table th:nth-child(n+6),
     body.st-view-mobile #competitionTable table td:nth-child(n+6){display:none!important}
+    body.st-view-mobile .table-scroll table,
     body.st-view-mobile #competitionTable table,
     body.st-view-mobile #playerPanel table,
     body.st-view-mobile #countryPanel table,
     body.st-view-mobile #seasonPanel table{
       min-width:0!important;
       width:100%!important;
-      table-layout:auto!important;
+      table-layout:fixed!important;
       white-space:normal!important;
     }
+    body.st-view-mobile .table-scroll{overflow-x:hidden!important}
+    body.st-view-mobile .table-scroll th,
+    body.st-view-mobile .table-scroll td{overflow:hidden!important;text-overflow:ellipsis!important}
     body.st-view-mobile #competitionTable th,
     body.st-view-mobile #competitionTable td,
     body.st-view-mobile #playerPanel th,
@@ -9269,6 +9279,49 @@
       white-space:nowrap!important;
     }
     body.st-view-mobile #competitionTable .medal{min-width:0!important;padding:2px 4px!important;font-size:9.5px!important;border-radius:4px!important}
+
+    body.st-view-mobile .mobile-player-snapshot{display:none!important}
+    body.st-view-mobile .player-timeline-details{
+      border:0!important;
+      border-top:1px solid #e2e8f0!important;
+      border-radius:0!important;
+      background:#fff!important;
+    }
+    body.st-view-mobile .player-timeline-details>summary{
+      min-height:30px!important;
+      padding:5px 0!important;
+      border-bottom:1px solid #e2e8f0!important;
+    }
+    body.st-view-mobile .player-timeline-details-title small{display:none!important}
+    body.st-view-mobile .player-timeline-details-title strong{font-size:12px!important}
+    body.st-view-mobile .player-timeline-details-action{
+      min-height:24px!important;
+      padding:2px 5px!important;
+      border-radius:4px!important;
+      font-size:9.5px!important;
+    }
+    body.st-view-mobile .player-timeline-details #playerTimeline{padding:0!important}
+    body.st-view-mobile #playerPanel .timeline{border-left:0!important;margin:0!important;padding:0!important}
+    body.st-view-mobile #playerPanel .timeline-year{margin:0!important;border-bottom:1px solid #e2e8f0!important}
+    body.st-view-mobile #playerPanel .timeline-year h4{font-size:10px!important;margin:0!important;padding:4px 0!important;color:#64748b!important}
+    body.st-view-mobile #playerPanel .timeline-list{display:block!important}
+    body.st-view-mobile #playerPanel .timeline-item{
+      display:grid!important;
+      grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr) auto!important;
+      gap:4px!important;
+      border:0!important;
+      border-top:1px solid #eef2f7!important;
+      border-radius:0!important;
+      background:#fff!important;
+      padding:4px 0!important;
+      font-size:10px!important;
+      line-height:1.1!important;
+      white-space:nowrap!important;
+      overflow:hidden!important;
+    }
+    body.st-view-mobile #playerPanel .timeline-item strong,
+    body.st-view-mobile #playerPanel .timeline-item small{display:none!important}
+    body.st-view-mobile #playerPanel .timeline-item .medal-pill{padding:1px 4px!important;font-size:9px!important;border-radius:4px!important}
   }
 </style>
 
