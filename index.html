@@ -6,16 +6,14 @@
   <title>Short Track Archive – 쇼트트랙 역대 기록·랭킹·선수 검색</title>
   <meta name="description" content="쇼트트랙 올림픽, 세계선수권, 월드컵·월드투어 포디움 기록과 선수 검색, 국가별 메달 순위, 종목별 기록, 랩타임 순위를 확인하는 아카이브입니다." />
   <link rel="canonical" href="https://shorttrackarchive.github.io/shorttrack/" />
-  <link rel="icon" href="assets/hof/hof-01.webp" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-size='22' font-family='Arial' font-weight='700' fill='white'%3EST%3C/text%3E%3C/svg%3E" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Short Track Archive – 쇼트트랙 역대 기록·랭킹·선수 검색" />
   <meta property="og:description" content="쇼트트랙 선수, 국가, 대회, 포디움, 기록 순위를 검색하고 비교하는 정적 아카이브입니다." />
   <meta property="og:url" content="https://shorttrackarchive.github.io/shorttrack/" />
-  <meta property="og:image" content="https://shorttrackarchive.github.io/shorttrack/assets/hof/hof-01.webp" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Short Track Archive – 쇼트트랙 역대 기록·랭킹·선수 검색" />
   <meta name="twitter:description" content="쇼트트랙 선수 검색, 메달 순위, 종목별 기록, 랩타임 순위를 확인하세요." />
-  <meta name="twitter:image" content="https://shorttrackarchive.github.io/shorttrack/assets/hof/hof-01.webp" />
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"WebSite","name":"Short Track Archive","url":"https://shorttrackarchive.github.io/shorttrack/","potentialAction":{"@type":"SearchAction","target":"https://shorttrackarchive.github.io/shorttrack/?q={search_term_string}","query-input":"required name=search_term_string"}}
   </script>
@@ -901,7 +899,7 @@
         <button type="button" class="report-modal-close" data-i18n="close" onclick="closeHelpModal()">닫기</button>
       </div>
       <div class="help-grid">
-        <div class="help-item"><strong data-i18n="helpWorldsOverallTitle">세계선수권 종합</strong><span data-i18n="helpWorldsOverallText">세계선수권 Overall 포디움입니다. 개인 종목 메달과 별도 또는 합산해 볼 수 있습니다.</span></div>
+        <div class="help-item"><strong data-i18n="helpWorldsOverallTitle">세계선수권 종합</strong><span data-i18n="helpWorldsOverallText">세계선수권 Overall 포디움입니다. 선수별 종합 순위에서는 기본적으로 개인 종목 메달과 별도 집계합니다.</span></div>
         <div class="help-item"><strong data-i18n="help3000Title">3000m S.F.</strong><span data-i18n="help3000Text">세계선수권 Super Final 성격의 3000m 개인전 기록입니다. 기본 순위에서는 제외하거나 별도 안내합니다.</span></div>
         <div class="help-item"><strong data-i18n="helpRelayTitle">계주 데이터</strong><span data-i18n="helpRelayText">계주 멤버 데이터는 올림픽 중심으로 정리되어 있습니다. 세계선수권·월드컵 계주는 불완전할 수 있습니다.</span></div>
         <div class="help-item"><strong data-i18n="helpScoreTitle">점수 계산</strong><span data-i18n="helpScoreText">점수 입력란의 값에 따라 순위가 즉시 바뀝니다. 기본값은 13·21·34 기반 점수 체계입니다.</span></div>
@@ -1071,8 +1069,7 @@
       <div class="ranking-filter-row" aria-label="선수별 종합 메달 포함 설정">
         <span class="ranking-filter-label" data-i18n="includeSettings">포함 설정</span>
         <button type="button" class="tab ranking-option-tab" data-option="includeOlympicDemo" data-i18n="olympicDemo">올림픽 시범종목</button>
-        <button type="button" class="tab ranking-option-tab active" data-option="includeWorldsOverall" data-i18n="worldsOverall">세계선수권 종합</button>
-        <button type="button" class="tab ranking-option-tab" data-option="separateWorldsOverall" data-i18n="separateWorldsOverall">세계선수권 종합 포디움 별도</button>
+        <button type="button" class="tab ranking-option-tab active" data-option="includeWorldsOverall" data-i18n="worldsOverallOption">세계선수권 종합 별도 집계</button>
         <button type="button" class="tab ranking-option-tab" data-option="includeIndividual3000m">3000m</button>
       </div>
 
@@ -1088,7 +1085,7 @@
         <select id="skaterEraEnd"><option value="" data-i18n="eraEndAll">전체 시즌 끝</option></select>
       </div>
 
-      <div class="subnote" data-i18n="skaterFilterNote">현재 검색어와 선수별 종합 순위의 시즌·성별·시대·포함 설정이 반영됩니다. 기본값은 개인전만·전체 시즌·전체 성별·올림픽 시범종목 제외·세계선수권 종합 포함·3000m 제외입니다.</div>
+      <div class="subnote" data-i18n="skaterFilterNote">현재 검색어와 선수별 종합 순위의 시즌·성별·시대·포함 설정이 반영됩니다. 기본값은 개인전만·전체 시즌·전체 성별·올림픽 시범종목 제외·세계선수권 종합 별도 집계·3000m 제외입니다.</div>
 
       <div class="score-actions" style="margin:10px 0 12px">
         <span class="score-mini" data-i18n="skaterScoreAutoNote">기본 순위는 아래 점수 기준으로 계산됩니다. 점수를 바꾸면 순위가 자동으로 다시 계산됩니다.</span>
@@ -1105,9 +1102,9 @@
           <div class="score-field"><label data-i18n="worldsSilver">세계선수권 은</label><input class="score-input" data-score-key="worlds_silver" type="number" step="0.1" value="126"></div>
           <div class="score-field"><label data-i18n="worldsBronze">세계선수권 동</label><input class="score-input" data-score-key="worlds_bronze" type="number" step="0.1" value="78"></div>
 
-          <div class="score-field worlds-overall-score-field" style="display:none"><label data-i18n="worldsOverallGold">세계선수권 종합 금</label><input class="score-input worlds-overall-score-input" data-score-key="worlds_overall_gold" type="number" step="0.1" value="0"></div>
-          <div class="score-field worlds-overall-score-field" style="display:none"><label data-i18n="worldsOverallSilver">세계선수권 종합 은</label><input class="score-input worlds-overall-score-input" data-score-key="worlds_overall_silver" type="number" step="0.1" value="0"></div>
-          <div class="score-field worlds-overall-score-field" style="display:none"><label data-i18n="worldsOverallBronze">세계선수권 종합 동</label><input class="score-input worlds-overall-score-input" data-score-key="worlds_overall_bronze" type="number" step="0.1" value="0"></div>
+          <div class="score-field worlds-overall-score-field"><label data-i18n="worldsOverallGold">세계선수권 종합 금</label><input class="score-input worlds-overall-score-input" data-score-key="worlds_overall_gold" type="number" step="0.1" value="204"></div>
+          <div class="score-field worlds-overall-score-field"><label data-i18n="worldsOverallSilver">세계선수권 종합 은</label><input class="score-input worlds-overall-score-input" data-score-key="worlds_overall_silver" type="number" step="0.1" value="126"></div>
+          <div class="score-field worlds-overall-score-field"><label data-i18n="worldsOverallBronze">세계선수권 종합 동</label><input class="score-input worlds-overall-score-input" data-score-key="worlds_overall_bronze" type="number" step="0.1" value="78"></div>
 
           <div class="score-field"><label data-i18n="worldcupGold">월드컵·월드투어 금</label><input class="score-input" data-score-key="worldcup_gold" type="number" step="0.1" value="34"></div>
           <div class="score-field"><label data-i18n="worldcupSilver">월드컵·월드투어 은</label><input class="score-input" data-score-key="worldcup_silver" type="number" step="0.1" value="21"></div>
@@ -1992,14 +1989,14 @@
         mobileHomeKicker:'Mobile Archive', mobileHomeTitle:'검색부터 빠르게 시작하세요', mobileHomeDesc:'선수, 국가, 대회, 종목을 한 번에 찾고 자주 보는 기록으로 바로 이동합니다.', mobileSearchPlaceholder:'선수·국가·대회 검색',
         mobileQuickSkaterRank:'선수 종합 순위', mobileQuickSkaterRankDesc:'가장 많이 보는 기본 랭킹', mobileQuickRecordRank:'종목별 기록', mobileQuickRecordRankDesc:'500m·1000m·1500m 기록 순위', mobileQuickLapRank:'랩타임 순위', mobileQuickLapRankDesc:'빠른 랩 기록 확인', mobileQuickHall:'명예의 전당', mobileQuickHallDesc:'대표 기록 카드 모음',
         reportTitle:'오류 신고 및 문의', close:'닫기', cancel:'취소', submit:'제출',
-        reportPlaceholder:'오류 내용이나 문의 내용을 입력해 주세요.', searchPlaceholder:'선수명, 국가, 대회명, 종목 검색', searchSort:'정렬', sortRecent:'최신순', sortOldest:'오래된순', sortMedal:'메달순', sortEvent:'종목순', sortName:'선수명순', relayOnly:'계주만', goldOnly:'금메달만', excludeWorldsOverall:'세계선수권 종합 제외', exclude3000:'3000m 제외', helpTitle:'용어·데이터 기준 도움말', helpDesc:'순위와 기록을 해석할 때 참고할 기준입니다.', helpWorldsOverallTitle:'세계선수권 종합', helpWorldsOverallText:'세계선수권 Overall 포디움입니다. 개인 종목 메달과 별도 또는 합산해 볼 수 있습니다.', help3000Title:'3000m S.F.', help3000Text:'세계선수권 Super Final 성격의 3000m 개인전 기록입니다. 기본 순위에서는 제외하거나 별도 안내합니다.', helpRelayTitle:'계주 데이터', helpRelayText:'계주 멤버 데이터는 올림픽 중심으로 정리되어 있습니다. 세계선수권·월드컵 계주는 불완전할 수 있습니다.', helpScoreTitle:'점수 계산', helpScoreText:'점수 입력란의 값에 따라 순위가 즉시 바뀝니다. 기본값은 13·21·34 기반 점수 체계입니다.', playerTimelineTitle:'커리어 타임라인', playerTimelineDesc:'선수의 메달 기록을 시즌 역순으로 보여 줍니다.', dataLoaded:'데이터 로드 완료', reportThisRow:'오류 신고',
+        reportPlaceholder:'오류 내용이나 문의 내용을 입력해 주세요.', searchPlaceholder:'선수명, 국가, 대회명, 종목 검색', searchSort:'정렬', sortRecent:'최신순', sortOldest:'오래된순', sortMedal:'메달순', sortEvent:'종목순', sortName:'선수명순', relayOnly:'계주만', goldOnly:'금메달만', excludeWorldsOverall:'세계선수권 종합 제외', exclude3000:'3000m 제외', helpTitle:'용어·데이터 기준 도움말', helpDesc:'순위와 기록을 해석할 때 참고할 기준입니다.', helpWorldsOverallTitle:'세계선수권 종합', helpWorldsOverallText:'세계선수권 Overall 포디움입니다. 선수별 종합 순위에서는 기본적으로 개인 종목 메달과 별도 집계합니다.', help3000Title:'3000m S.F.', help3000Text:'세계선수권 Super Final 성격의 3000m 개인전 기록입니다. 기본 순위에서는 제외하거나 별도 안내합니다.', helpRelayTitle:'계주 데이터', helpRelayText:'계주 멤버 데이터는 올림픽 중심으로 정리되어 있습니다. 세계선수권·월드컵 계주는 불완전할 수 있습니다.', helpScoreTitle:'점수 계산', helpScoreText:'점수 입력란의 값에 따라 순위가 즉시 바뀝니다. 기본값은 13·21·34 기반 점수 체계입니다.', playerTimelineTitle:'커리어 타임라인', playerTimelineDesc:'선수의 메달 기록을 시즌 역순으로 보여 줍니다.', dataLoaded:'데이터 로드 완료', reportThisRow:'오류 신고',
         skaterRankTitle:'선수별 종합 순위', countryRankTitle:'국가별 메달 순위', eventRankTitle:'종목별 선수 순위',
         skaterRankDesc:'올림픽 / 세계선수권 / 월드컵·월드투어 금·은·동을 나누고 마지막에 총합을 표시합니다.',
         countryRankDesc:'medals 시트 기준입니다. 계주가 선수 수만큼 중복 집계되지 않습니다. 상위 20개 국가까지만 표시합니다.',
         eventRankDesc:'종목별 점수 기준으로 산정합니다. 개인 종목은 선수별, 계주 종목은 국가별로 순위를 매깁니다. 초기 화면은 500m 순위입니다.',
         includeRelay:'계주 포함', individualOnly:'개인전만', gender:'성별', includeSettings:'포함 설정',
         all:'전체', menShort:'남', womenShort:'녀', men:'남자', women:'여자',
-        olympicDemo:'올림픽 시범종목', worldsOverall:'세계선수권 종합', separateWorldsOverall:'세계선수권 종합 포디움 별도', worldsOverallGold:'세계선수권 종합 금', worldsOverallSilver:'세계선수권 종합 은', worldsOverallBronze:'세계선수권 종합 동', worldsOverallGroup:'세계선수권 종합',
+        olympicDemo:'올림픽 시범종목', worldsOverall:'세계선수권 종합', worldsOverallOption:'세계선수권 종합 별도 집계', separateWorldsOverall:'종합 메달 별도 집계', worldsOverallGold:'세계선수권 종합 금', worldsOverallSilver:'세계선수권 종합 은', worldsOverallBronze:'세계선수권 종합 동', worldsOverallGroup:'세계선수권 종합',
         olympics:'올림픽', worlds:'세계선수권', worldcupTour:'월드컵 및 월드투어',
         includeOlympicDemo:'올림픽 시범종목 포함', excludeOlympicDemo:'올림픽 시범종목 제외',
         event500:'500', event1000:'1000', event1500:'1500', womenRelay:'여자계주', menRelay:'남자계주', mixedRelay:'혼성계주',
@@ -2024,7 +2021,7 @@
         skaterScoreHelp:'점수를 바꾼 뒤 설정을 누르면 점수 기준 순위로 다시 정렬됩니다.',
         eventScoreHelp:'점수를 바꾼 뒤 설정을 누르면 종목별 순위만 다시 계산됩니다.',
         top50Only:'상위 50위까지만 표시됩니다. 기본 순위는 사용자 정의 점수 기준입니다. 금·은·동·계는 각각 개별 정렬됩니다. 현재 설정:',
-        skaterFilterNote:'현재 검색어와 선수별 종합 순위의 시즌·성별·시대·포함 설정이 반영됩니다. 기본값은 개인전만·전체 시즌·전체 성별·올림픽 시범종목 제외·세계선수권 종합 포함·3000m 제외입니다.',
+        skaterFilterNote:'현재 검색어와 선수별 종합 순위의 시즌·성별·시대·포함 설정이 반영됩니다. 기본값은 개인전만·전체 시즌·전체 성별·올림픽 시범종목 제외·세계선수권 종합 별도 집계·3000m 제외입니다.',
         skaterScoreAutoNote:'기본 순위는 아래 점수 기준으로 계산됩니다. 점수를 바꾸면 순위가 자동으로 다시 계산됩니다.',
         allCompetitions:'전체 대회', allSeasons:'전체 시즌', allGenders:'전체 성별', allEvents:'전체 종목', season:'시즌',
         reliabilityTitle:'자료 신뢰도 안내', reliabilityDesc:'순위를 해석할 때 참고해야 할 데이터 반영 범위입니다.', reliabilityOlympicsTitle:'올림픽', reliabilityOlympicsText:'정식 메달과 시범종목을 구분해 반영했습니다.', reliabilityWorldsTitle:'세계선수권', reliabilityWorldsText:'종합, 개인전 결과를 중심으로 정리했습니다.', reliabilityWorldcupTitle:'월드컵·월드투어', reliabilityWorldcupText:'개인전 중심이며 일부 초기 자료는 보완이 필요할 수 있습니다.', reliabilityRelayTitle:'계주 멤버', reliabilityRelayText:'계주 멤버는 올림픽 중심으로 정리되어 있습니다.',
@@ -2052,7 +2049,7 @@
         eventRankDesc:'Calculated with event-specific points. Individual events rank skaters; relay events rank countries. The default view is 500m.',
         includeRelay:'Include relay', individualOnly:'Individual only', gender:'Gender', includeSettings:'Settings',
         all:'All', menShort:'Men', womenShort:'Women', men:'Men', women:'Women',
-        olympicDemo:'Olympic demo events', worldsOverall:'Worlds overall', separateWorldsOverall:'Separate Worlds overall podiums', worldsOverallGold:'Worlds overall gold', worldsOverallSilver:'Worlds overall silver', worldsOverallBronze:'Worlds overall bronze', worldsOverallGroup:'Worlds overall',
+        olympicDemo:'Olympic demo events', worldsOverall:'Worlds overall', worldsOverallOption:'Worlds overall separate', separateWorldsOverall:'Separate overall medals', worldsOverallGold:'Worlds overall gold', worldsOverallSilver:'Worlds overall silver', worldsOverallBronze:'Worlds overall bronze', worldsOverallGroup:'Worlds overall',
         olympics:'Olympics', worlds:'World Championships', worldcupTour:'World Cup & World Tour',
         includeOlympicDemo:'Include Olympic demo events', excludeOlympicDemo:'Exclude Olympic demo events',
         event500:'500', event1000:'1000', event1500:'1500', womenRelay:"Women's relay", menRelay:"Men's relay", mixedRelay:'Mixed relay',
@@ -2077,7 +2074,7 @@
         skaterScoreHelp:'After changing point values, click Apply to sort by score again.',
         eventScoreHelp:'After changing point values, click Apply to recalculate only the event ranking.',
         top50Only:'Only the top 50 are shown. The default ranking uses custom score. Gold, silver, bronze, and total columns are independently sortable. Current settings:',
-        skaterFilterNote:'Current search and this section’s season, gender, era, and inclusion settings are applied. Default settings: individual only, all seasons, all genders, Olympic demonstration events excluded, World Championships overall included, 3000m excluded.',
+        skaterFilterNote:'Current search and this section’s season, gender, era, and inclusion settings are applied. Default settings: individual only, all seasons, all genders, Olympic demonstration events excluded, World Championships overall counted separately, 3000m excluded.',
         skaterScoreAutoNote:'The default ranking is calculated using the points below. Change the point values and click Apply to recalculate the ranking.',
         allCompetitions:'All competitions', allSeasons:'All seasons', allGenders:'All genders', allEvents:'All events', season:'Season',
         reliabilityTitle:'Data Coverage Notice', reliabilityDesc:'Use this as context when interpreting rankings.', reliabilityOlympicsTitle:'Olympics', reliabilityOlympicsText:'Official medals and demonstration events are separated.', reliabilityWorldsTitle:'World Championships', reliabilityWorldsText:'Overall and individual results are organized as the main focus.', reliabilityWorldcupTitle:'World Cup & World Tour', reliabilityWorldcupText:'Mainly individual events; some early records may still need refinement.', reliabilityRelayTitle:'Relay members', reliabilityRelayText:'Relay member data is organized mainly around the Olympics.',
@@ -2201,7 +2198,7 @@
     let skaterRankingOptions = {
       includeOlympicDemo: false,
       includeWorldsOverall: true,
-      separateWorldsOverall: false,
+      separateWorldsOverall: true,
       includeIndividual3000m: false
     };
     let scoreWeights = {};
@@ -2355,9 +2352,13 @@
         if(!option || !(option in skaterRankingOptions)) return;
         skaterRankingOptions[option] = !skaterRankingOptions[option];
 
-        if(option === 'includeWorldsOverall' && !skaterRankingOptions.includeWorldsOverall){
-          skaterRankingOptions.separateWorldsOverall = false;
-          resetWorldsOverallScoreInputs();
+        if(option === 'includeWorldsOverall'){
+          skaterRankingOptions.separateWorldsOverall = !!skaterRankingOptions.includeWorldsOverall;
+          if(skaterRankingOptions.includeWorldsOverall){
+            copyWorldsScoresToOverallScores();
+          }else{
+            resetWorldsOverallScoreInputs();
+          }
         }
 
         if(option === 'separateWorldsOverall'){
@@ -2955,8 +2956,7 @@
 
       if(!skaterRankingOptions.includeOlympicDemo && isOlympicDemonstrationRow({competition_type:competitionType, competition_name:competitionName, year, note})) return false;
       if(!skaterRankingOptions.includeWorldsOverall && isWorldChampionshipOverallRow({competition_type:competitionType, event})) return false;
-      if(isWorldChampionshipSuperFinalRow(row)) return false;
-      if(!skaterRankingOptions.includeIndividual3000m && isIndividual3000mEvent(event)) return false;
+      if(!skaterRankingOptions.includeIndividual3000m && (isWorldChampionshipSuperFinalRow(row) || isIndividual3000mEvent(event))) return false;
 
       return true;
     }
@@ -3236,7 +3236,7 @@
     }
 
     function updateWorldsOverallScoreFields(){
-      const show=!!skaterRankingOptions.separateWorldsOverall;
+      const show=!!skaterRankingOptions.includeWorldsOverall && !!skaterRankingOptions.separateWorldsOverall;
       document.querySelectorAll('.worlds-overall-score-field').forEach(el=>{
         el.style.display=show?'block':'none';
       });
@@ -3398,10 +3398,9 @@
     function getSkaterRankingOptionSummary(){
       const genderLabel = skaterRankingGender === 'men' ? tr('menShort') : skaterRankingGender === 'women' ? tr('womenShort') : tr('all');
       const demoLabel = skaterRankingOptions.includeOlympicDemo ? tr('includeOlympicDemo') : tr('excludeOlympicDemo');
-      const worldsOverallLabel = skaterRankingOptions.includeWorldsOverall ? tr('worldsOverall') + ' ' + (currentLang==='en'?'included':'포함') : tr('worldsOverall') + ' ' + (currentLang==='en'?'excluded':'제외');
-      const separateLabel = skaterRankingOptions.separateWorldsOverall ? tr('separateWorldsOverall') + ' ' + (currentLang==='en'?'on':'적용') : tr('separateWorldsOverall') + ' ' + (currentLang==='en'?'off':'해제');
+      const worldsOverallLabel = skaterRankingOptions.includeWorldsOverall ? tr('worldsOverall') + ' ' + (currentLang==='en'?'separate':'별도 집계') : tr('worldsOverall') + ' ' + (currentLang==='en'?'excluded':'제외');
       const event3000Label = skaterRankingOptions.includeIndividual3000m ? '3000m ' + (currentLang==='en'?'included':'포함') : '3000m ' + (currentLang==='en'?'excluded':'제외');
-      return `${genderLabel} · ${demoLabel} · ${worldsOverallLabel} · ${separateLabel} · ${event3000Label}`;
+      return [genderLabel, demoLabel, worldsOverallLabel, event3000Label].filter(Boolean).join(' · ');
     }
 
     function defaultSkaterCompare(a,b){
@@ -3435,7 +3434,7 @@
     }
 
     function updateWorldsOverallScoreFields(){
-      const show=!!skaterRankingOptions.separateWorldsOverall;
+      const show=!!skaterRankingOptions.includeWorldsOverall && !!skaterRankingOptions.separateWorldsOverall;
       document.querySelectorAll('.worlds-overall-score-field').forEach(el=>{
         el.style.display=show?'block':'none';
       });
@@ -3454,7 +3453,6 @@
     function buildSkaterAggregates(data){
       const map=new Map();
       data.forEach(row=>{
-        if(isWorldChampionshipSuperFinalRow(row)) return;
         const key=row.skater_name;if(!key)return;
         if(!map.has(key)) map.set(key,createSkaterAgg(row.skater_name,eventCountry(row)));
         const item=map.get(key);
