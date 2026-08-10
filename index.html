@@ -1008,11 +1008,6 @@
 
     <section class="card anchor-section" id="homeFeatureSection">
       <div class="section-title"><div><h2 data-i18n="todayFeatureTitle">오늘의 추천</h2><span data-i18n="todayFeatureDesc">검색하지 않아도 바로 둘러볼 수 있는 빠른 메뉴입니다.</span></div></div>
-      <div class="explorer-entry-grid" aria-label="아카이브 탐색">
-        <button type="button" class="explorer-entry-card" onclick="scrollToSection('seasonDirectorySection')"><strong data-i18n="exploreBySeason">시즌으로 보기</strong><span data-i18n="exploreBySeasonDesc">특정 시즌의 대회와 결과 탐색</span></button>
-        <button type="button" class="explorer-entry-card" onclick="scrollToSection('competitionDirectorySection')"><strong data-i18n="exploreByCompetition">대회로 보기</strong><span data-i18n="exploreByCompetitionDesc">올림픽·세계선수권·월드컵·월드투어 탐색</span></button>
-        <button type="button" class="explorer-entry-card" onclick="scrollToSection('athleteDirectorySection')"><strong data-i18n="exploreByAthlete">선수로 보기</strong><span data-i18n="exploreByAthleteDesc">선수의 시즌별 성적과 출전 기록 탐색</span></button>
-      </div>
       <div class="st-home-feature-grid">
         <div class="st-home-feature-card">
           <div>
@@ -1982,8 +1977,9 @@
           <div>
             <label for="recordLimitFilter" data-i18n="displayLimit">표시 개수</label>
             <select id="recordLimitFilter" onchange="renderEventRecords()">
+              <option value="20" selected>20</option>
               <option value="50">50</option>
-              <option value="100" selected>100</option>
+              <option value="100">100</option>
               <option value="200">200</option>
               <option value="500">500</option>
               <option value="1000">1000</option>
@@ -2029,7 +2025,7 @@
           <div>
             <label for="lapLimitFilter" data-i18n="displayLimit">표시 개수</label>
             <select id="lapLimitFilter" onchange="renderLapRankings()">
-              <option value="50">50</option><option value="100" selected>100</option><option value="200">200</option><option value="500">500</option>
+              <option value="20" selected>20</option><option value="50">50</option><option value="100">100</option><option value="200">200</option><option value="500">500</option>
             </select>
           </div>
           <div>
@@ -7147,6 +7143,9 @@
     let lapRankingRows = [];
     let lapRankingLoaded = false;
     let currentLapContext = 'all';
+    let lapVisibleLimit = 0;
+    let lapVisibleBaseLimit = 0;
+    let lapVisibleSignature = '';
 
     function lapContextLabel(key){
       return {lead:tr('lapLead'), pass:tr('lapPass'), follow:tr('lapFollow'), passed:tr('lapPassed'), unknown:tr('lapUnknown')}[key] || key || tr('lapUnknown');
@@ -7341,7 +7340,13 @@
       const gender=document.getElementById('lapGenderFilter')?.value||'all';
       const season=document.getElementById('lapSeasonFilter')?.value||'all';
       const event=document.getElementById('lapEventFilter')?.value||'all';
-      const limit=Number(document.getElementById('lapLimitFilter')?.value||100);
+      const baseLimit=Math.max(1, Number(document.getElementById('lapLimitFilter')?.value||20));
+      const signature=[gender,season,event,currentLapContext,baseLimit].join('|');
+      if(signature!==lapVisibleSignature){
+        lapVisibleSignature=signature;
+        lapVisibleBaseLimit=baseLimit;
+        lapVisibleLimit=baseLimit;
+      }
       let rows=lapRankingRows.slice();
       rows=rows.filter(row=>{
         const context=row.manual_context || row.auto_context || 'unknown';
@@ -7354,7 +7359,8 @@
         return true;
       });
       rows.sort((a,b)=>a.lap_time-b.lap_time || lapContextPriority(a.manual_context||a.auto_context)-lapContextPriority(b.manual_context||b.auto_context) || String(a.skater_name).localeCompare(String(b.skater_name),'ko'));
-      const visible=rows.slice(0,limit);
+      const currentLimit=Math.max(lapVisibleLimit||baseLimit, baseLimit);
+      const visible=rows.slice(0,currentLimit);
       if(!visible.length){
         wrap.innerHTML=`<div class="empty"><strong>${escapeHtml(tr('lapNoMatch'))}</strong><br>${escapeHtml(tr('adjustLapFilters'))}</div>`;
         return;
@@ -7375,6 +7381,7 @@
           </details>
         </article>`;
       }).join('')}</div>`;
+      const moreControls=lapRankingMoreControls(visible.length, rows.length);
       const html=`${cards}<div class="desktop-data-table table-scroll"><table><thead><tr>
         <th>${escapeHtml(tr('rank'))}</th><th>${escapeHtml(tr('lapTime'))}</th><th>${escapeHtml(tr('skater'))}</th><th>${escapeHtml(tr('country'))}</th><th>${escapeHtml(tr('gender'))}</th><th>${escapeHtml(tr('event'))}</th><th>${escapeHtml(tr('competition'))}</th><th>${escapeHtml(tr('season'))}</th><th>${escapeHtml(tr('round'))}</th><th>${escapeHtml(tr('heat'))}</th><th>${escapeHtml(tr('lap'))}</th><th>${escapeHtml(tr('category'))}</th><th>${escapeHtml(tr('basis'))}</th>
       </tr></thead><tbody>${visible.map((row,idx)=>{
@@ -7383,9 +7390,23 @@
         return `<tr>
           <td>${idx+1}</td><td><strong>${row.lap_time.toFixed(2)}</strong></td><td>${escapeHtml(row.skater_name)}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td>${escapeHtml(row.competition_name)}</td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.round)}</td><td>${escapeHtml(row.heat)}</td><td>${row.lap_no||''}</td><td><span class="lap-badge ${lapContextClass(context)}">${lapContextLabel(context)}</span></td><td>${escapeHtml(basis)}</td>
         </tr>`;
-      }).join('')}</tbody></table></div><div class="subnote">${currentLang==='en' ? `${tr('totalShown')}: ${visible.length.toLocaleString('en-US')} ${tr('shownCount')} ${tr('ofCount')} ${rows.length.toLocaleString('en-US')}` : `${tr('totalShown')} ${rows.length.toLocaleString('ko-KR')}${tr('ofCount')} ${visible.length.toLocaleString('ko-KR')}${tr('shownCount')}`}</div>`;
+      }).join('')}</tbody></table></div><div class="subnote">${currentLang==='en' ? `${tr('totalShown')}: ${visible.length.toLocaleString('en-US')} ${tr('shownCount')} ${tr('ofCount')} ${rows.length.toLocaleString('en-US')}` : `${tr('totalShown')} ${rows.length.toLocaleString('ko-KR')}${tr('ofCount')} ${visible.length.toLocaleString('ko-KR')}${tr('shownCount')}`}</div>${moreControls}`;
       wrap.innerHTML=html;
     }
+    function lapRankingMoreControls(shown,total){
+      const showMore = shown < total ? `<button type="button" class="sort-btn" onclick="showMoreLapRankings()">${escapeHtml(tr('showMoreLaps'))}</button>` : '';
+      const collapse = shown > (lapVisibleBaseLimit||Number(document.getElementById('lapLimitFilter')?.value||20)) ? `<button type="button" class="sort-btn" onclick="collapseLapRankings()">${escapeHtml(tr('collapse'))}</button>` : '';
+      return showMore || collapse ? `<div class="ranking-more-actions"><span class="score-mini">${currentLang==='en' ? `${total.toLocaleString('en-US')} total` : `총 ${total.toLocaleString('ko-KR')}개`}</span>${showMore}${collapse}</div>` : '';
+    }
+    window.showMoreLapRankings=function(){
+      const step=lapVisibleBaseLimit||Math.max(1,Number(document.getElementById('lapLimitFilter')?.value||20));
+      lapVisibleLimit+=step;
+      renderLapRankings();
+    };
+    window.collapseLapRankings=function(){
+      lapVisibleLimit=lapVisibleBaseLimit||Math.max(1,Number(document.getElementById('lapLimitFilter')?.value||20));
+      renderLapRankings();
+    };
 
 </script>
 
@@ -7565,6 +7586,9 @@
 (function(){
   let eventRecordRows = [];
   let eventRecordsLoaded = false;
+  let eventRecordVisibleLimit = 0;
+  let eventRecordVisibleBaseLimit = 0;
+  let eventRecordVisibleSignature = '';
 
   function recordEscape(v){
     if(typeof escapeHtml === 'function') return escapeHtml(v);
@@ -8081,7 +8105,13 @@
     const competition = document.getElementById('recordCompetitionFilter')?.value || 'all';
     const finalRank = document.getElementById('recordFinalRankFilter')?.value || '1';
     const bestOnly = document.getElementById('recordBestOnlyFilter')?.value || 'all';
-    const limit = Number(document.getElementById('recordLimitFilter')?.value || 100);
+    const baseLimit = Math.max(1, Number(document.getElementById('recordLimitFilter')?.value || 20));
+    const signature = [gender, season, event, competition, finalRank, bestOnly, baseLimit].join('|');
+    if(signature !== eventRecordVisibleSignature){
+      eventRecordVisibleSignature = signature;
+      eventRecordVisibleBaseLimit = baseLimit;
+      eventRecordVisibleLimit = baseLimit;
+    }
 
     let rows = eventRecordRows.slice().filter(row => {
       if(row.gender !== gender) return false;
@@ -8102,7 +8132,8 @@
       String(a.skater_name).localeCompare(String(b.skater_name),'ko')
     );
 
-    const visible = rows.slice(0, limit);
+    const currentLimit = Math.max(eventRecordVisibleLimit || baseLimit, baseLimit);
+    const visible = rows.slice(0, currentLimit);
     const visibleKpi = document.getElementById('recordKpiVisible');
     if(visibleKpi) visibleKpi.textContent = `${visible.length.toLocaleString('ko-KR')}/${rows.length.toLocaleString('ko-KR')}`;
 
@@ -8150,13 +8181,28 @@
     const summaryText = currentLang === 'en'
       ? `${tr('recordShownSummary')}: ${visible.length.toLocaleString('en-US')} ${tr('shownCount')} ${tr('ofCount')} ${rows.length.toLocaleString('en-US')}`
       : `${tr('recordShownSummary')} ${rows.length.toLocaleString('ko-KR')}${tr('ofCount')} ${visible.length.toLocaleString('ko-KR')}${tr('shownCount')}`;
+    const moreControls = eventRecordMoreControls(visible.length, rows.length);
     wrap.innerHTML = `${cards}<div class="desktop-data-table table-scroll"><table>
       <thead><tr>
         <th>${recordEscape(tr('rank'))}</th><th>${recordEscape(tr('record'))}</th><th>${recordEscape(tr('skaterTeam'))}</th><th>${recordEscape(tr('country'))}</th><th>${recordEscape(tr('recordFinalRank'))}</th><th>${recordEscape(tr('competition'))}</th><th>${recordEscape(tr('season'))}</th><th>${recordEscape(tr('source'))}</th>
       </tr></thead>
       <tbody>${body}</tbody>
     </table></div>
-    <div class="subnote">${recordEscape(summaryText)}</div>`;
+    <div class="subnote">${recordEscape(summaryText)}</div>${moreControls}`;
+  };
+  function eventRecordMoreControls(shown,total){
+    const showMore = shown < total ? `<button type="button" class="sort-btn" onclick="showMoreEventRecords()">${recordEscape(tr('showMoreRecords'))}</button>` : '';
+    const collapse = shown > (eventRecordVisibleBaseLimit||Number(document.getElementById('recordLimitFilter')?.value||20)) ? `<button type="button" class="sort-btn" onclick="collapseEventRecords()">${recordEscape(tr('collapse'))}</button>` : '';
+    return showMore || collapse ? `<div class="ranking-more-actions"><span class="score-mini">${currentLang==='en' ? `${total.toLocaleString('en-US')} total` : `총 ${total.toLocaleString('ko-KR')}개`}</span>${showMore}${collapse}</div>` : '';
+  }
+  window.showMoreEventRecords = function(){
+    const step = eventRecordVisibleBaseLimit || Math.max(1, Number(document.getElementById('recordLimitFilter')?.value || 20));
+    eventRecordVisibleLimit += step;
+    renderEventRecords();
+  };
+  window.collapseEventRecords = function(){
+    eventRecordVisibleLimit = eventRecordVisibleBaseLimit || Math.max(1, Number(document.getElementById('recordLimitFilter')?.value || 20));
+    renderEventRecords();
   };
 })();
 </script>
@@ -8903,7 +8949,7 @@
       if(list.classList.contains('search-mobile-row-cards')) return 4;
       if(list.classList.contains('country-mobile-cards')) return 10;
       if(list.classList.contains('rank-mobile-cards')) return 10;
-      if(list.classList.contains('record-mobile-cards') || list.classList.contains('lap-mobile-cards')) return 15;
+      if(list.classList.contains('record-mobile-cards') || list.classList.contains('lap-mobile-cards')) return Number.POSITIVE_INFINITY;
       if(list.classList.contains('heat-mobile-result-list')) return 12;
       return 12;
     }
