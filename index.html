@@ -3,7 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Short Track Archive</title>
+  <title>Short Track Archive – 쇼트트랙 역대 기록·랭킹·선수 검색</title>
+  <meta name="description" content="쇼트트랙 올림픽, 세계선수권, 월드컵·월드투어 포디움 기록과 선수 검색, 국가별 메달 순위, 종목별 기록, 랩타임 순위를 확인하는 아카이브입니다." />
+  <link rel="canonical" href="https://shorttrackarchive.github.io/shorttrack/" />
+  <link rel="icon" href="assets/hof/hof-01.webp" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Short Track Archive – 쇼트트랙 역대 기록·랭킹·선수 검색" />
+  <meta property="og:description" content="쇼트트랙 선수, 국가, 대회, 포디움, 기록 순위를 검색하고 비교하는 정적 아카이브입니다." />
+  <meta property="og:url" content="https://shorttrackarchive.github.io/shorttrack/" />
+  <meta property="og:image" content="https://shorttrackarchive.github.io/shorttrack/assets/hof/hof-01.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Short Track Archive – 쇼트트랙 역대 기록·랭킹·선수 검색" />
+  <meta name="twitter:description" content="쇼트트랙 선수 검색, 메달 순위, 종목별 기록, 랩타임 순위를 확인하세요." />
+  <meta name="twitter:image" content="https://shorttrackarchive.github.io/shorttrack/assets/hof/hof-01.webp" />
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebSite","name":"Short Track Archive","url":"https://shorttrackarchive.github.io/shorttrack/","potentialAction":{"@type":"SearchAction","target":"https://shorttrackarchive.github.io/shorttrack/?q={search_term_string}","query-input":"required name=search_term_string"}}
+  </script>
   <style>
     :root {
       --bg:#f5f7fb; --card:#fff; --text:#172033; --muted:#6b7280; --line:#e5e7eb;
@@ -18,7 +33,7 @@
     .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.tab{border:1px solid var(--line);background:#fff;color:var(--text);padding:9px 13px;border-radius:999px;cursor:pointer;font-size:14px}.tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
     table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:14px} th,td{border-bottom:1px solid var(--line);padding:10px 9px;text-align:left;font-size:13.5px;vertical-align:middle} th{background:#f8fafc;color:#334155;font-size:12.5px;white-space:nowrap} tr:hover td{background:#f9fafb}
     .medal{display:inline-flex;align-items:center;justify-content:center;min-width:46px;border-radius:999px;padding:5px 8px;font-weight:700;font-size:12px}.Gold{background:rgba(245,158,11,.14);color:var(--gold)}.Silver{background:rgba(156,163,175,.16);color:#4b5563}.Bronze{background:rgba(180,83,9,.14);color:var(--bronze)}
-    .link{color:var(--primary);font-weight:700;cursor:pointer;text-decoration:none}.link:hover{text-decoration:underline}.panel{display:none}.panel.active{display:block}.panel-header{display:flex;justify-content:space-between;gap:16px;align-items:start;margin-bottom:14px}.panel-header h2{margin:0 0 6px;font-size:24px}.panel-header p{margin:0;color:var(--muted)}.close-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}
+    .link{color:var(--primary);font-weight:700;cursor:pointer;text-decoration:none}.link:hover{text-decoration:underline}.panel{display:none}.panel.active{display:block}.panel-header{display:flex;justify-content:space-between;gap:16px;align-items:start;margin-bottom:14px}.panel-header h2{margin:0 0 6px;font-size:24px}.panel-header p{margin:0;color:var(--muted)}.panel-actions{display:flex;gap:8px;align-items:center}.close-btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer}
     .empty{text-align:center;color:var(--muted);padding:32px}.notice{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;border-radius:14px;padding:12px 14px;font-size:14px;margin-bottom:14px}.error{background:#fef2f2;border:1px solid #fecaca;color:var(--danger);border-radius:14px;padding:12px 14px;font-size:14px;margin-bottom:14px} small{color:var(--muted)}.spacer{height:18px}.lap-group{margin-bottom:18px;border:1px solid var(--line);border-radius:16px;overflow:hidden}.lap-group-title{padding:12px 14px;background:#f8fafc;border-bottom:1px solid var(--line)}
     .table-scroll{overflow-x:auto}.rank-total{font-weight:800;background:#fbfdff}.group-head{font-weight:800;text-align:center;background:#f8fafc}.nowrap{white-space:nowrap}
     .sort-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}.sort-controls select{max-width:260px}.sort-btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 13px;cursor:pointer;font-size:14px}.sort-btn:hover{border-color:var(--primary)}.sort-th{cursor:pointer;user-select:none}.sort-th:hover{background:#eef2ff;color:#1d4ed8}.sort-arrow{font-size:11px;color:var(--primary);margin-left:3px}
@@ -458,6 +473,8 @@
     .quality-badge.warn{background:#fef3c7;color:#92400e;border-color:#fde68a}
     .quality-badge.danger{background:#fee2e2;color:#991b1b;border-color:#fecaca}
     .quality-badge.info{background:#dbeafe;color:#1e40af;border-color:#bfdbfe}
+    .country-history-line{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 12px;color:#334155;font-size:12px}
+    .country-history-line strong{margin-right:2px;color:#111827;font-size:12px}
     .row-report-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 8px;font-size:11px;color:var(--muted);cursor:pointer;white-space:nowrap}
     .help-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
     .help-item{border:1px solid var(--line);border-radius:16px;background:#fbfdff;padding:14px;line-height:1.65}
@@ -983,7 +1000,7 @@
 <section id="playerPanel" class="card panel">
       <div class="panel-header">
         <div><div class="player-title-row"><h2 id="playerName">선수명</h2><div id="playerAchievementBadges" class="player-achievement-badges" aria-label="선수 주요 업적"></div></div><p id="playerInfo">선수 정보</p></div>
-        <button class="close-btn" onclick="closePlayerPanel()">닫기</button>
+        <div class="panel-actions"><button type="button" class="sort-btn" onclick="copyPlayerLink()">링크 복사</button><button type="button" class="close-btn" onclick="closePlayerPanel()">닫기</button></div>
       </div>
       <div class="summary" style="margin-bottom:16px">
         <div class="summary-box"><div class="label">총 메달</div><div class="value" id="playerTotal">0</div></div>
@@ -2149,6 +2166,7 @@
     let eventRecordsCache = [];
     let skaterAliases = [];
     let skaterAliasMap = new Map();
+    let athleteCountryHistory = [];
     let skaterMedals = [];
     let filteredMedals = [];
     let currentMedalFilter = '';
@@ -2292,6 +2310,8 @@
       if(loadingStatus) loadingStatus.textContent=tr('loading');
       if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')){showNotConnected();return;}
       await loadData();
+      window.shorttrackDataReady = true;
+      window.dispatchEvent(new CustomEvent('shorttrack:data-ready'));
       updateFanCard();
       registerVisit();
     }
@@ -2480,8 +2500,12 @@
     }
     async function fetchInitialData(){
       try{
-        const json = await cachedFetchJson('data/initial.json', 'shorttrack_static_initial_v1');
-        if(json && json.ok !== false && Array.isArray(json.medals)) return await refreshBestTimesIfNeeded(json);
+        const json = await cachedFetchJson('data/initial.json', 'shorttrack_static_initial_v2');
+        if(json && json.ok !== false && Array.isArray(json.medals)){
+          const countryHistory = await fetchAthleteCountryHistory();
+          if(countryHistory.length) json.athlete_country_history = countryHistory;
+          return await refreshBestTimesIfNeeded(json);
+        }
       }catch(_staticError){}
       try{
         const json = await cachedFetchJson(buildApiUrl({action:'initialData'}), 'shorttrack_initial_data_v3');
@@ -2498,8 +2522,17 @@
         medals: medalJson.medals || [],
         relay_members: relayJson.relay_members || [],
         best_times: bestJson.best_times || [],
-        skater_aliases: aliasJson.skater_aliases || []
+        skater_aliases: aliasJson.skater_aliases || [],
+        athlete_country_history: await fetchAthleteCountryHistory()
       };
+    }
+    async function fetchAthleteCountryHistory(){
+      try{
+        const json = await cachedFetchJson('data/athlete-country-history.json', 'shorttrack_athlete_country_history_v1');
+        return Array.isArray(json && json.athletes) ? json.athletes : [];
+      }catch(_e){
+        return [];
+      }
     }
     let __filterTimer = 0;
     function scheduleApplyFilters(){
@@ -2511,6 +2544,7 @@
       try{
         const json=await fetchInitialData();
         if(!json.ok) throw new Error(json.error || '데이터를 불러오지 못했습니다.');
+        athleteCountryHistory=normalizeAthleteCountryHistory(json.athlete_country_history||json.athletes||[]);
         skaterAliases=(json.skater_aliases||[]).map(normalizeAliasRow);
         skaterAliasMap=buildSkaterAliasMap(skaterAliases);
         medals=(json.medals||[]).map(normalizeMedalRow);
@@ -2520,20 +2554,17 @@
         if(!eventRecordsCache.length){ eventRecordsCache=[]; }
         window.eventRecordsCache = eventRecordsCache;
         const loadingStatus=document.getElementById('loadingStatus');
-        if(loadingStatus) loadingStatus.textContent=`${tr('dataLoaded')}: medals ${medals.length.toLocaleString()} · relay_members ${relayMembers.length.toLocaleString()} · best_times ${bestTimes.length.toLocaleString()} · event_records ${eventRecordsCache.length.toLocaleString()}`;
+        const generatedAt=json.generated_at ? ` · 데이터 최종 갱신 ${new Date(json.generated_at).toLocaleString(currentLang==='en'?'en-US':'ko-KR')}` : '';
+        if(loadingStatus) loadingStatus.textContent=`${tr('dataLoaded')}: medals ${medals.length.toLocaleString()} · relay_members ${relayMembers.length.toLocaleString()} · best_times ${bestTimes.length.toLocaleString()} · event_records ${eventRecordsCache.length.toLocaleString()}${generatedAt}`;
         skaterMedals=buildSkaterMedals();
         setupSectionSeasonFilters();
         setupSectionEraFilters();
         setupComparePlayerSelects();
         applyFilters();
         if(typeof unlockLapFilterControls === 'function') unlockLapFilterControls();
-        Promise.allSettled([
-          typeof window.preloadEventRecordFilters === 'function' ? window.preloadEventRecordFilters() : Promise.resolve(),
-          typeof window.preloadLapRankingFilters === 'function' ? window.preloadLapRankingFilters() : Promise.resolve()
-        ]);
       }catch(error){
         console.error(error);
-        document.getElementById('tableWrap').innerHTML='<div class="error">데이터를 불러오지 못했습니다.<br>Apps Script 배포 권한, 시트 이름, APPS_SCRIPT_URL을 확인해 주세요.</div>';
+        document.getElementById('tableWrap').innerHTML='<div class="error">데이터를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</div>';
         (document.getElementById('skaterRankingTableWrap')||document.getElementById('skaterRankingWrap')).innerHTML=`<div class="empty">${tr('dataLoadFail')}</div>`;
         document.getElementById('countryRankingWrap').innerHTML=`<div class="empty">${tr('dataLoadFail')}</div>`; document.getElementById('eventRankingWrap').innerHTML=`<div class="empty">${tr('dataLoadFail')}</div>`;
       }
@@ -2558,8 +2589,79 @@
       }
       return escapeHtml(name);
     }
-    function normalizeMedalRow(row){const original=String(row.skater_name||'').trim();return {competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,country:String(row.country||'').trim(),time:String(row.time||'').trim(),note:String(row.note||'').trim()};}
-    function normalizeRelayRow(row){const original=String(row.skater_name||'').trim();return {competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),country:String(row.country||'').trim(),team_name:String(row.team_name||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,time:String(row.time||'').trim(),note:String(row.note||'').trim()};}
+    function eventCountry(row){return String(row && (row.country_at_event || row.country) || '').trim();}
+    function eventSkaterName(row){return String(row && (row.name_at_event || row.skater_name) || '').trim();}
+    function normalizeAthleteCountryHistory(rows){
+      return (rows||[]).map(item=>({
+        canonical_name:String(item.canonical_name||'').trim(),
+        aliases:(item.aliases||[]).map(alias=>String(alias||'').trim()).filter(Boolean),
+        country_periods:(item.country_periods||[]).map(period=>({
+          from_season:String(period.from_season||'').trim(),
+          to_season:String(period.to_season||'').trim(),
+          country:String(period.country||'').trim(),
+          status:String(period.status||'').trim(),
+          source_urls:(period.source_urls||[]).map(url=>String(url||'').trim()).filter(Boolean),
+          effective_from:String(period.effective_from||'').trim(),
+          effective_to:String(period.effective_to||'').trim()
+        }))
+      })).filter(item=>item.canonical_name);
+    }
+    function seasonStartNumberForCountryHistory(season, year){
+      const text=String(season||year||'').trim();
+      const match=text.match(/(\d{4})/);
+      return match ? Number(match[1]) : 0;
+    }
+    function countryHistoryEntryForSkater(name){
+      const keys=new Set([aliasKey(name), aliasKey(canonicalSkaterName(name)), looseNameKey(name), looseNameKey(canonicalSkaterName(name))]);
+      return (athleteCountryHistory||[]).find(item=>{
+        const names=[item.canonical_name, ...(item.aliases||[])];
+        return names.some(value=>keys.has(aliasKey(value)) || keys.has(looseNameKey(value)));
+      }) || null;
+    }
+    function countryHistoryPeriodForSeason(name, season, year){
+      const entry=countryHistoryEntryForSkater(name);
+      if(!entry) return null;
+      const value=seasonStartNumberForCountryHistory(season, year);
+      if(!value) return null;
+      return (entry.country_periods||[]).find(period=>{
+        const from=period.from_season ? seasonStartNumberForCountryHistory(period.from_season, period.from_season) : -Infinity;
+        const to=period.to_season ? seasonStartNumberForCountryHistory(period.to_season, period.to_season) : Infinity;
+        return value>=from && value<=to;
+      }) || null;
+    }
+    function representativeCountryForRow(row, name){
+      const period=countryHistoryPeriodForSeason(name || row?.skater_name || row?.original_skater_name, row?.season, row?.year);
+      return period && period.country ? period.country : '';
+    }
+    function applyRepresentativeCountry(row, name){
+      const country=representativeCountryForRow(row, name);
+      if(!country) return row;
+      return {...row, country, country_at_event:country};
+    }
+    function currentRepresentativeCountry(name, rows){
+      const entry=countryHistoryEntryForSkater(name);
+      if(entry){
+        const active=(entry.country_periods||[]).filter(period=>period.country && period.status!=='transition' && period.status!=='no_international_results')
+          .sort((a,b)=>seasonStartNumberForCountryHistory(b.from_season||b.to_season,b.from_season||b.to_season)-seasonStartNumberForCountryHistory(a.from_season||a.to_season,a.from_season||a.to_season))[0];
+        if(active) return active.country;
+      }
+      const latest=(rows||[]).slice().sort((a,b)=>seasonStartNumberForCountryHistory(b.season,b.year)-seasonStartNumberForCountryHistory(a.season,a.year))[0];
+      return latest ? eventCountry(latest) : '';
+    }
+    function countryHistorySummaryHtml(name){
+      const entry=countryHistoryEntryForSkater(name);
+      if(!entry || !entry.country_periods?.length) return '';
+      const parts=entry.country_periods.map(period=>{
+        const range=period.from_season && period.to_season && period.from_season!==period.to_season
+          ? `${period.from_season}~${period.to_season}`
+          : (period.from_season ? `${period.from_season}~` : (period.to_season ? `~${period.to_season}` : ''));
+        const label=period.country || (period.status==='transition' ? '전환기' : '국제대회 기록 없음');
+        return `<span class="quality-badge">${escapeHtml(label)}${range?` (${escapeHtml(range)})`:''}</span>`;
+      }).join('');
+      return `<div class="country-history-line"><strong>대표국 이력</strong>${parts}</div>`;
+    }
+    function normalizeMedalRow(row){const original=String(row.skater_name||'').trim();const normalized={competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,name_at_event:String(row.name_at_event||'').trim(),country:String(row.country||'').trim(),country_at_event:String(row.country_at_event||'').trim(),source_url:String(row.source_url||'').trim(),time:String(row.time||'').trim(),note:String(row.note||'').trim()};return applyRepresentativeCountry(normalized, normalized.skater_name);}
+    function normalizeRelayRow(row){const original=String(row.skater_name||'').trim();const normalized={competition_type:String(row.competition_type||'').trim(),season:String(row.season||'').trim(),competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),country:String(row.country||'').trim(),country_at_event:String(row.country_at_event||'').trim(),team_name:String(row.team_name||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,name_at_event:String(row.name_at_event||'').trim(),source_url:String(row.source_url||'').trim(),time:String(row.time||'').trim(),note:String(row.note||'').trim()};return applyRepresentativeCountry(normalized, normalized.skater_name);}
     function normalizeBestTimeRow(row){
       const original=String(row.skater_name||row.name||'').trim();
       const event=normalizeBestTimeEvent(row.event||row.distance||row.discipline||'');
@@ -2572,7 +2674,7 @@
         best_time:String(row.best_time||row.final_time||row.time||row.record||row.lap_time||row.cumulative_time||'').trim(),
         competition_type:String(row.competition_type||'').trim(),
         season:String(row.season||'').trim(),
-        competition_name:String(row.competition_name||row.competition||'').trim(),
+        competition_name:String(row.competition_name||row.compitition||row.competition||'').trim(),
         city:String(row.city||'').trim(),
         year:String(row.year||'').trim(),
         round:String(row.round||'').trim(),
@@ -2812,7 +2914,7 @@
     }
 
     function rowMatchesSearchAndMedal(row,q){
-      const target=[row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.original_skater_name,row.country,row.team_name,row.time,row.note].join(' ').toLowerCase();
+      const target=[row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.original_skater_name,row.name_at_event,row.country,row.country_at_event,row.team_name,row.time,row.note].join(' ').toLowerCase();
       if(q && !target.includes(q)) return false;
       if(currentMedalFilter && row.medal!==currentMedalFilter) return false;
 
@@ -2926,7 +3028,7 @@
     }
 
     function rowMatchesEventRankingBaseFilters(row,q){
-      const target=[row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.original_skater_name,row.country,row.team_name,row.time,row.note].join(' ').toLowerCase();
+      const target=[row.competition_type,row.season,row.competition_name,row.city,row.year,row.gender,row.event,row.medal,row.skater_name,row.original_skater_name,row.name_at_event,row.country,row.country_at_event,row.team_name,row.time,row.note].join(' ').toLowerCase();
       return (!q||target.includes(q)) &&
         (!eventSeason||row.season===eventSeason) &&
         rowInEra(row, eventEraStart, eventEraEnd) &&
@@ -3038,6 +3140,8 @@
       if(isWorldChampionshipOverallRow(row)) badges.push({text:currentLang==='en'?'Worlds overall':'세선 종합',level:'info'});
       if(isIndividual3000mEvent(row.event)) badges.push({text:'3000m S.F.',level:'info'});
       if(isOlympicDemonstrationRow(row)) badges.push({text:currentLang==='en'?'Olympic demo':'올림픽 시범',level:'warn'});
+      const source=sourceStatus(row);
+      badges.push({text:sourceStatusLabel(source),level:source.level});
       const sameMedal=indexes?.medalSlots?.get(medalSlotKey(row))||[];
       const distinctNames=new Set(sameMedal.map(r=>r.skater_name+'|'+r.country));
       if(sameMedal.length>1 && distinctNames.size>1) badges.push({text:currentLang==='en'?'Joint/conflict?':'공동/충돌 의심',level:'danger'});
@@ -3054,12 +3158,35 @@
 
     function renderQualityBadges(row,indexes){
       const badges=rowQualityBadges(row,indexes);
-      if(!badges.length) return '';
-      return `<div class="quality-badges">${badges.map(b=>`<span class="quality-badge ${b.level}">${escapeHtml(b.text)}</span>`).join('')}</div>`;
+      const sourceLink=row.source_url?`<a class="quality-badge info" href="${escapeAttr(row.source_url)}" target="_blank" rel="noopener">출처 보기</a>`:'';
+      if(!badges.length && !sourceLink) return '';
+      return `<div class="quality-badges">${badges.map(b=>`<span class="quality-badge ${b.level}">${escapeHtml(b.text)}</span>`).join('')}${sourceLink}</div>`;
+    }
+
+    function sourceStatus(row){
+      const note=String(row && row.note || '').toLowerCase();
+      const url=String(row && row.source_url || '').trim();
+      if(url) return {key:'official', level:'info'};
+      if(note.includes('verify with official source') || note.includes('확인 필요')) return {key:'needsVerification', level:'warn'};
+      if(note.includes('user-supplied') || note.includes('사용자')) return {key:'userSupplied', level:'warn'};
+      if(note.includes('wikipedia')) return {key:'secondary', level:'warn'};
+      return {key:'missing', level:'danger'};
+    }
+
+    function sourceStatusLabel(status){
+      const key=typeof status==='string'?status:status?.key;
+      const labels={
+        official: currentLang==='en'?'Official source':'공식 출처 확인',
+        secondary: currentLang==='en'?'Secondary source':'2차 자료',
+        userSupplied: currentLang==='en'?'User-supplied':'사용자 제공 자료',
+        needsVerification: currentLang==='en'?'Needs verification':'검증 필요',
+        missing: currentLang==='en'?'No source':'출처 미등록'
+      };
+      return labels[key] || labels.missing;
     }
 
     function rowReportText(row,context){
-      return `[메달 데이터 오류 신고]\n위치: ${context||''}\n대회유형: ${row.competition_type||''}\n시즌: ${row.season||''}\n대회: ${row.competition_name||''}\n개최지: ${row.city||''}\n연도: ${row.year||''}\n성별: ${row.gender||''}\n종목: ${row.event||''}\n메달: ${row.medal||''}\n선수/팀: ${row.skater_name||''}\n국가: ${row.country||''}\n기록: ${row.time||''}\n비고: ${row.note||''}\n\n의견: `;
+      return `[메달 데이터 오류 신고]\n위치: ${context||''}\n대회유형: ${row.competition_type||''}\n시즌: ${row.season||''}\n대회: ${row.competition_name||''}\n개최지: ${row.city||''}\n연도: ${row.year||''}\n성별: ${row.gender||''}\n종목: ${row.event||''}\n메달: ${row.medal||''}\n선수/팀: ${eventSkaterName(row)||''}\n통합 선수명: ${row.skater_name||''}\n국가: ${eventCountry(row)||''}\n기록: ${row.time||''}\n비고: ${row.note||''}\n출처 상태: ${sourceStatusLabel(sourceStatus(row))}\n\n의견: `;
     }
 
     function reportRowIssue(encodedText){
@@ -3143,7 +3270,9 @@
     function totalCustomScore(row,weights){
       return bucketScore(row.olympic,'olympic',weights)
         + bucketScore(row.worlds,'worlds',weights)
-        + (skaterRankingOptions.separateWorldsOverall ? bucketScore(row.worldsOverall,'worlds_overall',weights) : 0)
+        + (skaterRankingOptions.includeWorldsOverall
+          ? bucketScore(row.worldsOverall, skaterRankingOptions.separateWorldsOverall ? 'worlds_overall' : 'worlds', weights)
+          : 0)
         + bucketScore(row.worldcup,'worldcup',weights);
     }
 
@@ -3279,9 +3408,9 @@
       return b.olympic.gold-a.olympic.gold||
         b.olympic.silver-a.olympic.silver||
         b.olympic.bronze-a.olympic.bronze||
-        b.worlds.gold-a.worlds.gold||
-        b.worlds.silver-a.worlds.silver||
-        b.worlds.bronze-a.worlds.bronze||
+        (b.worlds.gold + (!skaterRankingOptions.separateWorldsOverall && skaterRankingOptions.includeWorldsOverall ? b.worldsOverall.gold : 0))-(a.worlds.gold + (!skaterRankingOptions.separateWorldsOverall && skaterRankingOptions.includeWorldsOverall ? a.worldsOverall.gold : 0))||
+        (b.worlds.silver + (!skaterRankingOptions.separateWorldsOverall && skaterRankingOptions.includeWorldsOverall ? b.worldsOverall.silver : 0))-(a.worlds.silver + (!skaterRankingOptions.separateWorldsOverall && skaterRankingOptions.includeWorldsOverall ? a.worldsOverall.silver : 0))||
+        (b.worlds.bronze + (!skaterRankingOptions.separateWorldsOverall && skaterRankingOptions.includeWorldsOverall ? b.worldsOverall.bronze : 0))-(a.worlds.bronze + (!skaterRankingOptions.separateWorldsOverall && skaterRankingOptions.includeWorldsOverall ? a.worldsOverall.bronze : 0))||
         (skaterRankingOptions.separateWorldsOverall ? (b.worldsOverall.gold-a.worldsOverall.gold||b.worldsOverall.silver-a.worldsOverall.silver||b.worldsOverall.bronze-a.worldsOverall.bronze) : 0)||
         b.worldcup.gold-a.worldcup.gold||
         b.worldcup.silver-a.worldcup.silver||
@@ -3327,9 +3456,9 @@
       data.forEach(row=>{
         if(isWorldChampionshipSuperFinalRow(row)) return;
         const key=row.skater_name;if(!key)return;
-        if(!map.has(key)) map.set(key,createSkaterAgg(row.skater_name,row.country));
+        if(!map.has(key)) map.set(key,createSkaterAgg(row.skater_name,eventCountry(row)));
         const item=map.get(key);
-        if(row.country && !item.country) item.country=row.country;
+        if(eventCountry(row) && !item.country) item.country=eventCountry(row);
         let bucket=competitionBucket(row.competition_type);
         if(bucket==='worlds' && isWorldChampionshipOverallRow(row)){
           bucket='worldsOverall';
@@ -3471,7 +3600,7 @@
       if(!scoped.length){wrap.innerHTML=`<div class="empty">${tr('empty')}</div>`;return;}
       const map=new Map();
       scoped.forEach(row=>{
-        const key=row.country;if(!key)return;
+        const key=eventCountry(row);if(!key)return;
         if(!map.has(key))map.set(key,{country:key,gold:0,silver:0,bronze:0,total:0});
         const item=map.get(key);
         if(row.medal==='Gold')item.gold++;
@@ -3694,7 +3823,7 @@
         }
       });
       document.querySelectorAll('.compare-worlds-overall-score-field').forEach(el=>{
-        el.style.display = compareOptions.includeWorldsOverall ? 'block' : 'none';
+        el.style.display = 'none';
       });
     }
 
@@ -3711,7 +3840,7 @@
     function totalCompareScore(row,weights){
       return bucketScore(row.olympic,'olympic',weights)
         + bucketScore(row.worlds,'worlds',weights)
-        + (compareOptions.includeWorldsOverall ? bucketScore(row.worldsOverall,'worlds_overall',weights) : 0)
+        + (compareOptions.includeWorldsOverall ? bucketScore(row.worldsOverall,'worlds',weights) : 0)
         + bucketScore(row.worldcup,'worldcup',weights);
     }
 
@@ -3749,7 +3878,7 @@
       const weights=readCompareScoreWeights();
       const agg=aggregateRowsForComparison(rows);
       if(bucketName==='olympic') return bucketScore(agg.olympic,'olympic',weights);
-      if(bucketName==='worldsOverall') return compareOptions.includeWorldsOverall ? bucketScore(agg.worldsOverall,'worlds_overall',weights) : 0;
+      if(bucketName==='worldsOverall') return compareOptions.includeWorldsOverall ? bucketScore(agg.worldsOverall,'worlds',weights) : 0;
       if(bucketName==='worlds') return bucketScore(agg.worlds,'worlds',weights);
       if(bucketName==='worldcup') return bucketScore(agg.worldcup,'worldcup',weights);
       return totalCompareScore(agg,weights);
@@ -5598,18 +5727,20 @@
     function normalizeMedalRow(row){
       const original=String(row.skater_name||'').trim();
       const season=normalizeSeasonLabel(row.season||'', row.year||'');
-      return {competition_type:String(row.competition_type||'').trim(),season,competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,country:String(row.country||'').trim(),time:String(row.time||'').trim(),note:String(row.note||'').trim()};
+      const normalized={competition_type:String(row.competition_type||'').trim(),season,competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,name_at_event:String(row.name_at_event||'').trim(),country:String(row.country||'').trim(),country_at_event:String(row.country_at_event||'').trim(),source_url:String(row.source_url||'').trim(),time:String(row.time||'').trim(),note:String(row.note||'').trim()};
+      return applyRepresentativeCountry(normalized, normalized.skater_name);
     }
     function normalizeRelayRow(row){
       const original=String(row.skater_name||'').trim();
       const season=normalizeSeasonLabel(row.season||'', row.year||'');
-      return {competition_type:String(row.competition_type||'').trim(),season,competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),country:String(row.country||'').trim(),team_name:String(row.team_name||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,time:String(row.time||'').trim(),note:String(row.note||'').trim()};
+      const normalized={competition_type:String(row.competition_type||'').trim(),season,competition_name:String(row.competition_name||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),gender:String(row.gender||'').trim(),event:String(row.event||'').trim(),medal:String(row.medal||'').trim(),country:String(row.country||'').trim(),country_at_event:String(row.country_at_event||'').trim(),team_name:String(row.team_name||'').trim(),skater_name:canonicalSkaterName(original),original_skater_name:original,name_at_event:String(row.name_at_event||'').trim(),source_url:String(row.source_url||'').trim(),time:String(row.time||'').trim(),note:String(row.note||'').trim()};
+      return applyRepresentativeCountry(normalized, normalized.skater_name);
     }
     function normalizeBestTimeRow(row){
       const original=String(row.skater_name||row.name||'').trim();
       const event=normalizeBestTimeEvent(row.event||row.distance||row.discipline||'');
       const season=normalizeSeasonLabel(row.season||'', row.year||'');
-      return {skater_name:canonicalSkaterName(original),original_skater_name:original,country:String(row.country||'').trim(),gender:String(row.gender||'').trim(),event,best_time:String(row.best_time||row.final_time||row.time||row.record||row.lap_time||row.cumulative_time||'').trim(),competition_type:String(row.competition_type||'').trim(),season,competition_name:String(row.competition_name||row.competition||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),round:String(row.round||'').trim(),note:String(row.note||'').trim()};
+      return {skater_name:canonicalSkaterName(original),original_skater_name:original,name_at_event:String(row.name_at_event||'').trim(),country:String(row.country||'').trim(),country_at_event:String(row.country_at_event||'').trim(),gender:String(row.gender||'').trim(),event,best_time:String(row.best_time||row.final_time||row.time||row.record||row.lap_time||row.cumulative_time||'').trim(),competition_type:String(row.competition_type||'').trim(),season,competition_name:String(row.competition_name||row.compitition||row.competition||'').trim(),city:String(row.city||'').trim(),year:String(row.year||'').trim(),round:String(row.round||'').trim(),source_url:String(row.source_url||'').trim(),note:String(row.note||'').trim()};
     }
 
     function unique(data,key){
@@ -5668,9 +5799,10 @@
       const individual=rows.filter(r=>r.medal_type==='Individual' && !isWorldChampionshipSuperFinalRow(r));
       const relay=rows.filter(r=>r.medal_type==='Relay');
       const superFinal=rows.filter(r=>r.medal_type==='SuperFinal' || isWorldChampionshipSuperFinalRow(r));
+      const currentCountry=currentRepresentativeCountry(name, rows.concat(lapRows,pbRows));
       document.getElementById('playerName').textContent=name;
       renderPlayerAchievementBadges(name);
-      document.getElementById('playerInfo').textContent=`${sample.country||''} · ${genderKorean(sample.gender)||'-'} · 개인전 메달 ${individual.length}개 · 계주 ${relay.length}개 · 3000m S.F. ${superFinal.length}개 · 활동 시즌 ${activeSeasonsForPlayer(rows,lapRows.concat(pbRows))}`;
+      document.getElementById('playerInfo').textContent=`${currentCountry||sample.country||''} · ${genderKorean(sample.gender)||'-'} · 개인전 메달 ${individual.length}개 · 계주 ${relay.length}개 · 3000m S.F. ${superFinal.length}개 · 활동 시즌 ${activeSeasonsForPlayer(rows,lapRows.concat(pbRows))}`;
       document.getElementById('playerTotal').textContent=individual.length;
       document.getElementById('playerGold').textContent=individual.filter(r=>r.medal==='Gold').length;
       document.getElementById('playerSilver').textContent=individual.filter(r=>r.medal==='Silver').length;
@@ -5698,6 +5830,7 @@
       const relay=rows.filter(row=>row.medal_type==='Relay');
       const superFinal=rows.filter(row=>row.medal_type==='SuperFinal' || isWorldChampionshipSuperFinalRow(row));
       const sample=rows[0]||laps[0]||recordRows[0]||{};
+      const currentCountry=currentRepresentativeCountry(name, rows.concat(laps,recordRows));
       const bestMap=bestTimeMapForPlayer(name);
 
       const pbEvents=['500m','1000m','1500m'];
@@ -5735,11 +5868,12 @@
 
       wrap.innerHTML=`
         <div class="approved-profile-grid">
-          <div class="approved-profile-box"><div class="label">국가</div><div class="value">${escapeHtml(sample.country||'-')}</div></div>
+          <div class="approved-profile-box"><div class="label">현재/최근 대표국</div><div class="value">${escapeHtml(currentCountry||sample.country||'-')}</div></div>
           <div class="approved-profile-box"><div class="label">성별</div><div class="value">${escapeHtml(genderKorean(sample.gender)||'-')}</div></div>
           <div class="approved-profile-box"><div class="label">주요 종목</div><div class="value">${escapeHtml(mainEventForPlayer(individual))}</div></div>
           <div class="approved-profile-box"><div class="label">활동 시즌</div><div class="value">${escapeHtml(activeSeasonsForPlayer(rows,laps.concat(recordRows)))}</div></div>
         </div>
+        ${countryHistorySummaryHtml(name)}
         <div class="approved-overview-split">
           <div>
             <div class="approved-overview-heading">메달 요약</div>
@@ -6361,7 +6495,7 @@
       const normalizedEvent=normalizeLapEvent(row.event||row.distance||row.discipline||'');
       const normalizedGender=inferLapGender(row.gender||'', normalizedEvent);
       return {
-        competition_type:String(row.competition_type||''), season:String(row.season||''), competition_name:String(row.competition_name||''), city:String(row.city||''), year:String(row.year||''),
+        competition_type:String(row.competition_type||''), season:String(row.season||''), competition_name:String(row.competition_name||row.compitition||row.competition||''), city:String(row.city||''), year:String(row.year||''),
         gender:normalizedGender, event:normalizedEvent, round:String(row.round||''), heat:String(row.heat||''), skater_name:String(row.skater_name||row.name||row.athlete||''), country:String(row.country||row.noc||''),
         lap_no:Number(row.lap_no||row.lap_number||0), lap_time:Number(row.lap_time||row.rap_time||row.time||0), split_time:String(row.split_time||''), split_rank:Number(row.split_rank||0), prev_split_rank:Number(row.prev_split_rank||0),
         auto_context:String(row.auto_context||row.context||''), manual_context:String(row.manual_context||''), source_url:String(row.source_url||''), note:String(row.note||''), context_basis:String(row.context_basis||'')
@@ -6412,7 +6546,7 @@
         return;
       }
       try{
-        const staticJson = await cachedFetchJson('data/lap-rankings.json', 'shorttrack_static_lap_rankings_v1');
+        const staticJson = await cachedFetchJson('data/lap-rankings.json', 'shorttrack_static_lap_rankings_v2');
         applyLoadedLapRankingsJson(staticJson, false);
       }catch(error){
         unlockLapFilterControls();
@@ -6434,12 +6568,12 @@
       const api=getLapApiUrl();
       unlockLapFilterControls();
       try{
-        const staticJson = await cachedFetchJson('data/lap-rankings.json', 'shorttrack_static_lap_rankings_v1');
+        const staticJson = await cachedFetchJson('data/lap-rankings.json', 'shorttrack_static_lap_rankings_v2');
         applyLoadedLapRankingsJson(staticJson);
         return;
       }catch(_staticError){}
       if(!api || api.includes('여기에')){
-        wrap.innerHTML='<div class="empty"><strong>랩타임 API 주소가 연결되지 않았습니다.</strong><br>Apps Script에 lap time API 코드를 추가한 뒤 LAP_API_URL을 확인해 주세요.</div>';
+        wrap.innerHTML='<div class="empty"><strong>랩타임 데이터를 준비하지 못했습니다.</strong><br>잠시 후 다시 시도해 주세요.</div>';
         return;
       }
       wrap.innerHTML='<div class="empty">랩타임 순위 데이터를 불러오는 중입니다.</div>';
@@ -6448,7 +6582,7 @@
         const sep=api.includes('?')?'&':'?';
         let json;
         try{
-          json = await cachedFetchJson('data/lap-rankings.json', 'shorttrack_static_lap_rankings_v1');
+          json = await cachedFetchJson('data/lap-rankings.json', 'shorttrack_static_lap_rankings_v2');
         }catch(_staticError){
           json = await cachedFetchJson(`${api}${sep}action=lapRankings&limit=50000&includeRelay=1&includeRelays=1&includeAllEvents=1`, 'shorttrack_lap_rankings_v3');
         }
@@ -6462,7 +6596,8 @@
         renderLapRankings();
       }catch(err){
         ['lapSeasonFilter','lapEventFilter'].forEach(id=>{const el=document.getElementById(id); if(el) el.disabled=false;});
-        wrap.innerHTML=`<div class="empty"><strong>랩타임 데이터를 불러오지 못했습니다.</strong><br>${escapeHtml(err.message||err)}<br><small>Apps Script 배포 URL, action=lapRankings, lap_times_raw 시트를 확인해 주세요.</small></div>`;
+        console.error('Lap ranking load failed', err);
+        wrap.innerHTML='<div class="empty"><strong>랩타임 데이터를 불러오지 못했습니다.</strong><br>잠시 후 다시 시도해 주세요.</div>';
       }
     }
     function renderLapRankings(){
@@ -7142,7 +7277,7 @@
 
     const api = getRecordApiUrl();
     if(!api || api.includes('여기에')){
-      wrap.innerHTML = '<div class="empty"><strong>종목별 기록 API 주소가 연결되지 않았습니다.</strong><br>Apps Script에서 event_records_raw 또는 event_records 시트를 반환하도록 연결해 주세요.</div>';
+      wrap.innerHTML = '<div class="empty"><strong>종목별 기록 데이터를 준비하지 못했습니다.</strong><br>잠시 후 다시 시도해 주세요.</div>';
       return;
     }
 
@@ -7180,7 +7315,7 @@
       }catch(_syncError){}
 
       if(!eventRecordRows.length && !sourceRows.length){
-        wrap.innerHTML = '<div class="empty"><strong>event_records 데이터를 찾지 못했습니다.</strong><br>구글시트에 event_records 탭을 만든 뒤, Apps Script doGet 응답에도 event_records를 포함해야 합니다.</div>';
+        wrap.innerHTML = '<div class="empty"><strong>종목별 기록 데이터를 찾지 못했습니다.</strong><br>잠시 후 다시 시도해 주세요.</div>';
         ['recordSeasonFilter','recordEventFilter'].forEach(id => { const el = document.getElementById(id); if(el) el.disabled = false; });
         return;
       }
@@ -7194,7 +7329,8 @@
       renderEventRecords();
     }catch(err){
       ['recordSeasonFilter','recordEventFilter'].forEach(id => { const el = document.getElementById(id); if(el) el.disabled = false; });
-      wrap.innerHTML = `<div class="empty"><strong>종목별 기록 데이터를 불러오지 못했습니다.</strong><br>${recordEscape(err.message || err)}<br><small>Apps Script의 action=eventRecords 또는 event_records_raw 시트를 확인해 주세요.</small></div>`;
+      console.error('Event records load failed', err);
+      wrap.innerHTML = '<div class="empty"><strong>종목별 기록 데이터를 불러오지 못했습니다.</strong><br>잠시 후 다시 시도해 주세요.</div>';
     }
   };
 
@@ -8732,6 +8868,193 @@
     }
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initMobileEnhancements);
     else initMobileEnhancements();
+  })();
+</script>
+
+<script>
+  (function(){
+    const sectionAliases = {
+      search: 'searchSection',
+      skaters: 'skaterRankingSection',
+      skaterRank: 'skaterRankingSection',
+      eventRank: 'eventRankingSection',
+      recordRank: 'recordRankingSection',
+      records: 'recordRankingSection',
+      lapRank: 'lapRankingSection',
+      laps: 'lapRankingSection',
+      compare: 'compareSection',
+      countryRank: 'countryRankingSection',
+      heat: 'heatToolSection',
+      hall: 'hallOfFameSection',
+      card: 'cardMakerSection',
+      tier: 'tierMakerSection',
+      quiz: 'quizSection'
+    };
+    let restoringRoute = false;
+
+    function routeSectionId(value){
+      const raw = String(value || '').replace(/^#/, '').trim();
+      if(!raw) return '';
+      return sectionAliases[raw] || raw;
+    }
+
+    function buildShorttrackUrl(params){
+      const url = new URL(location.href);
+      const query = new URLSearchParams();
+      Object.entries(params || {}).forEach(([key, value]) => {
+        const text = String(value || '').trim();
+        if(text) query.set(key, text);
+      });
+      url.search = query.toString();
+      url.hash = '';
+      return url.toString();
+    }
+
+    function updateRoute(params, replace){
+      if(restoringRoute || !history || typeof history.pushState !== 'function') return;
+      const next = buildShorttrackUrl(params);
+      if(next === location.href) return;
+      history[replace ? 'replaceState' : 'pushState']({shorttrack:true}, '', next);
+    }
+
+    function syncSearchQuery(query){
+      const text = String(query || '').trim();
+      if(!text) return;
+      const search = document.getElementById('searchInput');
+      const mobile = document.getElementById('mobileSearchInput');
+      if(search) search.value = text;
+      if(mobile) mobile.value = text;
+      if(typeof scheduleApplyFilters === 'function') scheduleApplyFilters();
+      else if(typeof applyFilters === 'function') applyFilters();
+    }
+
+    function scrollToRouteSection(section){
+      const id = routeSectionId(section);
+      if(!id || !document.getElementById(id)) return false;
+      if(typeof window.scrollToSection === 'function') window.scrollToSection(id);
+      else document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
+      return true;
+    }
+
+    function applyRoute(){
+      const params = new URLSearchParams(location.search);
+      const query = params.get('q') || params.get('search') || '';
+      const player = params.get('player') || params.get('skater') || '';
+      const country = params.get('country') || '';
+      const season = params.get('season') || '';
+      const section = params.get('section') || location.hash.replace(/^#/, '');
+      restoringRoute = true;
+      try{
+        if(query) syncSearchQuery(query);
+        if(player && typeof window.openPlayerPanel === 'function'){
+          const resolved = typeof canonicalSkaterName === 'function' ? canonicalSkaterName(player) : player;
+          window.openPlayerPanel(resolved);
+          return;
+        }
+        if(country && typeof window.openCountryPage === 'function'){
+          window.openCountryPage(country);
+          return;
+        }
+        if(season && typeof window.openSeasonPage === 'function'){
+          window.openSeasonPage(season);
+          return;
+        }
+        scrollToRouteSection(section || (query ? 'searchSection' : ''));
+      }finally{
+        setTimeout(() => { restoringRoute = false; }, 0);
+      }
+    }
+
+    async function copyText(text){
+      if(navigator.clipboard && window.isSecureContext){
+        try{ await navigator.clipboard.writeText(text); return true; }catch(_e){}
+      }
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.left = '-9999px';
+      document.body.appendChild(area);
+      area.select();
+      const ok = document.execCommand('copy');
+      area.remove();
+      return ok;
+    }
+
+    async function copyShorttrackLink(params){
+      const ok = await copyText(buildShorttrackUrl(params));
+      alert(ok ? '링크를 복사했습니다.' : '링크 복사에 실패했습니다.');
+    }
+
+    window.copyPlayerLink = function(){
+      const name = String(document.getElementById('playerName')?.textContent || '').trim();
+      if(!name) return;
+      copyShorttrackLink({player:name});
+    };
+    window.copyCurrentShorttrackLink = copyShorttrackLink;
+
+    function wrapRouteWriters(){
+      const previousScroll = window.scrollToSection;
+      if(typeof previousScroll === 'function' && !previousScroll.__routeWrapped){
+        const wrapped = function(id){
+          const result = previousScroll.apply(this, arguments);
+          if(routeSectionId(id)) updateRoute({section:routeSectionId(id)});
+          return result;
+        };
+        wrapped.__routeWrapped = true;
+        window.scrollToSection = wrapped;
+        try{ scrollToSection = wrapped; }catch(_e){}
+      }
+
+      const previousOpenPlayer = window.openPlayerPanel;
+      if(typeof previousOpenPlayer === 'function' && !previousOpenPlayer.__routeWrapped){
+        const wrapped = function(name){
+          const result = previousOpenPlayer.apply(this, arguments);
+          if(document.getElementById('playerPanel')?.classList.contains('active')) updateRoute({player:name});
+          return result;
+        };
+        wrapped.__routeWrapped = true;
+        window.openPlayerPanel = wrapped;
+        try{ openPlayerPanel = wrapped; }catch(_e){}
+      }
+
+      const previousCountry = window.openCountryPage;
+      if(typeof previousCountry === 'function' && !previousCountry.__routeWrapped){
+        const wrapped = function(country){
+          const result = previousCountry.apply(this, arguments);
+          if(document.getElementById('countryPanel')?.classList.contains('active')) updateRoute({country});
+          return result;
+        };
+        wrapped.__routeWrapped = true;
+        window.openCountryPage = wrapped;
+      }
+
+      const previousSeason = window.openSeasonPage;
+      if(typeof previousSeason === 'function' && !previousSeason.__routeWrapped){
+        const wrapped = function(season){
+          const result = previousSeason.apply(this, arguments);
+          if(document.getElementById('seasonPanel')?.classList.contains('active')) updateRoute({season});
+          return result;
+        };
+        wrapped.__routeWrapped = true;
+        window.openSeasonPage = wrapped;
+      }
+    }
+
+    function initRouteState(){
+      wrapRouteWriters();
+      setTimeout(applyRoute, 80);
+    }
+
+    window.addEventListener('popstate', () => {
+      restoringRoute = true;
+      setTimeout(() => {
+        restoringRoute = false;
+        applyRoute();
+      }, 0);
+    });
+    if(window.shorttrackDataReady) initRouteState();
+    else window.addEventListener('shorttrack:data-ready', initRouteState, {once:true});
   })();
 </script>
 
