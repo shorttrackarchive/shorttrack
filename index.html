@@ -2563,7 +2563,10 @@
           }
         });
         mobileSearchInput.addEventListener('keydown', event=>{
-          if(event.key === 'Enter') scrollToSection('searchSection');
+          if(event.key === 'Enter'){
+            event.preventDefault();
+            commitSearchAndScrollToResults();
+          }
         });
       }
       searchInput?.addEventListener('input', ()=>{
@@ -2598,6 +2601,12 @@
     function bindEvents(){
       enhanceSeasonControls();
       searchInput.addEventListener('input', scheduleApplyFilters);
+      searchInput.addEventListener('keydown', event=>{
+        if(event.key === 'Enter'){
+          event.preventDefault();
+          commitSearchAndScrollToResults();
+        }
+      });
       ['searchSortSelect','searchIndividualOnly','searchRelayOnly','searchGoldOnly','searchExcludeWorldsOverall','searchExclude3000'].forEach(id=>{
         document.getElementById(id)?.addEventListener('change', applyFilters);
       });
@@ -2854,6 +2863,15 @@
     function scheduleApplyFilters(){
       window.clearTimeout(__filterTimer);
       __filterTimer = window.setTimeout(() => applyFilters(), 120);
+    }
+    function commitSearchAndScrollToResults(){
+      window.clearTimeout(__filterTimer);
+      applyFilters();
+      const query=String(searchInput?.value || '').trim();
+      const target=query ? document.getElementById('stSearchResultView') : document.getElementById('searchSection');
+      window.requestAnimationFrame(()=>{
+        target?.scrollIntoView({behavior:'smooth', block:'start'});
+      });
     }
 
     async function loadData(){
