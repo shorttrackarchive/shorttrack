@@ -585,6 +585,9 @@
     .recent-searches-title{font-size:12px;color:var(--muted);font-weight:900;margin-right:2px}
     .recent-chip,.suggest-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:850;cursor:pointer;color:#334155}
     .recent-chip:hover,.suggest-chip:hover{border-color:var(--primary);color:var(--primary);background:#eff6ff}
+    .file-input-localized{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+    .file-input-localized .native-file-input{display:none}
+    #fanCardImageFileName{font-size:13px;color:var(--text)}
     .suggestion-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
     .st-result-name .competition-type-badge{margin-right:6px}
     .st-result-card-rich{border:1px solid var(--line);background:#fbfdff;border-radius:16px;padding:12px}
@@ -1659,7 +1662,11 @@
             </div>
             <div class="wide">
               <label for="fanCardImageFile" data-i18n="cardImageFile">이미지 직접 첨부</label>
-              <input id="fanCardImageFile" type="file" accept="image/*" onchange="handleFanCardImageFile(event)">
+              <div class="file-input-localized">
+                  <button type="button" class="sort-btn" data-i18n="chooseFile" onclick="document.getElementById('fanCardImageFile')?.click()">파일 선택</button>
+                  <span id="fanCardImageFileName" data-i18n="noFileSelected">선택된 파일 없음</span>
+                  <input id="fanCardImageFile" class="native-file-input" type="file" accept="image/*" onchange="handleFanCardImageFile(event)">
+                </div>
             </div>
             <div class="wide">
               <label for="fanCardComment" data-i18n="cardComment">한 줄 코멘트</label>
@@ -2201,7 +2208,7 @@
         playerOverviewTitle:'Skater Summary', playerOverviewDesc:'Summarizes medals by individual/relay and competition type.', playerMedalDetailTitle:'Medal Details', playerMedalDetailDesc:'Shows individual medals together with relay medals from relay_members.',
         eraRange:'Season range', eraStartAll:'Start', eraEndAll:'End',
         compareTitle:'Compare Skaters', compareDesc:'Select two skaters to compare scores and event performance based on individual results only.',
-        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. If a URL image does not load, upload an image directly. Directly uploaded images are more reliably included when saving the card.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardImageFile:'Upload image directly', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 8 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'Heat Draw Tool', heatToolDesc:'Enter race results to calculate qualifiers and estimate the next-round heat draw.', heatToolNotice:'This is a fan-made helper. Because ADV qualifiers may occur, set the number of skaters per heat manually before building the result table. Qualifiers are seeded by finish-position groups first, then by time within each group; next-round heats are assigned by snake seeding. SP within each next-round heat is then re-sorted by the previous-round time. Actual official heat draws may differ, and ADV/ties should be checked manually.', heatDistance:'Event', heatRound:'Current round', roundPreliminary:'Preliminary', roundHeats:'Heats', roundQuarterfinals:'Quarterfinals', roundSemifinals:'Semifinals', heatCount:'Current heats', heatSkatersPerHeat:'Skaters per heat', heatAutoQualifiers:'Auto qualifiers per heat', heatTimeQualifiers:'Fastest additional qualifiers', heatNextCount:'Next-round heats', heatSeedMethod:'Seeding method', seedSnake:'Snake seeding', seedStraight:'Straight seeding', heatTimeSort:'Time sorting', timeFastest:'Fastest first', timeNone:'Do not use times', buildHeatTable:'Build result table', calculateHeatDraw:'Calculate qualifiers & draw', sampleHeatData:'Fill sample', clearHeatData:'Clear input', heatInputEmpty:'Build a result table first.', heatOutputEmpty:'Results will appear here.', heatNoQualifiers:'No qualifiers.', heatAutoQ:'Auto qualifier', heatTimeQ:'Time qualifier', heatAdv:'ADV', heatEliminated:'Eliminated', heatQualifiers:'Qualifiers', heatNextDraw:'Next-round heat draw', heatName:'Skater', heatCountry:'Country', heatPosition:'Place', heatTime:'Time', heatStatus:'Status', heatHeat:'Heat', heatReason:'Reason', heatRank:'Seed', heatSP:'SP', heatOfficialNote:'Estimated heat draw. Actual official heat draws may differ.', quizTitle:'Random Short Track Quiz', quizDesc:'Questions are generated automatically from the current medals data. You do not need to create questions manually; when new data is added, the quiz pool updates after refresh.', quizNotice:'Questions focus on individual events and exclude relays, 3000m, Olympic demonstration events, joint-medal cases, and incomplete podiums. If you find an error, report it from that question.', quizCount:'Questions', quizEra:'Era', quizType:'Question type', quizTypeMixed:'Mixed', quizTypeGold:'Gold medalist', quizTypePodium:'Podium order', quizTypeCountry:'Skater country', quizTypeMedal:'Medal color', startQuiz:'Start quiz', submitQuiz:'Grade quiz', resetQuiz:'Reset', quizEmpty:'Select options and start the quiz.', quizNoData:'No question candidates match these options.', quizQuestion:'Question', quizReport:'Report this question', quizCorrectAnswer:'Answer', quizYourAnswer:'Your answer', quizUnanswered:'Unanswered', quizScoreText:'Correct', quizAccuracy:'Accuracy', quizTitleGod:'ISU database itself', quizTitleLegend:'Short track encyclopedia', quizTitleWorld:'World Tour commentator', quizTitlePodium:'Podium tracker', quizTitleFan:'Rink regular', quizTitleRookie:'Needs replay training', quizGoldQuestion:'Who was the gold medalist?', quizPodiumQuestion:'Which podium order is correct?', quizCountryQuestion:'is from which country?', quizMedalQuestion:'What medal did this skater win?', heatToolTitle:'조편성 계산기', heatToolDesc:'경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.', heatToolNotice:'팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 순위 그룹 우선·그룹 내 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 배정된 조 안의 SP는 직전 라운드 기록순으로 다시 정렬합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.', heatDistance:'종목', heatRound:'현재 라운드', roundPreliminary:'예비예선', roundHeats:'예선', roundQuarterfinals:'준준결승', roundSemifinals:'준결승', heatCount:'현재 조 수', heatSkatersPerHeat:'조별 선수 수', heatAutoQualifiers:'조별 순위 진출', heatTimeQualifiers:'기록순 추가 진출', heatNextCount:'다음 라운드 조 수', heatSeedMethod:'배정 방식', seedSnake:'지그재그 배정', seedStraight:'순차 배정', heatTimeSort:'기록 정렬', timeFastest:'빠른 기록 우선', timeNone:'기록 미사용', buildHeatTable:'결과 입력표 만들기', calculateHeatDraw:'진출자·조편성 계산', sampleHeatData:'예시 채우기', clearHeatData:'입력 초기화', heatInputEmpty:'결과 입력표를 먼저 만들어 주세요.', heatOutputEmpty:'계산 결과가 여기에 표시됩니다.', heatNoQualifiers:'진출자가 없습니다.', heatAutoQ:'순위 진출', heatTimeQ:'기록 진출', heatAdv:'ADV', heatEliminated:'탈락자', heatQualifiers:'진출자', heatNextDraw:'다음 라운드 조편성', heatName:'선수명', heatCountry:'국가', heatPosition:'순위', heatTime:'기록', heatStatus:'상태', heatHeat:'조', heatReason:'진출 방식', heatRank:'시드', heatSP:'SP', heatOfficialNote:'추정 조편성입니다. 실제 공식 조편성과 다를 수 있습니다.', quizTitle:'랜덤 쇼트트랙 퀴즈', quizDesc:'현재 medals 데이터를 바탕으로 자동 출제합니다. 문제를 따로 만들 필요는 없으며, 데이터가 추가되면 새로고침 후 문제 후보도 자동으로 늘어납니다.', quizNotice:'개인전 중심으로 출제하며 계주, 3000m, 올림픽 시범종목, 공동 메달 또는 불완전 포디움 의심 경기는 제외합니다. 문제에서 오류를 발견하면 문제별 오류 신고 버튼으로 제보할 수 있습니다.', quizCount:'문제 수', quizEra:'시대', quizType:'문제 유형', quizTypeMixed:'혼합', quizTypeGold:'금메달리스트', quizTypePodium:'포디움 순서', quizTypeCountry:'선수 국가', quizTypeMedal:'메달 색', startQuiz:'퀴즈 시작', submitQuiz:'채점하기', resetQuiz:'초기화', quizEmpty:'옵션을 선택한 뒤 퀴즈를 시작해 주세요.', quizNoData:'조건에 맞는 문제 후보가 없습니다.', quizQuestion:'문제', quizReport:'이 문제 오류 신고', quizCorrectAnswer:'정답', quizYourAnswer:'내 답', quizUnanswered:'미응답', quizScoreText:'정답 수', quizAccuracy:'정답률', quizTitleGod:'ISU 데이터베이스 그 자체', quizTitleLegend:'쇼트트랙 백과사전', quizTitleWorld:'월드투어 해설위원', quizTitlePodium:'포디움 추적자', quizTitleFan:'빙상장 상주팬', quizTitleRookie:'다시보기 훈련 필요', quizGoldQuestion:'금메달리스트는?', quizPodiumQuestion:'포디움 순서로 맞는 것은?', quizCountryQuestion:'의 국가로 맞는 것은?', quizMedalQuestion:'이 선수의 메달 색은?', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
+        hallTitle:'Hall of Fame', hallDesc:'Record-based cards excluding relays, 3000m, and Olympic demonstration events. Individual records are based on 500m, 1000m, and 1500m events, while World Championships Overall titles are counted separately from Overall Gold.', hallRecordUnit:'medals', hallOverallUnit:'titles', cardMakerTitle:'Card Maker', cardMakerDesc:'Create a fan-made skater card from your own inputs. This is not an official rating, and no gallery or saved sharing is provided.', cardMakerNotice:'Only image URLs that allow external display can be used. If a URL image does not load, upload an image directly. Directly uploaded images are more reliably included when saving the card.', cardSkaterName:'Skater name', cardRating:'Card rating', cardGrade:'Grade', cardCustomGrade:'CUSTOM grade name', cardImageUrl:'Image URL', cardImageFile:'Upload image directly', chooseFile:'Choose file', noFileSelected:'No file selected', cardComment:'One-line comment', cardStats:'Stats and scores', cardStatsNotice:'You can freely enter up to 8 stats.', updateCard:'Create card', downloadCard:'Save image', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'Heat Draw Tool', heatToolDesc:'Enter race results to calculate qualifiers and estimate the next-round heat draw.', heatToolNotice:'This is a fan-made helper. Because ADV qualifiers may occur, set the number of skaters per heat manually before building the result table. Qualifiers are seeded by finish-position groups first, then by time within each group; next-round heats are assigned by snake seeding. SP within each next-round heat is then re-sorted by the previous-round time. Actual official heat draws may differ, and ADV/ties should be checked manually.', heatDistance:'Event', heatRound:'Current round', roundPreliminary:'Preliminary', roundHeats:'Heats', roundQuarterfinals:'Quarterfinals', roundSemifinals:'Semifinals', heatCount:'Current heats', heatSkatersPerHeat:'Skaters per heat', heatAutoQualifiers:'Auto qualifiers per heat', heatTimeQualifiers:'Fastest additional qualifiers', heatNextCount:'Next-round heats', heatSeedMethod:'Seeding method', seedSnake:'Snake seeding', seedStraight:'Straight seeding', heatTimeSort:'Time sorting', timeFastest:'Fastest first', timeNone:'Do not use times', buildHeatTable:'Build result table', calculateHeatDraw:'Calculate qualifiers & draw', sampleHeatData:'Fill sample', clearHeatData:'Clear input', heatInputEmpty:'Build a result table first.', heatOutputEmpty:'Results will appear here.', heatNoQualifiers:'No qualifiers.', heatAutoQ:'Auto qualifier', heatTimeQ:'Time qualifier', heatAdv:'ADV', heatEliminated:'Eliminated', heatQualifiers:'Qualifiers', heatNextDraw:'Next-round heat draw', heatName:'Skater', heatCountry:'Country', heatPosition:'Place', heatTime:'Time', heatStatus:'Status', heatHeat:'Heat', heatReason:'Reason', heatRank:'Seed', heatSP:'SP', heatOfficialNote:'Estimated heat draw. Actual official heat draws may differ.', quizTitle:'Random Short Track Quiz', quizDesc:'Questions are generated automatically from the current medals data. You do not need to create questions manually; when new data is added, the quiz pool updates after refresh.', quizNotice:'Questions focus on individual events and exclude relays, 3000m, Olympic demonstration events, joint-medal cases, and incomplete podiums. If you find an error, report it from that question.', quizCount:'Questions', quizEra:'Era', quizType:'Question type', quizTypeMixed:'Mixed', quizTypeGold:'Gold medalist', quizTypePodium:'Podium order', quizTypeCountry:'Skater country', quizTypeMedal:'Medal color', startQuiz:'Start quiz', submitQuiz:'Grade quiz', resetQuiz:'Reset', quizEmpty:'Select options and start the quiz.', quizNoData:'No question candidates match these options.', quizQuestion:'Question', quizReport:'Report this question', quizCorrectAnswer:'Answer', quizYourAnswer:'Your answer', quizUnanswered:'Unanswered', quizScoreText:'Correct', quizAccuracy:'Accuracy', quizTitleGod:'ISU database itself', quizTitleLegend:'Short track encyclopedia', quizTitleWorld:'World Tour commentator', quizTitlePodium:'Podium tracker', quizTitleFan:'Rink regular', quizTitleRookie:'Needs replay training', quizGoldQuestion:'Who was the gold medalist?', quizPodiumQuestion:'Which podium order is correct?', quizCountryQuestion:'is from which country?', quizMedalQuestion:'What medal did this skater win?', selectPlayerA:'Select skater A', selectPlayerB:'Select skater B', compareButton:'Compare', compareEmpty:'Select two skaters to compare.', compareScoreDesc:'These weights apply only to skater comparison. Defaults follow the existing 13·21·34-based scoring system. Relays are excluded, and only individual results are compared.', compareIncludeWorldsOverall:'Include Worlds overall', compareExcludeWorldsOverall:'Exclude Worlds overall', worldsOverallScore:'Worlds overall score',
         heatToolTitle:'Heat Draw Tool', heatToolDesc:'Enter race results to calculate qualifiers and estimate the next-round heat draw.', heatToolNotice:'This is a fan-made helper. Because ADV qualifiers may occur, set the number of skaters per heat manually before building the result table. Qualifiers are seeded by finish-position groups first, then by time within each group; next-round heats are assigned by snake seeding. SP within each next-round heat is then re-sorted by the previous-round time. Actual official heat draws may differ, and ADV/ties should be checked manually.', heatDistance:'Event', heatRound:'Current round', roundPreliminary:'Preliminary', roundHeats:'Heats', roundQuarterfinals:'Quarterfinals', roundSemifinals:'Semifinals', heatCount:'Current heats', heatSkatersPerHeat:'Skaters per heat', heatAutoQualifiers:'Auto qualifiers per heat', heatTimeQualifiers:'Fastest additional qualifiers', heatNextCount:'Next-round heats', heatSeedMethod:'Seeding method', seedSnake:'Snake seeding', seedStraight:'Straight seeding', heatTimeSort:'Time sorting', timeFastest:'Fastest first', timeNone:'Do not use times', buildHeatTable:'Build result table', calculateHeatDraw:'Calculate qualifiers & draw', sampleHeatData:'Fill sample', clearHeatData:'Clear input', heatInputEmpty:'Build a result table first.', heatOutputEmpty:'Results will appear here.', heatNoQualifiers:'No qualifiers.', heatAutoQ:'Auto qualifier', heatTimeQ:'Time qualifier', heatAdv:'ADV', heatEliminated:'Eliminated', heatQualifiers:'Qualifiers', heatNextDraw:'Next-round heat draw', heatName:'Skater', heatCountry:'Country', heatPosition:'Place', heatTime:'Time', heatStatus:'Status', heatHeat:'Heat', heatReason:'Reason', heatRank:'Seed', heatSP:'SP', heatOfficialNote:'Estimated heat draw. Actual official heat draws may differ.',
         quizTitle:'Random Short Track Quiz', quizDesc:'Questions are generated automatically from the current medals data. You do not need to create questions manually; when new data is added, the quiz pool updates after refresh.', quizNotice:'Questions focus on individual events and exclude relays, 3000m, Olympic demonstration events, joint-medal cases, and incomplete podiums. If you find an error, report it from that question.', quizCount:'Questions', quizEra:'Era', quizType:'Question type', quizTypeMixed:'Mixed', quizTypeGold:'Gold medalist', quizTypePodium:'Podium order', quizTypeCountry:'Skater country', quizTypeMedal:'Medal color', startQuiz:'Start quiz', submitQuiz:'Grade quiz', resetQuiz:'Reset', quizEmpty:'Select options and start the quiz.', quizNoData:'No question candidates match these options.', quizQuestion:'Question', quizReport:'Report this question', quizCorrectAnswer:'Answer', quizYourAnswer:'Your answer', quizUnanswered:'Unanswered', quizScoreText:'Correct', quizAccuracy:'Accuracy', quizTitleGod:'ISU database itself', quizTitleLegend:'Short track encyclopedia', quizTitleWorld:'World Tour commentator', quizTitlePodium:'Podium tracker', quizTitleFan:'Rink regular', quizTitleRookie:'Needs replay training', quizGoldQuestion:'Who was the gold medalist?', quizPodiumQuestion:'Which podium order is correct?', quizCountryQuestion:'is from which country?', quizMedalQuestion:'What medal did this skater win?',
         category:'Category', individual:'Individual', relayMedal:'Relay', includeRelayTotal:'Relay included', individualMedals:'Individual medals', relayIncludedMedals:'Relay included medals', bestEvent:'Best gold-medal event', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'Score', olympicScore:'Olympic score', worldsScore:'Worlds score', worldcupScore:'World Cup/Tour score', totalScore:'Total score', noData:'No data',
@@ -2259,7 +2266,7 @@
       rulesRelayCodesText:'Relay-specific infringement codes such as R1 Missed Relay Touch, R2 Illegal Relay, and R3 Blocking in the Infield.',
       rulesSourceNote:'Source: ISU Sports Rules - Short Track, Rules 291, 296, 297, and ISU Short Track Infringement Language and Code 2025/26.',
       skaterName:'Skater name', skaterInfo:'Skater information', playerAchievementLabel:'Skater achievements', totalMedals:'Total medals', copyLink:'Copy link',
-      playerTimelineAction:'View timeline', playerTimelineEmpty:'Press View timeline to display this section.',
+      playerTimelineAction:'View timeline', playerTimelineEmpty:'Press View timeline to display this section.', dataLoaded:'Data loaded',
       competitionNameLabel:'Competition name', competitionInfoLabel:'Competition information', competitionMedalTableTitle:'Competition Medal Table', competitionMedalTableDesc:'Gold, silver, and bronze podiums by event for this competition.', competitionBestTimeTitle:'Best-Time Entry Coverage', competitionBestTimeDesc:'Summarizes final personal-best rows entered in the best_times sheet for this competition.',
       countryInfoLabel:'Country-related records', seasonInfoLabel:'Season-related records', selectCountryPrompt:'Select a country.', selectSeasonPrompt:'Select a season.',
       tierMakerTitle:'Tier Maker', tierMakerDesc:'Drag skater cards into S/A/B/C/D/Hold tiers. This is a user-made tool, not an official evaluation.', tierSearch:'Skater search', tierSearchPlaceholder:'Search skater or country', mixedRelayIncluded:'Mixed / relays included', tierSource:'Skater pool', tierMedalSkaters:'Skaters with medal records', tierAllSkaters:'All skaters', refresh:'Refresh', reset:'Reset', tierNote:'Tier names are editable. Drag skater cards into tier rows or back to the skater list.', tierPoolTitle:'Skater list', tierPoolEmpty:'Skaters appear after the data loads.', tierBoardTitle:'Tier board', saveImage:'Save image', copyText:'Copy text', generateText:'Generate text', tierCopyPlaceholder:'Press Generate text to show the tier-board result here.', tierNoSkater:'No skaters match these filters.', tierDragHere:'Drag here', tierResetConfirm:'Reset the current tier board?', tierCopied:'Tier-board text copied.', tierCopyManual:'Automatic copy was blocked. Select and copy the text below.', tierExportTitle:'Short Track Skater Tier Board', tierImageFail:'Could not save the image. This may be a browser security limitation. Use text copy instead.', tierImageRetry:'Could not save the image. Please try again.', noRecord:'No records',
@@ -2293,6 +2300,20 @@
 
     function tr(key){
       return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.ko && I18N.ko[key]) || key;
+    }
+    function initialLanguage(){
+      try{
+        const saved=localStorage.getItem('shorttrack_lang');
+        if(saved === 'ko' || saved === 'en') return saved;
+      }catch(_e){}
+      const langs=[navigator.language, ...(navigator.languages || [])].filter(Boolean).map(v=>String(v).toLowerCase());
+      return langs.some(v=>v === 'ko' || v.startsWith('ko-')) ? 'ko' : 'en';
+    }
+    function updateLocalizedFileInput(){
+      const input=document.getElementById('fanCardImageFile');
+      const label=document.getElementById('fanCardImageFileName');
+      if(!label) return;
+      label.textContent=input?.files?.[0]?.name || tr('noFileSelected');
     }
 
     function localizeFanCardDefaults(){
@@ -2358,6 +2379,7 @@
       document.querySelectorAll('[data-mobile-filter-title]').forEach(el=>{el.textContent = tr(el.dataset.mobileFilterTitle);});
       document.querySelectorAll('.hof-title,.hof-note,.hof-unit[data-ko],.hof-unit[data-en]').forEach(el=>{el.textContent = currentLang === 'en' ? (el.dataset.en || el.textContent) : (el.dataset.ko || el.textContent);});
       localizeFanCardDefaults();
+      updateLocalizedFileInput();
       refreshSelectOptionLabels();
       renderSummary(filteredMedals || []);
       if(filteredMedals) renderCountryRanking(getFilteredCountryMedals());
@@ -2554,7 +2576,7 @@
     async function init(){
       initViewModeControls();
       bindEvents();
-      setLanguage('ko');
+      setLanguage(initialLanguage());
       syncSkaterScoreInputs(scoreWeights);
       updateSkaterScoreStatus('applied');
       applyViewMode();
@@ -2848,7 +2870,7 @@
         if(!eventRecordsCache.length){ eventRecordsCache=[]; }
         window.eventRecordsCache = eventRecordsCache;
         const loadingStatus=document.getElementById('loadingStatus');
-        const generatedAt=json.generated_at ? ` · 데이터 최종 갱신 ${new Date(json.generated_at).toLocaleString(currentLang==='en'?'en-US':'ko-KR')}` : '';
+        const generatedAt=json.generated_at ? ` · ${currentLang==='en'?'Last updated':'데이터 최종 갱신'} ${new Date(json.generated_at).toLocaleString(currentLang==='en'?'en-US':'ko-KR')}` : '';
         if(loadingStatus) loadingStatus.textContent=`${tr('dataLoaded')}: medals ${medals.length.toLocaleString()} · relay_members ${relayMembers.length.toLocaleString()} · best_times ${bestTimes.length.toLocaleString()} · event_records ${eventRecordsCache.length.toLocaleString()}${generatedAt}`;
         skaterMedals=buildSkaterMedals();
         setupSectionSeasonFilters();
@@ -5178,8 +5200,10 @@
 
     function handleFanCardImageFile(event){
       const file=event.target.files && event.target.files[0];
+      updateLocalizedFileInput();
       if(!file){
         fanCardUploadedImageDataUrl='';
+        updateLocalizedFileInput();
         updateFanCard();
         return;
       }
@@ -7151,6 +7175,23 @@
 
     function lapContextLabel(key){
       return {lead:tr('lapLead'), pass:tr('lapPass'), follow:tr('lapFollow'), passed:tr('lapPassed'), unknown:tr('lapUnknown')}[key] || key || tr('lapUnknown');
+    }
+    function ordinalEn(value){
+      const n=Number(value);
+      if(!Number.isFinite(n)) return String(value||'');
+      const mod100=n%100;
+      const suffix=mod100>=11&&mod100<=13?'th':(n%10===1?'st':n%10===2?'nd':n%10===3?'rd':'th');
+      return `${n}${suffix}`;
+    }
+    function lapBasisText(row){
+      if(row.prev_split_rank && row.split_rank){
+        return currentLang==='en' ? `${ordinalEn(row.prev_split_rank)} to ${ordinalEn(row.split_rank)}` : `${row.prev_split_rank}위 → ${row.split_rank}위`;
+      }
+      const raw=String(row.context_basis||'').trim();
+      if(currentLang==='en' && raw){
+        return raw.replace(/(\d+)\s*위\s*[→>-]+\s*(\d+)\s*위/g, (_m,a,b)=>`${ordinalEn(a)} to ${ordinalEn(b)}`);
+      }
+      return raw || '-';
     }
     function lapContextClass(key){
       return ['lead','pass','follow','passed'].includes(key) ? key : 'unknown';
