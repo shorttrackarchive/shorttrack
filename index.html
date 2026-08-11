@@ -6,7 +6,7 @@
   <title>Short Track Archive – 쇼트트랙 역대 기록·랭킹·선수 검색</title>
   <meta name="description" content="쇼트트랙 올림픽, 세계선수권, 월드컵·월드투어 포디움 기록과 선수 검색, 국가별 메달 순위, 종목별 기록, 랩타임 순위를 확인하는 아카이브입니다." />
   <link rel="canonical" href="https://shorttrackarchive.github.io/shorttrack/" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%233451FF' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M43 14H24C13 14 8 22 8 32s5 18 16 18h19'/%3E%3Cpath d='M43 21H25c-7 0-10 5-10 11s3 11 10 11h18'/%3E%3Cpath d='M43 28H27c-3 0-5 2-5 4s2 4 5 4h16'/%3E%3Cpath d='m48 49 9-34'/%3E%3Cpath d='M45 42h15'/%3E%3C/g%3E%3C/svg%3E" />
+  <link rel="icon" type="image/png" href="assets/short-track-archive-logo.png?v=20260811" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css" />
   <meta name="theme-color" content="#DDEAE6" />
@@ -876,15 +876,7 @@
 <body>
 <header>
     <a class="brand-lockup" href="?section=homeFeatureSection" aria-label="Short Track Archive home" onclick="event.preventDefault(); scrollToSection('homeFeatureSection')">
-      <svg class="brand-mark" viewBox="0 0 112 64" role="img" aria-label="Short Track Archive track mark">
-        <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M68 10H31C17 10 9 19 9 32s8 22 22 22h37"/>
-          <path d="M68 18H33c-9 0-15 6-15 14s6 14 15 14h35"/>
-          <path d="M68 26H35c-5 0-8 2.5-8 6s3 6 8 6h33"/>
-          <path d="m81 53 15-42" stroke-width="2.9"/>
-          <path d="M76 45h28" stroke-width="2.9"/>
-        </g>
-      </svg>
+      <img class="brand-mark" src="assets/short-track-archive-logo.png?v=20260811" width="560" height="491" alt="" decoding="async" fetchpriority="high" />
       <span class="brand-wordmark"><strong>SHORT TRACK</strong><span>ARCHIVE</span></span>
     </a>
     <aside class="visitor-widget" aria-label="방문자 수">
@@ -1005,9 +997,7 @@
         <button type="button" class="brand-hero-cta" onclick="scrollToSection('searchSection')"><span data-i18n="brandHeroCta">아카이브 검색</span><b aria-hidden="true">&#8594;</b></button>
       </div>
       <div class="brand-hero-visual" aria-hidden="true">
-        <div class="brand-track-lines"><i></i><i></i><i></i><i></i></div>
-        <div class="brand-data-fragment"><span>RACE / DATA</span><strong>ARCHIVE</strong><small>RESULTS &nbsp; / &nbsp; SEASONS &nbsp; / &nbsp; LEGACY</small></div>
-        <div class="brand-index-number">ST<span>/A</span></div>
+        <img class="brand-hero-image" src="assets/archive-hero.webp?v=20260811" width="1619" height="971" alt="" decoding="async" fetchpriority="high" />
       </div>
       <div class="brand-hero-index"><span>DATA</span><span>RECORDS</span><span>HISTORY</span><span>LEGACY</span></div>
     </section>
@@ -11696,7 +11686,7 @@
     text-decoration:none;
     min-width:0;
   }
-  .brand-mark{width:72px;height:42px;flex:0 0 auto}
+  .brand-mark{display:block;width:56px;height:48px;object-fit:contain;flex:0 0 auto}
   .brand-wordmark{display:grid;color:var(--color-indigo);line-height:1.05;font-family:var(--font-display)}
   .brand-wordmark strong{font-size:15px;font-weight:800}
   .brand-wordmark span{font-size:10px;font-weight:700;letter-spacing:.28em}
@@ -11821,18 +11811,7 @@
   }
   .brand-hero-cta b{color:var(--color-cobalt);font-size:18px}
   .brand-hero-visual{position:relative;min-height:330px;background:var(--color-indigo);overflow:hidden}
-  .brand-track-lines{position:absolute;inset:32px -74px 42px 35px}
-  .brand-track-lines i{position:absolute;inset:calc(var(--track-index,0) * 14px);border:2px solid var(--color-lilac);border-radius:140px 0 0 140px;opacity:.9}
-  .brand-track-lines i:nth-child(1){--track-index:0}
-  .brand-track-lines i:nth-child(2){--track-index:1}
-  .brand-track-lines i:nth-child(3){--track-index:2}
-  .brand-track-lines i:nth-child(4){--track-index:3}
-  .brand-data-fragment{position:absolute;left:42px;bottom:38px;display:grid;color:var(--color-mist);font-family:var(--font-display)}
-  .brand-data-fragment span,.brand-data-fragment small{font-size:9px;font-weight:700;letter-spacing:.13em}
-  .brand-data-fragment strong{font-size:34px;line-height:1.05;letter-spacing:.04em}
-  .brand-data-fragment small{margin-top:6px;color:var(--color-mint)}
-  .brand-index-number{position:absolute;right:24px;top:24px;color:rgba(221,234,230,.16);font:800 80px/.85 var(--font-display);font-variant-numeric:tabular-nums}
-  .brand-index-number span{display:block;margin-left:36px;color:var(--color-mint);font-size:26px}
+  .brand-hero-image{display:block;width:100%;height:100%;min-height:330px;object-fit:cover;object-position:center}
   .brand-hero-index{grid-column:1/3;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);color:var(--color-indigo)}
   .brand-hero-index span{padding:11px 16px;border-right:1px solid var(--border)}
   .brand-hero-index span:last-child{border-right:0}
@@ -12069,7 +12048,7 @@
     text-align:left;
   }
   body.st-view-mobile .brand-lockup{grid-column:1;grid-row:1;gap:5px}
-  body.st-view-mobile .brand-mark{width:44px;height:32px}
+  body.st-view-mobile .brand-mark{width:40px;height:36px}
   body.st-view-mobile .brand-wordmark strong{font-size:10px}
   body.st-view-mobile .brand-wordmark span{font-size:7px;letter-spacing:.18em}
   body.st-view-mobile header .language-toggle{display:flex!important;grid-column:2;grid-row:1;position:static!important;margin:0!important;justify-content:flex-end}
