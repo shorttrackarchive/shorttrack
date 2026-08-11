@@ -6,7 +6,8 @@
   <title>Short Track Archive – 쇼트트랙 역대 기록·랭킹·선수 검색</title>
   <meta name="description" content="쇼트트랙 올림픽, 세계선수권, 월드컵·월드투어 포디움 기록과 선수 검색, 국가별 메달 순위, 종목별 기록, 랩타임 순위를 확인하는 아카이브입니다." />
   <link rel="canonical" href="https://shorttrackarchive.github.io/shorttrack/" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232563eb'/%3E%3Ctext x='32' y='40' text-anchor='middle' font-size='22' font-family='Arial' font-weight='700' fill='white'%3EST%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%233451FF' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M45 14H25C10 14 6 50 25 50h20'/%3E%3Cpath d='M45 21H27c-10 0-13 22 0 22h18'/%3E%3Cpath d='M45 28H29c-5 0-6 8 0 8h16'/%3E%3Cpath d='M48 49 58 14'/%3E%3C/g%3E%3C/svg%3E" />
+  <meta name="theme-color" content="#DDEAE6" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Short Track Archive – 쇼트트랙 역대 기록·랭킹·선수 검색" />
   <meta property="og:description" content="쇼트트랙 선수, 국가, 대회, 포디움, 기록 순위를 검색하고 비교하는 정적 아카이브입니다." />
@@ -872,6 +873,18 @@
 </head>
 <body>
 <header>
+    <a class="brand-lockup" href="?section=homeFeatureSection" aria-label="Short Track Archive home" onclick="event.preventDefault(); scrollToSection('homeFeatureSection')">
+      <svg class="brand-mark" viewBox="0 0 96 64" role="img" aria-label="Short Track Archive track mark">
+        <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+          <path d="M62 8H30C8 8 5 56 30 56h32"/>
+          <path d="M62 16H32c-16 0-18 32 0 32h30"/>
+          <path d="M62 24H35c-9 0-10 16 0 16h27"/>
+          <path d="M69 55 84 9"/>
+          <path d="M73 50h14"/>
+        </g>
+      </svg>
+      <span class="brand-wordmark"><strong>SHORT TRACK</strong><span>ARCHIVE</span></span>
+    </a>
     <aside class="visitor-widget" aria-label="방문자 수">
         <div class="visitor-row"><span data-i18n="todayVisitors">오늘 방문자 수</span><strong id="todayVisitors">-</strong></div>
         <div class="visitor-row"><span data-i18n="totalVisitors">총 방문자 수</span><strong id="totalVisitors">-</strong></div>
@@ -886,8 +899,8 @@
       <button type="button" class="view-btn" data-view-mode="mobile" data-i18n="viewMobile" onclick="setViewMode('mobile')">모바일</button>
       <button type="button" class="view-btn" data-view-mode="desktop" data-i18n="viewDesktop" onclick="setViewMode('desktop')">데스크탑</button>
     </div>
-    <h1 data-i18n="appTitle">Short Track Archive</h1>
-    <p data-i18n="appSubtitle">월드컵 · 월드투어 · 세계선수권 · 올림픽 쇼트트랙 포디움 아카이브</p>
+    <h1 class="sr-only" data-i18n="appTitle">Short Track Archive</h1>
+    <p class="sr-only" data-i18n="appSubtitle">월드컵 · 월드투어 · 세계선수권 · 올림픽 쇼트트랙 포디움 아카이브</p>
     <nav class="top-explorer-nav" aria-label="핵심 탐색 메뉴">
       <a href="?section=homeFeatureSection" data-explorer-nav="homeFeatureSection" data-i18n="navHome" onclick="event.preventDefault(); scrollToSection('homeFeatureSection')">홈</a>
       <a href="?section=seasonDirectorySection" data-explorer-nav="seasonDirectorySection" data-i18n="navSeasons" onclick="event.preventDefault(); scrollToSection('seasonDirectorySection')">시즌</a>
@@ -982,6 +995,20 @@
   </div>
 
   <main>
+    <section class="brand-hero anchor-section" id="brandHero" aria-labelledby="brandHeroTitle">
+      <div class="brand-hero-copy">
+        <div class="editorial-kicker">ARCHIVE / 001</div>
+        <h2 id="brandHeroTitle"><span class="brand-hero-line dark">SHORT TRACK</span><span class="brand-hero-line">ARCHIVE</span></h2>
+        <p data-i18n="brandHeroDesc">기록과 선수, 시즌과 대회의 흐름을 한곳에서 탐색하는 쇼트트랙 데이터 아카이브입니다.</p>
+        <button type="button" class="brand-hero-cta" onclick="scrollToSection('searchSection')"><span data-i18n="brandHeroCta">아카이브 검색</span><b aria-hidden="true">&#8594;</b></button>
+      </div>
+      <div class="brand-hero-visual" aria-hidden="true">
+        <div class="brand-track-lines"><i></i><i></i><i></i><i></i></div>
+        <div class="brand-data-fragment"><span>RECORD / TIME</span><strong>41.399</strong><small>500M &nbsp; / &nbsp; WORLD</small></div>
+        <div class="brand-index-number">25<span>/26</span></div>
+      </div>
+      <div class="brand-hero-index"><span>DATA</span><span>RECORDS</span><span>HISTORY</span><span>LEGACY</span></div>
+    </section>
     <section class="mobile-home-section card anchor-section" id="mobileHomeSection">
       <div class="mobile-home-hero">
         <div>
@@ -2093,6 +2120,7 @@
         navReport:'오류 신고 및 문의', navRecordRank:'종목별 기록 순위', navLapRank:'랩타임 순위', navRecords:'각종 기록',
         viewAuto:'자동', viewMobile:'모바일', viewDesktop:'데스크탑', mobileSettings:'설정',
         bottomHome:'홈', bottomSeason:'시즌', bottomCompetition:'대회', bottomAthlete:'선수', bottomSearch:'검색', bottomRank:'랭킹', bottomRecords:'기록', bottomMore:'더보기',
+        brandHeroDesc:'기록과 선수, 시즌과 대회의 흐름을 한곳에서 탐색하는 쇼트트랙 데이터 아카이브입니다.', brandHeroCta:'아카이브 검색',
         mobileHomeKicker:'Mobile Archive', mobileHomeTitle:'검색부터 빠르게 시작하세요', mobileHomeDesc:'선수, 국가, 대회, 종목을 한 번에 찾고 자주 보는 기록으로 바로 이동합니다.', mobileSearchPlaceholder:'선수·국가·대회 검색',
         mobileQuickSkaterRank:'종합 랭킹', mobileQuickSkaterRankDesc:'선수별 점수·메달', mobileQuickRecordRank:'세계 기록', mobileQuickRecordRankDesc:'종목별 기록 순위', mobileQuickEventRank:'종목 랭킹', mobileQuickEventRankDesc:'거리별 선수 순위', mobileQuickLapRank:'랩타임 순위', mobileQuickLapRankDesc:'빠른 랩 기록 확인', mobileQuickHall:'명예의 전당', mobileQuickHallDesc:'주요 기록 카드',
         exploreTitle:'아카이브 탐색', exploreDesc:'검색하지 않아도 시즌, 대회, 선수 목록에서 기존 상세 페이지로 바로 이동할 수 있습니다.',
@@ -2153,6 +2181,7 @@
         navReport:'Report / Contact', navRecordRank:'Event Record Ranking', navLapRank:'Lap Time Ranking', navRecords:'Records',
         viewAuto:'Auto', viewMobile:'Mobile', viewDesktop:'Desktop', mobileSettings:'Settings',
         bottomHome:'Home', bottomSeason:'Seasons', bottomCompetition:'Events', bottomAthlete:'Athletes', bottomSearch:'Search', bottomRank:'Rank', bottomRecords:'Records', bottomMore:'More',
+        brandHeroDesc:'Explore the people, seasons, competitions, and records that shape short track history.', brandHeroCta:'Explore the archive',
         mobileHomeKicker:'Mobile Archive', mobileHomeTitle:'Start with search', mobileHomeDesc:'Find skaters, countries, competitions, and events at once, then jump to frequently used records.', mobileSearchPlaceholder:'Search skater, country, or competition',
         mobileQuickSkaterRank:'Overall Ranking', mobileQuickSkaterRankDesc:'Skater score and medals', mobileQuickRecordRank:'World Records', mobileQuickRecordRankDesc:'Event record ranking', mobileQuickEventRank:'Event Ranking', mobileQuickEventRankDesc:'Distance-based skater ranking', mobileQuickLapRank:'Lap ranking', mobileQuickLapRankDesc:'Check the fastest lap records', mobileQuickHall:'Hall of Fame', mobileQuickHallDesc:'Featured record cards',
         exploreTitle:'Explore the Archive', exploreDesc:'Open season, competition, and athlete detail pages without starting from search.',
@@ -2363,6 +2392,10 @@
     }
 
     function setLanguage(lang){
+      const activePlayerPanel=document.getElementById('playerPanel');
+      const activePlayerName=activePlayerPanel?.classList.contains('active')
+        ? (activePlayerPanel.dataset.playerName || document.getElementById('playerName')?.textContent?.trim() || '')
+        : '';
       currentLang = lang === 'en' ? 'en' : 'ko';
       document.documentElement.lang = currentLang;
       document.querySelectorAll('.lang-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.lang === currentLang));
@@ -2395,6 +2428,7 @@
       if(typeof renderTierPool === 'function') renderTierPool();
       if(typeof renderTierBoard === 'function') renderTierBoard();
       if(typeof window.buildMobileHeatInputCards === 'function') window.buildMobileHeatInputCards();
+      if(activePlayerName && typeof openPlayerPanel === 'function') openPlayerPanel(activePlayerName);
       if(typeof window.buildMobileHeatResults === 'function') window.buildMobileHeatResults();
       if(typeof stRenderRecentSearches === 'function') stRenderRecentSearches();
       if(typeof renderRecentPlayers === 'function') renderRecentPlayers();
@@ -6406,6 +6440,15 @@
       return personalBestMapForPlayer(name);
     }
 
+    function refreshActivePlayerPersonalBests(){
+      const panel=document.getElementById('playerPanel');
+      const name=document.getElementById('playerName')?.textContent?.trim() || '';
+      if(!panel?.classList.contains('active') || !name) return;
+      renderPlayerOverview(name);
+      renderPlayerBestTimeTable(name);
+    }
+    window.refreshActivePlayerPersonalBests=refreshActivePlayerPersonalBests;
+
     function openPlayerPanel(name){
       const rows=skaterMedals.filter(row=>row.skater_name===name);
       const keys=buildSkaterNameKeySet(name);
@@ -6417,6 +6460,8 @@
       const relay=rows.filter(r=>r.medal_type==='Relay');
       const superFinal=rows.filter(r=>r.medal_type==='SuperFinal' || isWorldChampionshipSuperFinalRow(r));
       const currentCountry=currentRepresentativeCountry(name, rows.concat(lapRows,pbRows));
+      const panel=document.getElementById('playerPanel');
+      panel.dataset.playerName=name;
       document.getElementById('playerName').textContent=name;
       renderPlayerAchievementBadges(name);
       document.getElementById('playerInfo').textContent=currentLang === 'en'
@@ -6434,7 +6479,10 @@
       setStandaloneBestTimeBlockVisible(true);
       resetPlayerTimelineDetails(name);
       renderPlayerOverview(name);renderPlayerLapTable(name);
-      const panel=document.getElementById('playerPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
+      panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
+      if(!eventRecordsCache.length && typeof window.preloadEventRecordFilters === 'function'){
+        window.preloadEventRecordFilters();
+      }
     }
 
     function renderPlayerOverview(name){
@@ -7714,6 +7762,7 @@
   let eventRecordVisibleLimit = 0;
   let eventRecordVisibleBaseLimit = 0;
   let eventRecordVisibleSignature = '';
+  let eventRecordPreloadPromise = null;
 
   function recordEscape(v){
     if(typeof escapeHtml === 'function') return escapeHtml(v);
@@ -8109,42 +8158,52 @@
       return row.seconds_float <= threshold;
     }));
   }
+  function syncPersonalBestRecordCache(rows){
+    if(typeof normalizeEventRecordCacheRow !== 'function') return;
+    eventRecordsCache = (rows || []).map(normalizeEventRecordCacheRow).filter(row=>row.skater_name && row.personal_best_event);
+    window.eventRecordsCache = eventRecordsCache;
+    const loadingStatus=document.getElementById('loadingStatus');
+    if(loadingStatus){
+      loadingStatus.dataset.eventRecords=String(eventRecordsCache.length);
+      if(typeof refreshLoadingStatusText === 'function') refreshLoadingStatusText();
+    }
+    if(typeof refreshActivePlayerPersonalBests === 'function') refreshActivePlayerPersonalBests();
+  }
   function finishEventRecordLoadFromRows(){
     eventRecordsLoaded = true;
     populateEventRecordFilters(eventRecordRows);
-    try{
-      if(typeof normalizeEventRecordCacheRow === 'function'){
-        eventRecordsCache = eventRecordRows.map(normalizeEventRecordCacheRow).filter(row=>row.skater_name && row.personal_best_event);
-        window.eventRecordsCache = eventRecordsCache;
-      }
-    }catch(_syncError){}
+    try{ syncPersonalBestRecordCache(eventRecordRows); }catch(_syncError){}
     const total = eventRecordRows.length;
     document.getElementById('recordKpiTotal').textContent = total.toLocaleString('ko-KR');
     document.getElementById('recordKpiIndividual').textContent = eventRecordRows.filter(r => !recordIsRelay(r.event)).length.toLocaleString('ko-KR');
     document.getElementById('recordKpiRelay').textContent = eventRecordRows.filter(r => recordIsRelay(r.event)).length.toLocaleString('ko-KR');
     renderEventRecords();
   }
-  window.preloadEventRecordFilters = async function(){
+  window.preloadEventRecordFilters = function(){
     if(eventRecordRows.length){
       populateEventRecordFilters(eventRecordRows);
       unlockEventRecordFilterControls();
-      return;
+      try{ syncPersonalBestRecordCache(eventRecordRows); }catch(_syncError){}
+      return Promise.resolve(eventRecordRows);
     }
-    try{
-      const json = await cachedFetchJson('data/event-records.json', 'shorttrack_static_event_records_v1');
-      eventRecordRows = prepareEventRecordRows(extractRecordRowsFromJson(json));
+    if(eventRecordPreloadPromise) return eventRecordPreloadPromise;
+    eventRecordPreloadPromise=(async()=>{
       try{
-        if(typeof normalizeEventRecordCacheRow === 'function'){
-          eventRecordsCache = eventRecordRows.map(normalizeEventRecordCacheRow).filter(row=>row.skater_name && row.personal_best_event);
-          window.eventRecordsCache = eventRecordsCache;
-        }
-      }catch(_syncError){}
-      populateEventRecordFilters(eventRecordRows);
-      unlockEventRecordFilterControls();
-    }catch(error){
-      unlockEventRecordFilterControls();
-      console.warn('종목별 기록 필터 사전 준비 실패', error);
-    }
+        const json = await cachedFetchJson('data/event-records.json', 'shorttrack_static_event_records_v2');
+        eventRecordRows = prepareEventRecordRows(extractRecordRowsFromJson(json));
+        try{ syncPersonalBestRecordCache(eventRecordRows); }catch(_syncError){}
+        populateEventRecordFilters(eventRecordRows);
+        unlockEventRecordFilterControls();
+        return eventRecordRows;
+      }catch(error){
+        unlockEventRecordFilterControls();
+        console.warn('종목별 기록 필터 사전 준비 실패', error);
+        return [];
+      }finally{
+        eventRecordPreloadPromise=null;
+      }
+    })();
+    return eventRecordPreloadPromise;
   };
 
   window.loadEventRecords = async function(force){
@@ -8188,12 +8247,7 @@
         return row.seconds_float <= threshold;
       }));
 
-      try{
-        if(typeof normalizeEventRecordCacheRow === 'function'){
-          eventRecordsCache = eventRecordRows.map(normalizeEventRecordCacheRow).filter(row=>row.skater_name && row.personal_best_event);
-          window.eventRecordsCache = eventRecordsCache;
-        }
-      }catch(_syncError){}
+      try{ syncPersonalBestRecordCache(eventRecordRows); }catch(_syncError){}
 
       if(!eventRecordRows.length && !sourceRows.length){
       wrap.innerHTML = `<div class="empty"><strong>${recordEscape(tr('recordDataNotFound'))}</strong><br>${recordEscape(tr('tryAgainLater'))}</div>`;
@@ -11555,6 +11609,570 @@
     else initLazyBackgrounds();
   })();
 </script>
+
+<style id="sta-brand-system">
+  :root{
+    --color-cobalt:#3451ff;
+    --color-indigo:#20253d;
+    --color-mist:#ddeae6;
+    --color-lilac:#aaa8ff;
+    --color-mint:#7de2c3;
+    --text-primary:#20253d;
+    --text-secondary:#5f6878;
+    --surface:#f7faf8;
+    --surface-strong:#ffffff;
+    --border:#bfcfca;
+    --space-xs:4px;
+    --space-sm:8px;
+    --space-md:16px;
+    --space-lg:28px;
+    --space-xl:48px;
+    --radius-sm:4px;
+    --radius-md:8px;
+    --font-display:"Space Grotesk","Arial Narrow",Arial,sans-serif;
+    --font-body:Inter,"Segoe UI",Arial,sans-serif;
+    --bg:var(--color-mist);
+    --card:var(--surface-strong);
+    --text:var(--text-primary);
+    --muted:var(--text-secondary);
+    --line:var(--border);
+    --primary:var(--color-cobalt);
+  }
+
+  *{letter-spacing:0}
+  html{background:var(--color-mist);scroll-padding-top:112px}
+  body{
+    min-width:320px;
+    background:var(--color-mist);
+    color:var(--text-primary);
+    font-family:var(--font-body);
+    line-height:1.45;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    pointer-events:none;
+    background-image:linear-gradient(rgba(32,37,61,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(32,37,61,.035) 1px,transparent 1px);
+    background-size:80px 80px;
+  }
+  button,input,select,textarea{font:inherit}
+  button,a,input,select,summary{transition:border-color .18s ease,background-color .18s ease,color .18s ease,opacity .18s ease}
+  button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{
+    outline:3px solid rgba(52,81,255,.28);
+    outline-offset:2px;
+  }
+  .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+
+  header{
+    position:sticky;
+    top:0;
+    z-index:100;
+    min-height:96px;
+    padding:10px 24px;
+    display:grid;
+    grid-template-columns:250px minmax(0,1fr) auto auto;
+    grid-template-rows:38px 38px;
+    gap:0 12px;
+    align-items:center;
+    text-align:left;
+    color:var(--color-indigo);
+    background:rgba(247,250,248,.96);
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(14px);
+  }
+  .brand-lockup{
+    grid-column:1;
+    grid-row:1/3;
+    display:flex;
+    align-items:center;
+    gap:11px;
+    color:var(--color-cobalt);
+    text-decoration:none;
+    min-width:0;
+  }
+  .brand-mark{width:66px;height:44px;flex:0 0 auto}
+  .brand-wordmark{display:grid;color:var(--color-indigo);line-height:1.05;font-family:var(--font-display)}
+  .brand-wordmark strong{font-size:15px;font-weight:800}
+  .brand-wordmark span{font-size:10px;font-weight:700;letter-spacing:.28em}
+  .top-explorer-nav{
+    grid-column:2/4;
+    grid-row:2;
+    max-width:none;
+    margin:0;
+    padding:0;
+    justify-content:flex-start;
+    gap:24px;
+    overflow-x:auto;
+  }
+  .top-explorer-nav a{
+    position:relative;
+    min-height:34px;
+    padding:6px 0;
+    border:0;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+    color:var(--color-indigo);
+    font-size:12px;
+    font-weight:750;
+    white-space:nowrap;
+  }
+  .top-explorer-nav a::after{content:"";position:absolute;left:0;right:100%;bottom:2px;height:2px;background:var(--color-cobalt);transition:right .18s ease}
+  .top-explorer-nav a:hover,.top-explorer-nav a.active{background:transparent;color:var(--color-cobalt)}
+  .top-explorer-nav a:hover::after,.top-explorer-nav a.active::after{right:0}
+  .language-toggle,.view-toggle{
+    position:static;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:0;
+    margin:0;
+  }
+  .view-toggle{grid-column:2;grid-row:1;justify-self:end}
+  .language-toggle{grid-column:3;grid-row:1}
+  .lang-btn,.view-btn{
+    min-height:30px;
+    padding:5px 9px;
+    border:1px solid var(--border);
+    border-radius:0;
+    background:transparent;
+    color:var(--color-indigo);
+    font-size:10px;
+    font-weight:800;
+  }
+  .lang-btn+ .lang-btn,.view-btn+ .view-btn{border-left:0}
+  .lang-btn.active,.view-btn.active{background:var(--color-indigo);border-color:var(--color-indigo);color:var(--color-mist)}
+  header .visitor-widget{
+    position:static!important;
+    left:auto!important;
+    right:auto!important;
+    top:auto!important;
+    grid-column:4;
+    grid-row:1;
+    display:flex;
+    gap:12px;
+    min-width:0;
+    margin:0!important;
+    padding:0 0 0 12px;
+    border:0;
+    border-left:1px solid var(--border);
+    border-radius:0;
+    background:transparent!important;
+    box-shadow:none!important;
+    color:var(--text-secondary);
+  }
+  header .visitor-row{display:grid;gap:0;color:var(--text-secondary)!important;font-size:9px;line-height:1.1;text-transform:uppercase}
+  header .visitor-row strong{font-size:13px;color:var(--color-indigo)!important;font-variant-numeric:tabular-nums}
+
+  main{width:calc(100% - 48px)!important;max-width:1500px!important;margin:26px auto 80px!important;padding:0!important}
+  .brand-hero{
+    position:relative;
+    min-height:390px;
+    margin:0 0 38px;
+    display:grid;
+    grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);
+    grid-template-rows:1fr auto;
+    overflow:hidden;
+    background:var(--surface);
+    border:1px solid var(--border);
+  }
+  .brand-hero-copy{z-index:2;padding:48px clamp(30px,5vw,74px) 38px}
+  .editorial-kicker,.brand-hero-index,.section-title::before{
+    color:var(--color-cobalt);
+    font-family:var(--font-display);
+    font-size:10px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.16em;
+  }
+  .brand-hero h2{
+    margin:20px 0 18px;
+    color:var(--color-indigo);
+    font-family:var(--font-display);
+    font-size:clamp(52px,6vw,92px);
+    line-height:.88;
+    font-weight:800;
+  }
+  .brand-hero h2 span{color:var(--color-cobalt)}
+  .brand-hero h2 .brand-hero-line{display:block;white-space:nowrap}
+  .brand-hero h2 .brand-hero-line.dark{color:var(--color-indigo)}
+  .brand-hero-copy p{max-width:560px;margin:0 0 26px;color:var(--text-secondary);font-size:15px;line-height:1.65}
+  .brand-hero-cta{
+    display:inline-flex;
+    align-items:center;
+    gap:26px;
+    min-height:42px;
+    padding:10px 0;
+    border:0;
+    border-bottom:2px solid var(--color-cobalt);
+    border-radius:0;
+    background:transparent;
+    color:var(--color-indigo);
+    font-size:12px;
+    font-weight:800;
+    text-transform:uppercase;
+    cursor:pointer;
+  }
+  .brand-hero-cta b{color:var(--color-cobalt);font-size:18px}
+  .brand-hero-visual{position:relative;min-height:330px;background:var(--color-indigo);overflow:hidden}
+  .brand-track-lines{position:absolute;inset:32px -74px 42px 35px}
+  .brand-track-lines i{position:absolute;inset:calc(var(--track-index,0) * 14px);border:2px solid var(--color-lilac);border-radius:140px 0 0 140px;opacity:.9}
+  .brand-track-lines i:nth-child(1){--track-index:0}
+  .brand-track-lines i:nth-child(2){--track-index:1}
+  .brand-track-lines i:nth-child(3){--track-index:2}
+  .brand-track-lines i:nth-child(4){--track-index:3}
+  .brand-data-fragment{position:absolute;left:42px;bottom:38px;display:grid;color:var(--color-mist);font-family:var(--font-display)}
+  .brand-data-fragment span,.brand-data-fragment small{font-size:9px;font-weight:700;letter-spacing:.13em}
+  .brand-data-fragment strong{font-size:38px;line-height:1.05;font-variant-numeric:tabular-nums}
+  .brand-data-fragment small{margin-top:6px;color:var(--color-mint)}
+  .brand-index-number{position:absolute;right:24px;top:24px;color:rgba(221,234,230,.16);font:800 80px/.85 var(--font-display);font-variant-numeric:tabular-nums}
+  .brand-index-number span{display:block;margin-left:36px;color:var(--color-mint);font-size:26px}
+  .brand-hero-index{grid-column:1/3;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);color:var(--color-indigo)}
+  .brand-hero-index span{padding:11px 16px;border-right:1px solid var(--border)}
+  .brand-hero-index span:last-child{border-right:0}
+
+  .side-nav{
+    position:sticky!important;
+    left:auto!important;
+    top:96px!important;
+    transform:none!important;
+    width:100%!important;
+    max-width:100%!important;
+    height:40px;
+    margin:0!important;
+    padding:0 24px!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:18px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    border:0!important;
+    border-bottom:1px solid var(--border)!important;
+    border-radius:0!important;
+    background:rgba(221,234,230,.97)!important;
+    box-shadow:none!important;
+    backdrop-filter:blur(12px)!important;
+    scrollbar-width:none;
+  }
+  .side-nav::-webkit-scrollbar{display:none}
+  .side-nav-title{display:none!important}
+  .side-nav [data-i18n="navHome"],.side-nav [data-i18n="navSeasons"],.side-nav [data-i18n="navCompetitions"],.side-nav [data-i18n="navAthletes"],.side-nav [data-i18n="navRecordSearch"]{display:none!important}
+  .side-nav button{width:auto!important;flex:0 0 auto!important;padding:6px 0!important;border-radius:0;color:var(--color-indigo);font-size:10px;font-weight:700}
+  .side-nav button:hover{background:rgba(52,81,255,.08);color:var(--color-cobalt)}
+
+  .card{
+    position:relative;
+    margin:0;
+    padding:32px 0;
+    border:0;
+    border-top:1px solid var(--border);
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+  }
+  main>.card:first-of-type{border-top:0}
+  main>.card::before{
+    display:block;
+    margin:0 0 8px;
+    color:var(--color-cobalt);
+    font:800 9px/1.2 var(--font-display);
+    letter-spacing:.16em;
+  }
+  #searchSection::before{content:"ARCHIVE / SEARCH"}
+  #homeFeatureSection::before{content:"ARCHIVE / EXPLORE"}
+  #reliabilitySection::before{content:"ARCHIVE / DATA NOTES"}
+  #seasonDirectorySection::before{content:"ARCHIVE / SEASONS"}
+  #competitionDirectorySection::before{content:"ARCHIVE / COMPETITIONS"}
+  #athleteDirectorySection::before,#playerPanel::before{content:"ARCHIVE / ATHLETES"}
+  #competitionPanel::before{content:"ARCHIVE / RACE"}
+  #countryPanel::before{content:"ARCHIVE / NATIONS"}
+  #seasonPanel::before{content:"ARCHIVE / SEASON"}
+  #skaterRankingSection::before,#countryRankingSection::before,#eventRankingSection::before{content:"ARCHIVE / RANKING"}
+  #compareSection::before{content:"ARCHIVE / COMPARE"}
+  #recordRankingSection::before,#lapRankingSection::before{content:"ARCHIVE / RECORDS"}
+  #hallOfFameSection::before{content:"ARCHIVE / LEGACY"}
+  #cardMakerSection::before,#tierMakerSection::before,#heatToolSection::before,#quizSection::before{content:"ARCHIVE / STUDIO"}
+  .section-title{align-items:flex-end;margin:0 0 20px;padding:0 0 12px;border-bottom:1px solid var(--border)}
+  .section-title::before{display:none}
+  .section-title h2,.panel-header h2,.player-title-row h2{color:var(--color-indigo);font-family:var(--font-display);font-size:clamp(21px,2vw,30px);line-height:1.1;font-weight:750}
+  .section-title span,.panel-header p,.subnote,.muted{color:var(--text-secondary);font-size:12px}
+  .panel-header{padding-bottom:14px;border-bottom:1px solid var(--border)}
+
+  input,select,textarea{
+    min-height:40px;
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    background:var(--surface-strong);
+    color:var(--color-indigo);
+  }
+  input:focus,select:focus,textarea:focus{border-color:var(--color-cobalt);box-shadow:0 0 0 3px rgba(52,81,255,.12)}
+  .sort-btn,.close-btn,.primary-soft-btn,.report-submit-btn,.report-cancel-btn,.report-modal-close,.st-mini-btn,.archive-directory-link{
+    min-height:38px;
+    border-radius:var(--radius-sm);
+    border-color:var(--border);
+    box-shadow:none;
+    font-weight:750;
+  }
+  .sort-btn:hover,.close-btn:hover,.st-mini-btn:hover{border-color:var(--color-cobalt);background:rgba(52,81,255,.06);color:var(--color-cobalt)}
+  .primary-score-btn,.primary-soft-btn,.report-submit-btn{background:var(--color-cobalt);border-color:var(--color-cobalt);color:#fff}
+  .primary-soft-btn.secondary{background:transparent;color:var(--color-cobalt)}
+  .tabs{gap:0;margin:0 0 16px;border-bottom:1px solid var(--border)}
+  .tab{min-height:36px;padding:7px 11px;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:var(--text-secondary);font-size:12px;font-weight:750}
+  .tab:hover{color:var(--color-cobalt);background:rgba(52,81,255,.05)}
+  .tab.active,.ranking-option-tab.active,.country-ranking-tab.active,.event-ranking-tab.active,.event-rank-gender-tab.active,.lap-context-tab.active{
+    border-color:var(--color-cobalt);
+    background:transparent;
+    color:var(--color-cobalt);
+  }
+  .ranking-filter-row,.season-mode-control,.era-controls,.sort-controls{gap:6px;margin:8px 0 14px}
+  .season-mode-control,.score-panel,.record-ranking-controls,.lap-ranking-controls,.tier-maker-controls,.card-maker-form,.heat-tool-controls,.quiz-controls{
+    border:1px solid var(--border);
+    border-radius:var(--radius-md);
+    background:rgba(247,250,248,.78);
+    box-shadow:none;
+  }
+  .season-mode-summary,.st-search-type,.st-count-chip,.record-threshold-chip,.lap-badge,.simple-badge,.competition-type-badge,.achievement-badge,.medal{
+    border-radius:3px;
+  }
+
+  table{border:1px solid var(--border);border-radius:0;background:var(--surface-strong);font-variant-numeric:tabular-nums}
+  th,td{padding:9px 10px;border-bottom:1px solid #d7e1de;font-size:12.5px}
+  th{position:sticky;top:96px;z-index:2;background:#edf3f0;color:var(--color-indigo);font:750 10px/1.2 var(--font-display);text-transform:uppercase}
+  tbody tr:last-child td{border-bottom:0}
+  tr:hover td{background:rgba(125,226,195,.12)}
+  .rank-total{background:rgba(170,168,255,.11)}
+  .link{color:var(--color-cobalt);font-weight:750;text-underline-offset:2px}
+  .summary,.mini-grid,.approved-profile-grid,.competition-detail-grid,.record-kpi-grid,.lap-kpi-grid{gap:0;border-top:1px solid var(--border);border-left:1px solid var(--border)}
+  .summary-box,.mini-box,.approved-profile-box,.competition-detail-box,.record-kpi,.lap-kpi,.st-page-box{
+    min-width:0;
+    padding:14px;
+    border:0;
+    border-right:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    border-radius:0;
+    background:rgba(247,250,248,.72);
+  }
+  .summary-box .label,.mini-box .label,.approved-profile-box .label,.competition-detail-box .label,.record-kpi .label,.lap-kpi .label,.st-page-box .label{
+    margin-bottom:5px;
+    color:var(--text-secondary);
+    font:750 9px/1.2 var(--font-display);
+    text-transform:uppercase;
+  }
+  .summary-box .value,.mini-box .value,.approved-profile-box .value,.competition-detail-box .value,.record-kpi .value,.lap-kpi .value,.st-page-box .value{
+    color:var(--color-indigo);
+    font-family:var(--font-display);
+    font-variant-numeric:tabular-nums;
+  }
+
+  #searchSection{padding:0 0 36px;border-top:0}
+  #searchSection .controls{grid-template-columns:1fr}
+  #searchInput{min-height:64px;padding:14px 20px;border:2px solid var(--color-indigo);border-radius:0;background:var(--surface-strong);font-family:var(--font-display);font-size:18px}
+  .loading-status{padding:8px 0 0;color:var(--text-secondary);font-size:10px;font-variant-numeric:tabular-nums}
+  .st-search-head{padding-bottom:14px;border-bottom:1px solid var(--border)}
+  .st-search-head h2{font:750 clamp(24px,3vw,38px)/1.05 var(--font-display)}
+  .st-search-featured{margin:14px 0 20px;padding:18px;border:1px solid var(--color-cobalt);border-radius:var(--radius-md);background:var(--surface)}
+  .st-featured-kicker{color:var(--color-cobalt);font:800 9px/1.2 var(--font-display);letter-spacing:.14em;text-transform:uppercase}
+  .st-featured-title{color:var(--color-indigo);font-family:var(--font-display)}
+  .st-result-grid{gap:20px}
+  .st-result-section{padding:0;border:0;border-radius:0;background:transparent}
+  .st-result-section h3{padding-bottom:8px;border-bottom:2px solid var(--color-indigo);font-family:var(--font-display)}
+  .st-result-list{gap:0}
+  .st-result-item,.st-result-card-rich{padding:10px 0;border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent}
+  .st-mini-btn{min-height:30px;padding:5px 8px;background:transparent}
+
+  .st-home-feature-grid{gap:0;border:1px solid var(--border)}
+  .st-home-feature-card{min-height:184px;padding:22px;border:0;border-right:1px solid var(--border);border-radius:0;background:var(--surface)}
+  .st-home-feature-card:last-child{border-right:0}
+  .st-home-feature-card .kicker{color:var(--color-cobalt);font:800 9px/1.2 var(--font-display);letter-spacing:.14em;text-transform:uppercase}
+  .st-home-feature-card h2{font:750 24px/1.1 var(--font-display)}
+  .reliability-list{gap:0;border-top:1px solid var(--border);border-left:1px solid var(--border)}
+  .reliability-item{padding:14px;border:0;border-right:1px solid var(--border);border-bottom:1px solid var(--border);border-radius:0;background:transparent}
+  .reliability-item strong{color:var(--color-indigo);font-family:var(--font-display)}
+  .archive-explorer-toolbar{padding:12px;border:1px solid var(--border);background:rgba(247,250,248,.72)}
+  .archive-directory-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:1px solid var(--border);border-left:1px solid var(--border)}
+  .archive-directory-card{padding:13px;border:0;border-right:1px solid var(--border);border-bottom:1px solid var(--border);border-radius:0;background:rgba(255,255,255,.5)}
+  .archive-directory-card:hover,.archive-directory-card.is-featured{background:rgba(125,226,195,.12)}
+  .archive-directory-title{color:var(--color-indigo);font:750 14px/1.3 var(--font-display)}
+  .archive-directory-link{min-height:30px;padding:5px 8px;border:0;border-bottom:1px solid var(--color-cobalt);background:transparent}
+  .archive-era-group summary{padding:9px 0;border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent}
+  .archive-index-row button{min-width:32px;min-height:32px;padding:4px 7px;border-radius:3px}
+  .archive-index-row button.active{background:var(--color-cobalt);border-color:var(--color-cobalt)}
+
+  .panel.active{display:block}
+  .panel-actions{flex-wrap:wrap}
+  .breadcrumb{padding-bottom:8px;border-bottom:1px solid var(--border);font-size:10px;text-transform:uppercase}
+  .approved-overview-split,.st-page-two-col{gap:18px}
+  .approved-overview-split>div,.st-page-section{padding:16px;border:1px solid var(--border);border-radius:var(--radius-md);background:rgba(247,250,248,.6)}
+  .approved-overview-heading,.st-page-section h3{color:var(--color-indigo);font-family:var(--font-display)}
+  .distance-summary-grid{gap:0;border-top:1px solid var(--border);border-left:1px solid var(--border)}
+  .distance-summary-card{padding:14px;border:0;border-right:1px solid var(--border);border-bottom:1px solid var(--border);border-radius:0;background:var(--surface-strong)}
+  .distance-summary-card strong{color:var(--color-cobalt);font-family:var(--font-display);font-variant-numeric:tabular-nums}
+  .player-timeline-details{border-radius:var(--radius-md);background:rgba(247,250,248,.72)}
+  .player-timeline-details>summary{padding:12px 14px}
+  .player-timeline-details-action{border-radius:3px;background:transparent;color:var(--color-cobalt)}
+  .timeline{border-left:1px solid var(--color-cobalt)}
+  .timeline-item{padding:8px 0;border:0;border-bottom:1px solid var(--border);border-radius:0;background:transparent}
+
+  .hof-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+  .hof-card{border:0;border-radius:0;background:var(--surface);box-shadow:none}
+  .hof-image{height:176px;filter:saturate(.25) contrast(1.02)}
+  .hof-badge{border-radius:3px;background:var(--color-mist);color:var(--color-indigo)}
+  .hof-body{padding:13px}
+  .hof-title{color:var(--color-indigo);font-family:var(--font-display)}
+  .hof-number{color:var(--color-cobalt);font-family:var(--font-display);font-size:32px;font-variant-numeric:tabular-nums}
+  .hof-image.world-record-placeholder,.hof-image.world-record-placeholder.relay{background:var(--color-indigo)}
+  .tier-pool,.tier-board,.heat-output-box,.heat-mobile-group,.mobile-medal-group{border-radius:var(--radius-md);box-shadow:none}
+  .tier-row,.tier-skater-card,.rules-item,.help-item{border-radius:var(--radius-sm);box-shadow:none}
+  .report-modal{border-radius:var(--radius-md);background:var(--surface-strong);box-shadow:0 20px 60px rgba(32,37,61,.2)}
+
+  .mobile-bottom-nav{background:rgba(247,250,248,.97);border-color:var(--border);box-shadow:0 -8px 24px rgba(32,37,61,.12)}
+  .mobile-bottom-nav button{border-radius:0;color:var(--text-secondary)}
+  .mobile-bottom-nav button.active,.mobile-bottom-nav button:active{background:transparent;color:var(--color-cobalt);box-shadow:inset 0 2px 0 var(--color-cobalt)}
+
+  @media(max-width:1500px){
+    header{grid-template-columns:224px minmax(0,1fr) auto auto}
+    .top-explorer-nav{gap:16px}
+    main{max-width:none;margin-right:22px}
+    header .visitor-widget{display:none}
+  }
+  @media(max-width:1180px){
+    header{grid-template-columns:205px minmax(0,1fr) auto}
+    header .visitor-widget{display:none}
+    .language-toggle{grid-column:3}
+    .top-explorer-nav{grid-column:2/4}
+    .side-nav{display:none!important}
+    main{width:auto;max-width:none;margin:24px 22px 70px;padding:0}
+    .archive-directory-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  }
+
+  body.st-view-mobile{background:var(--color-mist)!important;color:var(--color-indigo);overflow-x:hidden}
+  body.st-view-mobile::before{background-size:52px 52px}
+  body.st-view-mobile header{
+    position:sticky;
+    min-height:60px;
+    padding:7px 10px!important;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto auto;
+    grid-template-rows:46px;
+    gap:5px;
+    background:rgba(247,250,248,.98)!important;
+    color:var(--color-indigo)!important;
+    border-bottom:1px solid var(--border)!important;
+    text-align:left;
+  }
+  body.st-view-mobile .brand-lockup{grid-column:1;grid-row:1;gap:5px}
+  body.st-view-mobile .brand-mark{width:44px;height:32px}
+  body.st-view-mobile .brand-wordmark strong{font-size:10px}
+  body.st-view-mobile .brand-wordmark span{font-size:7px;letter-spacing:.18em}
+  body.st-view-mobile header .language-toggle{display:flex!important;grid-column:2;grid-row:1;position:static!important;margin:0!important;justify-content:flex-end}
+  body.st-view-mobile .lang-btn{min-height:30px;padding:4px 6px;font-size:9px}
+  body.st-view-mobile .lang-btn{border-color:var(--border)!important;background:transparent!important;color:var(--color-indigo)!important}
+  body.st-view-mobile .lang-btn.active{border-color:var(--color-indigo)!important;background:var(--color-indigo)!important;color:var(--color-mist)!important}
+  body.st-view-mobile .mobile-settings-btn{display:inline-flex!important;grid-column:3;grid-row:1;align-items:center;justify-content:center;min-height:30px;margin:0!important;padding:5px 7px;border:1px solid var(--border);border-radius:3px;background:transparent;color:var(--color-indigo);font-size:9px}
+  body.st-view-mobile header .view-toggle{display:none!important;grid-column:1/4;grid-row:2;justify-self:start}
+  body.st-view-mobile header.mobile-settings-open{grid-template-rows:46px 34px}
+  body.st-view-mobile header.mobile-settings-open .view-toggle{display:flex!important;margin:0!important}
+  body.st-view-mobile .top-explorer-nav,body.st-view-mobile .visitor-widget,body.st-view-mobile .side-nav{display:none!important}
+  body.st-view-mobile main{width:auto!important;max-width:768px!important;margin:0 auto 68px!important;padding:10px 10px calc(74px + env(safe-area-inset-bottom))!important}
+  body.st-view-mobile .brand-hero{display:none}
+  body.st-view-mobile .card{padding:18px 0!important;margin:0!important;border-radius:0!important;border:0!important;border-top:1px solid var(--border)!important;background:transparent!important;box-shadow:none!important}
+  body.st-view-mobile main>.card:first-of-type{border-top:0!important}
+  body.st-view-mobile main>.card::before{margin-bottom:5px;font-size:8px}
+  body.st-view-mobile .mobile-home-section{padding:10px 0 14px!important}
+  body.st-view-mobile .mobile-home-hero{gap:8px!important}
+  body.st-view-mobile .mobile-home-kicker{font:800 8px/1.2 var(--font-display);letter-spacing:.14em;color:var(--color-cobalt)}
+  body.st-view-mobile .mobile-home-title{font:750 20px/1.1 var(--font-display);color:var(--color-indigo)}
+  body.st-view-mobile .mobile-home-desc{display:none!important}
+  body.st-view-mobile .mobile-search-box input{min-height:48px;padding:10px 12px;border:2px solid var(--color-indigo);border-radius:0;font-family:var(--font-display);font-size:16px}
+  body.st-view-mobile .mobile-search-type-chips{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--border)}
+  body.st-view-mobile .mobile-search-type-chips button{min-height:32px;padding:5px 8px;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:var(--text-secondary);font-size:10px;font-weight:750;white-space:nowrap}
+  body.st-view-mobile .mobile-search-type-chips button.active{border-color:var(--color-cobalt);color:var(--color-cobalt)}
+  body.st-view-mobile .mobile-recent-players{padding-top:8px!important;border-color:var(--border)!important}
+  body.st-view-mobile .mobile-recent-title{font-size:9px!important;text-transform:uppercase}
+  body.st-view-mobile .mobile-recent-chip{min-height:30px;padding:4px 8px;border-radius:3px;background:transparent;font-size:10px}
+  body.st-view-mobile #searchSection{padding:5px 0 12px!important;background:transparent!important}
+  body.st-view-mobile #loadingStatus{padding:0!important;font-size:9px!important}
+  body.st-view-mobile #loadingStatus[data-state="loaded"]{display:none!important}
+  body.st-view-mobile .section-title{margin-bottom:10px;padding-bottom:7px}
+  body.st-view-mobile .section-title h2,body.st-view-mobile .panel-header h2,body.st-view-mobile .player-title-row h2{font-size:18px!important;line-height:1.1}
+  body.st-view-mobile .section-title span{display:none}
+  body.st-view-mobile .panel-header{gap:8px;margin-bottom:8px;padding-bottom:8px}
+  body.st-view-mobile .panel-header p{font-size:10px}
+  body.st-view-mobile input,body.st-view-mobile select,body.st-view-mobile textarea{min-height:36px;padding:7px 8px;border-radius:3px;font-size:13px}
+  body.st-view-mobile .archive-explorer-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important;padding:6px!important}
+  body.st-view-mobile .archive-explorer-toolbar .wide{grid-column:1/-1!important}
+  body.st-view-mobile .archive-directory-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0!important;width:100%!important}
+  body.st-view-mobile .archive-directory-card{display:flex!important;align-items:center!important;justify-content:center!important;min-height:42px!important;padding:6px!important;text-align:center!important}
+  body.st-view-mobile .archive-directory-title{font-size:11px!important;line-height:1.15!important;text-align:center!important;white-space:normal!important}
+  body.st-view-mobile .archive-directory-meta,body.st-view-mobile .archive-directory-actions,body.st-view-mobile .archive-index-row{display:none!important}
+  body.st-view-mobile .tabs,body.st-view-mobile .ranking-filter-row{gap:0!important;border-bottom:1px solid var(--border);scrollbar-width:none}
+  body.st-view-mobile .tab{min-height:32px!important;padding:5px 8px!important;border-radius:0!important;font-size:10px!important}
+  body.st-view-mobile .sort-btn,body.st-view-mobile .close-btn,body.st-view-mobile .primary-soft-btn{min-height:34px;padding:6px 8px;border-radius:3px;font-size:11px}
+  body.st-view-mobile .summary,body.st-view-mobile .mini-grid,body.st-view-mobile .approved-profile-grid,body.st-view-mobile .competition-detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:0!important}
+  body.st-view-mobile .summary-box,body.st-view-mobile .mini-box,body.st-view-mobile .approved-profile-box,body.st-view-mobile .competition-detail-box{min-height:44px!important;padding:6px!important;text-align:left!important;background:rgba(247,250,248,.72)!important}
+  body.st-view-mobile .summary-box .label,body.st-view-mobile .mini-box .label,body.st-view-mobile .approved-profile-box .label,body.st-view-mobile .competition-detail-box .label{display:block!important;margin-bottom:2px!important;font-size:8px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  body.st-view-mobile .summary-box .value,body.st-view-mobile .mini-box .value,body.st-view-mobile .approved-profile-box .value,body.st-view-mobile .competition-detail-box .value{font-size:12px!important;line-height:1.15!important}
+  body.st-view-mobile .approved-overview-split>div,body.st-view-mobile .st-page-section{padding:8px!important;border-radius:3px!important}
+  body.st-view-mobile .distance-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:0!important}
+  body.st-view-mobile .distance-summary-card{padding:6px!important;text-align:left!important}
+  body.st-view-mobile .distance-summary-card strong{font-size:12px!important;margin-bottom:2px!important}
+  body.st-view-mobile .distance-summary-card span{display:block!important;font-size:8.5px!important;line-height:1.25!important}
+  body.st-view-mobile .player-timeline-details{border-radius:3px!important}
+  body.st-view-mobile #playerPanel .timeline-item{background:transparent!important;border-radius:0!important}
+  body.st-view-mobile #playerPanel .timeline-item strong{color:var(--color-indigo)!important}
+  body.st-view-mobile .mobile-card-list{gap:0!important;margin:6px 0!important;border-top:1px solid var(--border)}
+  body.st-view-mobile .mobile-data-card,body.st-view-mobile .mobile-table-card,body.st-view-mobile .heat-mobile-result-card,body.st-view-mobile .mobile-medal-card{
+    padding:8px 0!important;
+    border:0!important;
+    border-bottom:1px solid var(--border)!important;
+    border-radius:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  body.st-view-mobile .mobile-card-title,body.st-view-mobile .mobile-table-card-head strong{font-size:12px!important;color:var(--color-indigo)!important}
+  body.st-view-mobile .mobile-card-meta{margin-bottom:4px!important;font-size:9px!important}
+  body.st-view-mobile .mobile-rank-badge{padding:2px 5px;border-radius:2px;background:var(--color-cobalt);color:#fff;font-size:9px}
+  body.st-view-mobile .mobile-record-time,body.st-view-mobile .event-rank-score{font-size:16px!important;color:var(--color-cobalt)!important}
+  body.st-view-mobile table{width:100%!important;border-color:var(--border)!important;background:var(--surface-strong)!important}
+  body.st-view-mobile th{top:60px!important;background:#edf3f0!important;color:var(--color-indigo)!important;font-size:8px!important}
+  body.st-view-mobile th,body.st-view-mobile td{height:28px!important;padding:4px!important;border-color:#d7e1de!important;font-size:9.5px!important;vertical-align:middle!important}
+  body.st-view-mobile .record-ranking-controls,body.st-view-mobile .lap-ranking-controls,body.st-view-mobile .score-panel{border-radius:4px!important;background:var(--surface-strong)!important}
+  body.st-view-mobile .mobile-filter-open .mobile-filter-panel,body.st-view-mobile .mobile-filter-open .record-ranking-controls,body.st-view-mobile .mobile-filter-open .lap-ranking-controls{left:8px!important;right:8px!important;border-radius:6px!important;background:var(--surface-strong)!important}
+  body.st-view-mobile .mobile-filter-toggle{min-height:34px;padding:6px 9px;border-radius:3px;background:transparent;color:var(--color-cobalt);font-size:10px}
+  body.st-view-mobile .hof-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:1px!important}
+  body.st-view-mobile .hof-image{height:112px!important}
+  body.st-view-mobile .hof-body{padding:7px!important}
+  body.st-view-mobile .hof-title{min-height:0!important;font-size:10px!important}
+  body.st-view-mobile .hof-record{margin-top:5px!important}
+  body.st-view-mobile .hof-number{font-size:18px!important}
+  body.st-view-mobile .hof-note{display:none!important}
+  body.st-view-mobile .mobile-bottom-nav{height:calc(54px + env(safe-area-inset-bottom));padding:4px 6px calc(4px + env(safe-area-inset-bottom));background:rgba(247,250,248,.98)}
+  body.st-view-mobile .mobile-bottom-nav button{padding:4px 2px;font-size:9px;font-weight:750}
+  body.st-view-mobile .mobile-nav-icon{font-size:11px;margin-bottom:1px}
+  body.st-view-mobile .st-search-featured{padding:10px!important;border-radius:3px!important}
+  body.st-view-mobile .st-result-grid{gap:12px!important}
+  body.st-view-mobile .st-result-section,body.st-view-mobile .st-result-item,body.st-view-mobile .st-result-card-rich{border-radius:0!important;background:transparent!important}
+  body.st-view-mobile .st-result-item-top{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important}
+  body.st-view-mobile .st-mini-btn{width:auto!important;min-height:28px!important}
+  body.st-view-mobile .st-mini-btn::after{content:"  \2192"}
+  body.st-view-mobile .st-result-meta{font-size:9px!important;line-height:1.3!important}
+  body.st-view-mobile .report-modal{border-radius:6px}
+  body.st-view-mobile:has(#playerPanel.active) #searchSection,
+  body.st-view-mobile:has(#competitionPanel.active) #searchSection,
+  body.st-view-mobile:has(#countryPanel.active) #searchSection,
+  body.st-view-mobile:has(#seasonPanel.active) #searchSection,
+  body.st-view-mobile:has(.panel.active) #stSearchResultView{display:none!important}
+  body.st-view-mobile:has(main>.panel.active) main>section:not(.active){display:none!important}
+
+  @media(max-width:390px){
+    body.st-view-mobile .brand-wordmark span{display:none}
+    body.st-view-mobile .archive-explorer-toolbar{grid-template-columns:1fr!important}
+    body.st-view-mobile .archive-explorer-toolbar .wide{grid-column:auto!important}
+    body.st-view-mobile .distance-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  }
+</style>
 
 </body>
 </html>
