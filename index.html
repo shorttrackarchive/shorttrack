@@ -4503,7 +4503,7 @@
         });
       if(!map.size) return tr('noData');
       const [event,count]=[...map.entries()].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0]),'ko'))[0];
-      return `${event} (${count})`;
+      return currentLang === 'en' ? `${event} (${count})` : `${event} (${count}\uD68C)`;
     }
 
     function medalBucketText(bucket){
@@ -4625,6 +4625,7 @@
 
     function getPlayerAchievementBadges(name){
       const rows = badgeAllPlayerRows(name).filter(medalTextIsGold);
+      const label=(ko,en)=>currentLang==='en'?en:ko;
 
       const olympicIndividualGold = rows.some(row =>
         badgeCompetitionBucket(row) === 'olympic' &&
@@ -4652,12 +4653,12 @@
       const grandSlam = olympicIndividualGold && olympicRelayGold && worldsIndividualGold && worldCupTourIndividualGold;
 
       const badges = [];
-      if(olympicIndividualGold) badges.push({label:'올림픽 개인전 금메달', cls:''});
-      if(olympicRelayGold) badges.push({label:'올림픽 계주 금메달', cls:''});
-      if(worldsOverallGold) badges.push({label:'세계선수권 종합 우승', cls:''});
-      if(worldsIndividualGold) badges.push({label:'세계선수권 개인전 금메달', cls:''});
-      if(worldCupTourIndividualGold) badges.push({label:'월드컵·월드투어 개인전 금메달', cls:''});
-      if(grandSlam) badges.push({label:'그랜드슬램', cls:'grand-slam'});
+      if(olympicIndividualGold) badges.push({label:label('\uC62C\uB9BC\uD53D \uAC1C\uC778\uC804 \uAE08\uBA54\uB2EC','Olympic individual gold medal'), cls:''});
+      if(olympicRelayGold) badges.push({label:label('\uC62C\uB9BC\uD53D \uACC4\uC8FC \uAE08\uBA54\uB2EC','Olympic relay gold medal'), cls:''});
+      if(worldsOverallGold) badges.push({label:label('\uC138\uACC4\uC120\uC218\uAD8C \uC885\uD569 \uC6B0\uC2B9','World Championships overall title'), cls:''});
+      if(worldsIndividualGold) badges.push({label:label('\uC138\uACC4\uC120\uC218\uAD8C \uAC1C\uC778\uC804 \uAE08\uBA54\uB2EC','World Championships individual gold medal'), cls:''});
+      if(worldCupTourIndividualGold) badges.push({label:label('\uC6D4\uB4DC\uCEF5\u00B7\uC6D4\uB4DC\uD22C\uC5B4 \uAC1C\uC778\uC804 \uAE08\uBA54\uB2EC','World Cup & World Tour individual gold medal'), cls:''});
+      if(grandSlam) badges.push({label:label('\uADF8\uB79C\uB4DC\uC2AC\uB7A8','Grand Slam'), cls:'grand-slam'});
       return badges;
     }
 
@@ -6393,8 +6394,8 @@
       document.getElementById('playerName').textContent=name;
       renderPlayerAchievementBadges(name);
       document.getElementById('playerInfo').textContent=currentLang === 'en'
-        ? `${currentCountry||sample.country||''} · ${genderKorean(sample.gender)||'-'} · individual medals ${individual.length} · relay ${relay.length} · 3000m S.F. ${superFinal.length} · active seasons ${activeSeasonsForPlayer(rows,lapRows.concat(pbRows))}`
-        : `${currentCountry||sample.country||''} · ${genderKorean(sample.gender)||'-'} · 개인전 메달 ${individual.length}개 · 계주 ${relay.length}개 · 3000m S.F. ${superFinal.length}개 · 활동 시즌 ${activeSeasonsForPlayer(rows,lapRows.concat(pbRows))}`;
+        ? [currentCountry||sample.country||'', genderKorean(sample.gender)||'-', `individual medals ${individual.length}`, `relay ${relay.length}`, `3000m S.F. ${superFinal.length}`, `active seasons ${activeSeasonsForPlayer(rows,lapRows.concat(pbRows))}`].filter(Boolean).join(' \u00b7 ')
+        : `${currentCountry||sample.country||''} \u00b7 ${genderKorean(sample.gender)||'-'} \u00b7 \uAC1C\uC778\uC804 \uBA54\uB2EC ${individual.length}\uAC1C \u00b7 \uACC4\uC8FC ${relay.length}\uAC1C \u00b7 3000m S.F. ${superFinal.length}\uAC1C \u00b7 \uD65C\uB3D9 \uC2DC\uC98C ${activeSeasonsForPlayer(rows,lapRows.concat(pbRows))}`;
       document.getElementById('playerTotal').textContent=individual.length;
       document.getElementById('playerGold').textContent=individual.filter(r=>r.medal==='Gold').length;
       document.getElementById('playerSilver').textContent=individual.filter(r=>r.medal==='Silver').length;
@@ -7628,6 +7629,7 @@
   }
   function badgesFor(name){
     const rows = playerRows(name).filter(gold);
+    const label=(ko,en)=>currentLang==='en'?en:ko;
     const olympicIndividualGold = rows.some(r => isOlympic(r) && isIndividual(r));
     const olympicRelayGold = rows.some(r => isOlympic(r) && isRelay(r));
     const worldsOverallGold = rows.some(r => isWorlds(r) && isOverall(r));
@@ -7636,12 +7638,12 @@
     const grandSlam = olympicIndividualGold && olympicRelayGold && worldsIndividualGold && worldCupTourIndividualGold;
 
     const out = [];
-    if(olympicIndividualGold) out.push(['올림픽 개인전 금메달','']);
-    if(olympicRelayGold) out.push(['올림픽 계주 금메달','']);
-    if(worldsOverallGold) out.push(['세계선수권 종합 우승','']);
-    if(worldsIndividualGold) out.push(['세계선수권 개인전 금메달','']);
-    if(worldCupTourIndividualGold) out.push(['월드컵·월드투어 개인전 금메달','']);
-    if(grandSlam) out.push(['그랜드슬램','grand-slam']);
+    if(olympicIndividualGold) out.push([label('\uC62C\uB9BC\uD53D \uAC1C\uC778\uC804 \uAE08\uBA54\uB2EC','Olympic individual gold medal'),'']);
+    if(olympicRelayGold) out.push([label('\uC62C\uB9BC\uD53D \uACC4\uC8FC \uAE08\uBA54\uB2EC','Olympic relay gold medal'),'']);
+    if(worldsOverallGold) out.push([label('\uC138\uACC4\uC120\uC218\uAD8C \uC885\uD569 \uC6B0\uC2B9','World Championships overall title'),'']);
+    if(worldsIndividualGold) out.push([label('\uC138\uACC4\uC120\uC218\uAD8C \uAC1C\uC778\uC804 \uAE08\uBA54\uB2EC','World Championships individual gold medal'),'']);
+    if(worldCupTourIndividualGold) out.push([label('\uC6D4\uB4DC\uCEF5\u00B7\uC6D4\uB4DC\uD22C\uC5B4 \uAC1C\uC778\uC804 \uAE08\uBA54\uB2EC','World Cup & World Tour individual gold medal'),'']);
+    if(grandSlam) out.push([label('\uADF8\uB79C\uB4DC\uC2AC\uB7A8','Grand Slam'),'grand-slam']);
     return out;
   }
   window.renderPlayerAchievementBadgesForce = function(name){
