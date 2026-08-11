@@ -999,12 +999,6 @@
           <button type="button" data-mobile-search-type="event" onclick="setMobileSearchType('event')">Event</button>
           <button type="button" data-mobile-search-type="record" onclick="setMobileSearchType('record')">Record</button>
         </div>
-        <div class="mobile-quick-grid">
-          <button type="button" class="mobile-quick-btn" onclick="scrollToSection('skaterRankingSection')"><strong data-i18n="mobileQuickSkaterRank">종합 랭킹</strong><span data-i18n="mobileQuickSkaterRankDesc">선수별 점수·메달</span></button>
-          <button type="button" class="mobile-quick-btn" onclick="scrollToSection('hallOfFameSection')"><strong data-i18n="mobileQuickHall">명예의 전당</strong><span data-i18n="mobileQuickHallDesc">주요 기록 카드</span></button>
-          <button type="button" class="mobile-quick-btn" onclick="scrollToSection('recordRankingSection')"><strong data-i18n="mobileQuickRecordRank">세계 기록</strong><span data-i18n="mobileQuickRecordRankDesc">종목별 기록 순위</span></button>
-          <button type="button" class="mobile-quick-btn" onclick="scrollToSection('eventRankingSection')"><strong data-i18n="mobileQuickEventRank">종목 랭킹</strong><span data-i18n="mobileQuickEventRankDesc">거리별 선수 순위</span></button>
-        </div>
         <div class="mobile-more-sheet" id="mobileMoreSheet" aria-hidden="true">
           <div class="mobile-more-head"><strong data-i18n="bottomMore">더보기</strong><button type="button" data-i18n="close" onclick="closeMobileMoreMenu()">닫기</button></div>
           <div class="mobile-more-grid"></div>
@@ -9237,10 +9231,22 @@
     body.st-view-mobile #competitionDirectoryWrap .archive-directory-card{
       min-height:32px!important;
       padding:5px 5px!important;
-      display:block!important;
+      display:flex!important;
+      align-items:center!important;
+      justify-content:center!important;
       border-right:1px solid #e2e8f0!important;
       border-bottom:1px solid #e2e8f0!important;
       background:#fff!important;
+    }
+    body.st-view-mobile #athleteDirectoryWrap .archive-directory-card a,
+    body.st-view-mobile #seasonDirectoryWrap .archive-directory-card a,
+    body.st-view-mobile #competitionDirectoryWrap .archive-directory-card a{
+      width:100%!important;
+      display:flex!important;
+      align-items:center!important;
+      justify-content:center!important;
+      min-height:22px!important;
+      text-align:center!important;
     }
     body.st-view-mobile #athleteDirectoryWrap .archive-directory-card:nth-child(2n),
     body.st-view-mobile #seasonDirectoryWrap .archive-directory-card:nth-child(2n),
@@ -9255,6 +9261,7 @@
       overflow:hidden!important;
       text-overflow:ellipsis!important;
       color:#0f172a!important;
+      text-align:center!important;
     }
 
     body.st-view-mobile .record-kpi-grid,
@@ -9960,7 +9967,7 @@
         }
         button.hidden = false;
         const shown = expanded ? cards.length : Math.min(limit, cards.length);
-        button.innerHTML = `${expanded ? '접기' : mobileListLabelFor(list)} <span class="count">${shown}/${cards.length}</span>`;
+        button.innerHTML = `${expanded ? (currentLang === 'en' ? 'Collapse' : '\uC811\uAE30') : mobileListLabelFor(list)} <span class="count">${shown}/${cards.length}</span>`;
       });
     }
     function scheduleMobileCardListRefresh(){
@@ -9990,7 +9997,7 @@
       const headers = Array.from(table.querySelectorAll('thead th')).map(cleanCellText);
       if(headers.length) return headers;
       const first = table.querySelector('tbody tr');
-      return first ? Array.from(first.children).map((_,idx)=>`항목 ${idx+1}`) : [];
+      return first ? Array.from(first.children).map((_,idx)=>`${currentLang === 'en' ? 'Item' : '\uD56D\uBAA9'} ${idx+1}`) : [];
     }
     function convertTableToMobileCards(table){
       if(shouldSkipMobileTable(table)) return;
@@ -10009,7 +10016,7 @@
         const title = cells[0]?.innerHTML || '-';
         const side = cells[1]?.innerHTML || '';
         const details = cells.slice(2).map((cell,idx)=>{
-          const label = headers[idx+2] || `항목 ${idx+3}`;
+          const label = headers[idx+2] || `${currentLang === 'en' ? 'Item' : '\uD56D\uBAA9'} ${idx+3}`;
           return `<div class="mobile-table-row"><span>${mobileEscape(label)}</span><strong>${cell.innerHTML || '-'}</strong></div>`;
         }).join('');
         return `<article class="mobile-data-card mobile-table-card">
@@ -10018,7 +10025,7 @@
         </article>`;
       }).join('');
       const hidden = Math.max(0, table.querySelectorAll('tbody tr').length - rows.length);
-      source.insertAdjacentHTML('afterend', `<div class="mobile-card-list mobile-table-cards">${cards}${hidden ? `<div class="st-empty-small">외 ${hidden}건은 표 보기에서 확인할 수 있습니다.</div>` : ''}</div>`);
+      source.insertAdjacentHTML('afterend', `<div class="mobile-card-list mobile-table-cards">${cards}${hidden ? `<div class="st-empty-small">${currentLang === 'en' ? `${hidden} more rows are available in table view.` : `\uC678 ${hidden}\uAC74\uC740 \uD45C \uBCF4\uAE30\uC5D0\uC11C \uD655\uC778\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4.`}</div>` : ''}</div>`);
     }
     function refreshMobileTableCards(){
       document.querySelectorAll('.table-scroll table').forEach(convertTableToMobileCards);
@@ -10358,8 +10365,8 @@
         else if(row.medal === 'Bronze') bronze += 1;
       });
       return currentLang === 'en'
-        ? `G ${gold} · S ${silver} · B ${bronze} · Total ${rows.length}`
-        : `금 ${gold} · 은 ${silver} · 동 ${bronze} · 합계 ${rows.length}`;
+        ? `G ${gold} / S ${silver} / B ${bronze} / Total ${rows.length}`
+        : `\uAE08 ${gold} / \uC740 ${silver} / \uB3D9 ${bronze} / \uD569\uACC4 ${rows.length}`;
     }
     function medalGroupBucket(row){
       try{
@@ -10384,8 +10391,15 @@
         return typeof medalOrderForPlayerDetail === 'function' ? medalOrderForPlayerDetail(a.medal) - medalOrderForPlayerDetail(b.medal) : 0;
       });
     }
+    function medalLabelEn(medal){
+      const raw = String(medal || '').toLowerCase();
+      if(raw.includes('gold')) return 'Gold';
+      if(raw.includes('silver')) return 'Silver';
+      if(raw.includes('bronze')) return 'Bronze';
+      return medal || '-';
+    }
     function mobileMedalCard(row){
-      const medalText = typeof medalKorean === 'function' ? medalKorean(row.medal) : (row.medal || '-');
+      const medalText = currentLang === 'en' ? medalLabelEn(row.medal) : (typeof medalKorean === 'function' ? medalKorean(row.medal) : (row.medal || '-'));
       const medalClass = String(row.medal || '').toLowerCase();
       return `<article class="mobile-medal-card">
         <div class="mobile-medal-card-head"><span class="medal-pill ${mobileEscape(medalClass)}">${mobileEscape(medalText)}</span><strong>${mobileEscape(row.event || '-')}</strong></div>
@@ -10432,8 +10446,8 @@
       panel.innerHTML = events.map(event=>{
         const row = bestMap && bestMap.get ? bestMap.get(event) : null;
         const time = row ? (row.time || row.best_time || '-') : '-';
-        const details = row ? [row.competition_name, row.round, row.season || row.year].filter(Boolean).join(' · ') : (currentLang === 'en' ? 'No record' : '기록 없음');
-        return `<article class="mobile-player-best-card"><strong>${mobileEscape(event)} · ${mobileEscape(time)}</strong><span>${mobileEscape(details)}</span></article>`;
+        const details = row ? [row.competition_name, row.round, row.season || row.year].filter(Boolean).join(' / ') : (currentLang === 'en' ? 'No record' : '\uAE30\uB85D \uC5C6\uC74C');
+        return `<article class="mobile-player-best-card"><strong>${mobileEscape(event)} / ${mobileEscape(time)}</strong><span>${mobileEscape(details)}</span></article>`;
       }).join('');
     }
     function buildMobilePlayerSnapshot(){
