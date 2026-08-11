@@ -6625,15 +6625,51 @@
       if(q.length>=3){
         return normalizedCandidates.some(c=>{
           if(c.length<2) return false;
-          if(c.includes(q.slice(0,Math.max(2,q.length-1)))) return true;
-          const parts=c.split(/[^a-z0-9가-힣ㄱ-ㅎ]+/).filter(Boolean);
+          const parts=c.split(/[^a-z0-9\uac00-\ud7a3\u3131-\u314e\u314f-\u3163]+/).filter(Boolean);
           const pool=parts.length?parts:[c];
+          const loosePrefix=q.slice(0,Math.max(2,q.length-1));
+          if(q.length>=5 && c.includes(loosePrefix)) return true;
+          if(q.length<5 && pool.some(part=>part.startsWith(q))) return true;
           return pool.some(part=>stEditDistance(part,q,q.length>=6?2:1)<= (q.length>=6?2:1));
         });
       }
       return false;
     }
     function stRowTarget(row){return stSearchCandidatesForRow(row).map(stLower).join(' ')+' '+stSearchCandidatesForRow(row).map(stKoreanInitials).map(stLower).join(' ');}
+
+    function stEntitySearchScore(query, values){
+          const q=stNormalizeForSearch(query);
+          if(!q) return 9999;
+          const initials=stNormalizeForSearch(stKoreanInitials(query));
+          let best=9999;
+          (Array.isArray(values)?values:[values]).forEach(value=>{
+            const raw=stText(value);
+            if(!raw) return;
+            const norm=stNormalizeForSearch(raw);
+            const init=stNormalizeForSearch(stKoreanInitials(raw));
+            const tokens=norm.split(/[^a-z0-9\uac00-\ud7a3\u3131-\u314e\u314f-\u3163]+/).filter(Boolean);
+            const candidates=[norm,init,...tokens].filter(Boolean);
+            candidates.forEach(c=>{
+              let score=9999;
+              if(c===q) score=0;
+              else if(c.startsWith(q)) score=1;
+              else if(c.includes(q)) score=2;
+              else if(q.length>=3 && c.startsWith(q.slice(0,q.length-1))) score=4;
+              else if(q.length>=4) score=8+stEditDistance(c,q,q.length>=6?2:1);
+              best=Math.min(best,score);
+            });
+            if(initials && init.includes(initials)) best=Math.min(best,3);
+          });
+          return best;
+        }
+        function stSortBySearchRelevance(query, getter, fallback){
+          return (a,b)=>{
+            const sa=stEntitySearchScore(query,getter(a));
+            const sb=stEntitySearchScore(query,getter(b));
+            if(sa!==sb) return sa-sb;
+            return fallback ? fallback(a,b) : 0;
+          };
+        }
 
     function rowMatchesSearchAndMedal(row,q){
       const raw=searchInput?.value || q || '';
@@ -6678,11 +6714,11 @@
     function stBuildSearchData(query){
       const pool=stAllSearchRows();
       const matched=pool.filter(row=>stRowMatchesQuery(row,query));
-      const players=stUniqueBy(matched.filter(row=>stText(row.skater_name)), row=>stLower(row.skater_name)).map(row=>{const name=stText(row.skater_name); const related=pool.filter(item=>stText(item.skater_name)===name||stText(item.original_skater_name)===name); const country=stText(row.country)||stText(related.find(item=>stText(item.country))?.country); const gender=stText(row.gender)||stText(related.find(item=>stText(item.gender))?.gender); return {name,country,gender,count:related.length,summary:stMedalSummary(related)};}).sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'ko'));
-      const countries=stUniqueBy(matched.filter(row=>stText(row.country)), row=>stLower(row.country)).map(row=>{const country=stText(row.country); const related=pool.filter(item=>stText(item.country)===country); const playerCount=stUniqueBy(related.filter(item=>stText(item.skater_name)), item=>stLower(item.skater_name)).length; const competitionCount=stUniqueBy(related.filter(item=>stText(item.competition_name)), item=>stLower(item.competition_name)).length; return {country,playerCount,competitionCount,count:related.length,summary:stMedalSummary(related)};}).sort((a,b)=>b.count-a.count||a.country.localeCompare(b.country,'ko'));
-      const competitions=stUniqueBy(matched.filter(row=>stText(row.competition_name)), row=>[stLower(row.competition_name),stLower(row.season),stLower(row.year)].join('|')).map(row=>{const name=stText(row.competition_name); const season=normalizeSeasonLabel(row.season,row.year); const year=stText(row.year); const related=pool.filter(item=>stText(item.competition_name)===name&&(!season||normalizeSeasonLabel(item.season,item.year)===season)); return {name,season,year,type:stText(row.competition_type),city:stText(row.city),count:related.length,summary:stMedalSummary(related)};}).sort((a,b)=>seasonSortValue(b.season,b.year)-seasonSortValue(a.season,a.year)||b.count-a.count||a.name.localeCompare(b.name,'ko'));
-      const events=stUniqueBy(matched.filter(row=>stText(row.event)), row=>stLower(row.event)).map(row=>{const event=stText(row.event); const related=pool.filter(item=>stText(item.event)===event); const playerCount=stUniqueBy(related.filter(item=>stText(item.skater_name)), item=>stLower(item.skater_name)).length; return {event,gender:stText(row.gender),playerCount,count:related.length,summary:stMedalSummary(related)};}).sort((a,b)=>b.count-a.count||a.event.localeCompare(b.event,'ko'));
-      const seasons=stUniqueBy(matched.filter(row=>stText(row.season)), row=>stLower(row.season)).map(row=>{const season=normalizeSeasonLabel(row.season,row.year); const related=pool.filter(item=>normalizeSeasonLabel(item.season,item.year)===season); const competitionCount=stUniqueBy(related.filter(item=>stText(item.competition_name)), item=>stLower(item.competition_name)).length; return {season,competitionCount,count:related.length,summary:stMedalSummary(related)};}).sort((a,b)=>seasonSortValue(b.season,b.season)-seasonSortValue(a.season,a.season));
+      const players=stUniqueBy(matched.filter(row=>stText(row.skater_name)), row=>stLower(row.skater_name)).map(row=>{const name=stText(row.skater_name); const related=pool.filter(item=>stText(item.skater_name)===name||stText(item.original_skater_name)===name); const country=stText(row.country)||stText(related.find(item=>stText(item.country))?.country); const gender=stText(row.gender)||stText(related.find(item=>stText(item.gender))?.gender); return {name,country,gender,count:related.length,summary:stMedalSummary(related)};}).sort(stSortBySearchRelevance(query, item=>[item.name], (a,b)=>b.count-a.count||a.name.localeCompare(b.name,'ko')));
+      const countries=stUniqueBy(matched.filter(row=>stText(row.country)), row=>stLower(row.country)).map(row=>{const country=stText(row.country); const related=pool.filter(item=>stText(item.country)===country); const playerCount=stUniqueBy(related.filter(item=>stText(item.skater_name)), item=>stLower(item.skater_name)).length; const competitionCount=stUniqueBy(related.filter(item=>stText(item.competition_name)), item=>stLower(item.competition_name)).length; return {country,playerCount,competitionCount,count:related.length,summary:stMedalSummary(related)};}).sort(stSortBySearchRelevance(query, item=>[item.country], (a,b)=>b.count-a.count||a.country.localeCompare(b.country,'ko')));
+      const competitions=stUniqueBy(matched.filter(row=>stText(row.competition_name)), row=>[stLower(row.competition_name),stLower(row.season),stLower(row.year)].join('|')).map(row=>{const name=stText(row.competition_name); const season=normalizeSeasonLabel(row.season,row.year); const year=stText(row.year); const related=pool.filter(item=>stText(item.competition_name)===name&&(!season||normalizeSeasonLabel(item.season,item.year)===season)); return {name,season,year,type:stText(row.competition_type),city:stText(row.city),count:related.length,summary:stMedalSummary(related)};}).sort(stSortBySearchRelevance(query, item=>[item.name,item.season,item.city,item.type], (a,b)=>seasonSortValue(b.season,b.year)-seasonSortValue(a.season,a.year)||b.count-a.count||a.name.localeCompare(b.name,'ko')));
+      const events=stUniqueBy(matched.filter(row=>stText(row.event)), row=>stLower(row.event)).map(row=>{const event=stText(row.event); const related=pool.filter(item=>stText(item.event)===event); const playerCount=stUniqueBy(related.filter(item=>stText(item.skater_name)), item=>stLower(item.skater_name)).length; return {event,gender:stText(row.gender),playerCount,count:related.length,summary:stMedalSummary(related)};}).sort(stSortBySearchRelevance(query, item=>[item.event], (a,b)=>b.count-a.count||a.event.localeCompare(b.event,'ko')));
+      const seasons=stUniqueBy(matched.filter(row=>stText(row.season)), row=>stLower(row.season)).map(row=>{const season=normalizeSeasonLabel(row.season,row.year); const related=pool.filter(item=>normalizeSeasonLabel(item.season,item.year)===season); const competitionCount=stUniqueBy(related.filter(item=>stText(item.competition_name)), item=>stLower(item.competition_name)).length; return {season,competitionCount,count:related.length,summary:stMedalSummary(related)};}).sort(stSortBySearchRelevance(query, item=>[item.season], (a,b)=>seasonSortValue(b.season,b.season)-seasonSortValue(a.season,a.season)));
       const recentRows=matched.slice().sort((a,b)=>seasonSortValue(b.season,b.year)-seasonSortValue(a.season,a.year)||Number(b.year||0)-Number(a.year||0)).slice(0,8);
       return {query,type:stDetectSearchType(query,pool),total:matched.length,players,countries,competitions,events,seasons,recentRows,suggestions:stGetQuerySuggestions(query)};
     }
