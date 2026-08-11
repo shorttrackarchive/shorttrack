@@ -2266,7 +2266,7 @@
       rulesRelayCodesText:'Relay-specific infringement codes such as R1 Missed Relay Touch, R2 Illegal Relay, and R3 Blocking in the Infield.',
       rulesSourceNote:'Source: ISU Sports Rules - Short Track, Rules 291, 296, 297, and ISU Short Track Infringement Language and Code 2025/26.',
       skaterName:'Skater name', skaterInfo:'Skater information', playerAchievementLabel:'Skater achievements', totalMedals:'Total medals', copyLink:'Copy link',
-      playerTimelineAction:'View timeline', playerTimelineEmpty:'Press View timeline to display this section.', dataLoaded:'Data loaded',
+      playerTimelineTitle:'Career timeline', playerTimelineDesc:'Shows the skater medal history in reverse season order.', playerTimelineAction:'View timeline', playerTimelineEmpty:'Press View timeline to display this section.', dataLoaded:'Data loaded',
       competitionNameLabel:'Competition name', competitionInfoLabel:'Competition information', competitionMedalTableTitle:'Competition Medal Table', competitionMedalTableDesc:'Gold, silver, and bronze podiums by event for this competition.', competitionBestTimeTitle:'Best-Time Entry Coverage', competitionBestTimeDesc:'Summarizes final personal-best rows entered in the best_times sheet for this competition.',
       countryInfoLabel:'Country-related records', seasonInfoLabel:'Season-related records', selectCountryPrompt:'Select a country.', selectSeasonPrompt:'Select a season.',
       tierMakerTitle:'Tier Maker', tierMakerDesc:'Drag skater cards into S/A/B/C/D/Hold tiers. This is a user-made tool, not an official evaluation.', tierSearch:'Skater search', tierSearchPlaceholder:'Search skater or country', mixedRelayIncluded:'Mixed / relays included', tierSource:'Skater pool', tierMedalSkaters:'Skaters with medal records', tierAllSkaters:'All skaters', refresh:'Refresh', reset:'Reset', tierNote:'Tier names are editable. Drag skater cards into tier rows or back to the skater list.', tierPoolTitle:'Skater list', tierPoolEmpty:'Skaters appear after the data loads.', tierBoardTitle:'Tier board', saveImage:'Save image', copyText:'Copy text', generateText:'Generate text', tierCopyPlaceholder:'Press Generate text to show the tier-board result here.', tierNoSkater:'No skaters match these filters.', tierDragHere:'Drag here', tierResetConfirm:'Reset the current tier board?', tierCopied:'Tier-board text copied.', tierCopyManual:'Automatic copy was blocked. Select and copy the text below.', tierExportTitle:'Short Track Skater Tier Board', tierImageFail:'Could not save the image. This may be a browser security limitation. Use text copy instead.', tierImageRetry:'Could not save the image. Please try again.', noRecord:'No records',
@@ -6356,7 +6356,7 @@
 
     function individualRowsForPlayer(name){return skaterMedals.filter(row=>row.skater_name===name && row.medal_type==='Individual' && !isWorldChampionshipSuperFinalRow(row));}
     function relayRowsForPlayer(name){return skaterMedals.filter(row=>row.skater_name===name && row.medal_type==='Relay');}
-    function medalBucketInline(rows){const b=countMedalBucket(rows);return `금 ${b.gold} · 은 ${b.silver} · 동 ${b.bronze} · 총 ${medalTotal(b)}`;}
+    function medalBucketInline(rows){const b=countMedalBucket(rows);return currentLang === 'en' ? `G ${b.gold} \u00b7 S ${b.silver} \u00b7 B ${b.bronze} \u00b7 Total ${medalTotal(b)}` : `\uAE08 ${b.gold} \u00b7 \uC740 ${b.silver} \u00b7 \uB3D9 ${b.bronze} \u00b7 \uCD1D ${medalTotal(b)}`;}
     function mainEventForPlayer(rows){
       const map=new Map();
       rows.forEach(row=>{
@@ -6367,7 +6367,7 @@
       });
       if(!map.size) return '-';
       const [event,count]=[...map.entries()].sort((a,b)=>b[1]-a[1]||personalBestEventOrder(a[0])-personalBestEventOrder(b[0]))[0];
-      return `${event} (${count}회)`;
+      return currentLang === 'en' ? `${event} (${count})` : `${event} (${count}\uD68C)`;
     }
     function activeSeasonsForPlayer(rows, laps){
       const seasons=[...new Set([...rows,...laps].map(row=>normalizeSeasonLabel(row.season,row.year)||row.year).filter(Boolean))]
