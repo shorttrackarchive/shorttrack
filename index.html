@@ -2397,7 +2397,28 @@
       if(typeof window.buildMobileHeatInputCards === 'function') window.buildMobileHeatInputCards();
       if(typeof window.buildMobileHeatResults === 'function') window.buildMobileHeatResults();
       if(typeof stRenderRecentSearches === 'function') stRenderRecentSearches();
+      if(typeof renderRecentPlayers === 'function') renderRecentPlayers();
+      if(typeof refreshLoadingStatusText === 'function') refreshLoadingStatusText();
       updatePlayerTimelineDetailsAction(document.getElementById('playerTimelineDetails')?.open);
+    }
+
+    function refreshLoadingStatusText(){
+      const loadingStatus=document.getElementById('loadingStatus');
+      if(!loadingStatus) return;
+      const state=loadingStatus.dataset.state || 'loading';
+      if(state === 'loaded'){
+        const medalsCount=Number(loadingStatus.dataset.medals || 0);
+        const relayCount=Number(loadingStatus.dataset.relayMembers || 0);
+        const bestCount=Number(loadingStatus.dataset.bestTimes || 0);
+        const recordCount=Number(loadingStatus.dataset.eventRecords || 0);
+        const generatedRaw=loadingStatus.dataset.generatedAt || '';
+        const generatedAt=generatedRaw ? ` / ${currentLang==='en'?'Last updated':'\uB370\uC774\uD130 \uCD5C\uC885 \uAC31\uC2E0'} ${new Date(generatedRaw).toLocaleString(currentLang==='en'?'en-US':'ko-KR')}` : '';
+        loadingStatus.textContent=`${tr('dataLoaded')}: medals ${medalsCount.toLocaleString(currentLang==='en'?'en-US':'ko-KR')} / relay_members ${relayCount.toLocaleString(currentLang==='en'?'en-US':'ko-KR')} / best_times ${bestCount.toLocaleString(currentLang==='en'?'en-US':'ko-KR')} / event_records ${recordCount.toLocaleString(currentLang==='en'?'en-US':'ko-KR')}${generatedAt}`;
+      }else if(state === 'error'){
+        loadingStatus.textContent = loadingStatus.dataset.errorMessage || `${tr('dataLoadFail')} ${tr('tryAgainLater')}`;
+      }else{
+        loadingStatus.textContent=tr('loading');
+      }
     }
 
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkNr8yBRI_ok8aFZd623RmHhNCpyHFKuTvdwxYiczFi_LFff5olScBXSPGPd_-QWepKg/exec';
@@ -2882,8 +2903,15 @@
         if(!eventRecordsCache.length){ eventRecordsCache=[]; }
         window.eventRecordsCache = eventRecordsCache;
         const loadingStatus=document.getElementById('loadingStatus');
-        const generatedAt=json.generated_at ? ` · ${currentLang==='en'?'Last updated':'데이터 최종 갱신'} ${new Date(json.generated_at).toLocaleString(currentLang==='en'?'en-US':'ko-KR')}` : '';
-        if(loadingStatus) loadingStatus.textContent=`${tr('dataLoaded')}: medals ${medals.length.toLocaleString()} · relay_members ${relayMembers.length.toLocaleString()} · best_times ${bestTimes.length.toLocaleString()} · event_records ${eventRecordsCache.length.toLocaleString()}${generatedAt}`;
+        if(loadingStatus){
+          loadingStatus.dataset.state='loaded';
+          loadingStatus.dataset.medals=String(medals.length);
+          loadingStatus.dataset.relayMembers=String(relayMembers.length);
+          loadingStatus.dataset.bestTimes=String(bestTimes.length);
+          loadingStatus.dataset.eventRecords=String(eventRecordsCache.length);
+          loadingStatus.dataset.generatedAt=json.generated_at || '';
+          refreshLoadingStatusText();
+        }
         skaterMedals=buildSkaterMedals();
         setupSectionSeasonFilters();
         setupSectionEraFilters();
@@ -2895,7 +2923,11 @@
         console.error(error);
         const message = `${tr('dataLoadFail')} ${tr('tryAgainLater')}`;
         const loadingStatus=document.getElementById('loadingStatus');
-        if(loadingStatus) loadingStatus.textContent = message;
+        if(loadingStatus){
+          loadingStatus.dataset.state='error';
+          loadingStatus.dataset.errorMessage=message;
+          loadingStatus.textContent = message;
+        }
         document.getElementById('tableWrap').innerHTML=`<div class="error">${message}</div>`;
         (document.getElementById('skaterRankingTableWrap')||document.getElementById('skaterRankingWrap')).innerHTML=`<div class="empty">${tr('dataLoadFail')}</div>`;
         document.getElementById('countryRankingWrap').innerHTML=`<div class="empty">${tr('dataLoadFail')}</div>`; document.getElementById('eventRankingWrap').innerHTML=`<div class="empty">${tr('dataLoadFail')}</div>`;
