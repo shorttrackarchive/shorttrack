@@ -6,7 +6,9 @@
   <title>Short Track Archive – 쇼트트랙 역대 기록·랭킹·선수 검색</title>
   <meta name="description" content="쇼트트랙 올림픽, 세계선수권, 월드컵·월드투어 포디움 기록과 선수 검색, 국가별 메달 순위, 종목별 기록, 랩타임 순위를 확인하는 아카이브입니다." />
   <link rel="canonical" href="https://shorttrackarchive.github.io/shorttrack/" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%233451FF' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M45 14H25C10 14 6 50 25 50h20'/%3E%3Cpath d='M45 21H27c-10 0-13 22 0 22h18'/%3E%3Cpath d='M45 28H29c-5 0-6 8 0 8h16'/%3E%3Cpath d='M48 49 58 14'/%3E%3C/g%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%233451FF' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M43 14H24C13 14 8 22 8 32s5 18 16 18h19'/%3E%3Cpath d='M43 21H25c-7 0-10 5-10 11s3 11 10 11h18'/%3E%3Cpath d='M43 28H27c-3 0-5 2-5 4s2 4 5 4h16'/%3E%3Cpath d='m48 49 9-34'/%3E%3Cpath d='M45 42h15'/%3E%3C/g%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css" />
   <meta name="theme-color" content="#DDEAE6" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Short Track Archive – 쇼트트랙 역대 기록·랭킹·선수 검색" />
@@ -874,13 +876,13 @@
 <body>
 <header>
     <a class="brand-lockup" href="?section=homeFeatureSection" aria-label="Short Track Archive home" onclick="event.preventDefault(); scrollToSection('homeFeatureSection')">
-      <svg class="brand-mark" viewBox="0 0 96 64" role="img" aria-label="Short Track Archive track mark">
-        <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
-          <path d="M62 8H30C8 8 5 56 30 56h32"/>
-          <path d="M62 16H32c-16 0-18 32 0 32h30"/>
-          <path d="M62 24H35c-9 0-10 16 0 16h27"/>
-          <path d="M69 55 84 9"/>
-          <path d="M73 50h14"/>
+      <svg class="brand-mark" viewBox="0 0 112 64" role="img" aria-label="Short Track Archive track mark">
+        <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M68 10H31C17 10 9 19 9 32s8 22 22 22h37"/>
+          <path d="M68 18H33c-9 0-15 6-15 14s6 14 15 14h35"/>
+          <path d="M68 26H35c-5 0-8 2.5-8 6s3 6 8 6h33"/>
+          <path d="m81 53 15-42" stroke-width="2.9"/>
+          <path d="M76 45h28" stroke-width="2.9"/>
         </g>
       </svg>
       <span class="brand-wordmark"><strong>SHORT TRACK</strong><span>ARCHIVE</span></span>
@@ -1004,8 +1006,8 @@
       </div>
       <div class="brand-hero-visual" aria-hidden="true">
         <div class="brand-track-lines"><i></i><i></i><i></i><i></i></div>
-        <div class="brand-data-fragment"><span>RECORD / TIME</span><strong>41.399</strong><small>500M &nbsp; / &nbsp; WORLD</small></div>
-        <div class="brand-index-number">25<span>/26</span></div>
+        <div class="brand-data-fragment"><span>RACE / DATA</span><strong>ARCHIVE</strong><small>RESULTS &nbsp; / &nbsp; SEASONS &nbsp; / &nbsp; LEGACY</small></div>
+        <div class="brand-index-number">ST<span>/A</span></div>
       </div>
       <div class="brand-hero-index"><span>DATA</span><span>RECORDS</span><span>HISTORY</span><span>LEGACY</span></div>
     </section>
@@ -2431,7 +2433,7 @@
       if(activePlayerName && typeof openPlayerPanel === 'function') openPlayerPanel(activePlayerName);
       if(typeof window.buildMobileHeatResults === 'function') window.buildMobileHeatResults();
       if(typeof stRenderRecentSearches === 'function') stRenderRecentSearches();
-      if(typeof renderRecentPlayers === 'function') renderRecentPlayers();
+      if(typeof window.renderRecentPlayers === 'function') window.renderRecentPlayers();
       if(typeof refreshLoadingStatusText === 'function') refreshLoadingStatusText();
       updatePlayerTimelineDetailsAction(document.getElementById('playerTimelineDetails')?.open);
     }
@@ -9919,6 +9921,7 @@
       }
       wrap.innerHTML = `<div class="mobile-recent-title">${mobileEscape(currentLang === 'en' ? 'Recently viewed athletes' : '최근 본 선수')}</div><div class="mobile-recent-list">${items.map(name => `<button type="button" class="mobile-recent-chip" onclick="openPlayerPanel('${mobileJs(name)}')">${mobileEscape(name)}</button>`).join('')}</div>`;
     }
+    window.renderRecentPlayers = renderRecentPlayers;
     const mobileNavSections = [
       ['mobileHomeSection','mobileHomeSection'],
       ['homeFeatureSection','mobileMoreSheet'],
@@ -11629,8 +11632,8 @@
     --space-xl:48px;
     --radius-sm:4px;
     --radius-md:8px;
-    --font-display:"Space Grotesk","Arial Narrow",Arial,sans-serif;
-    --font-body:Inter,"Segoe UI",Arial,sans-serif;
+    --font-display:"Wanted Sans Variable","Wanted Sans","SUIT Variable","Noto Sans KR",sans-serif;
+    --font-body:"Wanted Sans Variable","Wanted Sans","SUIT Variable","Noto Sans KR",sans-serif;
     --bg:var(--color-mist);
     --card:var(--surface-strong);
     --text:var(--text-primary);
@@ -11646,6 +11649,7 @@
     background:var(--color-mist);
     color:var(--text-primary);
     font-family:var(--font-body);
+    font-synthesis:none;
     line-height:1.45;
   }
   body::before{
@@ -11692,7 +11696,7 @@
     text-decoration:none;
     min-width:0;
   }
-  .brand-mark{width:66px;height:44px;flex:0 0 auto}
+  .brand-mark{width:72px;height:42px;flex:0 0 auto}
   .brand-wordmark{display:grid;color:var(--color-indigo);line-height:1.05;font-family:var(--font-display)}
   .brand-wordmark strong{font-size:15px;font-weight:800}
   .brand-wordmark span{font-size:10px;font-weight:700;letter-spacing:.28em}
@@ -11825,7 +11829,7 @@
   .brand-track-lines i:nth-child(4){--track-index:3}
   .brand-data-fragment{position:absolute;left:42px;bottom:38px;display:grid;color:var(--color-mist);font-family:var(--font-display)}
   .brand-data-fragment span,.brand-data-fragment small{font-size:9px;font-weight:700;letter-spacing:.13em}
-  .brand-data-fragment strong{font-size:38px;line-height:1.05;font-variant-numeric:tabular-nums}
+  .brand-data-fragment strong{font-size:34px;line-height:1.05;letter-spacing:.04em}
   .brand-data-fragment small{margin-top:6px;color:var(--color-mint)}
   .brand-index-number{position:absolute;right:24px;top:24px;color:rgba(221,234,230,.16);font:800 80px/.85 var(--font-display);font-variant-numeric:tabular-nums}
   .brand-index-number span{display:block;margin-left:36px;color:var(--color-mint);font-size:26px}
@@ -11937,9 +11941,11 @@
     border-radius:3px;
   }
 
+  .table-scroll{isolation:isolate}
   table{border:1px solid var(--border);border-radius:0;background:var(--surface-strong);font-variant-numeric:tabular-nums}
   th,td{padding:9px 10px;border-bottom:1px solid #d7e1de;font-size:12.5px}
-  th{position:sticky;top:96px;z-index:2;background:#edf3f0;color:var(--color-indigo);font:750 10px/1.2 var(--font-display);text-transform:uppercase}
+  th{position:static;top:auto;z-index:auto;background:#edf3f0;color:var(--color-indigo);font:750 10px/1.2 var(--font-display);text-transform:uppercase}
+  thead{position:relative;z-index:1}
   tbody tr:last-child td{border-bottom:0}
   tr:hover td{background:rgba(125,226,195,.12)}
   .rank-total{background:rgba(170,168,255,.11)}
@@ -12088,7 +12094,7 @@
   body.st-view-mobile .mobile-search-box input{min-height:48px;padding:10px 12px;border:2px solid var(--color-indigo);border-radius:0;font-family:var(--font-display);font-size:16px}
   body.st-view-mobile .mobile-search-type-chips{display:flex;gap:0;overflow-x:auto;border-bottom:1px solid var(--border)}
   body.st-view-mobile .mobile-search-type-chips button{min-height:32px;padding:5px 8px;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:var(--text-secondary);font-size:10px;font-weight:750;white-space:nowrap}
-  body.st-view-mobile .mobile-search-type-chips button.active{border-color:var(--color-cobalt);color:var(--color-cobalt)}
+  body.st-view-mobile .mobile-search-type-chips button.active{border-color:var(--color-cobalt)!important;background:var(--color-cobalt)!important;color:#fff!important}
   body.st-view-mobile .mobile-recent-players{padding-top:8px!important;border-color:var(--border)!important}
   body.st-view-mobile .mobile-recent-title{font-size:9px!important;text-transform:uppercase}
   body.st-view-mobile .mobile-recent-chip{min-height:30px;padding:4px 8px;border-radius:3px;background:transparent;font-size:10px}
@@ -12115,6 +12121,7 @@
   body.st-view-mobile .summary-box .label,body.st-view-mobile .mini-box .label,body.st-view-mobile .approved-profile-box .label,body.st-view-mobile .competition-detail-box .label{display:block!important;margin-bottom:2px!important;font-size:8px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
   body.st-view-mobile .summary-box .value,body.st-view-mobile .mini-box .value,body.st-view-mobile .approved-profile-box .value,body.st-view-mobile .competition-detail-box .value{font-size:12px!important;line-height:1.15!important}
   body.st-view-mobile .approved-overview-split>div,body.st-view-mobile .st-page-section{padding:8px!important;border-radius:3px!important}
+  body.st-view-mobile #playerPanel .player-achievement-badges{display:none!important}
   body.st-view-mobile .distance-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:0!important}
   body.st-view-mobile .distance-summary-card{padding:6px!important;text-align:left!important}
   body.st-view-mobile .distance-summary-card strong{font-size:12px!important;margin-bottom:2px!important}
