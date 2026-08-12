@@ -7531,7 +7531,7 @@
       }
       const cards=`<div class="mobile-card-list lap-mobile-cards">${visible.map((row,idx)=>{
         const context=row.manual_context || row.auto_context || 'unknown';
-        const basis=row.context_basis || (row.prev_split_rank && row.split_rank ? (currentLang==='en' ? `${row.prev_split_rank} -> ${row.split_rank}` : `${row.prev_split_rank}위 → ${row.split_rank}위`) : '-');
+        const basis=lapBasisText(row);
         return `<article class="mobile-data-card lap-mobile-card">
           <div class="mobile-card-topline"><span class="mobile-rank-badge">#${idx+1}</span><strong class="mobile-record-time">${row.lap_time.toFixed(2)}</strong></div>
           <div class="mobile-card-title">${escapeHtml(row.skater_name || '-')}</div>
@@ -7550,7 +7550,7 @@
         <th>${escapeHtml(tr('rank'))}</th><th>${escapeHtml(tr('lapTime'))}</th><th>${escapeHtml(tr('skater'))}</th><th>${escapeHtml(tr('country'))}</th><th>${escapeHtml(tr('gender'))}</th><th>${escapeHtml(tr('event'))}</th><th>${escapeHtml(tr('competition'))}</th><th>${escapeHtml(tr('season'))}</th><th>${escapeHtml(tr('round'))}</th><th>${escapeHtml(tr('heat'))}</th><th>${escapeHtml(tr('lap'))}</th><th>${escapeHtml(tr('category'))}</th><th>${escapeHtml(tr('basis'))}</th>
       </tr></thead><tbody>${visible.map((row,idx)=>{
         const context=row.manual_context || row.auto_context || 'unknown';
-        const basis=row.context_basis || (row.prev_split_rank && row.split_rank ? (currentLang==='en' ? `${row.prev_split_rank} -> ${row.split_rank}` : `${row.prev_split_rank}위 → ${row.split_rank}위`) : '-');
+        const basis=lapBasisText(row);
         return `<tr>
           <td>${idx+1}</td><td><strong>${row.lap_time.toFixed(2)}</strong></td><td>${escapeHtml(row.skater_name)}</td><td>${escapeHtml(row.country)}</td><td>${escapeHtml(row.gender)}</td><td>${escapeHtml(row.event)}</td><td>${escapeHtml(row.competition_name)}</td><td>${escapeHtml(row.season)}</td><td>${escapeHtml(row.round)}</td><td>${escapeHtml(row.heat)}</td><td>${row.lap_no||''}</td><td><span class="lap-badge ${lapContextClass(context)}">${lapContextLabel(context)}</span></td><td>${escapeHtml(basis)}</td>
         </tr>`;
@@ -8481,7 +8481,8 @@
     const current = select.value || 'all';
     const countries = [...new Set(tierSkaters.map(s => s.country).filter(Boolean))].sort();
     select.innerHTML = `<option value="all">${tierEscape(tr('allCountries'))}</option>` + countries.map(c => `<option value="${tierEscape(c)}">${tierEscape(c)}</option>`).join('');
-    if(countries.includes(current)) select.value = current;
+    select.value = countries.includes(current) ? current : 'all';
+    select.disabled = false;
   };
 
   window.renderTierPool = function(){
