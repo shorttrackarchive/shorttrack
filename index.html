@@ -1814,7 +1814,7 @@
 
       <div class="heat-tool-layout">
         <div class="heat-tool-controls">
-          <div class="subnote" data-i18n="heatToolNotice">팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 순위 그룹 우선·그룹 내 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 배정된 조 안의 SP는 직전 라운드 기록순으로 다시 정렬합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.</div>
+          <div class="subnote" data-i18n="heatToolNotice">2026년 6월 12일 시행 ISU 규정 기준 팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 직전 라운드 순위 우선·동순위 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 각 조의 SP도 순위 우선·동순위 기록순으로 안쪽부터 배정합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.</div>
 
           <div class="heat-tool-grid">
             <div>
@@ -1858,14 +1858,12 @@
               <label for="heatSeedMethod" data-i18n="heatSeedMethod">배정 방식</label>
               <select id="heatSeedMethod">
                 <option value="snake" data-i18n="seedSnake">지그재그 배정</option>
-                <option value="straight" data-i18n="seedStraight">순차 배정</option>
               </select>
             </div>
             <div>
-              <label for="heatTimeSort" data-i18n="heatTimeSort">기록 정렬</label>
+              <label for="heatTimeSort" data-i18n="heatTimeSort">동순위 기준</label>
               <select id="heatTimeSort">
                 <option value="asc" data-i18n="timeFastest">빠른 기록 우선</option>
-                <option value="none" data-i18n="timeNone">기록 미사용</option>
               </select>
             </div>
           </div>
@@ -2162,7 +2160,7 @@
         playerOverviewTitle:'선수 요약', playerOverviewDesc:'개인전·계주·대회 유형별 메달을 요약합니다.', playerMedalDetailTitle:'선수별 메달 내역', playerMedalDetailDesc:'개인전 메달과 relay_members의 계주 메달을 함께 표시합니다.',
         eraRange:'시즌', eraStartAll:'전체 시즌 시작', eraEndAll:'전체 시즌 끝',
         compareTitle:'선수 비교', compareDesc:'두 선수를 선택해 개인전 성적만 기준으로 점수와 종목별 성과를 비교합니다.',
-        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. URL 이미지가 안 뜨면 이미지 직접 첨부를 이용해 주세요. 직접 첨부한 이미지는 카드 저장 시에도 안정적으로 포함됩니다.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardImageFile:'이미지 직접 첨부', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 8개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'조편성 계산기', heatToolDesc:'경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.', heatToolNotice:'팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 순위 그룹 우선·그룹 내 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 배정된 조 안의 SP는 직전 라운드 기록순으로 다시 정렬합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.', heatDistance:'종목', heatRound:'현재 라운드', roundPreliminary:'예비예선', roundHeats:'예선', roundQuarterfinals:'준준결승', roundSemifinals:'준결승', heatCount:'현재 조 수', heatSkatersPerHeat:'조별 선수 수', heatAutoQualifiers:'조별 순위 진출', heatTimeQualifiers:'기록순 추가 진출', heatNextCount:'다음 라운드 조 수', heatSeedMethod:'배정 방식', seedSnake:'지그재그 배정', seedStraight:'순차 배정', heatTimeSort:'기록 정렬', timeFastest:'빠른 기록 우선', timeNone:'기록 미사용', buildHeatTable:'결과 입력표 만들기', calculateHeatDraw:'진출자·조편성 계산', sampleHeatData:'예시 채우기', clearHeatData:'입력 초기화', heatInputEmpty:'결과 입력표를 먼저 만들어 주세요.', heatOutputEmpty:'계산 결과가 여기에 표시됩니다.', heatNoQualifiers:'진출자가 없습니다.', heatAutoQ:'순위 진출', heatTimeQ:'기록 진출', heatAdv:'ADV', heatEliminated:'탈락자', heatQualifiers:'진출자', heatNextDraw:'다음 라운드 조편성', heatName:'선수명', heatCountry:'국가', heatPosition:'순위', heatTime:'기록', heatStatus:'상태', heatHeat:'조', heatReason:'진출 방식', heatRank:'시드', heatSP:'SP', heatOfficialNote:'추정 조편성입니다. 실제 공식 조편성과 다를 수 있습니다.', quizTitle:'랜덤 쇼트트랙 퀴즈', quizDesc:'현재 medals 데이터를 바탕으로 자동 출제합니다. 문제를 따로 만들 필요는 없으며, 데이터가 추가되면 새로고침 후 문제 후보도 자동으로 늘어납니다.', quizNotice:'개인전 중심으로 출제하며 계주, 3000m, 올림픽 시범종목, 공동 메달 또는 불완전 포디움 의심 경기는 제외합니다. 문제에서 오류를 발견하면 문제별 오류 신고 버튼으로 제보할 수 있습니다.', quizCount:'문제 수', quizEra:'시대', quizType:'문제 유형', quizTypeMixed:'혼합', quizTypeGold:'금메달리스트', quizTypePodium:'포디움 순서', quizTypeCountry:'선수 국가', quizTypeMedal:'메달 색', startQuiz:'퀴즈 시작', submitQuiz:'채점하기', resetQuiz:'초기화', quizEmpty:'옵션을 선택한 뒤 퀴즈를 시작해 주세요.', quizNoData:'조건에 맞는 문제 후보가 없습니다.', quizQuestion:'문제', quizReport:'이 문제 오류 신고', quizCorrectAnswer:'정답', quizYourAnswer:'내 답', quizUnanswered:'미응답', quizScoreText:'정답 수', quizAccuracy:'정답률', quizTitleGod:'ISU 데이터베이스 그 자체', quizTitleLegend:'쇼트트랙 백과사전', quizTitleWorld:'월드투어 해설위원', quizTitlePodium:'포디움 추적자', quizTitleFan:'빙상장 상주팬', quizTitleRookie:'다시보기 훈련 필요', quizGoldQuestion:'금메달리스트는?', quizPodiumQuestion:'포디움 순서로 맞는 것은?', quizCountryQuestion:'의 국가로 맞는 것은?', quizMedalQuestion:'이 선수의 메달 색은?', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
+        hallTitle:'명예의 전당', hallDesc:'계주, 3000m, 올림픽 시범종목을 제외한 기록형 카드입니다. 개인전 기록은 500m·1000m·1500m 계열 종목 기준이며, 세계선수권 종합우승은 Overall Gold를 별도 집계합니다.', hallRecordUnit:'개', hallOverallUnit:'회', cardMakerTitle:'선수 카드 만들기', cardMakerDesc:'이용자가 직접 입력하는 팬메이드 선수 카드입니다. 공식 평가가 아니며 저장·공유 갤러리는 제공하지 않습니다.', cardMakerNotice:'이미지 URL은 외부 표시가 가능한 주소만 사용할 수 있습니다. URL 이미지가 안 뜨면 이미지 직접 첨부를 이용해 주세요. 직접 첨부한 이미지는 카드 저장 시에도 안정적으로 포함됩니다.', cardSkaterName:'선수명', cardRating:'카드 점수', cardGrade:'등급', cardCustomGrade:'CUSTOM 등급명', cardImageUrl:'이미지 URL', cardImageFile:'이미지 직접 첨부', cardComment:'한 줄 코멘트', cardStats:'스탯 항목 및 점수', cardStatsNotice:'최대 8개까지 자유롭게 입력할 수 있습니다.', updateCard:'카드 만들기', downloadCard:'이미지 저장', fanMadeFooter:'FAN-MADE · NOT OFFICIAL', heatToolTitle:'조편성 계산기', heatToolDesc:'경기 결과를 입력하면 진출자를 산정하고 다음 라운드 조편성을 추정합니다.', heatToolNotice:'2026년 6월 12일 시행 ISU 규정 기준 팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 직전 라운드 순위 우선·동순위 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 각 조의 SP도 순위 우선·동순위 기록순으로 안쪽부터 배정합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.', heatDistance:'종목', heatRound:'현재 라운드', roundPreliminary:'예비예선', roundHeats:'예선', roundQuarterfinals:'준준결승', roundSemifinals:'준결승', heatCount:'현재 조 수', heatSkatersPerHeat:'조별 선수 수', heatAutoQualifiers:'조별 순위 진출', heatTimeQualifiers:'기록순 추가 진출', heatNextCount:'다음 라운드 조 수', heatSeedMethod:'ISU 조 배정', seedSnake:'지그재그 배정', seedStraight:'순차 배정', heatTimeSort:'기록 정렬', timeFastest:'빠른 기록 우선', timeNone:'기록 미사용', buildHeatTable:'결과 입력표 만들기', calculateHeatDraw:'진출자·조편성 계산', sampleHeatData:'예시 채우기', clearHeatData:'입력 초기화', heatInputEmpty:'결과 입력표를 먼저 만들어 주세요.', heatOutputEmpty:'계산 결과가 여기에 표시됩니다.', heatNoQualifiers:'진출자가 없습니다.', heatAutoQ:'순위 진출', heatTimeQ:'기록 진출', heatAdv:'ADV', heatEliminated:'탈락자', heatQualifiers:'진출자', heatNextDraw:'다음 라운드 조편성', heatName:'선수명', heatCountry:'국가', heatPosition:'순위', heatTime:'기록', heatStatus:'상태', heatHeat:'조', heatReason:'진출 방식', heatRank:'시드', heatSP:'SP', heatOfficialNote:'ISU 규정 293조 기준 추정 결과입니다. ADV·동순위 등으로 실제 공식 조편성과 다를 수 있습니다.', quizTitle:'랜덤 쇼트트랙 퀴즈', quizDesc:'현재 medals 데이터를 바탕으로 자동 출제합니다. 문제를 따로 만들 필요는 없으며, 데이터가 추가되면 새로고침 후 문제 후보도 자동으로 늘어납니다.', quizNotice:'개인전 중심으로 출제하며 계주, 3000m, 올림픽 시범종목, 공동 메달 또는 불완전 포디움 의심 경기는 제외합니다. 문제에서 오류를 발견하면 문제별 오류 신고 버튼으로 제보할 수 있습니다.', quizCount:'문제 수', quizEra:'시대', quizType:'문제 유형', quizTypeMixed:'혼합', quizTypeGold:'금메달리스트', quizTypePodium:'포디움 순서', quizTypeCountry:'선수 국가', quizTypeMedal:'메달 색', startQuiz:'퀴즈 시작', submitQuiz:'채점하기', resetQuiz:'초기화', quizEmpty:'옵션을 선택한 뒤 퀴즈를 시작해 주세요.', quizNoData:'조건에 맞는 문제 후보가 없습니다.', quizQuestion:'문제', quizReport:'이 문제 오류 신고', quizCorrectAnswer:'정답', quizYourAnswer:'내 답', quizUnanswered:'미응답', quizScoreText:'정답 수', quizAccuracy:'정답률', quizTitleGod:'ISU 데이터베이스 그 자체', quizTitleLegend:'쇼트트랙 백과사전', quizTitleWorld:'월드투어 해설위원', quizTitlePodium:'포디움 추적자', quizTitleFan:'빙상장 상주팬', quizTitleRookie:'다시보기 훈련 필요', quizGoldQuestion:'금메달리스트는?', quizPodiumQuestion:'포디움 순서로 맞는 것은?', quizCountryQuestion:'의 국가로 맞는 것은?', quizMedalQuestion:'이 선수의 메달 색은?', selectPlayerA:'선수 A 선택', selectPlayerB:'선수 B 선택', compareButton:'비교하기', compareEmpty:'비교할 두 선수를 선택해 주세요.', compareScoreDesc:'이 점수는 선수 비교에만 적용됩니다. 기본값은 기존 13·21·34 기반 점수 체계이며, 계주는 제외하고 개인전 성적만 비교합니다.', compareIncludeWorldsOverall:'세계선수권 종합 포함', compareExcludeWorldsOverall:'세계선수권 종합 제외', worldsOverallScore:'세계선수권 종합 점수',
         category:'구분', individual:'개인전', relayMedal:'계주', includeRelayTotal:'계주 포함', individualMedals:'개인전 메달', relayIncludedMedals:'계주 포함 메달', bestEvent:'최다 금메달 종목', fiveHundred:'500m', thousand:'1000m', fifteenHundred:'1500m', scoreLabel:'점수', olympicScore:'올림픽 점수', worldsScore:'세계선수권 점수', worldcupScore:'월드컵·월드투어 점수', totalScore:'총점', noData:'데이터 없음',
         olympicGames:'올림픽', worldCup:'월드컵', worldTour:'월드투어', challengeCup:'챌린지컵', mixed:'혼성', overall:'종합', relay:'계주'
       },
@@ -2261,8 +2259,8 @@
       showMoreSkaters:'선수 더 보기', showMoreCountries:'국가 더 보기', showMoreRecords:'기록 더 보기', showMoreLaps:'랩타임 더 보기', showMoreRawRows:'원자료 더 보기', showMoreEventRanks:'종목 순위 더 보기', showMoreTableRows:'표 항목 더 보기',
       heatNoAssigned:'배정된 선수가 없습니다.', heatNoNextDraw:'다음 조 배정이 없습니다.', heatNoEliminated:'미진출자가 없습니다.',
       heatInputNote:'현재 라운드 결과에 필요한 선수들을 입력합니다. 심판 판정으로 진출한 선수만 ADV로 표시해 주세요.',
-      heatSeedOrderNote:'시드 순서: 순위 그룹 우선, 같은 순위 안에서는 기록순입니다.',
-      heatAssignmentNote:'조 배정은 시드 지그재그 방식입니다. 각 조 안의 SP는 직전 라운드 기록순으로 다시 정렬됩니다.',
+      heatSeedOrderNote:'시드 순서: 순위 진출자는 직전 라운드 순위 우선·동순위 기록순이며, 그다음 ADV, 마지막으로 기록 진출자입니다.',
+      heatAssignmentNote:'조는 시드 지그재그 방식으로 배정합니다. 각 조의 SP도 시드 순서대로 안쪽부터 배정합니다.',
       searchRawPrompt:'선수명, 국가, 대회명, 시즌, 종목을 검색하면 원자료 결과가 표시됩니다.'
     });
 
@@ -2294,11 +2292,27 @@
       showMoreSkaters:'Show more skaters', showMoreCountries:'Show more countries', showMoreRecords:'Show more records', showMoreLaps:'Show more lap times', showMoreRawRows:'Show more source rows', showMoreEventRanks:'Show more event rankings', showMoreTableRows:'Show more table rows',
       heatNoAssigned:'No skaters assigned.', heatNoNextDraw:'No next-round draw assigned.', heatNoEliminated:'No eliminated skaters.',
       heatInputNote:'Enter the skaters needed for the current heat results. Use ADV only for skaters advanced by referee decision.',
-      heatSeedOrderNote:'Seed order: finish-position groups first, then time within each group.',
-      heatAssignmentNote:'Heat assignment uses snake seeding. SP inside each heat is sorted again by previous-round time.',
+      heatSeedOrderNote:'Seed order: direct qualifiers by previous-round place then time, followed by ADV skaters and finally time qualifiers.',
+      heatAssignmentNote:'Heats use snake seeding. SP in each heat follows the same seed order from the inside lane outward.',
       searchRawPrompt:'Search by skater, country, competition, season, or event to show source rows.',
       heatToolTitle:'Heat Draw Tool', heatToolDesc:'Enter race results to calculate qualifiers and estimate the next-round heat draw.', heatToolNotice:'This is a fan-made helper. Because ADV qualifiers may occur, set the number of skaters per heat manually before building the result table. Qualifiers are seeded by finish-position groups first, then by time within each group; next-round heats are assigned by snake seeding. SP within each next-round heat is then re-sorted by the previous-round time. Actual official heat draws may differ, and ADV/ties should be checked manually.', heatDistance:'Event', heatRound:'Current round', roundPreliminary:'Preliminary', roundHeats:'Heats', roundQuarterfinals:'Quarterfinals', roundSemifinals:'Semifinals', heatCount:'Current heats', heatSkatersPerHeat:'Skaters per heat', heatAutoQualifiers:'Auto qualifiers per heat', heatTimeQualifiers:'Fastest additional qualifiers', heatNextCount:'Next-round heats', heatSeedMethod:'Seeding method', seedSnake:'Snake seeding', seedStraight:'Straight seeding', heatTimeSort:'Time sorting', timeFastest:'Fastest first', timeNone:'Do not use times', buildHeatTable:'Build result table', calculateHeatDraw:'Calculate qualifiers & draw', sampleHeatData:'Fill sample', clearHeatData:'Clear input', heatInputEmpty:'Build a result table first.', heatOutputEmpty:'Results will appear here.', heatNoQualifiers:'No qualifiers.', heatAutoQ:'Auto qualifier', heatTimeQ:'Time qualifier', heatAdv:'ADV', heatEliminated:'Eliminated', heatQualifiers:'Qualifiers', heatNextDraw:'Next-round heat draw', heatName:'Skater', heatCountry:'Country', heatPosition:'Place', heatTime:'Time', heatStatus:'Status', heatHeat:'Heat', heatReason:'Reason', heatRank:'Seed', heatSP:'SP', heatOfficialNote:'Estimated heat draw. Actual official heat draws may differ.',
       quizTitle:'Random Short Track Quiz', quizDesc:'Questions are generated automatically from the current medals data. You do not need to create questions manually; when new data is added, the quiz pool updates after refresh.', quizNotice:'Questions focus on individual events and exclude relays, 3000m, Olympic demonstration events, joint-medal cases, and incomplete podiums. If you find an error, report it from that question.', quizCount:'Questions', quizEra:'Era', quizType:'Question type', quizTypeMixed:'Mixed', quizTypeGold:'Gold medalist', quizTypePodium:'Podium order', quizTypeCountry:'Skater country', quizTypeMedal:'Medal color', startQuiz:'Start quiz', submitQuiz:'Grade quiz', resetQuiz:'Reset', quizEmpty:'Select options and start the quiz.', quizNoData:'No question candidates match these options.', quizQuestion:'Question', quizReport:'Report this question', quizCorrectAnswer:'Answer', quizYourAnswer:'Your answer', quizUnanswered:'Unanswered', quizScoreText:'Correct', quizAccuracy:'Accuracy', quizTitleGod:'ISU database itself', quizTitleLegend:'Short track encyclopedia', quizTitleWorld:'World Tour commentator', quizTitlePodium:'Podium tracker', quizTitleFan:'Rink regular', quizTitleRookie:'Needs replay training', quizGoldQuestion:'Who was the gold medalist?', quizPodiumQuestion:'Which podium order is correct?', quizCountryQuestion:'is from which country?', quizMedalQuestion:'What medal did this skater win?'
+    });
+
+    Object.assign(I18N.ko, {
+      heatToolNotice:'2026년 6월 12일 시행 ISU 규정 기준 팬용 도우미입니다. ADV 진출자가 생길 수 있으므로 조별 선수 수를 직접 정해 결과 입력표를 만듭니다. 진출자는 직전 라운드 순위 우선·동순위 기록순으로 시드화하고, 다음 라운드 조는 지그재그로 배정합니다. 각 조의 SP도 순위 우선·동순위 기록순으로 안쪽부터 배정합니다. 실제 공식 조편성과 다를 수 있으며 ADV·동순위는 수동 확인이 필요합니다.',
+      heatSeedMethod:'ISU 조 배정',
+      seedSnake:'지그재그 배정',
+      heatTimeSort:'동순위 기준',
+      heatOfficialNote:'ISU 규정 293조 기준 추정 결과입니다. ADV·동순위 등으로 실제 공식 조편성과 다를 수 있습니다.'
+    });
+
+    Object.assign(I18N.en, {
+      heatToolNotice:'Fan-made helper based on the ISU rules effective June 12, 2026. Qualifiers are seeded by previous-round place first and time within the same place; next-round heats use snake seeding. SP in each heat follows the same place-first, time-second order from the inside lane outward. Set heat sizes manually when ADV skaters are involved, and verify ties against the official draw.',
+      heatSeedMethod:'ISU heat assignment',
+      seedSnake:'Snake seeding',
+      heatTimeSort:'Same-place tiebreaker',
+      heatOfficialNote:'Estimated under ISU Rule 293. ADV cases and ties can still make the official draw differ.'
     });
 
     const FAN_CARD_DEFAULT_STATS = {
@@ -5482,12 +5496,30 @@
       return `<span class="qualifier-tag ${cls}">${qualifierReasonLabel(reason)}</span>`;
     }
 
+    function compareHeatSeedPriority(a, b){
+      const reasonOrder={Q:0,ADV:1,q:2};
+      const reasonDiff=(reasonOrder[a.reason]??9)-(reasonOrder[b.reason]??9);
+      if(reasonDiff) return reasonDiff;
+
+      // Rule 293: direct qualifiers and ADV skaters use place first, then time.
+      // Time qualifiers have already been selected by time and stay in that order.
+      if(a.reason==='q'){
+        return a.seconds-b.seconds
+          || a.position-b.position
+          || a.heat-b.heat
+          || a.index-b.index;
+      }
+      return a.position-b.position
+        || a.seconds-b.seconds
+        || a.heat-b.heat
+        || a.index-b.index;
+    }
+
     function calculateHeatDraw(){
       const rows=collectHeatRows();
       const autoN=Math.max(0, Number(document.getElementById('heatAutoQualifiers')?.value)||0);
       const timeN=Math.max(0, Number(document.getElementById('heatTimeQualifiers')?.value)||0);
       const nextHeatCount=Math.max(1, Number(document.getElementById('heatNextCount')?.value)||1);
-      const useTime=(document.getElementById('heatTimeSort')?.value||'asc')==='asc';
 
       const qualifiers=[];
       const used=new Set();
@@ -5504,56 +5536,44 @@
           .sort((a,b)=>a.position-b.position||a.seconds-b.seconds||a.index-b.index)
           .slice(0, autoN)
           .forEach(row=>{
-            qualifiers.push({...row, reason:'Q', seedGroup:row.position});
+            qualifiers.push({...row, reason:'Q'});
             used.add(row.index);
           });
       });
 
       // q는 직접 진출 포지션 밖의 선수 중 기록순으로 선발한다.
-      if(useTime && timeN>0){
+      if(timeN>0){
         rows
           .filter(row=>row.status==='OK' && !used.has(row.index))
           .sort((a,b)=>a.seconds-b.seconds||a.position-b.position||a.index-b.index)
           .slice(0,timeN)
           .forEach(row=>{
-            qualifiers.push({...row, reason:'q', seedGroup:100});
+            qualifiers.push({...row, reason:'q'});
             used.add(row.index);
           });
       }
 
-      // ADV는 직접 진출/q와 별도로 추가한다.
+      // ADV는 순위 진출자 뒤, 기록 진출자(q) 앞의 별도 시드 그룹이다.
       rows.filter(row=>row.status==='ADV').forEach(row=>{
-        qualifiers.push({...row, reason:'ADV', seedGroup:200});
+        qualifiers.push({...row, reason:'ADV'});
         used.add(row.index);
       });
 
-      const reasonOrder={Q:0,q:1,ADV:2};
-      const seedOrder=qualifiers.slice().sort((a,b)=>{
-        return (a.seedGroup??999)-(b.seedGroup??999)
-          || (reasonOrder[a.reason]??9)-(reasonOrder[b.reason]??9)
-          || a.seconds-b.seconds
-          || a.heat-b.heat
-          || a.position-b.position
-          || a.index-b.index;
-      }).map((row, i)=>({...row, seed:i+1}));
+      const seedOrder=qualifiers.slice()
+        .sort(compareHeatSeedPriority)
+        .map((row, i)=>({...row, seed:i+1}));
 
       const nextHeats=Array.from({length:nextHeatCount},()=>[]);
-      const method=document.getElementById('heatSeedMethod')?.value || 'snake';
       seedOrder.forEach((row, idx)=>{
-        let heatIndex;
-        if(method==='straight'){
-          heatIndex=idx % nextHeatCount;
-        }else{
-          const block=Math.floor(idx/nextHeatCount);
-          const pos=idx % nextHeatCount;
-          heatIndex=block % 2 === 0 ? pos : nextHeatCount-1-pos;
-        }
+        const block=Math.floor(idx/nextHeatCount);
+        const pos=idx % nextHeatCount;
+        const heatIndex=block % 2 === 0 ? pos : nextHeatCount-1-pos;
         nextHeats[heatIndex].push(row);
       });
 
       const nextHeatsWithSp=nextHeats.map(group=>group
         .slice()
-        .sort((a,b)=>a.seconds-b.seconds||a.seed-b.seed||a.index-b.index)
+        .sort((a,b)=>a.seed-b.seed||a.index-b.index)
         .map((row, idx)=>({...row, sp:idx+1}))
       );
 
