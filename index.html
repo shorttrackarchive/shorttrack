@@ -8137,18 +8137,19 @@
     if(!seasonSel || !eventSel) return;
 
     const oldSeason = seasonSel.value || 'all';
-    const preferredGender = genderSel?.value || 'Women';
+    const oldEvent = eventSel.value || '';
+    const preferredGender = ['Women','Men','Mixed'].includes(genderSel?.value) ? genderSel.value : 'Women';
 
     const seasons = [...new Set(rows.map(r => r.season).filter(Boolean))].sort().reverse();
     seasonSel.innerHTML = `<option value="all">${recordEscape(tr('allSeasons'))}</option>` + seasons.map(s => `<option value="${recordEscape(s)}">${recordEscape(s)}</option>`).join('');
     seasonSel.value = seasons.includes(oldSeason) ? oldSeason : 'all';
 
-    if(genderSel && !['Women','Men','Mixed'].includes(genderSel.value)) genderSel.value = 'Women';
+    if(genderSel) genderSel.value = preferredGender;
 
     const events = recordEventsForGender(preferredGender, rows);
     eventSel.innerHTML = events.map(e => `<option value="${recordEscape(e)}">${recordEscape(recordEventLabel(e))}</option>`).join('');
-    eventSel.value = events.includes('Women 500 m') && preferredGender === 'Women'
-      ? 'Women 500 m'
+    eventSel.value = events.includes(oldEvent)
+      ? oldEvent
       : defaultRecordEventForGender(preferredGender, rows);
 
     seasonSel.disabled = false;
