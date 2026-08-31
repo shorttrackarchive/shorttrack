@@ -11210,8 +11210,21 @@
           updateDirectoryQuery('competition');
         });
       });
-      ['athleteDirectorySearch','athleteDirectoryCountry','athleteDirectoryGender','athleteDirectorySeason'].forEach(id=>{
-        document.getElementById(id)?.addEventListener(id === 'athleteDirectorySearch' ? 'input' : 'change',()=>{
+      const athleteSearch = document.getElementById('athleteDirectorySearch');
+      athleteSearch?.addEventListener('input',()=>{
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+        renderAthleteDirectory();
+        window.scrollTo({left:scrollX, top:scrollY, behavior:'auto'});
+        window.requestAnimationFrame(()=>{
+          if(document.activeElement === athleteSearch){
+            window.scrollTo({left:scrollX, top:scrollY, behavior:'auto'});
+          }
+        });
+      });
+      athleteSearch?.addEventListener('change',()=>updateDirectoryQuery('athlete'));
+      ['athleteDirectoryCountry','athleteDirectoryGender','athleteDirectorySeason'].forEach(id=>{
+        document.getElementById(id)?.addEventListener('change',()=>{
           renderAthleteDirectory();
           updateDirectoryQuery('athlete');
         });
