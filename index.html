@@ -7,6 +7,9 @@
   <meta name="description" content="쇼트트랙 올림픽, 세계선수권, 월드컵·월드투어 포디움 기록과 선수 검색, 국가별 메달 순위, 종목별 기록, 랩타임 순위를 확인하는 아카이브입니다." />
   <link rel="canonical" href="https://shorttrackarchive.github.io/shorttrack/" />
   <link rel="icon" type="image/png" href="assets/short-track-archive-logo.png?v=20260811" />
+  <link rel="preconnect" href="https://script.google.com" crossorigin />
+  <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin />
+  <script src="live-results.js?v=20261025" defer></script>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css" />
   <meta name="theme-color" content="#DDEAE6" />
@@ -2421,8 +2424,7 @@
       if(typeof renderPlayerComparison === 'function') renderPlayerComparison();
       if(typeof updateAllSeasonModeControls === 'function') updateAllSeasonModeControls();
       if(typeof updateSkaterScoreStatus === 'function') updateSkaterScoreStatus('applied');
-      if(typeof window.preloadEventRecordFilters === 'function') window.preloadEventRecordFilters();
-      if(typeof window.preloadLapRankingFilters === 'function') window.preloadLapRankingFilters();
+      // Load large record datasets on demand so they do not compete with initialData.
       if(typeof window.renderEventRecords === 'function') window.renderEventRecords();
       if(typeof renderLapRankings === 'function') renderLapRankings();
       document.querySelectorAll('.tier-label').forEach(el=>{
@@ -2645,10 +2647,12 @@
       const loadingStatus=document.getElementById('loadingStatus');
       if(loadingStatus) loadingStatus.textContent=tr('loading');
       if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')){showNotConnected();return;}
-      const loaded = await loadData();
+      const loaded = await startLiveResults();
       if(!loaded) return;
-      window.shorttrackDataReady = true;
-      window.dispatchEvent(new CustomEvent('shorttrack:data-ready'));
+      if(!window.shorttrackDataReady){
+        window.shorttrackDataReady = true;
+        window.dispatchEvent(new CustomEvent('shorttrack:data-ready'));
+      }
       updateFanCard();
       registerVisit();
     }
@@ -2851,7 +2855,22 @@
       if('requestIdleCallback' in window) return window.requestIdleCallback(callback, {timeout});
       return window.setTimeout(callback, 0);
     }
+    const liveRequests = new Map();
+    function fetchLiveJson(url){
+      // Share concurrent consumers, but never reuse an old Sheets response.
+      if(liveRequests.has(url)) return liveRequests.get(url);
+      const request = (async()=>{
+        const target = new URL(url, location.href);
+        target.searchParams.set('_live', Date.now().toString());
+        const json = await fetchJson(target.href, {cache:'no-store', signal:AbortSignal.timeout(25000)});
+        if(!json || json.ok === false) throw new Error(json?.error || 'Sheets API error');
+        return json;
+      })().finally(()=>liveRequests.delete(url));
+      liveRequests.set(url, request);
+      return request;
+    }
     async function cachedFetchJson(url, storageKey, ttlMs = API_CACHE_TTL_MS){
+      if(String(url).startsWith(APPS_SCRIPT_URL)) return fetchLiveJson(url);
       const now = Date.now();
       try{
         const cached = JSON.parse(localStorage.getItem(storageKey) || 'null');
@@ -2877,34 +2896,27 @@
       return json;
     }
     async function fetchInitialData(){
+      const historyRequest = fetchAthleteCountryHistory();
+      let json;
       try{
-        const [json, countryHistory] = await Promise.all([
-          fetchStaticJson('data/initial.json'),
-          fetchAthleteCountryHistory()
+        json = await fetchLiveJson(buildApiUrl({action:'initialData'}));
+        if(!['medals','relay_members','best_times','skater_aliases'].every(key=>Array.isArray(json[key]))) throw new Error('Incomplete initialData');
+      }catch(error){
+        const [medalJson, relayJson, bestJson, aliasJson] = await Promise.all([
+          fetchLiveJson(buildApiUrl({type:'medals'})),
+          fetchLiveJson(buildApiUrl({type:'relay_members'})),
+          fetchLiveJson(buildApiUrl({type:'best_times'})),
+          fetchLiveJson(buildApiUrl({type:'skater_aliases'}))
         ]);
-        if(json && json.ok !== false && Array.isArray(json.medals)){
-          if(countryHistory.length) json.athlete_country_history = countryHistory;
-          return await refreshBestTimesIfNeeded(json);
-        }
-      }catch(_staticError){}
-      try{
-        const json = await cachedFetchJson(buildApiUrl({action:'initialData'}), 'shorttrack_initial_data_v3');
-        if(json && json.ok !== false && Array.isArray(json.medals)) return await refreshBestTimesIfNeeded(json);
-      }catch(_e){}
-      const [medalJson, relayJson, bestJson, aliasJson] = await Promise.all([
-        cachedFetchJson(buildApiUrl({type:'medals'}), 'shorttrack_medals_v3'),
-        cachedFetchJson(buildApiUrl({type:'relay_members'}), 'shorttrack_relay_members_v3'),
-        cachedFetchJson(buildApiUrl({type:'best_times'}), 'shorttrack_best_times_v4'),
-        cachedFetchJson(buildApiUrl({type:'skater_aliases'}), 'shorttrack_skater_aliases_v3')
-      ]);
-      return {
-        ok: true,
-        medals: medalJson.medals || [],
-        relay_members: relayJson.relay_members || [],
-        best_times: bestJson.best_times || [],
-        skater_aliases: aliasJson.skater_aliases || [],
-        athlete_country_history: await fetchAthleteCountryHistory()
-      };
+        if(!Array.isArray(medalJson.medals) || !Array.isArray(relayJson.relay_members) ||
+           !Array.isArray(bestJson.best_times) || !Array.isArray(aliasJson.skater_aliases)) throw error;
+        json = {ok:true, medals:medalJson.medals, relay_members:relayJson.relay_members,
+          best_times:bestJson.best_times, skater_aliases:aliasJson.skater_aliases};
+      }
+      // Country history is curated repository metadata, not a results snapshot.
+      const history = await historyRequest;
+      if(!json.athlete_country_history && history.length) json.athlete_country_history = history;
+      return json;
     }
     async function fetchAthleteCountryHistory(){
       try{
@@ -2929,9 +2941,9 @@
       });
     }
 
-    async function loadData(){
+    async function loadData(suppliedJson){
       try{
-        const json=await fetchInitialData();
+        const json=suppliedJson || await fetchInitialData();
         if(!json.ok) throw new Error(json.error || '데이터를 불러오지 못했습니다.');
         athleteCountryHistory=normalizeAthleteCountryHistory(json.athlete_country_history||json.athletes||[]);
         skaterAliases=(json.skater_aliases||[]).map(normalizeAliasRow);
@@ -2939,8 +2951,8 @@
         medals=(json.medals||[]).map(normalizeMedalRow);
         relayMembers=(json.relay_members||[]).map(normalizeRelayRow);
         bestTimes=(json.best_times||json.lap_times||[]).map(normalizeBestTimeRow);
-        eventRecordsCache=extractEventRecordsFromJson(json).map(normalizeEventRecordCacheRow).filter(row=>row.skater_name && row.personal_best_event);
-        if(!eventRecordsCache.length){ eventRecordsCache=[]; }
+        const initialEventRecords=extractEventRecordsFromJson(json).map(normalizeEventRecordCacheRow).filter(row=>row.skater_name && row.personal_best_event);
+        if(initialEventRecords.length) eventRecordsCache=initialEventRecords;
         window.eventRecordsCache = eventRecordsCache;
         const loadingStatus=document.getElementById('loadingStatus');
         if(loadingStatus){
@@ -4752,7 +4764,7 @@
       document.getElementById('playerBronze').textContent=rows.filter(r=>r.medal==='Bronze').length;
       resetPlayerTimelineDetails(name);
       renderPlayerOverview(name);renderPlayerLapTable(name);
-      const panel=document.getElementById('playerPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
+      const panel=document.getElementById('playerPanel');panel.classList.add('active');if(!window.shorttrackRefreshingResults) panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
     function closePlayerPanel(){document.getElementById('playerPanel').classList.remove('active');}
 
@@ -5202,6 +5214,7 @@
     }
 
     function openCompetitionPanel(name){
+      document.getElementById('competitionPanel').dataset.liveName=name;
       const rows=medals.filter(row=>row.competition_name===name);
       const laps=bestTimes.filter(row=>row.competition_name===name);
       if(!rows.length&&!laps.length)return;
@@ -5213,7 +5226,7 @@
       document.getElementById('competitionSilver').textContent=rows.filter(r=>r.medal==='Silver').length;
       document.getElementById('competitionBronze').textContent=rows.filter(r=>r.medal==='Bronze').length;
       renderCompetitionTable(name);renderCompetitionLapSummary(name);
-      const panel=document.getElementById('competitionPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
+      const panel=document.getElementById('competitionPanel');panel.classList.add('active');if(!window.shorttrackRefreshingResults) panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
     function closeCompetitionPanel(){document.getElementById('competitionPanel').classList.remove('active');}
 
@@ -6491,7 +6504,7 @@
       setStandaloneBestTimeBlockVisible(true);
       resetPlayerTimelineDetails(name);
       renderPlayerOverview(name);renderPlayerLapTable(name);
-      panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
+      panel.classList.add('active');if(!window.shorttrackRefreshingResults) panel.scrollIntoView({behavior:'smooth',block:'start'});
       if(!eventRecordsCache.length && typeof window.preloadEventRecordFilters === 'function'){
         window.preloadEventRecordFilters();
       }
@@ -6608,6 +6621,7 @@
     }
 
     function openCompetitionPanel(name){
+      document.getElementById('competitionPanel').dataset.liveName=name;
       const rows=medals.filter(row=>row.competition_name===name);
       const laps=bestTimes.filter(row=>row.competition_name===name);
       if(!rows.length&&!laps.length)return;
@@ -6621,7 +6635,7 @@
       document.getElementById('competitionSilver').textContent=rows.filter(r=>r.medal==='Silver').length;
       document.getElementById('competitionBronze').textContent=rows.filter(r=>r.medal==='Bronze').length;
       renderCompetitionTable(name);renderCompetitionLapSummary(name);
-      const panel=document.getElementById('competitionPanel');panel.classList.add('active');panel.scrollIntoView({behavior:'smooth',block:'start'});
+      const panel=document.getElementById('competitionPanel');panel.classList.add('active');if(!window.shorttrackRefreshingResults) panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
 
     function renderCompetitionTable(name){
@@ -6997,7 +7011,7 @@
         <div class="st-page-two-col"><div class="st-page-section"><h3>${stLang('주요 선수','Key athletes')}</h3>${stTopPlayersHtml(indivRows)}</div><div class="st-page-section"><h3>${stLang('관련 대회','Related competitions')}</h3>${stTopCompetitionsHtml(rows)}</div></div>
         <div class="st-page-section"><h3>${stLang('최근 관련 기록','Recent related records')}</h3><div class="table-scroll"><table><thead><tr><th>${tr('season')}</th><th>${stLang('대회','Competition')}</th><th>${tr('gender')}</th><th>${stLang('종목','Event')}</th><th>${stLang('메달','Medal')}</th><th>${stLang('선수/팀','Athlete/team')}</th><th>${stLang('기록','Time')}</th></tr></thead><tbody>${rows.slice().sort((a,b)=>seasonSortValue(b.season,b.year)-seasonSortValue(a.season,a.year)||eventOrder(a.event)-eventOrder(b.event)).slice(0,80).map(row=>`<tr><td>${escapeHtml(normalizeSeasonLabel(row.season,row.year)||'-')}</td><td>${competitionTypeBadgeHtml(row.competition_type)}${escapeHtml(row.competition_name||'-')}</td><td>${escapeHtml(genderKorean(row.gender)||'-')}</td><td>${escapeHtml(row.event||'-')}</td><td>${escapeHtml(medalKorean(row.medal))}</td><td>${isRelayEvent(row.event)?escapeHtml(row.skater_name||'-'):`<span class="link" onclick="openPlayerPanel('${escapeJs(row.skater_name)}')">${escapeHtml(row.skater_name||'-')}</span>`}</td><td>${escapeHtml(row.time||'-')}</td></tr>`).join('')}</tbody></table></div></div>`;
       }
-      panel.classList.add('active'); panel.scrollIntoView({behavior:'smooth',block:'start'});
+      panel.classList.add('active'); if(!window.shorttrackRefreshingResults) panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
     function closeCountryPanel(){document.getElementById('countryPanel')?.classList.remove('active');}
     window.openCountryPage=openCountryPage; window.closeCountryPanel=closeCountryPanel;
@@ -7018,7 +7032,7 @@
         <div class="st-page-two-col"><div class="st-page-section"><h3>${stLang('국가별 메달','Medals by country')}</h3>${stCountryRankingWithinRows(rows)}</div><div class="st-page-section"><h3>${stLang('주요 선수','Key athletes')}</h3>${stTopPlayersHtml(indivRows)}</div></div>
         <div class="st-page-section"><h3>${stLang('대회 목록','Competition list')}</h3>${stTopCompetitionsHtml(rows,50)}</div>`;
       }
-      panel.classList.add('active'); panel.scrollIntoView({behavior:'smooth',block:'start'});
+      panel.classList.add('active'); if(!window.shorttrackRefreshingResults) panel.scrollIntoView({behavior:'smooth',block:'start'});
     }
     function closeSeasonPanel(){document.getElementById('seasonPanel')?.classList.remove('active');}
     window.openSeasonPage=openSeasonPage; window.closeSeasonPanel=closeSeasonPanel;
@@ -7252,8 +7266,8 @@
     };
 
     const __stOriginalLoadDataForApprovedPages = loadData;
-    loadData = async function(){
-      const result = await __stOriginalLoadDataForApprovedPages();
+    loadData = async function(suppliedJson){
+      const result = await __stOriginalLoadDataForApprovedPages(suppliedJson);
       refreshTodaySkaterCard();
       return result;
     };
@@ -7270,6 +7284,7 @@
     }
     if(typeof openCountryPage==='function'){
       const __stOpenCountryPageWithScroll=openCountryPage;
+      (window.liveDetailRenderers ||= {}).CountryPage=openCountryPage;
       openCountryPage=function(country){
         __stOpenCountryPageWithScroll(country);
         stScrollToElementAfterRender('countryPanel');
@@ -7278,6 +7293,7 @@
     }
     if(typeof openSeasonPage==='function'){
       const __stOpenSeasonPageWithScroll=openSeasonPage;
+      (window.liveDetailRenderers ||= {}).SeasonPage=openSeasonPage;
       openSeasonPage=function(season){
         __stOpenSeasonPageWithScroll(season);
         stScrollToElementAfterRender('seasonPanel');
@@ -7286,6 +7302,7 @@
     }
     if(typeof openPlayerPanel==='function'){
       const __stOpenPlayerPanelWithScroll=openPlayerPanel;
+      (window.liveDetailRenderers ||= {}).PlayerPanel=openPlayerPanel;
       openPlayerPanel=function(name){
         __stOpenPlayerPanelWithScroll(name);
         stScrollToElementAfterRender('playerPanel');
@@ -7294,6 +7311,7 @@
     }
     if(typeof openCompetitionPanel==='function'){
       const __stOpenCompetitionPanelWithScroll=openCompetitionPanel;
+      (window.liveDetailRenderers ||= {}).CompetitionPanel=openCompetitionPanel;
       openCompetitionPanel=function(name){
         __stOpenCompetitionPanelWithScroll(name);
         stScrollToElementAfterRender('competitionPanel');
@@ -7460,7 +7478,7 @@
         return;
       }
       try{
-        const staticJson = await cachedFetchJson('data/lap-rankings.json', 'shorttrack_static_lap_rankings_v2');
+        const staticJson = await fetchLiveJson(buildApiUrl({action:'lapRankings', limit:50000, includeRelay:1, includeRelays:1, includeAllEvents:1}));
         applyLoadedLapRankingsJson(staticJson, false);
       }catch(error){
         unlockLapFilterControls();
@@ -7471,7 +7489,7 @@
       const wrap=document.getElementById('lapRankingWrap');
       if(!wrap) return;
       if(lapRankingLoaded && !force){ renderLapRankings(); return; }
-      if(lapRankingRows.length && !lapRankingLoaded){
+      if(lapRankingRows.length && !lapRankingLoaded && !force){
         lapRankingLoaded=true;
         populateLapFilters(lapRankingRows);
         document.getElementById('lapKpiTotal').textContent=lapRankingRows.length.toLocaleString('ko-KR');
@@ -7481,11 +7499,6 @@
       }
       const api=getLapApiUrl();
       unlockLapFilterControls();
-      try{
-        const staticJson = await cachedFetchJson('data/lap-rankings.json', 'shorttrack_static_lap_rankings_v2');
-        applyLoadedLapRankingsJson(staticJson);
-        return;
-      }catch(_staticError){}
       if(!api || api.includes('여기에')){
         wrap.innerHTML=`<div class="empty"><strong>${escapeHtml(tr('lapDataNotReady'))}</strong><br>${escapeHtml(tr('tryAgainLater'))}</div>`;
         return;
@@ -7494,12 +7507,7 @@
       ['lapSeasonFilter','lapEventFilter'].forEach(id=>{const el=document.getElementById(id); if(el) el.disabled=false;});
       try{
         const sep=api.includes('?')?'&':'?';
-        let json;
-        try{
-          json = await cachedFetchJson('data/lap-rankings.json', 'shorttrack_static_lap_rankings_v2');
-        }catch(_staticError){
-          json = await cachedFetchJson(`${api}${sep}action=lapRankings&limit=50000&includeRelay=1&includeRelays=1&includeAllEvents=1`, 'shorttrack_lap_rankings_v3');
-        }
+        const json = await fetchLiveJson(`${api}${sep}action=lapRankings&limit=50000&includeRelay=1&includeRelays=1&includeAllEvents=1`);
         if(!json || json.ok===false) throw new Error(json && json.error ? json.error : 'lapRankings 응답 오류');
         let sourceRows=extractLapRowsFromJson(json);
         lapRankingRows=dedupeLapRows(sourceRows.map(normalizeLapRow).filter(r=>r.lap_time>0 && r.event));
@@ -8192,6 +8200,17 @@
     document.getElementById('recordKpiRelay').textContent = eventRecordRows.filter(r => recordIsRelay(r.event)).length.toLocaleString('ko-KR');
     renderEventRecords();
   }
+  window.refreshLiveEventRecords = async function(){
+    if(!eventRecordsLoaded && !eventRecordRows.length) return;
+    const json = await fetchLiveJson(buildApiUrl({action:'eventRecords', limit:50000}));
+    const rows = prepareEventRecordRows(extractRecordRowsFromJson(json));
+    eventRecordRows = rows;
+    if(eventRecordsLoaded) finishEventRecordLoadFromRows();
+    else{
+      populateEventRecordFilters(rows);
+      syncPersonalBestRecordCache(rows);
+    }
+  };
   window.preloadEventRecordFilters = function(){
     if(eventRecordRows.length){
       populateEventRecordFilters(eventRecordRows);
@@ -8202,7 +8221,7 @@
     if(eventRecordPreloadPromise) return eventRecordPreloadPromise;
     eventRecordPreloadPromise=(async()=>{
       try{
-        const json = await cachedFetchJson('data/event-records.json', 'shorttrack_static_event_records_v2');
+        const json = await fetchLiveJson(buildApiUrl({action:'eventRecords', limit:50000}));
         eventRecordRows = prepareEventRecordRows(extractRecordRowsFromJson(json));
         try{ syncPersonalBestRecordCache(eventRecordRows); }catch(_syncError){}
         populateEventRecordFilters(eventRecordRows);
@@ -8223,7 +8242,7 @@
     const wrap = document.getElementById('recordRankingWrap');
     if(!wrap) return;
     if(eventRecordsLoaded && !force){ renderEventRecords(); return; }
-    if(eventRecordRows.length && !eventRecordsLoaded){
+    if(eventRecordRows.length && !eventRecordsLoaded && !force){
       finishEventRecordLoadFromRows();
       return;
     }
@@ -8241,15 +8260,8 @@
       let sourceRows = [];
       const sep = api.includes('?') ? '&' : '?';
 
-      try{
-        let json;
-        try{
-          json = await cachedFetchJson('data/event-records.json', 'shorttrack_static_event_records_v1');
-        }catch(_staticError){
-          json = await cachedFetchJson(`${api}${sep}action=eventRecords&limit=50000`, 'shorttrack_event_records_v3');
-        }
-        sourceRows = sourceRows.concat(extractRecordRowsFromJson(json));
-      }catch(_e){}
+      const json = await fetchLiveJson(`${api}${sep}action=eventRecords&limit=50000`);
+      sourceRows = extractRecordRowsFromJson(json);
 
       eventRecordRows = dedupeEventRecords(sourceRows.map(normalizeEventRecordRow).filter(row => {
         if(!row.skater_name || invalidRecordName(row.skater_name)) return false;
@@ -11381,6 +11393,10 @@
       window.setLanguage = wrapped;
       try{ setLanguage = wrapped; }catch(_e){}
     }
+    window.addEventListener('shorttrack:data-updated',()=>{
+      archiveDirectoryCache = null;
+      if(archiveDirectoryReady){populateArchiveDirectoryFilters(); renderArchiveDirectories();}
+    });
     window.addEventListener('scroll',()=>window.requestAnimationFrame(updateExplorerActiveNav),{passive:true});
     window.addEventListener('popstate',()=>{if(archiveDirectoryReady){applyArchiveDirectoryQuery(); renderArchiveDirectories();}});
     function shouldInitArchiveDirectoriesNow(){
