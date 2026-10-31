@@ -55,3 +55,8 @@ html body[class] header aside.visitor-widget strong{font-size:12px!important;col
 #visitorCountStatus{font-size:10px;color:var(--text-secondary);white-space:nowrap}
 #visitorCountStatus:empty{display:none}
 html body.st-view-mobile header aside.visitor-widget{justify-content:flex-start!important;gap:4px 12px!important}
+
+/* Match the submenu's sticky offset to the actual responsive header height. */
+html body.st-view-desktop nav.side-nav{display:flex!important;position:sticky!important;top:var(--archive-header-height,120px)!important;z-index:90!important;flex-wrap:nowrap!important;flex-shrink:0!important}
+html{scroll-padding-top:calc(var(--archive-sticky-height,120px) + 12px)!important}
+html body section,html body .anchor-section{scroll-margin-top:0!important}

@@ -170,3 +170,21 @@ document.addEventListener('click',event=>{
   stSetSearchHomeVisible(true);applyFilters();
   document.querySelectorAll('.mobile-filter-open').forEach(section=>window.closeMobileFilterSection?.(section));
 },true);
+
+// Header height changes with view mode, language, visitor status and viewport width.
+document.addEventListener('DOMContentLoaded',()=>{
+  const header=document.querySelector('header'),submenu=document.querySelector('nav.side-nav');
+  if(!header||!submenu)return;
+  let frame=0;
+  const measure=()=>{
+    frame=0;
+    const headerHeight=Math.ceil(header.getBoundingClientRect().height);
+    const submenuHeight=submenu.getClientRects().length?Math.ceil(submenu.getBoundingClientRect().height):0;
+    document.documentElement.style.setProperty('--archive-header-height',headerHeight+'px');
+    document.documentElement.style.setProperty('--archive-sticky-height',(headerHeight+submenuHeight)+'px');
+  };
+  const schedule=()=>{if(!frame)frame=requestAnimationFrame(measure);};
+  if(window.ResizeObserver){const observer=new ResizeObserver(schedule);observer.observe(header);observer.observe(submenu);}
+  window.addEventListener('resize',schedule,{passive:true});
+  measure();
+});
