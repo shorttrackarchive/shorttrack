@@ -6498,7 +6498,7 @@
       renderPlayerAchievementBadges(name);
       document.getElementById('playerInfo').textContent=currentLang === 'en'
         ? [currentCountry||sample.country||'', genderKorean(sample.gender)||'-', `individual medals ${individual.length}`, `relay ${relay.length}`, `3000m S.F. ${superFinal.length}`, `recorded seasons ${activeSeasonsForPlayer(rows,lapRows.concat(pbRows))}`].filter(Boolean).join(' \u00b7 ')
-        : `${currentCountry||sample.country||''} \u00b7 ${genderKorean(sample.gender)||'-'} \u00b7 \uAC1C\uC778\uC804 \uBA54\uB2EC ${individual.length}\uAC1C \u00b7 \uACC4\uC8FC ${relay.length}\uAC1C \u00b7 3000m S.F. ${superFinal.length}\uAC1C \u00b7 \uD65C\uB3D9 \uC2DC\uC98C ${activeSeasonsForPlayer(rows,lapRows.concat(pbRows))}`;
+        : `${currentCountry||sample.country||''} \u00b7 ${genderKorean(sample.gender)||'-'} \u00b7 \uAC1C\uC778\uC804 \uBA54\uB2EC ${individual.length}\uAC1C \u00b7 \uACC4\uC8FC ${relay.length}\uAC1C \u00b7 3000m S.F. ${superFinal.length}\uAC1C \u00b7 수록 기록 시즌 ${activeSeasonsForPlayer(rows,lapRows.concat(pbRows))}`;
       document.getElementById('playerTotal').textContent=individual.length;
       document.getElementById('playerGold').textContent=individual.filter(r=>r.medal==='Gold').length;
       document.getElementById('playerSilver').textContent=individual.filter(r=>r.medal==='Silver').length;
@@ -6589,7 +6589,7 @@
           </div>
           <div>
             <div class="approved-overview-heading">${stLang('수록 경기 중 최고기록','Best recorded times')}</div>
-            <div class="table-scroll"><table><thead><tr><th>${tr('eventRankTitle')}</th><th>${stLang('수록 최고기록','Best recorded time')}</th><th>${stLang('대회/라운드','Competition/round')}</th><th>${stLang('구분','Type')}</th><th>${stLang('시즌/연도','Season/year')}</th><th>${stLang('출처','Source')}</th></tr></thead><tbody>${bestTimeRows}</tbody></table></div>
+            <div class="table-scroll"><table><thead><tr><th>${tr('event')}</th><th>${stLang('수록 최고기록','Best recorded time')}</th><th>${stLang('대회/라운드','Competition/round')}</th><th>${stLang('구분','Type')}</th><th>${stLang('시즌/연도','Season/year')}</th><th>${stLang('출처','Source')}</th></tr></thead><tbody>${bestTimeRows}</tbody></table></div>
           </div>
         </div>`;
     }
