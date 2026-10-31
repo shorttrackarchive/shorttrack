@@ -98,12 +98,12 @@ function approvedSetupComparisonSearch(){
     field.append(label,input,list);select.before(field);select.hidden=true;
     let active=-1,choices=[];
     const close=()=>{list.hidden=true;input.setAttribute('aria-expanded','false');input.removeAttribute('aria-activedescendant');active=-1;};
-    const choose=option=>{select.value=option.value;input.value=(koreanAliasForSkater(option.value)&&currentLang!=='en'?koreanAliasForSkater(option.value)+' · ':'')+option.value;close();select.dispatchEvent(new Event('change',{bubbles:true}));};
+    const choose=option=>{select.value=option.value;input.value=option.value;close();select.dispatchEvent(new Event('change',{bubbles:true}));};
     const open=()=>{
       choices=approvedComparisonChoices(select,input.value);list.replaceChildren();active=-1;
       choices.forEach((option,index)=>{
         const button=document.createElement('button');button.type='button';button.id=id+'Option'+index;button.setAttribute('role','option');button.setAttribute('aria-selected','false');
-        const local=koreanAliasForSkater(option.value);button.textContent=(local&&currentLang!=='en'?local+' · ':'')+option.value;
+        button.textContent=option.value;
         button.addEventListener('mousedown',e=>e.preventDefault());button.addEventListener('click',()=>choose(option));list.append(button);
       });
       if(!choices.length){const empty=document.createElement('p');empty.textContent=tr('noSearchResults');list.append(empty);}
@@ -127,9 +127,9 @@ function approvedSetupComparisonSearch(){
 function approvedSyncComparisonSearch(){
   ['comparePlayerA','comparePlayerB'].forEach(id=>{
     const input=document.getElementById(id+'Search'),select=document.getElementById(id);if(!input)return;
-    input.placeholder=stLang('한국어·영문 이름 검색','Search Korean or English names');
+    input.placeholder=stLang('선수 이름 검색','Search skater names');
     document.querySelector(`[data-compare-label="${id}"]`).textContent=tr(id==='comparePlayerA'?'selectPlayerA':'selectPlayerB');
-    if(select.value)input.value=(currentLang!=='en'&&koreanAliasForSkater(select.value)?koreanAliasForSkater(select.value)+' · ':'')+select.value;
+    if(select.value)input.value=select.value;
   });
 }
 const approvedOriginalCompareSetup=setupComparePlayerSelects;
@@ -145,7 +145,7 @@ function approvedRenderHome(){
     section.querySelector('.approved-share-current').addEventListener('click',()=>approvedShareLink());
   }
   section.querySelector('label').textContent=stLang('선수·국가·대회 통합 검색','Search skaters, countries and competitions');
-  section.querySelector('input').placeholder=stLang('최민정, KOR, 2026-27…','Choi Min-jeong, KOR, 2026-27…');
+  section.querySelector('input').placeholder=stLang('선수명, 국가 코드, 시즌…','Skater name, country code, season…');
   section.querySelector('.approved-share-current').textContent=stLang('현재 조건으로 링크 복사','Copy link with current settings');
   section.querySelector('#approvedRecentTitle').textContent=stLang('최근 시즌 대회 바로 보기','Explore recent-season competitions');
   const map=new Map();medals.forEach(row=>{const key=[row.competition_name,row.season].join('|');if(!map.has(key))map.set(key,row);});
