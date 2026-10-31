@@ -9,6 +9,7 @@ function approvedReadInputWeights(selector){
 }
 function approvedShareState(){
   const ui={};APPROVED_SHARE_IDS.forEach(id=>{const el=document.getElementById(id);if(el)ui[id]=el.type==='checkbox'?el.checked:el.value;});
+  ui.searchInput=archiveCommittedSearch;ui.athleteDirectorySearch=window.archiveAthleteSearchQuery?.()||'';
   return {v:1,lang:currentLang,ui,model:{currentMedalFilter,countryRankingGroup,eventRankingEvent,eventRankingGender,compareGender,skaterRankingMode,skaterRankingGender,
     skaterSortKey,skaterSortDir,eventSortKey,eventSortDir,skaterCustomScoreEnabled,skaterRankingOptions:{...skaterRankingOptions},eventRankingOptions:{...eventRankingOptions},compareOptions:{...compareOptions},seasonFilterModes:{...seasonFilterModes},currentLapContext},
     weights:{ranking:{...getAppliedSkaterScoreWeights()},comparison:approvedReadInputWeights('.compare-score-input'),event:approvedReadInputWeights('.event-score-input')}};
@@ -69,6 +70,7 @@ async function approvedRestoreShareState(){
     await window.preloadEventRecordFilters?.();
     if(window.archiveCurrentSnapshot)applyLoadedLapRankingsJson({ok:true,rows:window.archiveCurrentSnapshot.lap_rankings},false);
     Object.entries(state.ui).filter(([id])=>!['comparePlayerA','comparePlayerB'].includes(id)).forEach(([id,value])=>approvedApplyInput(id,value));
+    archiveCommittedSearch=String(searchInput.value||'').trim();window.archiveCommitAthleteSearch?.();
     skaterSeason=skaterSeasonFilter.value;compareSeason=compareSeasonFilter.value;countrySeason=countrySeasonFilter.value;eventSeason=eventSeasonFilter.value;
     skaterEraStart=skaterEraStartSelect.value;skaterEraEnd=skaterEraEndSelect.value;compareEraStart=compareEraStartSelect.value;compareEraEnd=compareEraEndSelect.value;
     countryEraStart=countryEraStartSelect.value;countryEraEnd=countryEraEndSelect.value;eventEraStart=eventEraStartSelect.value;eventEraEnd=eventEraEndSelect.value;

@@ -112,7 +112,7 @@ function archiveRefreshRankingNote(){
   let note=document.getElementById('rankingScopeNote');
   if(!note){note=document.createElement('p');note.id='rankingScopeNote';note.className='archive-scope-note';wrap.before(note);}
   const scope=[skaterRankingMode==='individual'?tr('individual'):tr('relay'),skaterSeason||tr('allSeasons'),getSkaterRankingOptionSummary()];
-  if(searchInput.value) scope.push(stLang('검색: ','Search: ')+searchInput.value);
+  if(archiveCommittedSearch) scope.push(stLang('검색: ','Search: ')+archiveCommittedSearch);
   const generated=document.getElementById('loadingStatus')?.dataset.generatedAt;
   const version=generated ? stLang('메달 자료 조회 시각: ','Medal data fetched: ')+new Date(generated).toLocaleString(currentLang==='en'?'en-US':'ko-KR') : '';
   note.textContent=stLang('공식 ISU 순위가 아닌 아카이브 비교입니다. 적용 조건: ','Archive comparison, not official ISU rankings. Filters: ')+scope.join(' · ')+(version?' · '+version:'');

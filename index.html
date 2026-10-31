@@ -10,10 +10,10 @@
   <link rel="preconnect" href="https://script.google.com" crossorigin />
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin />
   <script src="live-results.js?v=20261101" defer></script>
-  <script src="archive-usability.js?v=20261101" defer></script>
-  <script src="approved-features.js?v=20261101c" defer></script>
+  <script src="archive-usability.js?v=20261101d" defer></script>
+  <script src="approved-features.js?v=20261101d" defer></script>
   <script src="approved-evidence.js?v=20261101" defer></script>
-  <script src="approved-sharing.js?v=20261101" defer></script>
+  <script src="approved-sharing.js?v=20261101d" defer></script>
   <link rel="stylesheet" href="approved-features.css?v=20261101b" />
   <link rel="stylesheet" href="archive-usability.css?v=20261101" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -2534,6 +2534,7 @@
     let scoreWeights = {...SKATER_SCORE_DEFAULTS};
     let lastAppliedSkaterScoreWeights = {...SKATER_SCORE_DEFAULTS};
 
+    let archiveCommittedSearch = '';
     const searchInput = document.getElementById('searchInput');
     const skaterSeasonFilter = document.getElementById('skaterSeasonFilter');
     const compareSeasonFilter = document.getElementById('compareSeasonFilter');
@@ -2610,11 +2611,10 @@
         mobileSearchInput.addEventListener('input', ()=>{
           if(searchInput && searchInput.value !== mobileSearchInput.value){
             searchInput.value = mobileSearchInput.value;
-            scheduleApplyFilters();
           }
         });
         mobileSearchInput.addEventListener('keydown', event=>{
-          if(event.key === 'Enter'){
+          if(event.key === 'Enter' && !event.isComposing){
             event.preventDefault();
             commitSearchAndScrollToResults();
           }
@@ -2653,9 +2653,8 @@
 
     function bindEvents(){
       enhanceSeasonControls();
-      searchInput.addEventListener('input', scheduleApplyFilters);
       searchInput.addEventListener('keydown', event=>{
-        if(event.key === 'Enter'){
+        if(event.key === 'Enter' && !event.isComposing){
           event.preventDefault();
           commitSearchAndScrollToResults();
         }
@@ -2909,10 +2908,13 @@
     }
     let __filterTimer = 0;
     function scheduleApplyFilters(){
+      archiveCommittedSearch=String(searchInput?.value||'').trim();
       window.clearTimeout(__filterTimer);
       __filterTimer = window.setTimeout(() => applyFilters(), 120);
     }
     function commitSearchAndScrollToResults(){
+      archiveCommittedSearch=String(searchInput?.value||'').trim();
+      document.querySelectorAll('main > .panel.active').forEach(panel=>panel.classList.remove('active'));
       window.clearTimeout(__filterTimer);
       applyFilters();
       const query=String(searchInput?.value || '').trim();
@@ -3367,7 +3369,7 @@
 
     function applyFilters(){
       if(!window.shorttrackRefreshingResults) resetRankingVisibleCounts();
-      const q=searchInput.value.trim().toLowerCase();
+      const q=archiveCommittedSearch.toLowerCase();
       filteredMedals=medals.filter(row=>rowMatchesSearchAndMedal(row,q));
       renderSummary(filteredMedals);
       if(q) renderMedalTable(filteredMedals);
@@ -3442,7 +3444,7 @@
 
 
     function getFilteredSkaterMedals(){
-      const q=searchInput.value.trim().toLowerCase();
+      const q=archiveCommittedSearch.toLowerCase();
       let data=skaterMedals.filter(row=>rowMatchesSearchAndMedal(row,q)).filter(row=>!skaterSeason||row.season===skaterSeason).filter(shouldIncludeSkaterRankingRow);
       if(skaterRankingMode==='individual') data=data.filter(row=>row.medal_type==='Individual' || (skaterRankingOptions.includeIndividual3000m && row.medal_type==='SuperFinal'));
       return data;
@@ -3523,7 +3525,7 @@
     }
 
     function getFilteredEventRankingMedals(){
-      const q=searchInput.value.trim().toLowerCase();
+      const q=archiveCommittedSearch.toLowerCase();
       const source = isEventRankingRelay() ? medals : skaterMedals;
       return source
         .filter(row=>rowMatchesEventRankingBaseFilters(row,q))
@@ -4240,7 +4242,7 @@
     }
 
     function getFilteredCountryMedals(){
-      const q=searchInput.value.trim().toLowerCase();
+      const q=archiveCommittedSearch.toLowerCase();
       return medals.filter(row=>rowMatchesSearchAndMedal(row,q)).filter(row=>!countrySeason||row.season===countrySeason).filter(row=>rowInEra(row, countryEraStart, countryEraEnd));
     }
 
@@ -6058,7 +6060,9 @@
     }
 
     function scrollToSection(id){
+      if(id==='homeFeatureSection')id=getEffectiveViewMode()==='mobile'?'mobileHomeSection':'archiveQuickStart';
       const el=document.getElementById(id);
+      if(el && !el.classList.contains('panel'))document.querySelectorAll('main > .panel.active').forEach(panel=>panel.classList.remove('active'));
       if(!el) return;
       el.scrollIntoView({behavior:'smooth',block:'start'});
     }
@@ -6283,7 +6287,7 @@
 
     function renderSearchResultView(){
       const view = stEnsureSearchView();
-      const query = stText(searchInput?.value);
+      const query = stText(archiveCommittedSearch);
       if(!query){
         stSetSearchHomeVisible(true);
         view.innerHTML = '';
@@ -6349,6 +6353,8 @@
     }
 
     function stClearSearchView(){
+      archiveCommittedSearch='';
+      const homeInput=document.getElementById('archiveHomeSearch');if(homeInput)homeInput.value='';
       if(searchInput) searchInput.value = '';
       const mobileInput=document.getElementById('mobileSearchInput');
       if(mobileInput) mobileInput.value = '';
@@ -6357,6 +6363,8 @@
     }
 
     function stSetQuery(value){
+      archiveCommittedSearch=String(value||'').trim();
+      const homeInput=document.getElementById('archiveHomeSearch');if(homeInput)homeInput.value=value;
       if(searchInput) searchInput.value = value;
       const mobileInput=document.getElementById('mobileSearchInput');
       if(mobileInput) mobileInput.value = value;
@@ -6780,7 +6788,7 @@
         }
 
     function rowMatchesSearchAndMedal(row,q){
-      const raw=searchInput?.value || q || '';
+      const raw=archiveCommittedSearch || q || '';
       if(raw && !stRowMatchesQuery(row, raw)) return false;
       if(currentMedalFilter && row.medal!==currentMedalFilter) return false;
       const individualOnly=document.getElementById('searchIndividualOnly')?.checked;
@@ -6796,7 +6804,7 @@
       return true;
     }
     function rowMatchesEventRankingBaseFilters(row,q){
-      const raw=searchInput?.value || q || '';
+      const raw=archiveCommittedSearch || q || '';
       return (!raw||stRowMatchesQuery(row,raw)) && (!eventSeason||row.season===eventSeason) && rowInEra(row,eventEraStart,eventEraEnd) && (!currentMedalFilter||row.medal===currentMedalFilter);
     }
 
@@ -6868,7 +6876,7 @@
 
     function renderSearchResultView(){
       const view=stEnsureSearchView();
-      const query=stText(searchInput?.value);
+      const query=stText(archiveCommittedSearch);
       if(!query){stSetSearchHomeVisible(true);view.innerHTML='';stRenderRecentSearches();return;}
       const data=stBuildSearchData(query);
       stSetSearchHomeVisible(false);
@@ -6892,7 +6900,7 @@
       setupSearchAutocomplete();
       stRenderRecentSearches();
       if(!window.shorttrackRefreshingResults) resetRankingVisibleCounts();
-      const q=searchInput.value.trim().toLowerCase();
+      const q=archiveCommittedSearch.toLowerCase();
       filteredMedals=medals.filter(row=>rowMatchesSearchAndMedal(row,q));
       renderSummary(filteredMedals);
       if(q) renderMedalTable(filteredMedals);
@@ -7068,7 +7076,7 @@
     const __stOriginalRenderSearchResultView = typeof renderSearchResultView === 'function' ? renderSearchResultView : null;
     renderSearchResultView = function(){
       const view=stEnsureSearchView();
-      const query=stText(searchInput?.value);
+      const query=stText(archiveCommittedSearch);
       if(!query){stSetSearchHomeVisible(true);view.innerHTML='';if(typeof stRenderRecentSearches==='function') stRenderRecentSearches();return;}
       const data=stBuildSearchData(query);
       stSetSearchHomeVisible(false);
@@ -7234,7 +7242,7 @@
     };
     renderSearchResultView = function(){
       const view=stEnsureSearchView();
-      const query=stText(searchInput?.value);
+      const query=stText(archiveCommittedSearch);
       if(!query){stSetSearchHomeVisible(true);view.innerHTML='';if(typeof stRenderRecentSearches==='function') stRenderRecentSearches();return;}
       const data=stBuildSearchData(query);
       stSetSearchHomeVisible(false);
@@ -10814,6 +10822,9 @@
     let competitionDirectoryVisible = 40;
     let athleteDirectoryIndex = 'all';
     let athleteDirectorySearchTimer = 0;
+    let athleteDirectoryCommittedSearch = '';
+    window.archiveCommitAthleteSearch=()=>{athleteDirectoryCommittedSearch=String(document.getElementById('athleteDirectorySearch')?.value||'').trim();};
+    window.archiveAthleteSearchQuery=()=>athleteDirectoryCommittedSearch;
     let archiveDirectoryReady = false;
 
     function archiveText(ko,en){return currentLang === 'en' ? en : ko;}
@@ -11045,7 +11056,7 @@
       const wrap = document.getElementById('athleteDirectoryWrap');
       const summary = document.getElementById('athleteDirectorySummary');
       if(!wrap) return;
-      const q = String(document.getElementById('athleteDirectorySearch')?.value || '').trim().toLowerCase();
+      const q = athleteDirectoryCommittedSearch.toLowerCase();
       const country = document.getElementById('athleteDirectoryCountry')?.value || '';
       const gender = document.getElementById('athleteDirectoryGender')?.value || '';
       const season = document.getElementById('athleteDirectorySeason')?.value || '';
@@ -11218,18 +11229,14 @@
         });
       });
       const athleteSearch = document.getElementById('athleteDirectorySearch');
-      athleteSearch?.addEventListener('input',()=>{
-        window.clearTimeout(athleteDirectorySearchTimer);
-        athleteDirectorySearchTimer = window.setTimeout(renderAthleteDirectory, 180);
-      });
       const commitAthleteSearch = ()=>{
+        window.archiveCommitAthleteSearch();
         window.clearTimeout(athleteDirectorySearchTimer);
         renderAthleteDirectory();
         updateDirectoryQuery('athlete');
       };
-      athleteSearch?.addEventListener('change',commitAthleteSearch);
       athleteSearch?.addEventListener('keydown',event=>{
-        if(event.key === 'Enter') commitAthleteSearch();
+        if(event.key === 'Enter' && !event.isComposing){event.preventDefault();commitAthleteSearch();}
       });
       ['athleteDirectoryCountry','athleteDirectoryGender','athleteDirectorySeason'].forEach(id=>{
         document.getElementById(id)?.addEventListener('change',()=>{
@@ -11253,7 +11260,7 @@
         params.dirCity = document.getElementById('competitionDirectoryCity')?.value || '';
       }else if(kind === 'athlete'){
         params.section = 'athleteDirectorySection';
-        params.athleteQ = document.getElementById('athleteDirectorySearch')?.value || '';
+        params.athleteQ = athleteDirectoryCommittedSearch;
         params.athleteCountry = document.getElementById('athleteDirectoryCountry')?.value || '';
         params.athleteGender = document.getElementById('athleteDirectoryGender')?.value || '';
         params.athleteSeason = document.getElementById('athleteDirectorySeason')?.value || '';
@@ -11275,6 +11282,7 @@
       setValue('competitionDirectoryType', params.get('dirType'));
       setValue('competitionDirectoryCity', params.get('dirCity'));
       setValue('athleteDirectorySearch', params.get('athleteQ'));
+      if(params.has('athleteQ'))window.archiveCommitAthleteSearch();
       setValue('athleteDirectoryCountry', params.get('athleteCountry'));
       setValue('athleteDirectoryGender', params.get('athleteGender'));
       setValue('athleteDirectorySeason', params.get('athleteSeason'));
@@ -11361,6 +11369,7 @@
       updateDirectoryQuery('competition');
     };
     window.resetAthleteDirectoryFilters = function(){
+      athleteDirectoryCommittedSearch='';
       ['athleteDirectorySearch','athleteDirectoryCountry','athleteDirectoryGender','athleteDirectorySeason'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
       athleteDirectoryIndex = 'all';
       renderAthleteDirectory();

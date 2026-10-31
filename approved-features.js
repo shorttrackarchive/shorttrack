@@ -98,7 +98,7 @@ function approvedSetupComparisonSearch(){
     field.append(label,input,list);select.before(field);select.hidden=true;
     let active=-1,choices=[];
     const close=()=>{list.hidden=true;input.setAttribute('aria-expanded','false');input.removeAttribute('aria-activedescendant');active=-1;};
-    const choose=option=>{select.value=option.value;input.value=option.value;close();select.dispatchEvent(new Event('change',{bubbles:true}));};
+    const choose=option=>{select.value=option.value;input.value=option.value;delete input.dataset.dirty;close();select.dispatchEvent(new Event('change',{bubbles:true}));};
     const open=()=>{
       choices=approvedComparisonChoices(select,input.value);list.replaceChildren();active=-1;
       choices.forEach((option,index)=>{
@@ -109,19 +109,19 @@ function approvedSetupComparisonSearch(){
       if(!choices.length){const empty=document.createElement('p');empty.textContent=tr('noSearchResults');list.append(empty);}
       list.hidden=false;input.setAttribute('aria-expanded','true');
     };
-    input.addEventListener('focus',()=>{if(!select.value)open();});
-    input.addEventListener('input',()=>{if(select.value){select.value='';renderPlayerComparison();}open();});
+    input.addEventListener('input',()=>{input.dataset.dirty='1';close();});
     input.addEventListener('blur',()=>setTimeout(close,120));
     input.addEventListener('keydown',event=>{
+      if(event.isComposing)return;
       if(event.key==='Escape'){close();return;}
       if(['ArrowDown','ArrowUp'].includes(event.key)){
-        event.preventDefault();if(list.hidden)open();if(!choices.length)return;
+        if(list.hidden)return;event.preventDefault();if(!choices.length)return;
         active=(active+(event.key==='ArrowDown'?1:-1)+choices.length)%choices.length;
         [...list.children].forEach((el,i)=>el.setAttribute('aria-selected',String(i===active)));
         input.setAttribute('aria-activedescendant',id+'Option'+active);list.children[active].scrollIntoView({block:'nearest'});
-      }else if(event.key==='Enter'&&!list.hidden){event.preventDefault();if(choices[active>=0?active:0])choose(choices[active>=0?active:0]);}
+      }else if(event.key==='Enter'){event.preventDefault();if(list.hidden){open();return;}if(choices[active>=0?active:0])choose(choices[active>=0?active:0]);}
     });
-    select.addEventListener('change',()=>{if(select.value)input.value=select.value;else input.value='';});
+    select.addEventListener('change',()=>{delete input.dataset.dirty;if(select.value)input.value=select.value;else input.value='';});
   });approvedSyncComparisonSearch();
 }
 function approvedSyncComparisonSearch(){
@@ -129,7 +129,7 @@ function approvedSyncComparisonSearch(){
     const input=document.getElementById(id+'Search'),select=document.getElementById(id);if(!input)return;
     input.placeholder=stLang('선수 이름 검색','Search skater names');
     document.querySelector(`[data-compare-label="${id}"]`).textContent=tr(id==='comparePlayerA'?'selectPlayerA':'selectPlayerB');
-    if(select.value)input.value=select.value;
+    if(select.value&&!input.dataset.dirty)input.value=select.value;
   });
 }
 const approvedOriginalCompareSetup=setupComparePlayerSelects;
@@ -140,8 +140,8 @@ function approvedRenderHome(){
     section=document.createElement('section');section.id='archiveQuickStart';section.className='card anchor-section';
     section.innerHTML='<div class="approved-home-search"><label for="archiveHomeSearch"></label><input type="search" id="archiveHomeSearch" autocomplete="off"></div><h2 id="approvedRecentTitle"></h2><div id="approvedRecentCompetitions" class="approved-recent-grid"></div><button class="sort-btn approved-share-current" type="button"></button>';
     document.querySelector('main').prepend(section);
-    const input=section.querySelector('input');input.addEventListener('input',()=>{searchInput.value=input.value;document.getElementById('mobileSearchInput').value=input.value;scheduleApplyFilters();});
-    input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();commitSearchAndScrollToResults();}});
+    const input=section.querySelector('input');input.addEventListener('input',()=>{searchInput.value=input.value;document.getElementById('mobileSearchInput').value=input.value;});
+    input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.isComposing){event.preventDefault();commitSearchAndScrollToResults();}});
     section.querySelector('.approved-share-current').addEventListener('click',()=>approvedShareLink());
   }
   section.querySelector('label').textContent=stLang('선수·국가·대회 통합 검색','Search skaters, countries and competitions');
@@ -158,3 +158,15 @@ window.addEventListener('shorttrack:data-ready',approvedRenderFeatures);
 window.addEventListener('shorttrack:snapshot-committed',approvedRenderFeatures);
 const approvedPreviousLanguage=setLanguage;
 setLanguage=window.setLanguage=function(lang){const result=approvedPreviousLanguage(lang);approvedRenderFeatures();return result;};
+
+// Menu navigation must leave search/detail views before their sections can be shown.
+document.addEventListener('click',event=>{
+  const nav=event.target.closest('.top-explorer-nav a,.side-nav button,.brand-lockup,.mobile-bottom-nav button:not([data-mobile-nav-target="mobileMoreSheet"]),#mobileMoreSheet .mobile-quick-btn');
+  if(!nav)return;
+  document.querySelectorAll('main > .panel.active').forEach(panel=>panel.classList.remove('active'));
+  archiveCommittedSearch='';
+  ['searchInput','mobileSearchInput','archiveHomeSearch'].forEach(id=>{const input=document.getElementById(id);if(input)input.value='';});
+  window.clearTimeout(__filterTimer);
+  stSetSearchHomeVisible(true);applyFilters();
+  document.querySelectorAll('.mobile-filter-open').forEach(section=>window.closeMobileFilterSection?.(section));
+},true);
