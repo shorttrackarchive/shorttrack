@@ -8,8 +8,6 @@
 .approved-recent-grid a:hover{background:#e5eeff}
 .approved-recent-grid strong,.approved-recent-grid span{display:block;overflow-wrap:anywhere}
 .approved-recent-grid span{font-size:12px;color:#4b5c6c;margin-top:5px}
-body.st-view-desktop .brand-hero{min-height:120px!important;height:150px!important;max-height:180px!important;margin:8px 0!important;padding:16px!important;background-size:cover!important}
-body.st-view-desktop .brand-hero h1,body.st-view-desktop .brand-hero-title{font-size:clamp(24px,4vw,48px)!important}
 body.st-view-mobile #mobileHomeSection{order:-5!important}
 body.st-view-mobile #archiveQuickStart{order:-4!important}
 body.st-view-mobile .approved-home-search{display:none!important}
