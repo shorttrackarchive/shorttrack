@@ -1,153 +1,119 @@
-/* Live Google Sheets results: instant previous response, then network verification. */
-const LIVE_RESULTS_INTERVAL_MS = 30000;
-const LIVE_SNAPSHOT_KEY = 'shorttrack_live_initial_v1';
-let liveResultsBusy = null;
-let liveResultsTimer = 0;
-let liveResultsFingerprint = '';
-let liveResultsCheckedAt = 0;
-let liveResultsState = 'syncing';
-let liveResultsLastChangedAt = 0;
-let liveLapFingerprint='';
-
+/* One public snapshot, one version, one UI commit. */
+const LIVE_RESULTS_INTERVAL_MS=30000;
+const LIVE_SNAPSHOT_KEY='shorttrack_coherent_snapshot_v2';
+let liveResultsBusy=null,liveResultsTimer=0,liveResultsFingerprint='',liveResultsCheckedAt=0,liveResultsState='syncing';
+let liveResultsLastChangedAt=0;
 function liveResultsStatus(state){
-  liveResultsState = state;
-  let bar = document.getElementById('liveResultsStatus');
+  liveResultsState=state;
+  let bar=document.getElementById('liveResultsStatus');
   if(!bar){
-    bar = document.createElement('div');
-    bar.id = 'liveResultsStatus';
-    bar.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;margin:8px 0';
-    const label = document.createElement('span');
-    label.setAttribute('role','status');
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'sort-btn';
-    button.addEventListener('click',()=>refreshLiveResults());
-    bar.append(label, button);
-    document.getElementById('loadingStatus')?.after(bar);
+    bar=document.createElement('div');bar.id='liveResultsStatus';bar.className='archive-live-status';
+    const label=document.createElement('span');label.setAttribute('role','status');
+    const button=document.createElement('button');button.type='button';button.className='sort-btn';button.addEventListener('click',()=>refreshLiveResults());
+    bar.append(label,button);document.getElementById('loadingStatus')?.after(bar);
   }
-  const en = currentLang === 'en';
-  const time = liveResultsCheckedAt ? new Date(liveResultsCheckedAt).toLocaleTimeString(en?'en-US':'ko-KR') : '';
-  const messages = {
-    syncing: en?'Checking Google Sheets…':'구글 시트 최신 결과 확인 중…',
-    cached: en?'Showing previous results · Checking Google Sheets…':'이전 조회 결과 표시 중 · 구글 시트 확인 중…',
-    live: en?`Live Sheets · Checked ${time} · Every 30 seconds${Date.now()-liveResultsLastChangedAt<10000?' · New results applied':''}`:`시트 실시간 연동 · ${time} 확인 · 30초마다 갱신${Date.now()-liveResultsLastChangedAt<10000?' · 새 결과 반영':''}`,
-    error: en?'Sync failed · Keeping previous results · Retrying automatically':'동기화 실패 · 이전 결과 유지 · 자동 재시도 중'
-  };
-  bar.firstElementChild.textContent = messages[state];
-  const button = bar.lastElementChild;
-  button.textContent = en?'Refresh now':'지금 새로고침';
-  button.disabled = state === 'syncing' || state === 'cached';
+  const en=currentLang==='en',time=liveResultsCheckedAt?new Date(liveResultsCheckedAt).toLocaleTimeString(en?'en-US':'ko-KR'):'';
+  const text={syncing:en?'Checking live results…':'최신 결과 확인 중…',cached:en?'Previous complete snapshot · Checking updates…':'이전 자료 묶음 표시 중 · 최신 결과 확인 중…',
+    live:en?`Live Sheets · ${time} · Every 30 seconds`:`시트 실시간 연동 · ${time} 확인 · 30초마다 갱신`,
+    error:en?'Sync failed · Keeping the previous complete snapshot · Retrying automatically':'동기화 실패 · 이전 자료 묶음 유지 · 자동 재시도 중'};
+  bar.firstElementChild.textContent=text[state]+(state==='live'&&Date.now()-liveResultsLastChangedAt<8000?(en?' · Updated':' · 새 결과 반영'):'');
+  bar.lastElementChild.textContent=en?'Refresh now':'지금 새로고침';
+  bar.lastElementChild.disabled=state==='syncing'||state==='cached';
+  bar.dataset.version=window.archiveSnapshotVersion||'';
 }
-
-function liveInitialFingerprint(json){
-  // generated_at changes on every API call, even when the results are identical.
-  return JSON.stringify([json.medals,json.relay_members,json.best_times,json.skater_aliases,json.athlete_country_history]);
-}
-
+function liveInitialFingerprint(json){return json.data_version||'';}
 function scheduleLiveResults(){
   clearTimeout(liveResultsTimer);
-  liveResultsTimer = setTimeout(()=>{
-    if(!document.hidden) refreshLiveResults();
-    else scheduleLiveResults();
-  }, LIVE_RESULTS_INTERVAL_MS);
+  liveResultsTimer=setTimeout(()=>document.hidden?scheduleLiveResults():refreshLiveResults(),LIVE_RESULTS_INTERVAL_MS);
 }
-
+function archiveSnapshotDB(){
+  return new Promise((resolve,reject)=>{
+    if(!window.indexedDB){reject(new Error('IndexedDB unavailable'));return;}
+    const request=indexedDB.open('shorttrack-coherent-snapshots',1);
+    request.onupgradeneeded=()=>request.result.createObjectStore('snapshots');
+    request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);
+  });
+}
+async function archiveStoredSnapshot(write){
+  try{
+    const db=await archiveSnapshotDB();
+    try{return await new Promise((resolve,reject)=>{
+      const tx=db.transaction('snapshots',write?'readwrite':'readonly'),store=tx.objectStore('snapshots');
+      const request=write?store.put(write,'latest'):store.get('latest');
+      request.onerror=()=>reject(request.error);tx.oncomplete=()=>resolve(write||request.result);tx.onerror=()=>reject(tx.error);
+    });}finally{db.close();}
+  }catch(_storageError){
+    try{if(write)localStorage.setItem(LIVE_SNAPSHOT_KEY,JSON.stringify(write));return write||JSON.parse(localStorage.getItem(LIVE_SNAPSHOT_KEY)||'null');}catch{return null;}
+  }
+}
+function archiveValidateSnapshot(json){
+  return json?.ok && json.schema_version===2 && typeof json.data_version==='string' &&
+    ['medals','relay_members','best_times','skater_aliases','event_records','lap_rankings','athlete_master'].every(key=>Array.isArray(json[key]));
+}
+async function archiveCommitSnapshot(json){
+  if(!archiveValidateSnapshot(json)) throw new Error('Incomplete coherent snapshot');
+  const previous=window.archiveCurrentSnapshot;
+  window.shorttrackRefreshingResults=true;window.archiveCurrentSnapshot=json;
+  try{
+    if(!await loadData(json)) throw new Error('Could not render snapshot');
+    window.archiveSnapshotVersion=json.data_version;archiveRecordState='ready';
+    window.archiveApplyEventSnapshot?.(json);
+    if(lapRankingLoaded||lapRankingRows.length) applyLoadedLapRankingsJson({ok:true,rows:json.lap_rankings},lapRankingLoaded);
+    refreshLiveDetailPanels();
+    window.dispatchEvent(new CustomEvent('shorttrack:data-updated'));
+    window.dispatchEvent(new CustomEvent('shorttrack:snapshot-committed',{detail:{version:json.data_version}}));
+  }catch(error){
+    window.archiveCurrentSnapshot=previous;
+    if(previous){await loadData(previous);window.archiveSnapshotVersion=previous.data_version;}
+    throw error;
+  }finally{window.shorttrackRefreshingResults=false;}
+}
 function refreshLiveResults(){
   if(liveResultsBusy) return liveResultsBusy;
-  liveResultsBusy = (async()=>{
-    liveResultsStatus(liveResultsFingerprint ? 'cached' : 'syncing');
+  liveResultsBusy=(async()=>{
+    liveResultsStatus(liveResultsFingerprint?'cached':'syncing');
     try{
-      const json = await fetchInitialData();
-      const fingerprint = liveInitialFingerprint(json);
-      if(fingerprint !== liveResultsFingerprint){
-        window.shorttrackRefreshingResults=true;
-        try{if(!await loadData(json)) throw new Error('Could not render live results');}
-        finally{window.shorttrackRefreshingResults=false;}
-        liveResultsLastChangedAt=Date.now();
-        liveResultsFingerprint = fingerprint;
-        if(!window.shorttrackDataReady){
-          window.shorttrackDataReady = true;
-          window.dispatchEvent(new CustomEvent('shorttrack:data-ready'));
-        }
-        window.dispatchEvent(new CustomEvent('shorttrack:data-updated'));
-        if(window.shorttrackDataReady) refreshLiveDetailPanels();
+      const json=await fetchInitialData();
+      if(json.unchanged){
+        if(!window.archiveCurrentSnapshot||json.data_version!==window.archiveSnapshotVersion) throw new Error('Unmatched unchanged version');
+      }else if(json.data_version!==liveResultsFingerprint){
+        await archiveCommitSnapshot(json);liveResultsFingerprint=json.data_version;liveResultsLastChangedAt=Date.now();void archiveStoredSnapshot(json);
       }
-      liveResultsCheckedAt = Date.now();
-      try{localStorage.setItem(LIVE_SNAPSHOT_KEY, JSON.stringify({savedAt:liveResultsCheckedAt, value:json}));}catch(_quotaError){}
-      liveResultsStatus('live');
-      // Large record datasets are only requested when the visitor has used them.
-      const records = [];
-      if(window.refreshLiveEventRecords) records.push(window.refreshLiveEventRecords());
-      if(lapRankingLoaded || lapRankingRows.length) records.push((async()=>{
-        const json = await fetchLiveJson(buildApiUrl({action:'lapRankings', limit:50000, includeRelay:1, includeRelays:1, includeAllEvents:1}));
-        const fingerprint=JSON.stringify(extractLapRowsFromJson(json));
-        if(fingerprint!==liveLapFingerprint){
-          applyLoadedLapRankingsJson(json, lapRankingLoaded);
-          liveLapFingerprint=fingerprint;
-        }
-      })());
-      const results = await Promise.allSettled(records);
-      if(results.some(result=>result.status === 'rejected')) liveResultsStatus('error');
+      liveResultsCheckedAt=Date.now();liveResultsStatus('live');
+      if(!window.shorttrackDataReady){window.shorttrackDataReady=true;window.dispatchEvent(new CustomEvent('shorttrack:data-ready'));}
       return true;
-    }catch(error){
-      console.warn('Live results sync failed', error);
-      liveResultsStatus('error');
-      return !!liveResultsFingerprint;
-    }finally{
-      liveResultsBusy = null;
-      scheduleLiveResults();
-    }
-  })();
-  return liveResultsBusy;
+    }catch(error){console.warn('Live snapshot sync failed',error);liveResultsStatus('error');return !!window.archiveCurrentSnapshot;}
+    finally{liveResultsBusy=null;scheduleLiveResults();}
+  })();return liveResultsBusy;
 }
-
 async function startLiveResults(){
-  let restored = false;
-  try{
-    // Retire six-hour result caches so the verified live snapshot has storage space.
-    ['shorttrack_initial_data_v3','shorttrack_medals_v3','shorttrack_relay_members_v3',
-      'shorttrack_best_times_v4','shorttrack_skater_aliases_v3','shorttrack_event_records_v3',
-      'shorttrack_lap_rankings_v3','shorttrack_static_event_records_v1',
-      'shorttrack_static_event_records_v2','shorttrack_static_lap_rankings_v2'
-    ].forEach(key=>localStorage.removeItem(key));
-    const snapshot = JSON.parse(localStorage.getItem(LIVE_SNAPSHOT_KEY) || 'null');
-    if(snapshot?.value?.ok && Array.isArray(snapshot.value.medals)){
-      restored = await loadData(snapshot.value);
-      if(restored) liveResultsFingerprint = liveInitialFingerprint(snapshot.value);
-    }
-  }catch(_invalidSnapshot){}
-  const request = refreshLiveResults();
-  return restored || await request;
+  const snapshot=await archiveStoredSnapshot();let restored=false;
+  if(archiveValidateSnapshot(snapshot)){
+    try{await archiveCommitSnapshot(snapshot);liveResultsFingerprint=snapshot.data_version;restored=true;}catch(_invalidCache){}
+  }
+  const request=refreshLiveResults();return restored||await request;
 }
-
-document.addEventListener('visibilitychange',()=>{
-  if(!document.hidden && Date.now()-liveResultsCheckedAt >= LIVE_RESULTS_INTERVAL_MS) refreshLiveResults();
-});
-window.addEventListener('online',()=>refreshLiveResults());
-document.addEventListener('click',event=>{
-  if(event.target.closest('.lang-btn')) queueMicrotask(()=>liveResultsStatus(liveResultsState));
-});
-
+async function archiveSnapshotDataset(key,force=false){
+  if(force){const ok=await refreshLiveResults();if(!ok||liveResultsState==='error') throw new Error('Snapshot refresh failed');}
+  const snapshot=window.archiveCurrentSnapshot;
+  if(!snapshot||!Array.isArray(snapshot[key])) throw new Error('No committed snapshot');
+  return {ok:true,data_version:snapshot.data_version,[key]:snapshot[key],rows:key==='lap_rankings'?snapshot[key]:undefined};
+}
 function refreshLiveDetailPanels(){
-  window.shorttrackRefreshingResults = true;
+  const before=window.shorttrackRefreshingResults;window.shorttrackRefreshingResults=true;
   try{
-    if(document.getElementById('playerPanel')?.classList.contains('active')){
-      const timeline = document.getElementById('playerTimelineDetails');
-      const expanded = timeline?.open;
-      const name = document.getElementById('playerPanel').dataset.playerName;
-      window.liveDetailRenderers.PlayerPanel(name);
-      if(expanded){timeline.open=true; renderPlayerTimeline(name);}
+    const player=document.getElementById('playerPanel');
+    if(player?.classList.contains('active')){
+      const timeline=document.getElementById('playerTimelineDetails'),expanded=timeline?.open,name=player.dataset.playerName;
+      window.liveDetailRenderers.PlayerPanel(name);if(expanded){timeline.open=true;renderPlayerTimeline(name);}
     }
-    if(document.getElementById('competitionPanel')?.classList.contains('active')){
-      window.liveDetailRenderers.CompetitionPanel(document.getElementById('competitionPanel').dataset.liveName);
-    }
-    if(document.getElementById('countryPanel')?.classList.contains('active')){
-      window.liveDetailRenderers.CountryPage(document.getElementById('countryPanelName').textContent);
-    }
-    if(document.getElementById('seasonPanel')?.classList.contains('active')){
-      window.liveDetailRenderers.SeasonPage(document.getElementById('seasonPanelName').textContent);
-    }
+    if(document.getElementById('competitionPanel')?.classList.contains('active')) window.liveDetailRenderers.CompetitionPanel(document.getElementById('competitionPanel').dataset.liveName);
+    if(document.getElementById('countryPanel')?.classList.contains('active')) window.liveDetailRenderers.CountryPage(document.getElementById('countryPanelName').textContent);
+    if(document.getElementById('seasonPanel')?.classList.contains('active')) window.liveDetailRenderers.SeasonPage(document.getElementById('seasonPanelName').textContent);
     renderPlayerComparison();
-  }finally{window.shorttrackRefreshingResults = false;}
+  }finally{window.shorttrackRefreshingResults=before;}
   window.dispatchEvent(new CustomEvent('shorttrack:detail-updated'));
 }
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-liveResultsCheckedAt>=LIVE_RESULTS_INTERVAL_MS)refreshLiveResults();});
+window.addEventListener('online',()=>refreshLiveResults());
+document.addEventListener('click',event=>{if(event.target.closest('.lang-btn'))queueMicrotask(()=>liveResultsStatus(liveResultsState));});
