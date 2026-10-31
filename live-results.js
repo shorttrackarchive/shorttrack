@@ -6,6 +6,8 @@ let liveResultsTimer = 0;
 let liveResultsFingerprint = '';
 let liveResultsCheckedAt = 0;
 let liveResultsState = 'syncing';
+let liveResultsLastChangedAt = 0;
+let liveLapFingerprint='';
 
 function liveResultsStatus(state){
   liveResultsState = state;
@@ -28,7 +30,7 @@ function liveResultsStatus(state){
   const messages = {
     syncing: en?'Checking Google Sheets…':'구글 시트 최신 결과 확인 중…',
     cached: en?'Showing previous results · Checking Google Sheets…':'이전 조회 결과 표시 중 · 구글 시트 확인 중…',
-    live: en?`Live Sheets · Checked ${time} · Every 30 seconds`:`시트 실시간 연동 · ${time} 확인 · 30초마다 갱신`,
+    live: en?`Live Sheets · Checked ${time} · Every 30 seconds${Date.now()-liveResultsLastChangedAt<10000?' · New results applied':''}`:`시트 실시간 연동 · ${time} 확인 · 30초마다 갱신${Date.now()-liveResultsLastChangedAt<10000?' · 새 결과 반영':''}`,
     error: en?'Sync failed · Keeping previous results · Retrying automatically':'동기화 실패 · 이전 결과 유지 · 자동 재시도 중'
   };
   bar.firstElementChild.textContent = messages[state];
@@ -58,7 +60,10 @@ function refreshLiveResults(){
       const json = await fetchInitialData();
       const fingerprint = liveInitialFingerprint(json);
       if(fingerprint !== liveResultsFingerprint){
-        if(!await loadData(json)) throw new Error('Could not render live results');
+        window.shorttrackRefreshingResults=true;
+        try{if(!await loadData(json)) throw new Error('Could not render live results');}
+        finally{window.shorttrackRefreshingResults=false;}
+        liveResultsLastChangedAt=Date.now();
         liveResultsFingerprint = fingerprint;
         if(!window.shorttrackDataReady){
           window.shorttrackDataReady = true;
@@ -75,7 +80,11 @@ function refreshLiveResults(){
       if(window.refreshLiveEventRecords) records.push(window.refreshLiveEventRecords());
       if(lapRankingLoaded || lapRankingRows.length) records.push((async()=>{
         const json = await fetchLiveJson(buildApiUrl({action:'lapRankings', limit:50000, includeRelay:1, includeRelays:1, includeAllEvents:1}));
-        applyLoadedLapRankingsJson(json, lapRankingLoaded);
+        const fingerprint=JSON.stringify(extractLapRowsFromJson(json));
+        if(fingerprint!==liveLapFingerprint){
+          applyLoadedLapRankingsJson(json, lapRankingLoaded);
+          liveLapFingerprint=fingerprint;
+        }
       })());
       const results = await Promise.allSettled(records);
       if(results.some(result=>result.status === 'rejected')) liveResultsStatus('error');
@@ -140,4 +149,5 @@ function refreshLiveDetailPanels(){
     }
     renderPlayerComparison();
   }finally{window.shorttrackRefreshingResults = false;}
+  window.dispatchEvent(new CustomEvent('shorttrack:detail-updated'));
 }
