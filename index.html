@@ -9,12 +9,13 @@
   <link rel="icon" type="image/png" href="assets/short-track-archive-logo.png?v=20260811" />
   <link rel="preconnect" href="https://script.google.com" crossorigin />
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin />
+  <script src="visitor-count.js?v=20261101" defer></script>
   <script src="live-results.js?v=20261101" defer></script>
   <script src="archive-usability.js?v=20261101d" defer></script>
   <script src="approved-features.js?v=20261101d" defer></script>
   <script src="approved-evidence.js?v=20261101" defer></script>
   <script src="approved-sharing.js?v=20261101d" defer></script>
-  <link rel="stylesheet" href="approved-features.css?v=20261101b" />
+  <link rel="stylesheet" href="approved-features.css?v=20261101v" />
   <link rel="stylesheet" href="archive-usability.css?v=20261101" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css" />
@@ -891,6 +892,7 @@
     <aside class="visitor-widget" aria-label="방문자 수">
         <div class="visitor-row"><span data-i18n="todayVisitors">오늘 방문자 수</span><strong id="todayVisitors">-</strong></div>
         <div class="visitor-row"><span data-i18n="totalVisitors">총 방문자 수</span><strong id="totalVisitors">-</strong></div>
+        <small id="visitorCountStatus" role="status"></small>
       </aside>
     <button type="button" class="mobile-settings-btn" onclick="toggleMobileSettings()" aria-expanded="false" data-i18n="mobileSettings">설정</button>
     <div class="language-toggle" aria-label="Language">
@@ -2641,6 +2643,7 @@
       const loadingStatus=document.getElementById('loadingStatus');
       if(loadingStatus) loadingStatus.textContent=tr('loading');
       if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')){showNotConnected();return;}
+      registerVisit();
       const loaded = await startLiveResults();
       if(!loaded) return;
       if(!window.shorttrackDataReady){
@@ -2648,7 +2651,6 @@
         window.dispatchEvent(new CustomEvent('shorttrack:data-ready'));
       }
       updateFanCard();
-      registerVisit();
     }
 
     function bindEvents(){
@@ -5249,35 +5251,7 @@
       return `${y}-${m}-${day}`;
     }
 
-    async function registerVisit(){
-      const todayEl=document.getElementById('todayVisitors');
-      const totalEl=document.getElementById('totalVisitors');
-      if(!todayEl || !totalEl || !APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('여기에')) return;
 
-      try{
-        const payload={
-          action:'visit',
-          visit_date:visitorLocalDate(),
-          page_url:location.href,
-          user_agent:navigator.userAgent,
-          referrer:document.referrer || '',
-          created_at:new Date().toISOString()
-        };
-        const response=await fetch(APPS_SCRIPT_URL,{
-          method:'POST',
-          headers:{'Content-Type':'text/plain;charset=utf-8'},
-          body:JSON.stringify(payload)
-        });
-        const result=await response.json().catch(()=>({ok:false}));
-        if(!result.ok) throw new Error(result.error || 'visit count failed');
-        todayEl.textContent=String(result.today ?? '-');
-        totalEl.textContent=String(result.total ?? '-');
-      }catch(error){
-        console.warn('방문자 수를 불러오지 못했습니다.', error);
-        todayEl.textContent='-';
-        totalEl.textContent='-';
-      }
-    }
 
 
 

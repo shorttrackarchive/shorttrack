@@ -47,3 +47,11 @@ body.st-view-mobile:has(main>.panel.active) #archiveQuickStart{display:none!impo
 .approved-share-settings{margin:0 0 12px!important;font-size:12px!important;min-height:34px!important}
 #approvedShareNotice{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:300;padding:12px 18px;background:#203368;color:white;font-size:14px;max-width:90vw}
 @media(max-width:700px){.approved-recent-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.approved-trend{padding:10px}#approvedEvidenceDialog{padding:12px}.approved-dialog-head{top:-12px}.approved-dialog-head h2{font-size:17px}}
+
+/* Keep visitor counts in their own header row at every viewport width. */
+html body[class] header aside.visitor-widget{display:flex!important;position:static!important;grid-column:1/-1!important;grid-row:3!important;justify-content:flex-end!important;align-items:center!important;flex-wrap:wrap!important;gap:5px 16px!important;margin:0!important;padding:4px 0!important;width:auto!important;min-width:0!important;max-width:none!important;border:0!important;box-shadow:none!important;background:transparent!important}
+html body[class] header aside.visitor-widget .visitor-row{display:flex!important;align-items:baseline!important;gap:6px!important;white-space:nowrap!important;color:var(--text-secondary)!important;font-size:10px!important;line-height:1.3!important}
+html body[class] header aside.visitor-widget strong{font-size:12px!important;color:var(--color-indigo)!important}
+#visitorCountStatus{font-size:10px;color:var(--text-secondary);white-space:nowrap}
+#visitorCountStatus:empty{display:none}
+html body.st-view-mobile header aside.visitor-widget{justify-content:flex-start!important;gap:4px 12px!important}
