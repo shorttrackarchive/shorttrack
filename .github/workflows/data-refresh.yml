@@ -1,0 +1,60 @@
+name: Refresh static data and deploy
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Sunday 03:20 KST. A quiet weekly run keeps data current without
+    # repeatedly consuming the Google Apps Script quota.
+    - cron: '20 18 * * 6'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: static-data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Refresh and validate static data
+        run: node refresh-static-data.mjs
+
+      - name: Commit verified data changes
+        run: |
+          if git diff --quiet -- data/event-records.json data/lap-rankings.json index.html; then
+            echo "No static data changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- data/event-records.json data/lap-rankings.json index.html
+          git commit -m "Refresh verified static data"
+          git push
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
