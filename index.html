@@ -2816,6 +2816,7 @@
     }
 
 
+    const STATIC_DATA_BUILD_ID = '20261103002541';
     const API_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
     function buildApiUrl(params){
       const query = new URLSearchParams(params);
@@ -2823,12 +2824,20 @@
     }
     function staticDataUrl(path){
       const clean = String(path || '').replace(/^\/+/, '');
+      let url;
       if(location.hostname.endsWith('github.io')){
         const parts = location.pathname.split('/').filter(Boolean);
         const repo = parts[0] || 'shorttrack';
-        return `${location.origin}/${repo}/${clean}`;
+        url = `${location.origin}/${repo}/${clean}`;
+      }else{
+        url = new URL(clean, document.baseURI || location.href).href;
       }
-      return new URL(clean, document.baseURI || location.href).href;
+      if(clean.startsWith('data/')){
+        const parsed = new URL(url, location.href);
+        parsed.searchParams.set('v', STATIC_DATA_BUILD_ID);
+        return parsed.href;
+      }
+      return url;
     }
     async function fetchJson(url, fetchOptions){
       const response = await fetch(url, fetchOptions);
@@ -2867,13 +2876,14 @@
     async function cachedFetchJson(url, storageKey, ttlMs = API_CACHE_TTL_MS){
       if(String(url).startsWith(APPS_SCRIPT_URL)) return fetchLiveJson(url);
       const now = Date.now();
+      const requestUrl = /^data\//.test(String(url || '')) ? staticDataUrl(url) : url;
       try{
         const cached = JSON.parse(localStorage.getItem(storageKey) || 'null');
-        if(cached && cached.expires > now && cached.value) return cached.value;
+        if(cached && cached.version === STATIC_DATA_BUILD_ID && cached.expires > now && cached.value) return cached.value;
       }catch(_e){}
-      const json = await fetchJson(url);
+      const json = await fetchJson(requestUrl, /^data\//.test(String(url || '')) ? {cache:'no-cache'} : undefined);
       if(json && json.ok !== false){
-        try{ localStorage.setItem(storageKey, JSON.stringify({expires: now + ttlMs, value: json})); }catch(_e){}
+        try{ localStorage.setItem(storageKey, JSON.stringify({version:STATIC_DATA_BUILD_ID, expires: now + ttlMs, value: json})); }catch(_e){}
       }
       return json;
     }

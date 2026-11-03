@@ -99,6 +99,30 @@ function sourceStatus(row) {
   return 'missing';
 }
 
+function validGeneratedAt(value, dataset) {
+  const stamp = Date.parse(String(value || ''));
+  if (!Number.isFinite(stamp)) {
+    err(`${dataset} generated_at 누락 또는 형식 오류`);
+    return;
+  }
+  if (stamp > Date.now() + 5 * 60 * 1000) err(`${dataset} generated_at가 현재보다 미래임`);
+}
+
+validGeneratedAt(initial.generated_at, 'initial.json');
+validGeneratedAt(lapJson.generated_at, 'lap-rankings.json');
+validGeneratedAt(eventJson.generated_at, 'event-records.json');
+
+const requiredTopLevelCollections = [
+  ['initial.medals', medals],
+  ['initial.relay_members', relayMembers],
+  ['initial.skater_aliases', aliases],
+  ['lap-rankings rows', lapRows],
+  ['event-records rows', eventRows]
+];
+for (const [name, rows] of requiredTopLevelCollections) {
+  if (!Array.isArray(rows) || !rows.length) err(`${name}가 비어 있음`);
+}
+
 for (const row of medals) {
   for (const field of ['competition_type', 'season', 'competition_name', 'year', 'gender', 'event', 'medal', 'skater_name', 'country']) {
     if (!String(row[field] || '').trim()) err(`medals 필수 필드 누락(${field})`, row);
@@ -123,9 +147,52 @@ for (const row of lapRows) {
   if (!Number.isFinite(lap) || lap <= 0) err(`유효하지 않은 랩타임(${row.lap_time || row.time})`, row);
 }
 
+let eventRowsMissingCompetitionName = 0;
 for (const row of eventRows) {
   if (row.compitition) err('event-records에 잘못된 필드명 compitition 존재', row);
+  for (const field of ['skater_name', 'country', 'gender', 'event', 'season']) {
+    if (!String(row[field] || '').trim()) err(`event-records 필수 필드 누락(${field})`, row);
+  }
+  if (!String(row.competition_name || '').trim()) eventRowsMissingCompetitionName += 1;
   if (row.time && parseRecordSeconds(row.time) === null) warn(`event-records 기록 형식 확인 필요(${row.time})`, row);
+}
+if (eventRowsMissingCompetitionName) warn(`event-records 대회명 미등록 행 ${eventRowsMissingCompetitionName.toLocaleString('ko-KR')}건`);
+
+const eventRecordKeys = new Map();
+for (const row of eventRows) {
+  const key = [row.skater_name, row.country, row.event, row.time, row.season, row.competition_name, row.round, row.heat].join('|');
+  eventRecordKeys.set(key, (eventRecordKeys.get(key) || 0) + 1);
+}
+for (const [key, count] of eventRecordKeys) {
+  if (count > 1) warn(`event-records 완전 중복 의심 ${count}건 ${key}`);
+}
+
+const knownIdentityRegressions = [
+  {
+    label: 'Beijing 2022 Lee June-seo 1000m quarterfinal',
+    matches: row => row.season === '2021-22' && row.city === 'Beijing' && row.event === 'Men 1000 m' && row.time === '1:23.682',
+    expected: 'June Seo Lee'
+  },
+  {
+    label: 'Beijing 2022 Lee June-seo 1500m final',
+    matches: row => row.season === '2021-22' && row.city === 'Beijing' && row.event === 'Men 1500 m' && row.time === '2:09.622',
+    expected: 'June Seo Lee'
+  },
+  {
+    label: 'Beijing 2022 Lee June-seo 1500m semifinal',
+    matches: row => row.season === '2021-22' && row.city === 'Beijing' && row.event === 'Men 1500 m' && row.time === '2:10.586',
+    expected: 'June Seo Lee'
+  },
+  {
+    label: 'Montreal 2024 Kim Gun-woo 1500m semifinal',
+    matches: row => row.season === '2024-25' && row.city === 'Montreal' && row.event === 'Men 1500 m' && row.time === '2:11.509',
+    expected: 'Gun Woo Kim'
+  }
+];
+for (const rule of knownIdentityRegressions) {
+  const matches = eventRows.filter(rule.matches);
+  if (matches.length !== 1) err(`${rule.label} 회귀 검사 대상 ${matches.length}건`);
+  else if (matches[0].skater_name !== rule.expected) err(`${rule.label} 선수명 오류: ${matches[0].skater_name} !== ${rule.expected}`);
 }
 
 const duplicateKeys = new Map();
