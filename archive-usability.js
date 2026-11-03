@@ -29,10 +29,9 @@ function archiveAliasesForName(name){
 }
 
 function archiveAthleteSearchText(item){
+  if(item && typeof item.searchText === 'string') return item.searchText;
   const keys = new Set([archiveNameKey(item.name),archiveNameKey(item.local),archiveNameKey(item.country),archiveNameKey(item.gender),archiveNameKey(item.activity)]);
-  skaterAliases.forEach(row=>{
-    if(canonicalSkaterName(row.canonical_name)===canonicalSkaterName(item.name)) keys.add(archiveNameKey(row.alias_name));
-  });
+  archiveAliasesForName(item.name).forEach(alias=>keys.add(archiveNameKey(alias)));
   const parts=String(item.name).split(/\s+/);
   if(parts.length>1) keys.add(archiveNameKey(parts.slice(1).concat(parts[0]).join(' ')));
   return [...keys].join('|');
