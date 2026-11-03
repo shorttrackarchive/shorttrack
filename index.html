@@ -884,6 +884,19 @@
   </style>
 </head>
 <body>
+  <script>
+    // Apply the effective layout before visible content is parsed to prevent
+    // the desktop hero from flashing briefly on mobile during startup.
+    (()=>{
+      let mode='auto';
+      try{mode=localStorage.getItem('shorttrack_view_mode_v1')||'auto';}catch(_e){}
+      if(!['auto','mobile','desktop'].includes(mode)) mode='auto';
+      const effective=mode==='auto'
+        ? (window.matchMedia?.('(max-width: 820px)').matches?'mobile':'desktop')
+        : mode;
+      document.body.classList.add(`st-view-${effective}`);
+    })();
+  </script>
 <header>
     <a class="brand-lockup" href="?section=homeFeatureSection" aria-label="Short Track Archive home" onclick="event.preventDefault(); scrollToSection('homeFeatureSection')">
       <img class="brand-mark" src="assets/short-track-archive-logo.png?v=20260811" width="560" height="491" alt="" decoding="async" fetchpriority="high" />
