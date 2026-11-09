@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://script.google.com" crossorigin />
   <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin />
   <script src="visitor-count.js?v=20261101" defer></script>
-  <script src="live-results.js?v=20261101" defer></script>
+  <script src="live-results.js?v=20261109filters" defer></script>
   <script src="archive-usability.js?v=20261101d" defer></script>
   <script src="approved-features.js?v=20261109perf" defer></script>
   <script src="approved-evidence.js?v=20261101" defer></script>
@@ -8195,7 +8195,6 @@
     renderEventRecords();
   }
   window.archiveApplyEventSnapshot = function(json){
-    if(!eventRecordsLoaded && !eventRecordRows.length) return;
     eventRecordRows=prepareEventRecordRows(extractRecordRowsFromJson(json));
     if(eventRecordsLoaded) finishEventRecordLoadFromRows();
     else{populateEventRecordFilters(eventRecordRows);syncPersonalBestRecordCache(eventRecordRows);}

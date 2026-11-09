@@ -58,7 +58,7 @@ async function archiveCommitSnapshot(json){
     if(!await loadData(json)) throw new Error('Could not render snapshot');
     window.archiveSnapshotVersion=json.data_version;archiveRecordState='ready';
     window.archiveApplyEventSnapshot?.(json);
-    if(lapRankingLoaded||lapRankingRows.length) applyLoadedLapRankingsJson({ok:true,rows:json.lap_rankings},lapRankingLoaded);
+    applyLoadedLapRankingsJson({ok:true,rows:json.lap_rankings},lapRankingLoaded);
     refreshLiveDetailPanels();
     window.dispatchEvent(new CustomEvent('shorttrack:data-updated'));
     window.dispatchEvent(new CustomEvent('shorttrack:snapshot-committed',{detail:{version:json.data_version}}));
