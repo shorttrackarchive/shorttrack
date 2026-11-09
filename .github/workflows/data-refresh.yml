@@ -35,6 +35,9 @@ jobs:
       - name: Refresh and validate static data
         run: node refresh-static-data.mjs
 
+      - name: Check performance regressions
+        run: node test-performance.mjs
+
       - name: Commit verified data changes
         run: |
           if git diff --quiet -- data/event-records.json data/lap-rankings.json index.html; then

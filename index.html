@@ -12,7 +12,7 @@
   <script src="visitor-count.js?v=20261101" defer></script>
   <script src="live-results.js?v=20261101" defer></script>
   <script src="archive-usability.js?v=20261101d" defer></script>
-  <script src="approved-features.js?v=20261101nav" defer></script>
+  <script src="approved-features.js?v=20261109perf" defer></script>
   <script src="approved-evidence.js?v=20261101" defer></script>
   <script src="approved-sharing.js?v=20261101d" defer></script>
   <link rel="stylesheet" href="approved-features.css?v=20261101nav" />
@@ -2683,7 +2683,7 @@
         btn.classList.add('active');
         currentMedalFilter = btn.dataset.medal;
         applyFilters();
-        initTierMaker();
+        if(typeof window.archiveRefreshTierSource === 'function') window.archiveRefreshTierSource();
       }));
 
       document.querySelectorAll('.skater-mode-tab').forEach(btn=>btn.addEventListener('click',()=>{
@@ -8431,6 +8431,24 @@
   let tierSkaters = [];
   let tierAssignments = {};
   let tierDraggedName = '';
+  let tierSummarySource = null;
+  let tierSummaryCache = new Map();
+
+  function tierSummary(name){
+    if(tierSummarySource !== skaterMedals){
+      tierSummarySource = skaterMedals;
+      tierSummaryCache = new Map();
+      skaterMedals.forEach(row=>{
+        const value=tierSummaryCache.get(row.skater_name)||{gold:0,silver:0,bronze:0,total:0,genders:new Set()};
+        const medal=String(row.medal||'').toLowerCase();
+        if(['gold','silver','bronze'].includes(medal)) value[medal]++;
+        value.total++;
+        value.genders.add(row.gender);
+        tierSummaryCache.set(row.skater_name,value);
+      });
+    }
+    return tierSummaryCache.get(name)||{gold:0,silver:0,bronze:0,total:0,genders:new Set()};
+  }
 
   function tierEscape(v){
     if(typeof escapeHtml === 'function') return escapeHtml(v);
@@ -8442,19 +8460,15 @@
   }
 
   function tierPrimaryGender(name){
-    const rows = (typeof skaterMedals !== 'undefined' ? skaterMedals : []).filter(row => row.skater_name === name);
-    if(rows.some(row => row.gender === 'Women')) return 'Women';
-    if(rows.some(row => row.gender === 'Men')) return 'Men';
-    if(rows.some(row => row.gender === 'Mixed')) return 'Mixed';
+    const genders = tierSummary(name).genders;
+    if(genders.has('Women')) return 'Women';
+    if(genders.has('Men')) return 'Men';
+    if(genders.has('Mixed')) return 'Mixed';
     return '';
   }
 
   function tierMedalSummary(name){
-    const rows = (typeof skaterMedals !== 'undefined' ? skaterMedals : []).filter(row => row.skater_name === name);
-    const gold = rows.filter(row => String(row.medal || '').toLowerCase() === 'gold').length;
-    const silver = rows.filter(row => String(row.medal || '').toLowerCase() === 'silver').length;
-    const bronze = rows.filter(row => String(row.medal || '').toLowerCase() === 'bronze').length;
-    const total = rows.length;
+    const {gold,silver,bronze,total} = tierSummary(name);
     if(total) return currentLang === 'en' ? `G ${gold} · S ${silver} · B ${bronze}` : `금 ${gold} · 은 ${silver} · 동 ${bronze}`;
     return tr('noRecord');
   }
@@ -8534,7 +8548,7 @@
     const count = document.getElementById('tierPoolCount');
     if(!pool) return;
 
-    if(!tierMakerInitialized) initTierMaker();
+    if(!tierMakerInitialized) return;
 
     const q = tierNorm(document.getElementById('tierSearchInput')?.value || '');
     const gender = document.getElementById('tierGenderFilter')?.value || 'all';
@@ -8635,6 +8649,7 @@
   };
 
   window.archiveRefreshTierSource = function(){
+    if(!tierMakerInitialized) return;
     tierSkaters=tierBuildSkaters();
     if(tierMakerInitialized){populateTierCountryFilter();renderTierPool();renderTierBoard();}
   };

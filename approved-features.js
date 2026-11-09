@@ -153,6 +153,24 @@ function approvedRenderHome(){
   section.querySelector('#approvedRecentCompetitions').innerHTML=rows.map(row=>`<a href="?competition=${encodeURIComponent(row.competition_name)}" onclick="event.preventDefault();openCompetitionPanel('${escapeJs(row.competition_name)}')"><strong>${escapeHtml(row.competition_name)}</strong><span>${escapeHtml(row.season)} · ${escapeHtml(translateCompetitionType(row.competition_type))}</span></a>`).join('');
 }
 function approvedRenderFeatures(){window.archiveRefreshTierSource?.();approvedSetupComparisonSearch();approvedSyncComparisonSearch();approvedRenderHome();approvedRenderHallEvidence();}
+
+// Build the tier pool only when its section is actually approached.
+document.addEventListener('DOMContentLoaded',()=>{
+  const section=document.getElementById('tierMakerSection');
+  if(!section)return;
+  if('IntersectionObserver' in window){
+    const observer=new IntersectionObserver(entries=>{
+      if(entries.some(entry=>entry.isIntersecting)&&window.shorttrackDataReady){
+        initTierMaker();observer.disconnect();
+      }
+    },{rootMargin:'150px'});
+    observer.observe(section);
+    window.addEventListener('shorttrack:data-ready',()=>{observer.unobserve(section);observer.observe(section);},{once:true});
+  }else{
+    section.addEventListener('focusin',()=>initTierMaker(),{once:true});
+    section.addEventListener('pointerdown',()=>initTierMaker(),{once:true});
+  }
+});
 document.addEventListener('DOMContentLoaded',()=>{approvedSetupComparisonSearch();approvedRenderHome();approvedRenderHallEvidence();});
 window.addEventListener('shorttrack:data-ready',approvedRenderFeatures);
 window.addEventListener('shorttrack:snapshot-committed',approvedRenderFeatures);

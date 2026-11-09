@@ -50,11 +50,6 @@ function pickRows(rows, keys) {
 function preserveEquivalentTypes(rows, baselineRows) {
   return rows.map((row, index) => Object.fromEntries(Object.entries(row).map(([key, value]) => {
     const previous = baselineRows[index]?.[key];
-    if (key === 'year') {
-      const start = Number(String(row.season || '').slice(0, 4));
-      const year = Number(value);
-      if (start && year && year !== start && year !== start + 1 && previous != null) return [key, previous];
-    }
     return [key, String(previous ?? '') === String(value ?? '') ? previous : value];
   })));
 }
