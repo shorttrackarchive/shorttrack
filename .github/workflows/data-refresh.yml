@@ -36,17 +36,19 @@ jobs:
         run: node refresh-static-data.mjs
 
       - name: Check performance regressions
-        run: node test-performance.mjs
+        run: |
+          node test-performance.mjs
+          node test-loading.mjs
 
       - name: Commit verified data changes
         run: |
-          if git diff --quiet -- data/event-records.json data/lap-rankings.json index.html; then
+          if git diff --quiet -- data/event-records.json data/lap-rankings.json index.html archive-core.js; then
             echo "No static data changes to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- data/event-records.json data/lap-rankings.json index.html
+          git add -- data/event-records.json data/lap-rankings.json index.html archive-core.js
           git commit -m "Refresh verified static data"
           git push
 

@@ -1,0 +1,31 @@
+#playerAchievementBadges.player-achievement-badges,
+.player-title-row #playerAchievementBadges{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  gap:6px !important;
+  margin:0 0 6px !important;
+}
+.player-title-row{
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  flex-wrap:wrap !important;
+}
+.achievement-badge{
+  display:inline-flex !important;
+  align-items:center !important;
+  border:1px solid #fde68a !important;
+  background:#fffbeb !important;
+  color:#92400e !important;
+  border-radius:999px !important;
+  padding:4px 9px !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  line-height:1.2 !important;
+  white-space:nowrap !important;
+}
+.achievement-badge.grand-slam{
+  border-color:#fbbf24 !important;
+  background:linear-gradient(135deg,#fef3c7,#fff7ed) !important;
+  color:#78350f !important;
+}

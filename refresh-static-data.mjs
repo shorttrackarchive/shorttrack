@@ -63,12 +63,15 @@ function writeAtomic(fileName, value) {
 }
 
 function updateBuildId() {
-  const indexPath = path.join(root, 'index.html');
+  const indexPath = path.join(root, 'archive-core.js');
   const buildId = generatedAt.replace(/\D/g, '').slice(0, 14);
   const source = fs.readFileSync(indexPath, 'utf8');
   const next = source.replace(/const STATIC_DATA_BUILD_ID = '[^']+';/, `const STATIC_DATA_BUILD_ID = '${buildId}';`);
-  if (next === source) throw new Error('STATIC_DATA_BUILD_ID marker was not found in index.html');
+  if (next === source) throw new Error('STATIC_DATA_BUILD_ID marker was not found in archive-core.js');
   fs.writeFileSync(indexPath, next);
+  const htmlPath=path.join(root,'index.html');
+  const html=fs.readFileSync(htmlPath,'utf8');
+  fs.writeFileSync(htmlPath,html.replace(/archive-core\.js\?v=[^"\s]+/g,`archive-core.js?v=${buildId}`));
 }
 
 const [initial, eventRecords, lapRankings] = await Promise.all([

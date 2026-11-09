@@ -2,7 +2,10 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 
-const html=fs.readFileSync('index.html','utf8');
+const markup=fs.readFileSync('index.html','utf8');
+const scripts=[...markup.matchAll(/<script[^>]*src="([^"?]+)(?:\?[^\"]*)?"[^>]*>/g)].map(m=>m[1]).filter(src=>!/^https?:/.test(src));
+const html=markup+'\n'+scripts.map(src=>fs.readFileSync(src,'utf8')).join('\n');
+for(const src of scripts)new vm.Script(fs.readFileSync(src,'utf8'),{filename:src});
 let checked=0;
 for(const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)){
   if(/application\/ld\+json|\bsrc=/.test(match[1])||!match[2].trim())continue;
@@ -41,7 +44,7 @@ let lapPrepared=0,lapRendered=null;
 const boot=vm.createContext({window:{archiveApplyEventSnapshot:()=>{},dispatchEvent:()=>{}},
   archiveValidateSnapshot:()=>true,loadData:async()=>true,archiveRecordState:'idle',lapRankingLoaded:false,lapRankingRows:[],
   applyLoadedLapRankingsJson:(json,render)=>{lapPrepared=json.rows.length;lapRendered=render;},
-  refreshLiveDetailPanels:()=>{},CustomEvent:class{}});
+  archivePrepareRankingFilterOptions:()=>{},refreshLiveDetailPanels:()=>{},CustomEvent:class{}});
 vm.runInContext(commit,boot);
 await vm.runInContext('archiveCommitSnapshot({data_version:"test",lap_rankings:[{season:"2026-27"}]})',boot);
 assert.equal(lapPrepared,1,'Cold-start lap filters must be populated before Load');
