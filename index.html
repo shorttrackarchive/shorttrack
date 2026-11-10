@@ -16,6 +16,7 @@
   <script src="approved-features.js?v=20261109perf" defer></script>
   <script src="approved-evidence.js?v=20261101" defer></script>
   <script src="approved-sharing.js?v=20261101d" defer></script>
+  <script src="ui-review.js?v=20261110" defer></script>
   <link rel="stylesheet" href="approved-features.css?v=20261101nav" />
   <link rel="stylesheet" href="archive-usability.css?v=20261101" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -46,6 +47,7 @@
     // Apply the effective layout before visible content is parsed to prevent
     // the desktop hero from flashing briefly on mobile during startup.
     (()=>{
+      if(new URLSearchParams(location.search).get('ui') !== 'previous') document.body.classList.add('ui-review');
       let mode='auto';
       try{mode=localStorage.getItem('shorttrack_view_mode_v1')||'auto';}catch(_e){}
       if(!['auto','mobile','desktop'].includes(mode)) mode='auto';
@@ -1295,6 +1297,7 @@
 <script src="archive-media.js?v=20261109split"></script>
 
 <link rel="stylesheet" href="archive-brand.css?v=20261109split" />
+<link rel="stylesheet" href="ui-review.css?v=20261110" />
 
 </body>
 </html>

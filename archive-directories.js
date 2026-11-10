@@ -154,6 +154,7 @@
       const decade = Math.floor(year / 10) * 10;
       return currentLang === 'en' ? `${decade}s` : `${decade}년대`;
     }
+    function archiveEmptyText(ko,en){return `<div class="empty" role="status">${archiveHtml(archiveText(ko,en))}</div>`;}
     function renderSeasonDirectory(){
       const {seasons,latestSeason} = archiveBuildCache();
       const wrap = document.getElementById('seasonDirectoryWrap');
@@ -163,6 +164,10 @@
       const type = document.getElementById('seasonDirectoryType')?.value || '';
       const keyword = String(document.getElementById('seasonDirectoryKeyword')?.value || '').trim().toLowerCase();
       const hasCriteria = !!(seasonValue || type || keyword);
+      if(document.body.classList.contains('ui-review') && !hasCriteria){
+        if(summary)summary.textContent='';
+        wrap.innerHTML=archiveEmptyText('시즌 조건을 선택해 주세요.','Choose season filters.');return;
+      }
       let rows = seasons.filter(item=>{
         const haystack = [item.season,...item.types].join(' ').toLowerCase();
         return (!seasonValue || item.season === seasonValue) &&
@@ -204,6 +209,10 @@
       const type = document.getElementById('competitionDirectoryType')?.value || '';
       const city = String(document.getElementById('competitionDirectoryCity')?.value || '').trim().toLowerCase();
       const hasCriteria = !!(season || type || city);
+      if(document.body.classList.contains('ui-review') && !hasCriteria){
+        if(summary)summary.textContent='';
+        wrap.innerHTML=archiveEmptyText('대회 조건을 선택해 주세요.','Choose competition filters.');return;
+      }
       let rows = cache.competitions.filter(item=>
         (!season || item.season === season) &&
         (!type || archiveCompetitionTypeLabel(item.type) === type) &&
@@ -244,6 +253,10 @@
       const gender = document.getElementById('athleteDirectoryGender')?.value || '';
       const season = document.getElementById('athleteDirectorySeason')?.value || '';
       const hasCriteria = !!(q || country || gender || season);
+      if(document.body.classList.contains('ui-review') && !hasCriteria){
+        if(summary)summary.textContent='';
+        wrap.innerHTML=archiveEmptyText('검색어 또는 선수 조건을 선택해 주세요.','Enter a name or choose athlete filters.');return;
+      }
       athleteDirectoryIndex = 'all';
       renderAthleteDirectoryIndex();
       let rows = cache.athletes.filter(item=>{
