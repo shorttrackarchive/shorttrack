@@ -709,7 +709,7 @@ let currentLang = 'ko';
     }
 
 
-    const STATIC_DATA_BUILD_ID = '20261107215836';
+    const STATIC_DATA_BUILD_ID = '20261114223223';
     const API_CACHE_TTL_MS = 6 * 60 * 60 * 1000;
     function buildApiUrl(params){
       const query = new URLSearchParams(params);
