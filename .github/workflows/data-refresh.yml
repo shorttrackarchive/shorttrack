@@ -39,6 +39,7 @@ jobs:
         run: |
           node test-performance.mjs
           node test-loading.mjs
+          node test-palettes.mjs
 
       - name: Commit verified data changes
         run: |

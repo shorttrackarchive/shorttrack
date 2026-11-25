@@ -17,6 +17,13 @@
   <script src="approved-evidence.js?v=20261101" defer></script>
   <script src="approved-sharing.js?v=20261101d" defer></script>
   <script src="ui-review.js?v=20261110" defer></script>
+  <script>
+    try{
+      const palette=localStorage.getItem('shorttrack_palette_v1');
+      if(['ice-trace','fresh-ice','night-session','photo-finish'].includes(palette))document.documentElement.dataset.palette=palette;
+    }catch(_e){}
+  </script>
+  <script src="palettes.js?v=20261125" defer></script>
   <link rel="stylesheet" href="approved-features.css?v=20261101nav" />
   <link rel="stylesheet" href="archive-usability.css?v=20261101" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -1298,6 +1305,7 @@
 
 <link rel="stylesheet" href="archive-brand.css?v=20261109split" />
 <link rel="stylesheet" href="ui-review.css?v=20261110" />
+<link rel="stylesheet" href="palettes.css?v=20261125" />
 
 </body>
 </html>
