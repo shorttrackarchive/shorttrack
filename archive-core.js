@@ -829,6 +829,7 @@ let currentLang = 'ko';
         archiveInstallMaster(json.athlete_master||[]);
         athleteCountryHistory=normalizeAthleteCountryHistory(json.athlete_country_history||json.athletes||[]);
         skaterAliases=archiveSupplementAliases(json.skater_aliases||[]).map(normalizeAliasRow);
+        archivePrepareIdentity(json);
         skaterAliasMap=buildSkaterAliasMap(skaterAliases, [...(json.medals||[]),...(json.relay_members||[]),...(json.best_times||[])]);
         medals=(json.medals||[]).map(normalizeMedalRow);
         relayMembers=(json.relay_members||[]).map(normalizeRelayRow);
@@ -970,7 +971,7 @@ let currentLang = 'ko';
     }
     function aliasKey(name){return archiveNameKey(name);}
     function looseNameKey(name){return archiveNameKey(name);}
-    function canonicalSkaterName(name){const raw=String(name||'').trim();if(!raw)return '';return skaterAliasMap.get(aliasKey(raw))||raw.normalize('NFD').replace(/[\u0300-\u036f]/g,'').normalize('NFC');}
+    function canonicalSkaterName(name){const raw=String(name||'').trim();if(!raw)return '';if(typeof archiveIdentity!=='undefined'&&archiveIdentity){const found=archiveIdentity.resolve({skater_name:raw},{lookup:true});return found.status==='resolved'?found.canonical_name:raw;}return skaterAliasMap.get(aliasKey(raw))||raw;}
     function addNameMatchingVariantsToSet(set, value){
       const raw=String(value||'').trim();
       if(!raw) return;
@@ -4996,7 +4997,7 @@ let currentLang = 'ko';
       const seen=new Set();
       const out=[];
       rows.forEach(row=>{
-        const key=[row.competition_type,row.season,row.competition_name,row.gender,row.event,row.round,row.heat,row.skater_name,row.country,row.lap_no,row.lap_time,row.split_time,row.prev_split_rank,row.split_rank].map(v=>String(v||'').trim()).join('||');
+        const key=[row.competition_type,row.season,row.competition_name,row.gender,row.event,row.round,row.heat,row.original_skater_name||row.skater_name,row.country,row.lap_no,row.lap_time,row.split_time,row.prev_split_rank,row.split_rank].map(v=>String(v||'').trim()).join('||');
         if(seen.has(key)) return;
         seen.add(key);
         out.push(row);

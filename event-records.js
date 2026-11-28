@@ -267,7 +267,7 @@
     const gender = inferRecordGender(row.gender || '', event);
     const sec = recordSeconds(row.seconds_float || row.time || row.record || row.best_time);
     const competitionType = recordCompetitionBucket(row.competition_type || row.type || '');
-    return {
+    const normalized = {
       rank: normalizeRecordText(row.rank || row.final_rank || ''),
       skater_name: fixRecordName(row),
       country: normalizeRecordText(row.country || row.noc || ''),
@@ -287,6 +287,7 @@
       source_url: normalizeRecordText(row.source_url || row.url || ''),
       raw_data: normalizeRecordText(row.raw_data || '')
     };
+    return typeof archiveFinalizeIdentityRow==='function'?archiveFinalizeIdentityRow(normalized,{...row,skater_name:fixRecordName(row),gender}):normalized;
   }
 
   function normalizedRecordNameKey(name){
@@ -342,7 +343,7 @@
         row.event,
         String(row.round || '').toLowerCase(),
         String(row.source_url || '').split('#')[0],
-        normalizedRecordNameKey(row.skater_name),
+        normalizedRecordNameKey(row.original_skater_name||row.skater_name),
         String(row.country || '').toLowerCase(),
         normalizedRecordTimeKey(row.seconds_float || row.time),
         String(row.final_rank || '').toLowerCase()

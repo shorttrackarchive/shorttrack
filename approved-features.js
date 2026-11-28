@@ -9,7 +9,7 @@ function archiveInstallMaster(rows){
       .forEach(name=>archiveMasterByName.set(archiveNameKey(name),row));
   });
 }
-function archiveAthleteId(name){return archiveMasterByName.get(archiveNameKey(name))?.athlete_id||'';}
+function archiveAthleteId(name){if(typeof archiveIdentity!=='undefined'&&archiveIdentity){const found=archiveIdentity.resolve({skater_name:name},{lookup:true});return found.status==='resolved'?found.athlete_id:'';}return archiveMasterByName.get(archiveNameKey(name))?.athlete_id||'';}
 const approvedSupplementAliases=archiveSupplementAliases;
 archiveSupplementAliases=function(rows){
   const master=[];

@@ -40,6 +40,7 @@ jobs:
           node test-performance.mjs
           node test-loading.mjs
           node test-palettes.mjs
+          node test-identity.mjs
 
       - name: Commit verified data changes
         run: |
